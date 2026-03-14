@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cinzel, Space_Grotesk } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const displayFont = Cinzel({
@@ -30,6 +31,9 @@ export default function RootLayout({
       <body className={`${displayFont.variable} ${bodyFont.variable} antialiased`}>
         {children}
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID ? (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      ) : null}
     </html>
   );
 }
