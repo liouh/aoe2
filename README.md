@@ -2,6 +2,8 @@
 
 Client-only Age of Empires II replay explorer built with Next.js. Upload a `.aoe2record` or `.mgz` file to visualize the minimap over time, inspect build orders, and compare player timelines.
 
+Hosted at: https://liouh.com/aoe2/
+
 ## Features
 
 - Replay parsing runs fully in the browser via `aoe2rec-js`
