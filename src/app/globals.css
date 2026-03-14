@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6efe4;
+  --foreground: #1c1610;
+  --panel: #fdf7ee;
+  --panel-strong: #efe2d0;
+  --accent: #b24a2a;
+  --accent-2: #304f6d;
+  --muted: #6b5b4d;
+  --ring: rgba(178, 74, 42, 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+}
+
+.gradient-shell {
+  background:
+    radial-gradient(circle at 10% 20%, rgba(178, 74, 42, 0.18), transparent 55%),
+    radial-gradient(circle at 90% 10%, rgba(48, 79, 109, 0.2), transparent 50%),
+    linear-gradient(180deg, #f6efe4 0%, #f1e3d1 100%);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(28, 22, 16, 0.08);
+  box-shadow: 0 20px 40px rgba(28, 22, 16, 0.08);
+}
+
+.panel-strong {
+  background: var(--panel-strong);
+  border: 1px solid rgba(28, 22, 16, 0.12);
+}
+
+.headline {
+  font-family: var(--font-display), "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
