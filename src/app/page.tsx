@@ -466,8 +466,6 @@ export default function Home() {
         if (typeof window !== "undefined") {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
-          console.log("parse_rec output:", parsed);
-          console.log("parse_rec_summary output:", parsedSummary);
         }
         const timeline = buildTimeline(parsed);
         const gameDuration = determineDuration(parsedSummary, timeline);
@@ -625,8 +623,6 @@ export default function Home() {
                 setIsDragging(false);
               }}
               onWheel={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
                 const canvas = canvasRef.current;
                 if (!canvas) return;
                 const rect = canvas.getBoundingClientRect();
