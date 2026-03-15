@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -136,6 +136,7 @@ export default function Home() {
   const lastKeyTimeRef = useRef(0);
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const zoomLimitTimestampRef = useRef<number | null>(null);
   const entityLookupRef = useRef<{
     tileToAnchor: Map<string, string>;
     buildings: Map<string, TimelineEvent>;
@@ -745,11 +746,35 @@ export default function Home() {
     const container = mapContainerRef.current;
     if (!container) return;
     const handleWheel = (event: WheelEvent) => {
-      event.preventDefault();
+      // If zooming in and not yet at MAX_ZOOM
+      if (event.deltaY < 0 && mapZoom < MAX_ZOOM) {
+        zoomLimitTimestampRef.current = null;
+        event.preventDefault();
+      }
+      // If zooming out and not yet at 1
+      else if (event.deltaY > 0 && mapZoom > 1) {
+        zoomLimitTimestampRef.current = null;
+        event.preventDefault();
+      }
+      // At a limit and continuing to scroll in that direction
+      else if ((event.deltaY < 0 && mapZoom >= MAX_ZOOM) || (event.deltaY > 0 && mapZoom <= 1)) {
+        if (zoomLimitTimestampRef.current === null) {
+          zoomLimitTimestampRef.current = Date.now();
+        }
+
+        const elapsed = Date.now() - zoomLimitTimestampRef.current;
+        if (elapsed < 1000) {
+          event.preventDefault();
+        }
+      }
+      // Scrolling AWAY from a limit
+      else {
+        zoomLimitTimestampRef.current = null;
+      }
     };
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
-  }, []);
+  }, [mapZoom]);
 
   return (
     <div className="gradient-shell min-h-screen">
@@ -764,7 +789,7 @@ export default function Home() {
                 Replay Viewer
               </h1>
               <p className="max-w-2xl text-base text-[color:var(--muted)] md:text-lg">
-                Upload a replay to see the minimap progression and analyze build orders.
+                Upload a replay to see minimap progression and analyze build orders.
               </p>
             </div>
             <label
