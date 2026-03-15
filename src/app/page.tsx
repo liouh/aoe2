@@ -628,7 +628,13 @@ export default function Home() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-      if ((event.target as HTMLElement)?.tagName === "INPUT") return;
+      const target = event.target as HTMLElement;
+      if (target?.tagName === "INPUT" && (target as HTMLInputElement).type !== "range") return;
+
+      if (target?.tagName === "INPUT" && (target as HTMLInputElement).type === "range") {
+        event.preventDefault();
+      }
+
       const now = performance.now();
       if (now - lastKeyTimeRef.current < 16) return;
       lastKeyTimeRef.current = now;
