@@ -64,14 +64,18 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 20) 
 
     const current = activeGroups.get(identity);
 
+    const amount = typeof event.raw?.amount === "number" && event.raw.amount > 0
+      ? event.raw.amount
+      : 1;
+
     if (current && event.time - current.time <= windowSeconds) {
-      current.count++;
+      current.count += amount;
     } else {
       // If there was an existing group but it's now out of window, 
       // we don't necessarily push it yet because other groups might still be active.
       // However, for the timeline, we want to maintain chronological order of 
       // the START of these groups.
-      const newGroup = { ...event, count: 1 };
+      const newGroup = { ...event, count: amount };
       consolidated.push(newGroup);
       activeGroups.set(identity, newGroup);
     }
