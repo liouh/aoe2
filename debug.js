@@ -1,0 +1,39 @@
+__aoe2rec.operations.filter((item) => {
+    if (item.Action && item.Action.action_data.DeQueue) {
+        console.log(item.Action.action_data);
+    }
+});
+
+__aoe2rec.operations.filter((item) => {
+    if (item.Action && (
+        !item.Action.action_data.Transform
+        && !item.Action.action_data.Move
+        && !item.Action.action_data.Stance
+        && !item.Action.action_data.Interact
+        && !item.Action.action_data.Move
+        && !item.Action.action_data.Formation
+        && !item.Action.action_data.Patrol
+        && !item.Action.action_data.Order
+        && !item.Action.action_data.Release
+        && !item.Action.action_data.Gatherpoint
+        && !item.Action.action_data.Build
+        && !item.Action.action_data.Sell
+        && !item.Action.action_data.Stop
+        && !item.Action.action_data.Buy
+        && !item.Action.action_data.Research
+        && !item.Action.action_data.DeAttackMove
+        && !item.Action.action_data.Research
+        && !item.Action.action_data.Resign
+        && !item.Action.action_data.Game
+        && !item.Action.action_data.Research
+        && !item.Action.action_data.BackToWork
+        && !item.Action.action_data.Flare
+        && !item.Action.action_data.Wall
+        && !item.Action.action_data.Delete
+        && !item.Action.action_data.Follow
+        && !item.Action.action_data.Repair
+        // && !item.Action.action_data.DeQueue
+    )) {
+        console.log(item.Action.action_data);
+    }
+});

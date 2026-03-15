@@ -105,7 +105,7 @@ export default function Home() {
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
-  const [activeTab, setActiveTab] = useState<"timeline" | "info">("timeline");
+  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("timeline");
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -303,6 +303,63 @@ export default function Home() {
     () => events.filter((event) => event.category === "research" && timelineShowResearch),
     [events, timelineShowResearch]
   );
+
+  const unitStats = useMemo(() => {
+    const rawEvents = events.filter((e) => e.category === "train");
+    const statsMap = new Map<number, Map<number, { name: string; count: number }>>();
+
+    rawEvents.forEach((event) => {
+      if (event.playerId === undefined || event.unitTypeId === undefined) return;
+
+      let playerMap = statsMap.get(event.playerId);
+      if (!playerMap) {
+        playerMap = new Map();
+        statsMap.set(event.playerId, playerMap);
+      }
+
+      const existing = playerMap.get(event.unitTypeId);
+      if (existing) {
+        existing.count++;
+      } else {
+        playerMap.set(event.unitTypeId, {
+          name: getUnitName(event.unitTypeId) ?? "Unknown Unit",
+          count: 1,
+        });
+      }
+    });
+
+    const isEconomic = (name: string) => {
+      const lower = name.toLowerCase();
+      return (
+        lower.includes("villager") ||
+        lower.includes("trade cart") ||
+        lower.includes("trade cog") ||
+        lower.includes("fishing ship") ||
+        lower.includes("transport ship") ||
+        lower.includes("llama") ||
+        lower.includes("cow") ||
+        lower.includes("sheep") ||
+        lower.includes("turkey") ||
+        lower.includes("goat") ||
+        lower.includes("goose") ||
+        lower.includes("pig") ||
+        lower.includes("mule cart")
+      );
+    };
+
+    const result = new Map<number, { military: { name: string; count: number }[], economic: { name: string; count: number }[] }>();
+    statsMap.forEach((playerMap, playerId) => {
+      const allUnits = Array.from(playerMap.values());
+      const economic = allUnits
+        .filter((u) => isEconomic(u.name))
+        .sort((a, b) => b.count - a.count);
+      const military = allUnits
+        .filter((u) => !isEconomic(u.name))
+        .sort((a, b) => b.count - a.count);
+      result.set(playerId, { military, economic });
+    });
+    return result;
+  }, [events]);
 
 
   const timelineHeight = useMemo(() => {
@@ -1150,6 +1207,15 @@ export default function Home() {
                   Timeline
                 </button>
                 <button
+                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "units"
+                    ? "border-b-2 border-[color:var(--accent)] text-white"
+                    : "text-white/40 hover:text-white/70"
+                    }`}
+                  onClick={() => setActiveTab("units")}
+                >
+                  Units
+                </button>
+                <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "info"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "text-white/40 hover:text-white/70"
@@ -1386,6 +1452,73 @@ export default function Home() {
                           );
                         })}
                     </div>
+                  </div>
+                </section>
+              ) : activeTab === "units" ? (
+                <section className="panel rounded-3xl p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2 className="headline text-2xl">Units Trained</h2>
+                  </div>
+                  <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {players.map((player) => {
+                      const stats = unitStats.get(player.id) || { military: [], economic: [] };
+                      const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
+                      const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
+
+                      return (
+                        <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                          <div className="flex items-center justify-between">
+                            <h3 className="headline text-lg">{player.name}</h3>
+                            <span
+                              className="h-3 w-3 rounded-full"
+                              style={{ background: classifyColor(player.id) }}
+                            ></span>
+                          </div>
+
+                          <div className="space-y-4">
+                            {/* Military Section */}
+                            <div>
+                              <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
+                                <span className="text-xs font-mono bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                              </div>
+                              <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                {stats.military.length > 0 ? (
+                                  stats.military.map((u, idx) => (
+                                    <div key={idx} className="flex items-center justify-between text-sm">
+                                      <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                      <span className="font-mono font-bold shrink-0">{u.count}</span>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-[10px] text-white/20 italic">No military trained</p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Economic Section */}
+                            <div>
+                              <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
+                                <span className="text-xs font-mono bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
+                              </div>
+                              <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                {stats.economic.length > 0 ? (
+                                  stats.economic.map((u, idx) => (
+                                    <div key={idx} className="flex items-center justify-between text-sm">
+                                      <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                      <span className="font-mono font-bold shrink-0">{u.count}</span>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-[10px] text-white/20 italic">No eco units trained</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </section>
               ) : (
