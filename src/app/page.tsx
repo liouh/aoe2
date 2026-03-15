@@ -59,7 +59,7 @@ export default function Home() {
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
-  const [timelineShowUnits, setTimelineShowUnits] = useState(true);
+  const [timelineShowUnits, setTimelineShowUnits] = useState(false);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
@@ -114,8 +114,8 @@ export default function Home() {
   });
 
   const players = useMemo(
-    () => summarizePlayers(summary, replay),
-    [summary, replay]
+    () => summarizePlayers(summary, replay, events),
+    [summary, replay, events]
   );
 
   useEffect(() => {
@@ -153,9 +153,9 @@ export default function Home() {
           setIsPlaying(false);
           return prev;
         }
-        return Math.min(prev + 30, duration);
+        return Math.min(prev + 10, duration);
       });
-    }, 150);
+    }, 100);
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
@@ -534,7 +534,7 @@ export default function Home() {
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
-        context.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
         context.fill();
         context.lineWidth = 1;
         context.strokeStyle = "#ffffff";
@@ -1103,7 +1103,9 @@ export default function Home() {
                                 className="h-3 w-3 rounded-full"
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
-                              <p className="text-sm font-semibold">{player.name}</p>
+                              <p className="text-sm font-semibold">
+                                {player.name}
+                              </p>
                             </div>
                             <select
                               className="rounded-full border border-transparent bg-[color:var(--panel)] px-2 py-1 text-xs text-[color:var(--muted)]"
@@ -1221,7 +1223,7 @@ export default function Home() {
               <aside className="flex flex-col gap-6">
                 <section className="panel rounded-3xl p-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="headline text-2xl">Player Stats</h2>
+                    <h2 className="headline text-2xl">Players</h2>
                   </div>
                   <div className="mt-4 grid gap-4">
                     {players.map((player, index) => {
@@ -1235,7 +1237,10 @@ export default function Home() {
                         >
                           <div className="flex items-top justify-between">
                             <div>
-                              <h3 className="headline text-lg">{player.name}</h3>
+                              <h3 className="headline text-lg flex items-start">
+                                {player.name}
+                                {player.won && <span className="ml-1 text-xl leading-none">👑</span>}
+                              </h3>
                               <p className="text-xs text-[color:var(--muted)]">
                                 {getCivName(player.civId) ?? ("Civ " + (player.civId ?? "—"))} • Team {player.teamId ?? "—"}
                               </p>

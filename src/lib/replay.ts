@@ -25,6 +25,7 @@ export type PlayerSummary = {
   colorId?: number;
   civId?: number;
   teamId?: number;
+  won?: boolean;
 };
 
 export type TimeSeriesPoint = {
@@ -668,8 +669,14 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
   return events.sort((a, b) => a.time - b.time);
 };
 
-export const summarizePlayers = (summary: any, replay: any): PlayerSummary[] => {
+export const summarizePlayers = (
+  summary: any,
+  replay: any,
+  events: TimelineEvent[] = []
+): PlayerSummary[] => {
   const players: PlayerSummary[] = [];
+
+  // 1. Identify raw players from summary or replay
   const summaryTeams = summary?.teams ?? [];
   summaryTeams.forEach((team: any, teamIndex: number) => {
     (team?.players ?? []).forEach((player: any) => {
@@ -679,21 +686,41 @@ export const summarizePlayers = (summary: any, replay: any): PlayerSummary[] => 
         colorId: player.color_id ?? player.selected_color,
         civId: player.civ_id,
         teamId: player.resolved_team_id ?? teamIndex + 1,
+        won: player.victory === true || player.won === true,
       });
     });
   });
-  if (players.length) return players;
 
-  const replayPlayers = replay?.players ?? replay?.player ?? replay?.player_settings ?? [];
-  replayPlayers.forEach((player: any, index: number) => {
-    players.push({
-      id: player.player_number ?? index + 1,
-      name: player.name ?? `Player ${index + 1}`,
-      colorId: player.color_id ?? player.selected_color,
-      civId: player.civ_id,
-      teamId: player.team_id,
+  if (!players.length) {
+    const replayPlayers =
+      replay?.players ?? replay?.player ?? replay?.player_settings ?? [];
+    replayPlayers.forEach((player: any, index: number) => {
+      players.push({
+        id: player.player_number ?? index + 1,
+        name: player.name ?? `Player ${index + 1}`,
+        colorId: player.color_id ?? player.selected_color,
+        civId: player.civ_id,
+        teamId: player.team_id,
+        won: player.victory === true || player.won === true,
+      });
     });
-  });
+  }
+
+  // 2. Winner inference fallback using Resign events
+  const explicitWinner = players.some((p) => p.won);
+  if (!explicitWinner && events.length > 0) {
+    const resigners = new Set(
+      events.filter((e) => e.type === "Resign").map((e) => e.playerId)
+    );
+    if (resigners.size > 0 && resigners.size < players.length) {
+      players.forEach((p) => {
+        if (!resigners.has(p.id)) {
+          p.won = true;
+        }
+      });
+    }
+  }
+
   return players;
 };
 
