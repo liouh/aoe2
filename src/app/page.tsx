@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -763,7 +763,7 @@ export default function Home() {
         }
 
         const elapsed = Date.now() - zoomLimitTimestampRef.current;
-        if (elapsed < 1000) {
+        if (elapsed < 300) {
           event.preventDefault();
         }
       }
