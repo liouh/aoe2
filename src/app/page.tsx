@@ -1055,6 +1055,22 @@ export default function Home() {
                             className="relative mt-3 w-full min-h-[520px]"
                             style={{ height: timelineHeight }}
                           >
+                            {/* Time Markers */}
+                            {Array.from({ length: Math.floor(duration / 300) + 1 }).map((_, i) => {
+                              const markerTime = i * 300;
+                              return (
+                                <div
+                                  key={`marker-${markerTime}`}
+                                  className="absolute left-1/2 w-full -translate-x-1/2 border-t border-[color:var(--panel)]"
+                                  style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
+                                >
+                                  <span className="absolute left-0 -translate-y-1/2 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-50">
+                                    {formatClock(markerTime)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+
                             <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-[color:var(--panel)]"></div>
                             {playerBuilds.map((event) => {
                               const buildingName =
@@ -1089,7 +1105,13 @@ export default function Home() {
                             <div
                               className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
                               style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-                            />
+                            >
+                              <div className="absolute right-0 -translate-y-1/2 translate-x-full pl-2">
+                                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold text-[color:var(--panel)] shadow-sm">
+                                  {formatClock(selectedTime)}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                           <div className="mt-2 flex flex-wrap gap-2 text-xs text-[color:var(--muted)]">
                             <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
