@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -248,8 +248,7 @@ export default function Home() {
   useEffect(() => {
     if (activeTab === "timeline" && pendingScrollRef.current && timelineRef.current) {
       pendingScrollRef.current = false;
-      const pxPerSecond = 3;
-      const targetOffset = selectedTime * pxPerSecond;
+      const targetOffset = selectedTime * PX_PER_SECOND;
       const containerTop =
         timelineRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
@@ -267,8 +266,7 @@ export default function Home() {
       pendingScrollRef.current = true;
       return;
     }
-    const pxPerSecond = 3;
-    const targetOffset = selectedTime * pxPerSecond;
+    const targetOffset = selectedTime * PX_PER_SECOND;
     const containerTop =
       timelineRef.current.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({
