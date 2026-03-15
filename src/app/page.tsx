@@ -794,8 +794,8 @@ export default function Home() {
         <main className="flex flex-col gap-6">
           <section className="panel-dark flex flex-col gap-6 rounded-3xl p-6">
             <div className="flex flex-wrap items-center justify-between">
-              <div className="flex flex-wrap items-center gap-8">
-                <label className="toggle-pill gap-3 group">
+              <div className="flex flex-wrap items-center gap-6">
+                <label className="toggle-pill gap-2 group">
                   <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
                     Buildings
                   </span>
@@ -811,7 +811,7 @@ export default function Home() {
                     </div>
                   </div>
                 </label>
-                <label className="toggle-pill gap-3 group">
+                <label className="toggle-pill gap-2 group">
                   <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
                     Unit movements
                   </span>
@@ -1086,7 +1086,7 @@ export default function Home() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="headline text-2xl">Timeline</h2>
                   <div className="flex flex-wrap items-center gap-4 bg-[color:var(--panel-strong)] px-4 py-2 rounded-2xl border border-[color:var(--panel)]">
-                    <label className="toggle-pill gap-2 group">
+                    <label className="toggle-pill gap-1 group">
                       <div className="relative scale-75">
                         <input
                           type="checkbox"
@@ -1102,7 +1102,7 @@ export default function Home() {
                         Buildings
                       </span>
                     </label>
-                    <label className="toggle-pill gap-2 group pl-4">
+                    <label className="toggle-pill gap-1 group">
                       <div className="relative scale-75">
                         <input
                           type="checkbox"
@@ -1118,7 +1118,7 @@ export default function Home() {
                         Units
                       </span>
                     </label>
-                    <label className="toggle-pill gap-2 group pl-4">
+                    <label className="toggle-pill gap-1 group">
                       <div className="relative scale-75">
                         <input
                           type="checkbox"
