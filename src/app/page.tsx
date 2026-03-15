@@ -1152,8 +1152,8 @@ export default function Home() {
                         (event) => event.playerId === player?.id
                       );
                       return (
-                        <div key={`${player.id}-${index}`} className="panel-strong rounded-2xl p-4">
-                          <div className="flex items-center justify-between gap-2">
+                        <div key={`${player.id}-${index}`} className="panel-strong rounded-2xl">
+                          <div className="flex items-center justify-between gap-2 p-4">
                             <div className="flex items-center gap-2">
                               <span
                                 className="h-3 w-3 rounded-full"
@@ -1196,7 +1196,7 @@ export default function Home() {
                             </select>
                           </div>
                           <div
-                            className="relative mt-3 w-full min-h-[520px]"
+                            className="relative mt-1 w-full min-h-[520px]"
                             style={{ height: timelineHeight }}
                           >
                             {/* Time Markers */}
@@ -1208,8 +1208,8 @@ export default function Home() {
                                   className="absolute left-1/2 w-full -translate-x-1/2 border-t border-[color:var(--panel)]"
                                   style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
                                 >
-                                  <span className="absolute left-0 -translate-y-1/2 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-50">
-                                    {formatClock(markerTime)}
+                                  <span className="absolute left-0 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-50">
+                                    {markerTime / 60 + "m"}
                                   </span>
                                 </div>
                               );
@@ -1273,11 +1273,16 @@ export default function Home() {
                               return (
                                 <div
                                   key={`age-${player.id}-${ageName}`}
-                                  className="absolute left-0 -translate-x-1/2 -translate-y-1/2 flex items-center z-10 cursor-help"
+                                  className="absolute left-0 w-full flex items-center pointer-events-none z-10"
                                   style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
-                                  title={`${ageName} Age reached @ ${formatClock(time)}`}
                                 >
-                                  <div className="relative bg-[color:var(--accent)] text-[color:var(--panel)] w-5 h-5 flex items-center justify-center rounded-sm font-black text-[10px] shadow-sm ring-2 ring-[color:var(--panel)]">
+                                  {/* Thin dotted line spanning the entire column */}
+                                  <div className="absolute left-0 w-full border-t border-dotted border-[color:var(--accent)]" />
+                                  {/* Roman numeral badge on the far left */}
+                                  <div
+                                    className="relative -translate-x-1/2 bg-[color:var(--accent)] text-[color:var(--panel)] w-5 h-5 flex items-center justify-center rounded-sm font-black text-[10px] shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
+                                    title={`${ageName} Age reached @ ${formatClock(time)}`}
+                                  >
                                     {ageNumeral}
                                   </div>
                                 </div>
@@ -1288,11 +1293,13 @@ export default function Home() {
                               className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
                               style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
                             >
-                              <div className="absolute right-0 -translate-y-1/2 translate-x-full pl-2">
-                                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold text-[color:var(--panel)] shadow-sm">
-                                  {formatClock(selectedTime)}
-                                </span>
-                              </div>
+                              {index === 0 && (
+                                <div className="absolute left-0 -translate-y-1/2 -translate-x-[120%] pl-2">
+                                  <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold text-[color:var(--panel)] shadow-sm">
+                                    {formatClock(selectedTime)}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
