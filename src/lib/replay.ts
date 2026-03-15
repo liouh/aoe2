@@ -86,6 +86,11 @@ const AGE_TECH_NAMES = {
   Castle: "Castle Age",
   Imperial: "Imperial Age",
 };
+const AGE_TECH_DURATIONS: Record<string, number> = {
+  Feudal: 130,
+  Castle: 160,
+  Imperial: 190,
+};
 const CHAT_KEYS = [
   "chat",
   "message",
@@ -136,69 +141,6 @@ const extractChatText = (event: Record<string, unknown>) => {
     if (value) return value;
   }
   return undefined;
-};
-
-const findAgeTimingsFromChat = (replay: unknown) => {
-  const ageByPlayer = new Map<number, Record<string, number>>();
-  const replayRecord = replay as Record<string, unknown>;
-  const operations = Array.isArray(replayRecord?.operations)
-    ? (replayRecord.operations as Record<string, unknown>[])
-    : null;
-  if (operations) {
-    let maxWorldTime = 0;
-    operations.forEach((op) => {
-      const action = op.Action as Record<string, unknown> | undefined;
-      if (!action) return;
-      const rawTime = pickNumber(action.world_time);
-      if (rawTime !== undefined && rawTime > maxWorldTime) {
-        maxWorldTime = rawTime;
-      }
-    });
-    const timeScale = timeScaleFromValue(maxWorldTime);
-    operations.forEach((op) => {
-      const action = op.Action as Record<string, unknown> | undefined;
-      if (!action) return;
-      const time = normalizeTime(pickNumber(action.world_time) ?? 0, timeScale);
-      const actionData = action.action_data as Record<string, unknown> | undefined;
-      if (!actionData) return;
-      const actionType = Object.keys(actionData)[0];
-      if (!actionType) return;
-      if (!/chat|message/i.test(actionType)) return;
-      const payload = actionData[actionType] as Record<string, unknown>;
-      const message = extractChatText(payload);
-      if (!message) return;
-      const age = extractAge(message);
-      if (!age) return;
-      const playerId = pickNumber(payload?.player_id) ?? detectPlayerId(payload);
-      if (playerId === undefined) return;
-      const existing = ageByPlayer.get(playerId) ?? {};
-      if (existing[age] === undefined || time < existing[age]) {
-        existing[age] = time;
-      }
-      ageByPlayer.set(playerId, existing);
-    });
-  }
-
-  const arrays = collectEventArrays(replay);
-  arrays.forEach((array) => {
-    array.forEach((event) => {
-      if (!isRecord(event)) return;
-      const message = extractChatText(event);
-      if (!message) return;
-      const age = extractAge(message);
-      if (!age) return;
-      const time = extractTimeValue(event);
-      if (time === undefined) return;
-      const playerId = detectPlayerId(event);
-      if (playerId === undefined) return;
-      const existing = ageByPlayer.get(playerId) ?? {};
-      if (existing[age] === undefined || time < existing[age]) {
-        existing[age] = time;
-      }
-      ageByPlayer.set(playerId, existing);
-    });
-  });
-  return ageByPlayer;
 };
 
 const extractPosition = (event: Record<string, unknown>) => {
@@ -772,7 +714,6 @@ export const extractPlayerStats = (
     eventsByPlayer.set(event.playerId, list);
   });
 
-  const chatAgeTimings = findAgeTimingsFromChat(replay);
   const stats: PlayerStats[] = [];
   eventsByPlayer.forEach((playerEvents, playerId) => {
     const apm = Math.round(playerEvents.length / durationMinutes);
@@ -803,28 +744,24 @@ export const extractPlayerStats = (
 
     const ageTimings: Record<string, number> = {};
     playerEvents.forEach((event) => {
-      if (event.age && ageTimings[event.age] === undefined) {
-        ageTimings[event.age] = event.time;
-      }
+      // 1. Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
       if (event.type === "Research" && event.label) {
         const lower = event.label.toLowerCase();
         Object.entries(AGE_TECH_NAMES).forEach(([age, name]) => {
           if (lower.includes(name.toLowerCase())) {
-            if (ageTimings[age] === undefined || event.time < ageTimings[age]) {
-              ageTimings[age] = event.time;
+            const adjustedTime = event.time + (AGE_TECH_DURATIONS[age] ?? 0);
+            // Use ">" to get the LATEST occurrence
+            if (ageTimings[age] === undefined || adjustedTime > ageTimings[age]) {
+              ageTimings[age] = adjustedTime;
             }
           }
         });
       }
+      // 2. Check for age-tagged events (fallback)
+      if (event.age && ageTimings[event.age] === undefined) {
+        ageTimings[event.age] = event.time;
+      }
     });
-    const chatTimings = chatAgeTimings.get(playerId);
-    if (chatTimings) {
-      Object.entries(chatTimings).forEach(([age, time]) => {
-        if (ageTimings[age] === undefined || time < ageTimings[age]) {
-          ageTimings[age] = time;
-        }
-      });
-    }
 
     stats.push({
       playerId,
