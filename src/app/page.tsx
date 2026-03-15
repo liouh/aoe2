@@ -1085,7 +1085,7 @@ export default function Home() {
               <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="headline text-2xl">Timeline</h2>
-                  <div className="flex flex-wrap items-center gap-4 bg-[color:var(--panel-strong)] px-4 py-2 rounded-2xl border border-[color:var(--panel)]">
+                  <div className="flex flex-wrap items-center gap-4 pr-2 py-2 rounded-2xl">
                     <label className="toggle-pill gap-1 group">
                       <div className="relative scale-75">
                         <input
