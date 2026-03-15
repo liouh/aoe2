@@ -715,7 +715,7 @@ export default function Home() {
               </p>
             </div>
             <label className="panel flex cursor-pointer flex-col gap-3 rounded-2xl px-5 py-4 text-sm font-medium text-[color:var(--foreground)]">
-              <span>Upload .aoe2record or .mgz</span>
+              <span>Upload .aoe2record replay file</span>
               <input
                 type="file"
                 accept=".aoe2record,.mgz"
