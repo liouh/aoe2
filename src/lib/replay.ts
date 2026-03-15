@@ -290,7 +290,7 @@ const detectType = (event: Record<string, unknown>): string => {
 
 const detectCategory = (type: string, event: Record<string, unknown>) => {
   const lower = type.toLowerCase();
-  if (lower.includes("build") || "building" in event || "building_id" in event) {
+  if (lower.includes("build") || lower.includes("wall") || "building" in event || "building_id" in event) {
     return "build";
   }
   if (
@@ -520,7 +520,7 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         (Array.isArray(payload?.data) ? extractIdFromData(payload.data as number[]) : undefined);
       const buildingId = payload?.building_id;
       const buildingTypeId =
-        Array.isArray(payload?.data) && actionType === "Build"
+        Array.isArray(payload?.data) && (actionType === "Build" || actionType === "Wall")
           ? extractBuildingTypeId(payload.data as number[])
           : undefined;
       const targetId =
