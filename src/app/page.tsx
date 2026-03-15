@@ -89,6 +89,7 @@ export default function Home() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const timelineRef = useRef<HTMLElement>(null);
   const terrainCacheKeyRef = useRef<string | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const lastKeyTimeRef = useRef(0);
@@ -158,6 +159,18 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
+
+  const jumpToTimeline = () => {
+    if (!timelineRef.current) return;
+    const pxPerSecond = 3;
+    const targetOffset = selectedTime * pxPerSecond;
+    const containerTop =
+      timelineRef.current.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+      top: containerTop + targetOffset,
+      behavior: "smooth",
+    });
+  };
 
   const clampPan = (pan: { x: number; y: number }) => {
     const container = mapContainerRef.current;
@@ -909,14 +922,26 @@ export default function Home() {
                 </div>
                 <button
                   type="button"
-                  className="mt-2 px-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                  className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     setMapZoom(1);
                     setMapPan({ x: 0, y: 0 });
                   }}
+                  title="Reset zoom"
                 >
                   ⛶
+                </button>
+                <button
+                  type="button"
+                  className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    jumpToTimeline();
+                  }}
+                  title="Jump to timeline position"
+                >
+                  ⏲
                 </button>
               </div>
               <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
@@ -1000,7 +1025,7 @@ export default function Home() {
           )}
 
           {replay && (
-            <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+            <section ref={timelineRef} className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
               <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="headline text-2xl">Timeline</h2>
