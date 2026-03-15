@@ -99,6 +99,7 @@ const BUILDING_NAMES: Record<number, string> = {
   801: "Palisade Gate N-S",
   1102: "Fortified Tower",
   1187: "Rice Farm",
+  1251: "Krepost",
   1379: "Sea Gate SW-NE",
   1383: "Sea Gate NW-SE",
   1387: "Sea Gate W-E",
@@ -109,6 +110,7 @@ const BUILDING_NAMES: Record<number, string> = {
   1591: "City Gate N-S",
   487: "Gate",
   488: "Fortified Gate",
+  490: "Gate",
   63: "Fortified Gate SW-NE",
   85: "Fortified Gate NW-SE",
   660: "Fortified Gate W-E",
@@ -124,5 +126,6 @@ export const getBuildingFootprint = (
 
 export const getBuildingName = (buildingTypeId?: number) => {
   if (!buildingTypeId) return undefined;
+  // if (!BUILDING_NAMES[buildingTypeId]) console.log(buildingTypeId);
   return BUILDING_NAMES[buildingTypeId];
 };
