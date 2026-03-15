@@ -708,9 +708,9 @@ export const extractPlayerStats = (
       findSeries(replay, VILLAGER_KEYS)?.series ??
       (resourceSeries.food.length
         ? resourceSeries.food.map((point) => ({
-            time: point.time,
-            value: point.value,
-          }))
+          time: point.time,
+          value: point.value,
+        }))
         : undefined);
 
     const militarySeries = findSeries(replay, MILITARY_KEYS)?.series;
@@ -836,13 +836,6 @@ export type MatchInfo = {
 export const extractMatchInfo = (summary: any): MatchInfo => {
   const settings = summary?.header?.game_settings;
   const replayData = summary?.header?.replay;
-  console.log("Match Settings Dump:", {
-    map_id: settings?.map_id,
-    resolved_map_id: settings?.resolved_map_id,
-    selected_map_id: settings?.selected_map_id,
-    replay_map_id: replayData?.map_id,
-    all_settings: settings,
-  });
   return {
     mapTypeId: pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id),
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),

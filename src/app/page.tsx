@@ -183,7 +183,7 @@ export default function Home() {
 
 
   const timelineHeight = useMemo(() => {
-    const pxPerSecond = 4;
+    const pxPerSecond = 3;
     return Math.max(520, duration * pxPerSecond);
   }, [duration]);
 
@@ -559,7 +559,7 @@ export default function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-3">
               <p className="text-sm uppercase tracking-[0.3em] text-[color:var(--muted)]">
-                Age of Empires 2
+                Age of Empires II
               </p>
               <h1 className="headline text-4xl font-semibold text-[color:var(--foreground)] md:text-5xl">
                 Replay Viewer
@@ -589,325 +589,6 @@ export default function Home() {
           )}
         </header>
 
-        {replay && (
-          <main className="flex flex-col gap-6">
-            <section className="panel flex flex-col gap-6 rounded-3xl p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h2 className="headline text-2xl">Minimap</h2>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--muted)]">
-                  <div className="rounded-full bg-[color:var(--panel-strong)] px-3 py-1 font-mono tabular-nums">
-                    Time: {formatClock(selectedTime)}
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-full border border-transparent bg-[color:var(--panel)] px-3 py-1 text-xs font-semibold text-[color:var(--foreground)] transition hover:border-[color:var(--muted)] hover:bg-[color:var(--panel-strong)]"
-                    onClick={() => {
-                      setMapZoom(1);
-                      setMapPan({ x: 0, y: 0 });
-                    }}
-                  >
-                    Reset view
-                  </button>
-                  <label className="flex items-center gap-2 text-xs font-medium">
-                    <input
-                      type="checkbox"
-                      checked={showBuildings}
-                      onChange={(event) => setShowBuildings(event.target.checked)}
-                    />
-                    Buildings
-                  </label>
-                  <label className="flex items-center gap-2 text-xs font-medium">
-                    <input
-                      type="checkbox"
-                      checked={showUnits}
-                      onChange={(event) => setShowUnits(event.target.checked)}
-                    />
-                    Unit movements
-                  </label>
-                </div>
-              </div>
-              <div
-                className="relative w-full aspect-[2/1] min-h-[480px]"
-                ref={mapContainerRef}
-                style={{
-                  touchAction: "none",
-                  cursor: mapZoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
-                }}
-                onPointerDown={(event) => {
-                  if (mapZoom <= 1) return;
-                  event.preventDefault();
-                  isDraggingRef.current = true;
-                  setIsDragging(true);
-                  lastPointerRef.current = { x: event.clientX, y: event.clientY };
-                  (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (mapZoom <= 1) return;
-                  if (!isDraggingRef.current || !lastPointerRef.current) return;
-                  const dx = event.clientX - lastPointerRef.current.x;
-                  const dy = event.clientY - lastPointerRef.current.y;
-                  lastPointerRef.current = { x: event.clientX, y: event.clientY };
-                  setMapPan((prev) => clampPan({ x: prev.x + dx, y: prev.y + dy }));
-                }}
-                onPointerUp={(event) => {
-                  isDraggingRef.current = false;
-                  lastPointerRef.current = null;
-                  setIsDragging(false);
-                  (event.currentTarget as HTMLDivElement).releasePointerCapture(event.pointerId);
-                }}
-                onPointerLeave={() => {
-                  isDraggingRef.current = false;
-                  lastPointerRef.current = null;
-                  setIsDragging(false);
-                }}
-                onWheel={(event) => {
-                  const canvas = canvasRef.current;
-                  if (!canvas) return;
-                  const rect = canvas.getBoundingClientRect();
-                  const cursorX = event.clientX - rect.left;
-                  const cursorY = event.clientY - rect.top;
-                  const centerX = rect.width / 2;
-                  const centerY = rect.height / 2;
-                  const zoomDelta = -event.deltaY * 0.0015;
-                  setMapZoom((prev) => {
-                    const next = clamp(prev * (1 + zoomDelta), 1, 2.5);
-                    if (next <= 1) {
-                      setMapPan({ x: 0, y: 0 });
-                      return next;
-                    }
-                    const scaleChange = next / prev;
-                    setMapPan((pan) =>
-                      clampPan({
-                        x: pan.x + (1 - scaleChange) * (cursorX - centerX - pan.x),
-                        y: pan.y + (1 - scaleChange) * (cursorY - centerY - pan.y),
-                      })
-                    );
-                    return next;
-                  });
-                }}
-              >
-                <canvas ref={canvasRef} className="h-full w-full" />
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={Math.max(duration, 1)}
-                value={selectedTime}
-                className="w-full accent-[color:var(--accent)]"
-                onChange={(event) => setSelectedTime(Number(event.target.value))}
-              />
-            </section>
-
-            {replay && (
-              <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-                <div className="panel flex flex-col gap-6 rounded-3xl p-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="headline text-2xl">Timeline</h2>
-                    <div className="text-xs text-[color:var(--muted)]">
-                      Duration: {formatClock(duration)}
-                    </div>
-                  </div>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {[leftPlayerId, rightPlayerId]
-                      .filter((id): id is number => typeof id === "number")
-                      .map((playerId, index) => {
-                        const player = players.find((item) => item.id === playerId);
-                        if (!player) return null;
-                        const playerBuilds = buildEventsTimeline.filter(
-                          (event) => event.playerId === player?.id
-                        );
-                        const playerTrains = trainEvents.filter(
-                          (event) => event.playerId === player?.id
-                        );
-                        return (
-                          <div key={`${player.id}-${index}`} className="panel-strong rounded-2xl p-4">
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="h-3 w-3 rounded-full"
-                                  style={{ background: classifyColor(player.id) }}
-                                ></span>
-                                <p className="text-sm font-semibold">{player.name}</p>
-                              </div>
-                              <select
-                                className="rounded-full border border-transparent bg-[color:var(--panel)] px-2 py-1 text-xs text-[color:var(--muted)]"
-                                value={player.id}
-                                onChange={(event) => {
-                                  const value = Number(event.target.value);
-                                  if (index === 0) {
-                                    setLeftPlayerId(value);
-                                    if (value === rightPlayerId && players.length > 1) {
-                                      const alternative =
-                                        players.find((option) => option.id !== value)?.id ??
-                                        rightPlayerId;
-                                      setRightPlayerId(alternative);
-                                    }
-                                  }
-                                  if (index === 1) {
-                                    setRightPlayerId(value);
-                                    if (value === leftPlayerId && players.length > 1) {
-                                      const alternative =
-                                        players.find((option) => option.id !== value)?.id ??
-                                        leftPlayerId;
-                                      setLeftPlayerId(alternative);
-                                    }
-                                  }
-                                }}
-                              >
-                                {players.map((option) => (
-                                  <option key={option.id} value={option.id}>
-                                    {option.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div
-                              className="relative mt-3 w-full min-h-[520px]"
-                              style={{ height: timelineHeight }}
-                            >
-                              <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-[color:var(--panel)]"></div>
-                              {showBuildings &&
-                                playerBuilds.map((event) => {
-                                  const buildingName =
-                                    getBuildingName(event.buildingTypeId) ?? event.label;
-                                  return (
-                                    <div
-                                      key={event.id}
-                                      className="absolute left-1/2 flex -translate-x-full items-center justify-end"
-                                      style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                      title={`${buildingName} @ ${formatClock(event.time)}`}
-                                    >
-                                      <span className="text-[10px] text-[color:var(--muted)] pr-3">
-                                        {formatClock(event.time)} · {buildingName}
-                                      </span>
-                                      <span className="absolute right-0 translate-x-1/2 text-[8px]">⚫</span>
-                                    </div>
-                                  );
-                                })}
-                              {showUnits &&
-                                playerTrains.map((event) => (
-                                  <div
-                                    key={event.id}
-                                    className="absolute left-1/2 flex items-center"
-                                    style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                    title={`${getUnitName(event.unitTypeId) ?? event.label} @ ${formatClock(event.time)}`}
-                                  >
-                                    <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚫</span>
-                                    <span className="text-[10px] text-[color:var(--muted)] pl-3">
-                                      {formatClock(event.time)} · {getUnitName(event.unitTypeId) ?? event.label}
-                                    </span>
-                                  </div>
-                                ))}
-                              <div
-                                className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
-                                style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-                              />
-                            </div>
-                            <div className="mt-2 flex flex-wrap gap-2 text-xs text-[color:var(--muted)]">
-                              <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
-                                Build events: {playerBuilds.length}
-                              </span>
-                              <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
-                                Unit creation events: {playerTrains.length}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-
-                <aside className="flex flex-col gap-6">
-                  <section className="panel rounded-3xl p-6">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Player Stats</h2>
-                    </div>
-                    <div className="mt-4 grid gap-4">
-                      {players.map((player, index) => {
-                        const stats = timelineStats.find(
-                          (item) => item.playerId === player.id
-                        );
-                        return (
-                          <div
-                            key={player.id}
-                            className="panel-strong rounded-2xl p-4"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h3 className="headline text-lg">{player.name}</h3>
-                                <p className="text-xs text-[color:var(--muted)]">
-                                  {getCivName(player.civId) ?? ("Civ " + (player.civId ?? "—"))} • Team {player.teamId ?? "—"}
-                                </p>
-                              </div>
-                              <span
-                                className="h-3 w-3 rounded-full"
-                                style={{ background: classifyColor(player.id) }}
-                              ></span>
-                            </div>
-                            <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                              <div>
-                                <p className="text-xs text-[color:var(--muted)]">APM</p>
-                                <p className="text-lg font-semibold">{formatOptional(stats?.apm)}</p>
-                              </div>
-                              <div>
-                                {stats?.ageTimings ? (
-                                  <div className="space-y-1 text-m text-[color:var(--muted)]">
-                                    {Object.entries(stats.ageTimings).map(([age, time]) => (
-                                      <div key={age}>
-                                        {age} {formatClock(time)}
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-sm">—</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  {matchInfo && (
-                    <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-                      <h2 className="headline text-2xl">Match Info</h2>
-                      <div className="flex flex-col gap-3">
-                        {matchInfo.gameTypeId !== undefined && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-[color:var(--muted)]">Game Mode</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
-                            </span>
-                          </div>
-                        )}
-                        {matchInfo.mapTypeId !== undefined && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-[color:var(--muted)]">Map Name</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
-                            </span>
-                          </div>
-                        )}
-                        {matchInfo.mapSizeId !== undefined && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-[color:var(--muted)]">Map Size</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </section>
-                  )}
-                </aside>
-              </section>
-            )}
-          </main>
-        )}
-
         {!replay && !loading && (
           <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
             Upload a replay to populate the timeline. Parsing happens entirely in the browser using
@@ -919,6 +600,367 @@ export default function Home() {
             Parsing replay, stand by...
           </div>
         )}
+
+        <main className="flex flex-col gap-6">
+          <section className="panel flex flex-col gap-6 rounded-3xl p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="headline text-2xl">Minimap</h2>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--muted)]">
+                <div className="rounded-full bg-[color:var(--panel-strong)] px-3 py-1 font-mono tabular-nums">
+                  Time: {formatClock(selectedTime)}
+                </div>
+                <label className="flex items-center gap-2 text-xs font-medium">
+                  <input
+                    type="checkbox"
+                    checked={showBuildings}
+                    onChange={(event) => setShowBuildings(event.target.checked)}
+                  />
+                  Buildings
+                </label>
+                <label className="flex items-center gap-2 text-xs font-medium">
+                  <input
+                    type="checkbox"
+                    checked={showUnits}
+                    onChange={(event) => setShowUnits(event.target.checked)}
+                  />
+                  Unit movements
+                </label>
+              </div>
+            </div>
+            <div
+              className="relative w-full aspect-[2/1] min-h-[480px]"
+              ref={mapContainerRef}
+              style={{
+                touchAction: "none",
+                cursor: mapZoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+              }}
+              onPointerDown={(event) => {
+                if (mapZoom <= 1) return;
+                event.preventDefault();
+                isDraggingRef.current = true;
+                setIsDragging(true);
+                lastPointerRef.current = { x: event.clientX, y: event.clientY };
+                (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
+              }}
+              onPointerMove={(event) => {
+                if (mapZoom <= 1) return;
+                if (!isDraggingRef.current || !lastPointerRef.current) return;
+                const dx = event.clientX - lastPointerRef.current.x;
+                const dy = event.clientY - lastPointerRef.current.y;
+                lastPointerRef.current = { x: event.clientX, y: event.clientY };
+                setMapPan((prev) => clampPan({ x: prev.x + dx, y: prev.y + dy }));
+              }}
+              onPointerUp={(event) => {
+                isDraggingRef.current = false;
+                lastPointerRef.current = null;
+                setIsDragging(false);
+                (event.currentTarget as HTMLDivElement).releasePointerCapture(event.pointerId);
+              }}
+              onPointerLeave={() => {
+                isDraggingRef.current = false;
+                lastPointerRef.current = null;
+                setIsDragging(false);
+              }}
+              onWheel={(event) => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const rect = canvas.getBoundingClientRect();
+                const cursorX = event.clientX - rect.left;
+                const cursorY = event.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const zoomDelta = -event.deltaY * 0.0015;
+                setMapZoom((prev) => {
+                  const next = clamp(prev * (1 + zoomDelta), 1, 2.5);
+                  if (next <= 1) {
+                    setMapPan({ x: 0, y: 0 });
+                    return next;
+                  }
+                  const scaleChange = next / prev;
+                  setMapPan((pan) =>
+                    clampPan({
+                      x: pan.x + (1 - scaleChange) * (cursorX - centerX - pan.x),
+                      y: pan.y + (1 - scaleChange) * (cursorY - centerY - pan.y),
+                    })
+                  );
+                  return next;
+                });
+              }}
+            >
+              {/* Map Floating Controls */}
+              <div
+                className="absolute right-0"
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-[color:var(--panel)] shadow-lg border border-[color:var(--panel-strong)] font-semibold text-xl text-[color:var(--foreground)] select-none">
+                  <button
+                    type="button"
+                    className="py-1 w-full transition hover:bg-[color:var(--panel-strong)] border-b border-[color:var(--panel-strong)] cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMapZoom((prev) => {
+                        const next = clamp(prev * 1.25, 1, 5);
+                        const scaleChange = next / prev;
+                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }));
+                        return next;
+                      });
+                    }}
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    className="py-1 w-full transition hover:bg-[color:var(--panel-strong)] cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMapZoom((prev) => {
+                        const next = clamp(prev * 0.8, 1, 2.5);
+                        if (next <= 1) {
+                          setMapPan({ x: 0, y: 0 });
+                          return next;
+                        }
+                        const scaleChange = next / prev;
+                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }));
+                        return next;
+                      });
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="mt-2 px-2 py-1 pointer-events-auto w-full rounded-xl border border-[color:var(--panel-strong)] bg-[color:var(--panel)] text-xl font-semibold text-[color:var(--foreground)] shadow-lg transition hover:border-[color:var(--muted)] hover:bg-[color:var(--panel-strong)] select-none cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMapZoom(1);
+                    setMapPan({ x: 0, y: 0 });
+                  }}
+                  title="Reset view"
+                >
+                  ↺
+                </button>
+              </div>
+              <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={Math.max(duration, 1)}
+              value={selectedTime}
+              className="w-full accent-[color:var(--accent)]"
+              onChange={(event) => setSelectedTime(Number(event.target.value))}
+            />
+          </section>
+
+          {replay && (
+            <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+              <div className="panel flex flex-col gap-6 rounded-3xl p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="headline text-2xl">Timeline</h2>
+                  <div className="text-xs text-[color:var(--muted)]">
+                    Duration: {formatClock(duration)}
+                  </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {[leftPlayerId, rightPlayerId]
+                    .filter((id): id is number => typeof id === "number")
+                    .map((playerId, index) => {
+                      const player = players.find((item) => item.id === playerId);
+                      if (!player) return null;
+                      const playerBuilds = buildEventsTimeline.filter(
+                        (event) => event.playerId === player?.id
+                      );
+                      const playerTrains = trainEvents.filter(
+                        (event) => event.playerId === player?.id
+                      );
+                      return (
+                        <div key={`${player.id}-${index}`} className="panel-strong rounded-2xl p-4">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="h-3 w-3 rounded-full"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                              <p className="text-sm font-semibold">{player.name}</p>
+                            </div>
+                            <select
+                              className="rounded-full border border-transparent bg-[color:var(--panel)] px-2 py-1 text-xs text-[color:var(--muted)]"
+                              value={player.id}
+                              onChange={(event) => {
+                                const value = Number(event.target.value);
+                                if (index === 0) {
+                                  setLeftPlayerId(value);
+                                  if (value === rightPlayerId && players.length > 1) {
+                                    const alternative =
+                                      players.find((option) => option.id !== value)?.id ??
+                                      rightPlayerId;
+                                    setRightPlayerId(alternative);
+                                  }
+                                }
+                                if (index === 1) {
+                                  setRightPlayerId(value);
+                                  if (value === leftPlayerId && players.length > 1) {
+                                    const alternative =
+                                      players.find((option) => option.id !== value)?.id ??
+                                      leftPlayerId;
+                                    setLeftPlayerId(alternative);
+                                  }
+                                }
+                              }}
+                            >
+                              {players.map((option) => (
+                                <option key={option.id} value={option.id}>
+                                  {option.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div
+                            className="relative mt-3 w-full min-h-[520px]"
+                            style={{ height: timelineHeight }}
+                          >
+                            <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-[color:var(--panel)]"></div>
+                            {showBuildings &&
+                              playerBuilds.map((event) => {
+                                const buildingName =
+                                  getBuildingName(event.buildingTypeId) ?? event.label;
+                                return (
+                                  <div
+                                    key={event.id}
+                                    className="absolute left-1/2 flex -translate-x-full items-center justify-end"
+                                    style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+                                    title={`${buildingName} @ ${formatClock(event.time)}`}
+                                  >
+                                    <span className="text-[10px] text-[color:var(--muted)] pr-3">
+                                      {formatClock(event.time)} · {buildingName}
+                                    </span>
+                                    <span className="absolute right-0 translate-x-1/2 text-[8px]">⚫</span>
+                                  </div>
+                                );
+                              })}
+                            {showUnits &&
+                              playerTrains.map((event) => (
+                                <div
+                                  key={event.id}
+                                  className="absolute left-1/2 flex items-center"
+                                  style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+                                  title={`${getUnitName(event.unitTypeId) ?? event.label} @ ${formatClock(event.time)}`}
+                                >
+                                  <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚫</span>
+                                  <span className="text-[10px] text-[color:var(--muted)] pl-3">
+                                    {formatClock(event.time)} · {getUnitName(event.unitTypeId) ?? event.label}
+                                  </span>
+                                </div>
+                              ))}
+                            <div
+                              className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
+                              style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
+                            />
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-2 text-xs text-[color:var(--muted)]">
+                            <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
+                              Build events: {playerBuilds.length}
+                            </span>
+                            <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
+                              Unit creation events: {playerTrains.length}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+              <aside className="flex flex-col gap-6">
+                <section className="panel rounded-3xl p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2 className="headline text-2xl">Player Stats</h2>
+                  </div>
+                  <div className="mt-4 grid gap-4">
+                    {players.map((player, index) => {
+                      const stats = timelineStats.find(
+                        (item) => item.playerId === player.id
+                      );
+                      return (
+                        <div
+                          key={player.id}
+                          className="panel-strong rounded-2xl p-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="headline text-lg">{player.name}</h3>
+                              <p className="text-xs text-[color:var(--muted)]">
+                                {getCivName(player.civId) ?? ("Civ " + (player.civId ?? "—"))} • Team {player.teamId ?? "—"}
+                              </p>
+                            </div>
+                            <span
+                              className="h-3 w-3 rounded-full"
+                              style={{ background: classifyColor(player.id) }}
+                            ></span>
+                          </div>
+                          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <p className="text-xs text-[color:var(--muted)]">APM</p>
+                              <p className="text-lg font-semibold">{formatOptional(stats?.apm)}</p>
+                            </div>
+                            <div>
+                              {stats?.ageTimings ? (
+                                <div className="space-y-1 text-m text-[color:var(--muted)]">
+                                  {Object.entries(stats.ageTimings).map(([age, time]) => (
+                                    <div key={age}>
+                                      {age} {formatClock(time)}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm">—</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {matchInfo && (
+                  <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+                    <h2 className="headline text-2xl">Match Info</h2>
+                    <div className="flex flex-col gap-3">
+                      {matchInfo.gameTypeId !== undefined && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-[color:var(--muted)]">Game Mode</span>
+                          <span className="font-semibold text-[color:var(--foreground)]">
+                            {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
+                          </span>
+                        </div>
+                      )}
+                      {matchInfo.mapTypeId !== undefined && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-[color:var(--muted)]">Map Name</span>
+                          <span className="font-semibold text-[color:var(--foreground)]">
+                            {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
+                          </span>
+                        </div>
+                      )}
+                      {matchInfo.mapSizeId !== undefined && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-[color:var(--muted)]">Map Size</span>
+                          <span className="font-semibold text-[color:var(--foreground)]">
+                            {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
+              </aside>
+            </section>
+          )}
+        </main>
       </div>
     </div>
   );
