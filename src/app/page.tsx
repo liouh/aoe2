@@ -1006,8 +1006,8 @@ export default function Home() {
                 <div
                   className="pointer-events-none fixed z-50 rounded-lg border border-[color:var(--panel-strong)] bg-[color:var(--panel)] p-2 text-xs shadow-xl animate-in fade-in zoom-in duration-100"
                   style={{
-                    left: tooltipPos.x + 12,
-                    top: tooltipPos.y + 12,
+                    left: tooltipPos.x + 10,
+                    top: tooltipPos.y - 60,
                   }}
                 >
                   <div className="flex items-center gap-2">
