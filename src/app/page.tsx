@@ -1208,9 +1208,9 @@ export default function Home() {
                                   className="absolute left-1/2 w-full -translate-x-1/2 border-t border-[color:var(--panel)]"
                                   style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
                                 >
-                                  <span className="absolute left-0 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-50">
-                                    {markerTime / 60 + "m"}
-                                  </span>
+                                  {i !== 0 && (<span className="absolute left-0 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-30">
+                                    {markerTime / 60 + "'"}
+                                  </span>)}
                                 </div>
                               );
                             })}
