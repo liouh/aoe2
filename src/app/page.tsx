@@ -79,6 +79,7 @@ export default function Home() {
     name: string;
     playerId?: number;
     type: "unit" | "building";
+    anchorKey?: string;
   } | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
@@ -493,6 +494,32 @@ export default function Home() {
       });
     }
 
+    if (showBuildings && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
+      const anchorKey = hoveredEntity.anchorKey;
+      const footprint = anchorToFootprint.get(anchorKey);
+      if (footprint) {
+        const [ax, ay] = anchorKey.split(",").map(Number);
+        const p1 = toCanvas(ax, ay);
+        const p2 = toCanvas(ax + footprint.w, ay);
+        const p3 = toCanvas(ax + footprint.w, ay + footprint.h);
+        const p4 = toCanvas(ax, ay + footprint.h);
+
+        context.save();
+        context.strokeStyle = "#ffffff";
+        context.lineWidth = 2;
+        context.shadowBlur = 4;
+        context.shadowColor = "rgba(0,0,0,0.5)";
+        context.beginPath();
+        context.moveTo(p1.x, p1.y);
+        context.lineTo(p2.x, p2.y);
+        context.lineTo(p3.x, p3.y);
+        context.lineTo(p4.x, p4.y);
+        context.closePath();
+        context.stroke();
+        context.restore();
+      }
+    }
+
     entityLookupRef.current = {
       tileToAnchor: tileToAnchor,
       buildings: anchorToEvent,
@@ -516,6 +543,7 @@ export default function Home() {
     summary,
     moveEvents,
     trainEvents,
+    hoveredEntity,
   ]);
 
   const handleFile = (file: File) => {
@@ -738,6 +766,7 @@ export default function Home() {
                         "Unknown Building",
                       playerId: building.playerId,
                       type: "building",
+                      anchorKey,
                     });
                     setTooltipPos({ x: event.clientX, y: event.clientY });
                   } else {
@@ -857,9 +886,8 @@ export default function Home() {
                     <span className="font-bold">{hoveredEntity.name}</span>
                   </div>
                   <div className="mt-0.5 text-[color:var(--muted)]">
-                    {hoveredEntity.type === "unit" ? "Unit" : "Building"}
                     {hoveredEntity.playerId !== undefined && (
-                      <> • {players.find((p) => p.id === hoveredEntity.playerId)?.name}</>
+                      <>{players.find((p) => p.id === hoveredEntity.playerId)?.name}</>
                     )}
                   </div>
                 </div>
