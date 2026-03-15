@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -311,6 +311,10 @@ export default function Home() {
     rawEvents.forEach((event) => {
       if (event.playerId === undefined || event.unitTypeId === undefined) return;
 
+      const amount = typeof event.raw?.amount === "number" && event.raw.amount > 0
+        ? event.raw.amount
+        : 1;
+
       let playerMap = statsMap.get(event.playerId);
       if (!playerMap) {
         playerMap = new Map();
@@ -319,11 +323,11 @@ export default function Home() {
 
       const existing = playerMap.get(event.unitTypeId);
       if (existing) {
-        existing.count++;
+        existing.count += amount;
       } else {
         playerMap.set(event.unitTypeId, {
           name: getUnitName(event.unitTypeId) ?? "Unknown Unit",
-          count: 1,
+          count: amount,
         });
       }
     });
