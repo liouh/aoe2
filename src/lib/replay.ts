@@ -742,14 +742,34 @@ export const extractPlayerStats = (
 
     const militarySeries = findSeries(replay, MILITARY_KEYS)?.series;
 
+    const player = players?.find((p) => p.id === playerId);
+    const civId = player?.civId;
     const ageTimings: Record<string, number> = {};
+
     playerEvents.forEach((event) => {
       // 1. Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
       if (event.type === "Research" && event.label) {
         const lower = event.label.toLowerCase();
         Object.entries(AGE_TECH_NAMES).forEach(([age, name]) => {
           if (lower.includes(name.toLowerCase())) {
-            const adjustedTime = event.time + (AGE_TECH_DURATIONS[age] ?? 0);
+            let duration = AGE_TECH_DURATIONS[age] ?? 0;
+
+            // Apply Civ Bonuses
+            if (civId === 29) { // Malay
+              duration /= 1.66;
+            } else if (civId === 8) { // Persians
+              if (age === "Feudal") duration /= 1.05;
+              if (age === "Castle") duration /= 1.10;
+              if (age === "Imperial") duration /= 1.15;
+            }
+
+            const adjustedTime = event.time + duration;
+
+            // Only count as complete if it finished before the game did
+            if (durationSeconds !== undefined && adjustedTime > durationSeconds) {
+              return;
+            }
+
             // Use ">" to get the LATEST occurrence
             if (ageTimings[age] === undefined || adjustedTime > ageTimings[age]) {
               ageTimings[age] = adjustedTime;

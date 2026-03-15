@@ -1574,7 +1574,7 @@ export default function Home() {
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
-                            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
+                            <div className="mt-6 grid grid-cols-2 gap-2 text-sm">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">APM</p>
                                 <p className="text-lg font-semibold">{formatOptional(stats?.apm)}</p>
@@ -1584,7 +1584,7 @@ export default function Home() {
                                   <div className="space-y-1 text-m text-[color:var(--muted)]">
                                     {Object.entries(stats.ageTimings).map(([age, time]) => (
                                       <div key={age}>
-                                        {age} {formatClock(time)}
+                                        {age}<span className="text-white pl-2">{formatClock(time)}</span>
                                       </div>
                                     ))}
                                   </div>
