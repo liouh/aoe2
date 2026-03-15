@@ -36,6 +36,5 @@ Open `http://localhost:3000` in your browser.
 ## TODO
 
 - Starting town centers
-- Walls
 - Resources
 - More metrics

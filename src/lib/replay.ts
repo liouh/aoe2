@@ -262,6 +262,33 @@ const extractBuildingTypeId = (data: number[]) => {
   return value;
 };
 
+const extractWallSegments = (data: number[]) => {
+  const bytes = Uint8Array.from(data);
+  if (bytes.length < 14) return undefined;
+  const view = new DataView(bytes.buffer);
+  const startX = view.getUint16(4, true);
+  const startY = view.getUint16(6, true);
+  const endX = view.getUint16(8, true);
+  const endY = view.getUint16(10, true);
+  const buildingTypeId = view.getUint16(12, true);
+  if (startX > 512 || startY > 512 || endX > 512 || endY > 512) return undefined;
+  // Bresenham line interpolation
+  const tiles: { x: number; y: number }[] = [];
+  let x0 = startX, y0 = startY;
+  const x1 = endX, y1 = endY;
+  const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+  const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+  let err = dx - dy;
+  for (let step = 0; step <= dx + dy + 1; step++) {
+    tiles.push({ x: x0, y: y0 });
+    if (x0 === x1 && y0 === y1) break;
+    const e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x0 += sx; }
+    if (e2 < dx) { err += dx; y0 += sy; }
+  }
+  return { tiles, buildingTypeId };
+};
+
 const extractIdFromData = (data: number[], offset = 0) => {
   const bytes = Uint8Array.from(data);
   if (bytes.length < offset + 4) return undefined;
@@ -532,6 +559,38 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
       const baseLabel = detectLabel(payload ?? {}, actionType);
       const label = normalizeEventLabel(actionType, baseLabel, unitTypeId, techId);
       if (shouldSkipEvent(actionType, label)) return;
+
+      // Expand wall commands into per-tile events
+      if (actionType === "Wall" && Array.isArray(payload?.data)) {
+        const wall = extractWallSegments(payload.data as number[]);
+        if (wall) {
+          wall.tiles.forEach((tile, tileIdx) => {
+            const tileId = `${actionType}-${playerId ?? "p"}-${time}-${index}-${tileIdx}`;
+            if (used.has(tileId)) return;
+            used.add(tileId);
+            events.push({
+              id: tileId,
+              time,
+              playerId,
+              type: actionType,
+              label,
+              category,
+              x: tile.x,
+              y: tile.y,
+              unitId,
+              unitTypeId,
+              buildingId: undefined,
+              buildingTypeId: wall.buildingTypeId,
+              targetId,
+              techId,
+              age,
+              raw: payload ?? {},
+            });
+          });
+          return;
+        }
+      }
+
       const id = `${actionType}-${playerId ?? "p"}-${time}-${index}`;
       if (used.has(id)) return;
       used.add(id);
