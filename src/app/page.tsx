@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -84,6 +84,9 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 20) 
 
 const UNIT_FADE_SECONDS = 200;
 const MAX_ZOOM = 5;
+const SCALE_BOOST = 1.0;
+const PAD_TOP = 0;
+const PAD_BOTTOM = 0;
 
 export default function Home() {
   const [replay, setReplay] = useState<any>(null);
@@ -214,33 +217,47 @@ export default function Home() {
     });
   };
 
-  const clampPan = (pan: { x: number; y: number }) => {
+  const clampPan = (pan: { x: number; y: number }, zoom?: number) => {
     const container = mapContainerRef.current;
     if (!container) return pan;
     const rect = container.getBoundingClientRect();
     if (!rect.width || !rect.height) return pan;
+
+    const z = zoom ?? mapZoom;
     const sizeX = mapInfo?.size_x ?? mapSize;
     const sizeY = mapInfo?.size_y ?? mapSize;
     const mapSpan = Math.max(sizeX, sizeY);
-    const padBottom = 8;
-    const padTop = 4;
+
     const widthScale = (rect.width - 2) / mapSpan;
-    const heightScale = (rect.height - padBottom - padTop) / (mapSpan * 0.5);
-    const scaleBoost = 1.08;
-    const isoScale = Math.max(
-      1,
-      Math.min(widthScale, heightScale) * scaleBoost * mapZoom
-    );
+    const heightScale = (rect.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
+    const isoScale = Math.max(1, Math.min(widthScale, heightScale) * SCALE_BOOST * z);
+
     const diamondWidth = mapSpan * isoScale;
     const diamondHeight = mapSpan * isoScale * 0.5;
-    const panLimitX = (diamondWidth - rect.width) / 2;
-    const minPanX = Math.min(-panLimitX, panLimitX);
-    const maxPanX = Math.max(-panLimitX, panLimitX);
-    const baseOriginY = (rect.height - padBottom - diamondHeight) / 2 + padTop;
-    const boundTop = -baseOriginY;
-    const boundBottom = rect.height - diamondHeight - baseOriginY;
-    const minPanY = Math.min(boundTop, boundBottom);
-    const maxPanY = Math.max(boundTop, boundBottom);
+
+    let minPanX, maxPanX;
+    if (diamondWidth <= rect.width) {
+      minPanX = 0;
+      maxPanX = 0;
+    } else {
+      const limitX = (diamondWidth - rect.width) / 2;
+      minPanX = -limitX;
+      maxPanX = limitX;
+    }
+
+    let minPanY, maxPanY;
+    const containerEffectiveHeight = rect.height - PAD_BOTTOM - PAD_TOP;
+    if (diamondHeight <= containerEffectiveHeight) {
+      minPanY = 0;
+      maxPanY = 0;
+    } else {
+      const baseOriginY = (rect.height - PAD_BOTTOM - diamondHeight) / 2 + PAD_TOP;
+      const boundTop = -baseOriginY;
+      const boundBottom = rect.height - diamondHeight - baseOriginY;
+      minPanY = Math.min(boundTop, boundBottom);
+      maxPanY = Math.max(boundTop, boundBottom);
+    }
+
     return {
       x: clamp(pan.x, minPanX, maxPanX),
       y: clamp(pan.y, minPanY, maxPanY),
@@ -309,19 +326,16 @@ export default function Home() {
     const sizeX = mapInfo?.size_x ?? mapSize;
     const sizeY = mapInfo?.size_y ?? mapSize;
     const mapSpan = Math.max(sizeX, sizeY);
-    const padBottom = 0;
-    const padTop = 0;
     const widthScale = (bounds.width - 2) / mapSpan;
-    const heightScale = (bounds.height - padBottom - padTop) / (mapSpan * 0.5);
-    const scaleBoost = 1;
+    const heightScale = (bounds.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
     const isoScale = Math.max(
       1,
-      Math.min(widthScale, heightScale) * scaleBoost * mapZoom
+      Math.min(widthScale, heightScale) * SCALE_BOOST * mapZoom
     );
     const isoOriginX = bounds.width * 0.5 + mapPan.x;
     const diamondHeight = mapSpan * isoScale * 0.5;
     const isoOriginY =
-      (bounds.height - padBottom - diamondHeight) / 2 + padTop + mapPan.y;
+      (bounds.height - PAD_BOTTOM - diamondHeight) / 2 + PAD_TOP + mapPan.y;
 
     const toCanvas = (x: number, y: number) => {
       const rx = y;
@@ -945,16 +959,33 @@ export default function Home() {
                 const zoomDelta = -event.deltaY * 0.0015;
                 setMapZoom((prev) => {
                   const next = clamp(prev * (1 + zoomDelta), 1, MAX_ZOOM);
+                  if (next === prev) return prev;
+
                   if (next <= 1) {
                     setMapPan({ x: 0, y: 0 });
                     return next;
                   }
-                  const scaleChange = next / prev;
+
+                  const rectMap = canvas.getBoundingClientRect();
+                  const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
+                  const wScale = (rectMap.width - 2) / mapSpan;
+                  const hScale = (rectMap.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
+                  const baseScale = Math.min(wScale, hScale) * SCALE_BOOST;
+                  
+                  const prevIsoScale = Math.max(1, baseScale * prev);
+                  const nextIsoScale = Math.max(1, baseScale * next);
+                  const scaleChange = nextIsoScale / prevIsoScale;
+
+                  const centerY = (rectMap.height - PAD_BOTTOM) / 2 + PAD_TOP;
+
                   setMapPan((pan) =>
-                    clampPan({
-                      x: pan.x + (1 - scaleChange) * (cursorX - centerX - pan.x),
-                      y: pan.y + (1 - scaleChange) * (cursorY - centerY - pan.y),
-                    })
+                    clampPan(
+                      {
+                        x: pan.x + (1 - scaleChange) * (cursorX - centerX - pan.x),
+                        y: pan.y + (1 - scaleChange) * (cursorY - centerY - pan.y),
+                      },
+                      next
+                    )
                   );
                   return next;
                 });
@@ -973,8 +1004,9 @@ export default function Home() {
                       e.stopPropagation();
                       setMapZoom((prev) => {
                         const next = clamp(prev * 1.25, 1, MAX_ZOOM);
+                        if (next === prev) return prev;
                         const scaleChange = next / prev;
-                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }));
+                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
                         return next;
                       });
                     }}
@@ -988,12 +1020,13 @@ export default function Home() {
                       e.stopPropagation();
                       setMapZoom((prev) => {
                         const next = clamp(prev * 0.8, 1, MAX_ZOOM);
+                        if (next === prev) return prev;
                         if (next <= 1) {
                           setMapPan({ x: 0, y: 0 });
                           return next;
                         }
                         const scaleChange = next / prev;
-                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }));
+                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
                         return next;
                       });
                     }}
