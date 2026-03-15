@@ -43,7 +43,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 20) {
   if (events.length === 0) return [];
-  
+
   const consolidated: (TimelineEvent & { count: number })[] = [];
   // Use a map to track active groups currently in their window
   // Key: identity string (category + relevant ID)
@@ -659,7 +659,7 @@ export default function Home() {
         setMatchInfo(extractedInfo);
         setEvents(timeline);
         setDuration(gameDuration);
-        
+
         // Reset interactive state
         setIsPlaying(false);
         setSelectedTime(0);
@@ -767,7 +767,7 @@ export default function Home() {
                 Upload a replay to see the minimap progression and analyze build orders.
               </p>
             </div>
-            <label 
+            <label
               className="panel flex cursor-pointer flex-col gap-3 rounded-2xl px-5 py-4 text-sm font-medium text-[color:var(--foreground)]"
               onClick={() => setIsPlaying(false)}
             >
@@ -1266,6 +1266,24 @@ export default function Home() {
                                 </div>
                               );
                             })}
+                            {/* Age Up Markers */}
+                            {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
+                              const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
+                              if (!ageNumeral) return null;
+                              return (
+                                <div
+                                  key={`age-${player.id}-${ageName}`}
+                                  className="absolute left-0 -translate-x-1/2 -translate-y-1/2 flex items-center z-10 cursor-help"
+                                  style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
+                                  title={`${ageName} Age reached @ ${formatClock(time)}`}
+                                >
+                                  <div className="relative bg-[color:var(--accent)] text-[color:var(--panel)] w-5 h-5 flex items-center justify-center rounded-sm font-black text-[10px] shadow-sm ring-2 ring-[color:var(--panel)]">
+                                    {ageNumeral}
+                                  </div>
+                                </div>
+                              );
+                            })}
+
                             <div
                               className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
                               style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
