@@ -821,3 +821,36 @@ export const extractMapSize = (replay: any, summary: any): number => {
   }
   return 200;
 };
+
+export type MatchInfo = {
+  mapTypeId?: number;
+  mapSizeId?: number;
+  gameTypeId?: number;
+  difficultyId?: number;
+  startingAgeId?: number;
+  populationLimit?: number;
+  speedId?: number;
+  cheats?: boolean;
+};
+
+export const extractMatchInfo = (summary: any): MatchInfo => {
+  const settings = summary?.header?.game_settings;
+  const replayData = summary?.header?.replay;
+  console.log("Match Settings Dump:", {
+    map_id: settings?.map_id,
+    resolved_map_id: settings?.resolved_map_id,
+    selected_map_id: settings?.selected_map_id,
+    replay_map_id: replayData?.map_id,
+    all_settings: settings,
+  });
+  return {
+    mapTypeId: pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id),
+    mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
+    gameTypeId: pickNumber(settings?.game_type),
+    difficultyId: pickNumber(settings?.difficulty),
+    startingAgeId: pickNumber(settings?.starting_age_id),
+    populationLimit: pickNumber(settings?.population_limit),
+    speedId: pickNumber(settings?.speed) ?? pickNumber(replayData?.game_speed_id),
+    cheats: settings?.cheats === true || replayData?.cheats_enabled === true,
+  };
+};
