@@ -16,9 +16,9 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AOE2 replay viewer",
+  title: "AoE2 Replay Viewer",
   description:
-    "Client-only Age of Empires 2 replay explorer with timelines, minimap, and player stats.",
+    "Age of Empires 2 replay viewer with timelines, minimap, and player stats.",
 };
 
 export default function RootLayout({
