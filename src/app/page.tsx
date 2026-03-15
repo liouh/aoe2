@@ -330,7 +330,7 @@ export default function Home() {
       return { x: isoX, y: isoY };
     };
 
-    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${summary?.duration ?? 0},${events.length}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !offscreenCanvasRef.current) {
       if (!offscreenCanvasRef.current) {
@@ -659,7 +659,13 @@ export default function Home() {
         setMatchInfo(extractedInfo);
         setEvents(timeline);
         setDuration(gameDuration);
+        
+        // Reset interactive state
+        setIsPlaying(false);
         setSelectedTime(0);
+        setMapZoom(1);
+        setMapPan({ x: 0, y: 0 });
+        setHoveredEntity(null);
       } catch (err) {
         setError("We could not parse that replay. Try another file.");
       } finally {
@@ -692,7 +698,13 @@ export default function Home() {
         setMatchInfo(extractedInfo);
         setEvents(timeline);
         setDuration(gameDuration);
+
+        // Reset interactive state
+        setIsPlaying(false);
         setSelectedTime(0);
+        setMapZoom(1);
+        setMapPan({ x: 0, y: 0 });
+        setHoveredEntity(null);
       } catch (err) {
         console.error("Could not load default file", err);
       } finally {
@@ -755,7 +767,10 @@ export default function Home() {
                 Upload a replay to see the minimap progression and analyze build orders.
               </p>
             </div>
-            <label className="panel flex cursor-pointer flex-col gap-3 rounded-2xl px-5 py-4 text-sm font-medium text-[color:var(--foreground)]">
+            <label 
+              className="panel flex cursor-pointer flex-col gap-3 rounded-2xl px-5 py-4 text-sm font-medium text-[color:var(--foreground)]"
+              onClick={() => setIsPlaying(false)}
+            >
               <span>Upload .aoe2record replay file</span>
               <input
                 type="file"
