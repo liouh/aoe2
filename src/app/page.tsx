@@ -320,9 +320,21 @@ export default function Home() {
 
     const destroyedTiles = new Set<string>();
     const targetPositions = new Map<number, { x: number; y: number }>();
+    const buildingIdToAnchor = new Map<number, string>();
     const tileToAnchor = new Map<string, string>();
     const anchorToFootprint = new Map<string, { w: number; h: number }>();
     const anchorToEvent = new Map<string, TimelineEvent>();
+
+    const markAnchorDestroyed = (anchorKey: string) => {
+      const footprint = anchorToFootprint.get(anchorKey) ?? { w: 1, h: 1 };
+      const [ax, ay] = anchorKey.split(",").map(Number);
+      for (let dx = 0; dx < footprint.w; dx += 1) {
+        for (let dy = 0; dy < footprint.h; dy += 1) {
+          destroyedTiles.add(`${ax + dx},${ay + dy}`);
+        }
+      }
+      anchorToEvent.delete(anchorKey);
+    };
 
     for (const event of events) {
       if (event.time > selectedTime) break;
@@ -333,36 +345,48 @@ export default function Home() {
         const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
         const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
         const footprint = getBuildingFootprint(event.buildingTypeId);
-        const baseX = Math.max(0, anchorX - Math.floor((footprint.w - 1) / 2));
-        const baseY = Math.max(0, anchorY - Math.floor((footprint.h - 1) / 2));
+        const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+        const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
         const anchorKey = `${baseX},${baseY}`;
         anchorToFootprint.set(anchorKey, footprint);
         anchorToEvent.set(anchorKey, event);
+        if (typeof event.buildingId === "number" && event.buildingId > 0) {
+          buildingIdToAnchor.set(event.buildingId, anchorKey);
+        }
+        // Remove any old buildings whose tiles overlap with this new building
+        const displacedAnchors = new Set<string>();
         for (let dx = 0; dx < footprint.w; dx += 1) {
           for (let dy = 0; dy < footprint.h; dy += 1) {
             const tileX = baseX + dx;
             const tileY = baseY + dy;
             if (tileX >= sizeX || tileY >= sizeY) continue;
             const tileKey = `${tileX},${tileY}`;
+            const oldAnchor = tileToAnchor.get(tileKey);
+            if (oldAnchor && oldAnchor !== anchorKey) {
+              displacedAnchors.add(oldAnchor);
+            }
             tileToAnchor.set(tileKey, anchorKey);
             destroyedTiles.delete(tileKey);
           }
         }
+        for (const oldAnchor of displacedAnchors) {
+          anchorToEvent.delete(oldAnchor);
+        }
       }
       if (event.type === "Delete" && event.targetId) {
-        const pos = targetPositions.get(event.targetId);
-        if (pos) {
-          const tileX = Math.max(0, Math.min(sizeX - 1, Math.floor(pos.x)));
-          const tileY = Math.max(0, Math.min(sizeY - 1, Math.floor(pos.y)));
-          const tileKey = `${tileX},${tileY}`;
-          const anchorKey = tileToAnchor.get(tileKey) ?? tileKey;
-          const footprint = anchorToFootprint.get(anchorKey) ?? { w: 1, h: 1 };
-          const [ax, ay] = anchorKey.split(",").map(Number);
-          for (let dx = 0; dx < footprint.w; dx += 1) {
-            for (let dy = 0; dy < footprint.h; dy += 1) {
-              const key = `${ax + dx},${ay + dy}`;
-              destroyedTiles.add(key);
-            }
+        // Try direct lookup via buildingId → anchorKey first
+        const directAnchor = buildingIdToAnchor.get(event.targetId);
+        if (directAnchor) {
+          markAnchorDestroyed(directAnchor);
+        } else {
+          // Fall back to position-based lookup
+          const pos = targetPositions.get(event.targetId);
+          if (pos) {
+            const tileX = Math.max(0, Math.min(sizeX - 1, Math.floor(pos.x)));
+            const tileY = Math.max(0, Math.min(sizeY - 1, Math.floor(pos.y)));
+            const tileKey = `${tileX},${tileY}`;
+            const anchorKey = tileToAnchor.get(tileKey) ?? tileKey;
+            markAnchorDestroyed(anchorKey);
           }
         }
       }
@@ -374,8 +398,8 @@ export default function Home() {
       const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
       const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
       const footprint = getBuildingFootprint(event.buildingTypeId);
-      const baseX = Math.max(0, anchorX - Math.floor((footprint.w - 1) / 2));
-      const baseY = Math.max(0, anchorY - Math.floor((footprint.h - 1) / 2));
+      const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+      const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
       const anchorKey = `${baseX},${baseY}`;
       for (let dx = 0; dx < footprint.w; dx += 1) {
         for (let dy = 0; dy < footprint.h; dy += 1) {
@@ -406,8 +430,8 @@ export default function Home() {
         const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
         const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
         const footprint = getBuildingFootprint(event.buildingTypeId);
-        const baseX = Math.max(0, anchorX - Math.floor((footprint.w - 1) / 2));
-        const baseY = Math.max(0, anchorY - Math.floor((footprint.h - 1) / 2));
+        const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+        const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
         const centerTileX = baseX + footprint.w / 2;
         const centerTileY = baseY + footprint.h / 2;
         const center = toCanvas(centerTileX, centerTileY);
