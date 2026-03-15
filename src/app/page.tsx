@@ -42,6 +42,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 const UNIT_FADE_SECONDS = 200;
+const MAX_ZOOM = 5;
 
 export default function Home() {
   const [replay, setReplay] = useState<any>(null);
@@ -664,7 +665,7 @@ export default function Home() {
                 const centerY = rect.height / 2;
                 const zoomDelta = -event.deltaY * 0.0015;
                 setMapZoom((prev) => {
-                  const next = clamp(prev * (1 + zoomDelta), 1, 2.5);
+                  const next = clamp(prev * (1 + zoomDelta), 1, MAX_ZOOM);
                   if (next <= 1) {
                     setMapPan({ x: 0, y: 0 });
                     return next;
@@ -692,7 +693,7 @@ export default function Home() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom((prev) => {
-                        const next = clamp(prev * 1.25, 1, 5);
+                        const next = clamp(prev * 1.25, 1, MAX_ZOOM);
                         const scaleChange = next / prev;
                         setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }));
                         return next;
@@ -707,7 +708,7 @@ export default function Home() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom((prev) => {
-                        const next = clamp(prev * 0.8, 1, 2.5);
+                        const next = clamp(prev * 0.8, 1, MAX_ZOOM);
                         if (next <= 1) {
                           setMapPan({ x: 0, y: 0 });
                           return next;
