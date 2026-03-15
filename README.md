@@ -37,6 +37,5 @@ Open `http://localhost:3000` in your browser.
 
 - Starting town centers
 - Walls
-- Track destroyed buildings
-- Add missing building mappings (e.g. krepost)
+- Resources
 - More metrics
