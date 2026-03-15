@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -60,7 +60,7 @@ const isEconomic = (name: string) => {
   );
 };
 
-function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 5) {
+function consolidateEvents(events: TimelineEvent[], windowSeconds: number = CONSOLIDATION_WINDOW_SECONDS) {
   if (events.length === 0) return [];
 
   const consolidated: (TimelineEvent & {
@@ -117,6 +117,13 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 5) {
 const UNIT_FADE_SECONDS = 200;
 const MAX_ZOOM = 5;
 const SCALE_BOOST = 1.0;
+const PX_PER_SECOND = 2;
+const MIN_TIMELINE_HEIGHT = 520;
+const UNIT_CIRCLE_RADIUS = 4;
+const TIMELINE_MARKER_INTERVAL = 300;
+const CONSOLIDATION_WINDOW_SECONDS = 5;
+const ISO_ICON_MIN_SIZE = 12;
+const ISO_ICON_SCALE_FACTOR = 3;
 const PAD_TOP = 0;
 const PAD_BOTTOM = 0;
 
@@ -401,8 +408,7 @@ export default function Home() {
 
 
   const timelineHeight = useMemo(() => {
-    const pxPerSecond = 3;
-    return Math.max(520, duration * pxPerSecond);
+    return Math.max(MIN_TIMELINE_HEIGHT, duration * PX_PER_SECOND);
   }, [duration]);
 
   useEffect(() => {
@@ -661,7 +667,7 @@ export default function Home() {
         const centerTileX = baseX + footprint.w / 2;
         const centerTileY = baseY + footprint.h / 2;
         const center = toCanvas(centerTileX, centerTileY);
-        const iconSize = Math.max(12, isoScale * 3);
+        const iconSize = Math.max(ISO_ICON_MIN_SIZE, isoScale * ISO_ICON_SCALE_FACTOR);
         const iconPath = isCastle(event.buildingTypeId) ? castlePath : townCenterPath;
         context.save();
         context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
@@ -686,7 +692,7 @@ export default function Home() {
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
-        context.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
         context.fill();
         context.lineWidth = 1;
         context.strokeStyle = "#ffffff";
@@ -1385,12 +1391,12 @@ export default function Home() {
                                 </select>
                               </div>
                               <div
-                                className="relative mt-1 w-full min-h-[520px]"
-                                style={{ height: timelineHeight }}
+                                className="relative mt-1 w-full"
+                                style={{ height: timelineHeight, minHeight: MIN_TIMELINE_HEIGHT }}
                               >
                                 {/* Time Markers */}
-                                {Array.from({ length: Math.floor(duration / 300) + 1 }).map((_, i) => {
-                                  const markerTime = i * 300;
+                                {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
+                                  const markerTime = i * TIMELINE_MARKER_INTERVAL;
                                   return (
                                     <div
                                       key={`marker-${markerTime}`}
