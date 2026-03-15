@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -144,7 +144,15 @@ export default function Home() {
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("units");
+
+  const LOADING_STEPS = [
+    "Reading file...",
+    "Parsing replay data...",
+    "Constructing timeline...",
+    "Preparing viewer..."
+  ];
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -754,10 +762,11 @@ export default function Home() {
   const handleFile = (file: File) => {
     setLoading(true);
     setError(null);
-
+    setLoadingStep(0);
     const reader = new FileReader();
     reader.addEventListener("loadend", () => {
       try {
+        setLoadingStep(1);
         const buffer = reader.result as ArrayBuffer;
         const parsed = parse_rec(buffer);
         const parsedSummary = parse_rec_summary(buffer);
@@ -765,10 +774,12 @@ export default function Home() {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
+        setLoadingStep(2);
         const timeline = buildTimeline(parsed);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
+        setLoadingStep(3);
         setReplay(parsed);
         setSummary(parsedSummary);
         setMatchInfo(extractedInfo);
@@ -795,19 +806,24 @@ export default function Home() {
       setLoading(true);
       setError(null);
       try {
+        setLoadingStep(0);
         const response = await fetch("default.aoe2record");
         if (!response.ok) return; // Silent fail if no default exists
         const buffer = await response.arrayBuffer();
+
+        setLoadingStep(1);
         const parsed = parse_rec(buffer);
         const parsedSummary = parse_rec_summary(buffer);
         if (typeof window !== "undefined") {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
+        setLoadingStep(2);
         const timeline = buildTimeline(parsed);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
+        setLoadingStep(3);
         setReplay(parsed);
         setSummary(parsedSummary);
         setMatchInfo(extractedInfo);
@@ -1225,8 +1241,58 @@ export default function Home() {
           </section>
 
           {loading && (
-            <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
-              Parsing replay, please stand by...
+            <div className="panel overflow-hidden rounded-3xl p-8 shadow-2xl ring-1 ring-white/10">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-10 py-6">
+                {/* Spinner / Progress Orb */}
+                <div className="relative h-24 w-24 shrink-0">
+                  <div className="absolute inset-0 animate-ping rounded-full bg-[color:var(--accent)] opacity-20"></div>
+                  <div className="absolute inset-0 animate-pulse rounded-full bg-[color:var(--accent)] opacity-40"></div>
+                  <div className="relative flex h-full w-full items-center justify-center rounded-full bg-[color:var(--panel-strong)] shadow-inner ring-1 ring-white/20">
+                    <span className="text-3xl animate-bounce">📜</span>
+                  </div>
+                </div>
+
+                <div className="flex w-full max-w-sm flex-col gap-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-bold uppercase tracking-wider text-[color:var(--accent)]">
+                      {LOADING_STEPS[loadingStep]}
+                    </span>
+                    <span className="font-mono text-[color:var(--muted)]">
+                      {Math.round(((loadingStep + 1) / LOADING_STEPS.length) * 100)}%
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-white/5 ring-1 ring-white/5">
+                    <div
+                      className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-400 transition-all duration-500 ease-out"
+                      style={{ width: `${((loadingStep + 1) / LOADING_STEPS.length) * 100}%` }}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    {LOADING_STEPS.map((step, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex items-center gap-3 text-xs transition-opacity duration-300 ${idx === loadingStep
+                            ? "text-[color:var(--foreground)] opacity-100"
+                            : idx < loadingStep
+                              ? "text-emerald-400 opacity-60"
+                              : "text-[color:var(--muted)] opacity-30"
+                          }`}
+                      >
+                        <div className={`h-1.5 w-1.5 rounded-full ${idx === loadingStep
+                            ? "bg-[color:var(--accent)] animate-pulse"
+                            : idx < loadingStep
+                              ? "bg-emerald-400"
+                              : "bg-white/20"
+                          }`} />
+                        {step}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
