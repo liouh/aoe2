@@ -42,7 +42,52 @@ body {
   border: 1px solid rgba(28, 22, 16, 0.12);
 }
 
+.panel-dark {
+  background: #1c1610;
+  color: #f6efe4;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-pill-track {
+  width: 40px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.toggle-pill-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #f6efe4;
+  border-radius: 50%;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.peer:checked + .toggle-pill-track {
+  background: var(--accent);
+}
+
+.peer:checked + .toggle-pill-track .toggle-pill-thumb {
+  transform: translateX(20px);
+}
+
 .headline {
   font-family: var(--font-display), "Times New Roman", serif;
   letter-spacing: 0.02em;
 }
+

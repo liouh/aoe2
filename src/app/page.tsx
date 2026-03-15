@@ -281,8 +281,8 @@ export default function Home() {
       if (offContext) {
         offContext.scale(dpr, dpr);
         const panelColor =
-          getComputedStyle(canvas).getPropertyValue("--panel")?.trim() ||
-          "#f1e5d4";
+          getComputedStyle(canvas).getPropertyValue("background-color")?.trim() ||
+          "#1c1610";
         offContext.fillStyle = panelColor;
         offContext.fillRect(0, 0, bounds.width, bounds.height);
 
@@ -513,7 +513,7 @@ export default function Home() {
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
-        context.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
         context.fill();
         context.lineWidth = 1;
         context.strokeStyle = "#ffffff";
@@ -715,27 +715,40 @@ export default function Home() {
         </header>
 
         <main className="flex flex-col gap-6">
-          <section className="panel flex flex-col gap-6 rounded-3xl p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="headline text-2xl">Minimap</h2>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--muted)]">
-                <label className="flex items-center gap-2 text-xs font-medium">
-                  <input
-                    type="checkbox"
-                    checked={showBuildings}
-                    onChange={(event) => setShowBuildings(event.target.checked)}
-                  />
-                  Buildings
+          <section className="panel-dark flex flex-col gap-6 rounded-3xl p-6">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex flex-wrap items-center gap-8">
+                <label className="toggle-pill gap-3 group">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
+                    Buildings
+                  </span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={showBuildings}
+                      onChange={(event) => setShowBuildings(event.target.checked)}
+                    />
+                    <div className="toggle-pill-track ring-1 ring-white/5 peer-focus:ring-var(--accent)/40">
+                      <div className="toggle-pill-thumb" />
+                    </div>
+                  </div>
                 </label>
-                <label className="flex items-center gap-2 text-xs font-medium">
-                  <input
-                    type="checkbox"
-                    checked={showUnits}
-                    onChange={(event) => setShowUnits(event.target.checked)}
-                  />
-                  Unit movements
+                <label className="toggle-pill gap-3 group">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
+                    Unit movements
+                  </span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={showUnits}
+                      onChange={(event) => setShowUnits(event.target.checked)}
+                    />
+                    <div className="toggle-pill-track ring-1 ring-white/5 peer-focus:ring-var(--accent)/40">
+                      <div className="toggle-pill-thumb" />
+                    </div>
+                  </div>
                 </label>
               </div>
             </div>
@@ -850,10 +863,10 @@ export default function Home() {
                 className="absolute right-0"
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-[color:var(--panel)] shadow-lg border border-[color:var(--panel-strong)] font-semibold text-xl text-[color:var(--foreground)] select-none">
+                <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm">
                   <button
                     type="button"
-                    className="py-1 w-full transition hover:bg-[color:var(--panel-strong)] border-b border-[color:var(--panel-strong)] cursor-pointer"
+                    className="py-1 w-full transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom((prev) => {
@@ -868,7 +881,7 @@ export default function Home() {
                   </button>
                   <button
                     type="button"
-                    className="py-1 w-full transition hover:bg-[color:var(--panel-strong)] cursor-pointer"
+                    className="py-1 w-full transition hover:bg-white/20 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom((prev) => {
@@ -888,7 +901,7 @@ export default function Home() {
                 </div>
                 <button
                   type="button"
-                  className="mt-2 px-2 py-1 pointer-events-auto w-full rounded-xl border border-[color:var(--panel-strong)] bg-[color:var(--panel)] text-xl font-semibold text-[color:var(--foreground)] shadow-lg transition hover:border-[color:var(--muted)] hover:bg-[color:var(--panel-strong)] select-none cursor-pointer"
+                  className="mt-2 px-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     setMapZoom(1);
@@ -896,7 +909,7 @@ export default function Home() {
                   }}
                   title="Reset view"
                 >
-                  ↺
+                  ⛶
                 </button>
               </div>
               <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
@@ -929,8 +942,15 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--panel-strong)] text-[color:var(--foreground)] transition hover:bg-[color:var(--muted-foreground)] hover:text-white"
-                onClick={() => setIsPlaying(!isPlaying)}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:scale-105 active:scale-95 cursor-pointer"
+                onClick={() => {
+                  if (selectedTime >= duration) {
+                    setSelectedTime(0);
+                    setIsPlaying(true);
+                  } else {
+                    setIsPlaying(!isPlaying);
+                  }
+                }}
                 title={isPlaying ? "Pause" : "Play"}
               >
                 {isPlaying ? (
