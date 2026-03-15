@@ -57,6 +57,7 @@ export default function Home() {
   const [showBuildings, setShowBuildings] = useState(true);
   const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -139,6 +140,20 @@ export default function Home() {
     () => extractPlayerStats(events, duration, replay, players),
     [events, duration, replay, players]
   );
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const interval = setInterval(() => {
+      setSelectedTime((prev) => {
+        if (prev >= duration) {
+          setIsPlaying(false);
+          return prev;
+        }
+        return Math.min(prev + 30, duration);
+      });
+    }, 150);
+    return () => clearInterval(interval);
+  }, [isPlaying, duration]);
 
 
   const clampPan = (pan: { x: number; y: number }) => {
@@ -706,9 +721,6 @@ export default function Home() {
                 <h2 className="headline text-2xl">Minimap</h2>
               </div>
               <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--muted)]">
-                <div className="rounded-full bg-[color:var(--panel-strong)] px-3 py-1 font-mono tabular-nums">
-                  Time: {formatClock(selectedTime)}
-                </div>
                 <label className="flex items-center gap-2 text-xs font-medium">
                   <input
                     type="checkbox"
@@ -914,14 +926,38 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <input
-              type="range"
-              min={0}
-              max={Math.max(duration, 1)}
-              value={selectedTime}
-              className="w-full accent-[color:var(--accent)]"
-              onChange={(event) => setSelectedTime(Number(event.target.value))}
-            />
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--panel-strong)] text-[color:var(--foreground)] transition hover:bg-[color:var(--muted-foreground)] hover:text-white"
+                onClick={() => setIsPlaying(!isPlaying)}
+                title={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <rect x="3" y="2" width="4" height="12" />
+                    <rect x="9" y="2" width="4" height="12" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M4 2v12l10-6z" />
+                  </svg>
+                )}
+              </button>
+              <div className="flex-1">
+                <input
+                  type="range"
+                  min={0}
+                  max={Math.max(duration, 1)}
+                  value={selectedTime}
+                  className="w-full accent-[color:var(--accent)]"
+                  onChange={(event) => setSelectedTime(Number(event.target.value))}
+                />
+              </div>
+              <div className="text-sm font-semibold tabular-nums text-[color:var(--muted-foreground)]">
+                {formatClock(selectedTime)} / {formatClock(duration)}
+              </div>
+            </div>
           </section>
 
           {!replay && !loading && (
@@ -941,9 +977,6 @@ export default function Home() {
               <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                 <div className="flex items-center justify-between">
                   <h2 className="headline text-2xl">Timeline</h2>
-                  <div className="text-xs text-[color:var(--muted)]">
-                    Duration: {formatClock(duration)}
-                  </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   {[leftPlayerId, rightPlayerId]
