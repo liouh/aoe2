@@ -41,7 +41,7 @@ const formatOptional = (value?: number) =>
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
-const UNIT_FADE_SECONDS = 60;
+const UNIT_FADE_SECONDS = 200;
 
 export default function Home() {
   const [replay, setReplay] = useState<any>(null);
@@ -416,7 +416,7 @@ export default function Home() {
         context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
         context.scale(iconSize / 100, iconSize / 100);
         context.fillStyle = classifyColor(event.playerId);
-        context.lineWidth = 6;
+        context.lineWidth = 10;
         context.lineJoin = "round";
         context.strokeStyle = "#ffffff";
         context.stroke(iconPath);
@@ -435,8 +435,11 @@ export default function Home() {
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
-        context.arc(pos.x, pos.y, 3.5, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
         context.fill();
+        context.lineWidth = 1;
+        context.strokeStyle = "#ffffff";
+        context.stroke();
         context.globalAlpha = 1;
       });
     }
@@ -588,18 +591,6 @@ export default function Home() {
             </div>
           )}
         </header>
-
-        {!replay && !loading && (
-          <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
-            Upload a replay to populate the timeline. Parsing happens entirely in the browser using
-            the WASM-based aoe2rec-js library.
-          </div>
-        )}
-        {loading && (
-          <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
-            Parsing replay, stand by...
-          </div>
-        )}
 
         <main className="flex flex-col gap-6">
           <section className="panel flex flex-col gap-6 rounded-3xl p-6">
@@ -755,6 +746,18 @@ export default function Home() {
             />
           </section>
 
+          {!replay && !loading && (
+            <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
+              Upload a replay to populate the timeline. Parsing happens entirely in the browser using
+              the WASM-based aoe2rec-js library.
+            </div>
+          )}
+          {loading && (
+            <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
+              Parsing replay, stand by...
+            </div>
+          )}
+
           {replay && (
             <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
               <div className="panel flex flex-col gap-6 rounded-3xl p-6">
@@ -823,38 +826,36 @@ export default function Home() {
                             style={{ height: timelineHeight }}
                           >
                             <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-[color:var(--panel)]"></div>
-                            {showBuildings &&
-                              playerBuilds.map((event) => {
-                                const buildingName =
-                                  getBuildingName(event.buildingTypeId) ?? event.label;
-                                return (
-                                  <div
-                                    key={event.id}
-                                    className="absolute left-1/2 flex -translate-x-full items-center justify-end"
-                                    style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                    title={`${buildingName} @ ${formatClock(event.time)}`}
-                                  >
-                                    <span className="text-[10px] text-[color:var(--muted)] pr-3">
-                                      {formatClock(event.time)} · {buildingName}
-                                    </span>
-                                    <span className="absolute right-0 translate-x-1/2 text-[8px]">⚫</span>
-                                  </div>
-                                );
-                              })}
-                            {showUnits &&
-                              playerTrains.map((event) => (
+                            {playerBuilds.map((event) => {
+                              const buildingName =
+                                getBuildingName(event.buildingTypeId) ?? event.label;
+                              return (
                                 <div
                                   key={event.id}
-                                  className="absolute left-1/2 flex items-center"
+                                  className="absolute left-1/2 flex -translate-x-full items-center justify-end"
                                   style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                  title={`${getUnitName(event.unitTypeId) ?? event.label} @ ${formatClock(event.time)}`}
+                                  title={`${buildingName} @ ${formatClock(event.time)}`}
                                 >
-                                  <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚫</span>
-                                  <span className="text-[10px] text-[color:var(--muted)] pl-3">
-                                    {formatClock(event.time)} · {getUnitName(event.unitTypeId) ?? event.label}
+                                  <span className="text-[10px] text-[color:var(--muted)] pr-3">
+                                    {formatClock(event.time)} · {buildingName}
                                   </span>
+                                  <span className="absolute right-0 translate-x-1/2 text-[8px]">⚫</span>
                                 </div>
-                              ))}
+                              );
+                            })}
+                            {playerTrains.map((event) => (
+                              <div
+                                key={event.id}
+                                className="absolute left-1/2 flex items-center"
+                                style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+                                title={`${getUnitName(event.unitTypeId) ?? event.label} @ ${formatClock(event.time)}`}
+                              >
+                                <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚫</span>
+                                <span className="text-[10px] text-[color:var(--muted)] pl-3">
+                                  {formatClock(event.time)} · {getUnitName(event.unitTypeId) ?? event.label}
+                                </span>
+                              </div>
+                            ))}
                             <div
                               className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
                               style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
@@ -889,7 +890,7 @@ export default function Home() {
                           key={player.id}
                           className="panel-strong rounded-2xl p-4"
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-top justify-between">
                             <div>
                               <h3 className="headline text-lg">{player.name}</h3>
                               <p className="text-xs text-[color:var(--muted)]">
