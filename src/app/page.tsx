@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -557,7 +557,7 @@ export default function Home() {
                 <h2 className="headline text-2xl">Minimap</h2>
               </div>
               <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--muted)]">
-                <div className="rounded-full bg-[color:var(--panel-strong)] px-3 py-1">
+                <div className="rounded-full bg-[color:var(--panel-strong)] px-3 py-1 font-mono tabular-nums">
                   Time: {formatClock(selectedTime)}
                 </div>
                 <button
