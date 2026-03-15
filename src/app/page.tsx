@@ -900,7 +900,7 @@ export default function Home() {
                 <span className="text-[color:var(--muted)]">AoE2</span> Replay Viewer
               </h1>
               <p className="max-w-2xl text-base text-[color:var(--muted)] md:text-lg">
-                Upload a replay to see minimap progression and analyze build orders.
+                Upload a replay to see minimap playback, key metrics, and build timelines.
               </p>
             </div>
             <label
@@ -908,7 +908,7 @@ export default function Home() {
               onClick={() => setIsPlaying(false)}
             >
               <span className="text-2xl">📁</span>
-              <span>Upload .aoe2record replay file</span>
+              <span>Open .aoe2record replay file</span>
               <input
                 type="file"
                 accept=".aoe2record,.mgz"
@@ -1224,15 +1224,9 @@ export default function Home() {
             </div>
           </section>
 
-          {!replay && !loading && (
-            <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
-              Upload a replay to populate the timeline. Parsing happens entirely in the browser using
-              the WASM-based aoe2rec-js library.
-            </div>
-          )}
           {loading && (
             <div className="panel rounded-3xl p-6 text-sm text-[color:var(--muted)]">
-              Parsing replay, stand by...
+              Parsing replay, please stand by...
             </div>
           )}
 
