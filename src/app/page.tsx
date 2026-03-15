@@ -226,6 +226,7 @@ export default function Home() {
 
 
   const jumpToTimeline = () => {
+    setIsPlaying(false);
     setActiveTab("timeline");
     if (!timelineRef.current) {
       pendingScrollRef.current = true;
