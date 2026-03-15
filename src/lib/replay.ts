@@ -1,4 +1,4 @@
-import { getTechName, getUnitName } from "@/lib/unitTechMappings";
+import { getTechName, getUnitName } from "@/lib/techMappings";
 
 export type TimelineEvent = {
   id: string;

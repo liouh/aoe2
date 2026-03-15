@@ -15,7 +15,7 @@ import {
 } from "@/lib/replay";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint, getBuildingName } from "@/lib/buildingFootprints";
-import { getUnitName } from "@/lib/unitTechMappings";
+import { getUnitName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 

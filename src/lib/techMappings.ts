@@ -1,6 +1,6 @@
 export { getUnitName } from "@/lib/entityNames";
 // Unit/building names are now in entityNames.ts (generated from de.csv)
-// This file only contains tech mappings.
+// This file contains technology (research) mappings.
 
 const TECH_NAMES: Record<number, string> = {
   2: "Elite Tarkan",
@@ -313,9 +313,9 @@ const TECH_NAMES: Record<number, string> = {
   755: "Flemish Revolution",
   756: "First Crusade",
   757: "Hauberk",
-  758: "Feudal Eco Tech Requirement",
-  759: "Castle Eco Tech Requirement",
-  760: "Imperial Eco Tech Requirement",
+  758: "Feudal Age Eco Tech Requirement",
+  759: "Castle Age Eco Tech Requirement",
+  760: "Imperial Age Eco Tech Requirement",
   761: "Heavy Plow Requirement",
   762: "Bow Saw Requirement",
   763: "Hand Cart Requirement",
