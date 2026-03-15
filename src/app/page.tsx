@@ -1313,7 +1313,7 @@ export default function Home() {
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h2 className="headline text-2xl">Players</h2>
                   </div>
-                  <div className="mt-4 grid gap-4">
+                  <div className="mt-6 grid gap-4">
                     {players.map((player, index) => {
                       const stats = timelineStats.find(
                         (item) => item.playerId === player.id
