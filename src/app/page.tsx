@@ -907,7 +907,6 @@ export default function Home() {
                     setMapZoom(1);
                     setMapPan({ x: 0, y: 0 });
                   }}
-                  title="Reset view"
                 >
                   ⛶
                 </button>
@@ -929,9 +928,9 @@ export default function Home() {
                         style={{ background: classifyColor(hoveredEntity.playerId) }}
                       ></span>
                     )}
-                    <span className="font-bold">{hoveredEntity.name}</span>
+                    <span className="font-bold text-[color:var(--foreground)]">{hoveredEntity.name}</span>
                   </div>
-                  <div className="mt-0.5 text-[color:var(--muted)]">
+                  <div className="mt-0.5 font-medium text-[color:var(--foreground)] opacity-80">
                     {hoveredEntity.playerId !== undefined && (
                       <>{players.find((p) => p.id === hoveredEntity.playerId)?.name}</>
                     )}
