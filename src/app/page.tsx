@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1102,7 +1102,7 @@ export default function Home() {
                         Buildings
                       </span>
                     </label>
-                    <label className="toggle-pill gap-2 group border-l border-[color:var(--panel)] pl-4">
+                    <label className="toggle-pill gap-2 group pl-4">
                       <div className="relative scale-75">
                         <input
                           type="checkbox"
@@ -1118,7 +1118,7 @@ export default function Home() {
                         Units
                       </span>
                     </label>
-                    <label className="toggle-pill gap-2 group border-l border-[color:var(--panel)] pl-4">
+                    <label className="toggle-pill gap-2 group pl-4">
                       <div className="relative scale-75">
                         <input
                           type="checkbox"
