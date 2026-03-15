@@ -57,15 +57,53 @@ export default function Home() {
   const [showBuildings, setShowBuildings] = useState(true);
   const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
+
+  const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
+
+  const mapSize = useMemo(() => {
+    const base = extractMapSize(replay, summary);
+    if (mapInfo?.size_x && mapInfo?.size_y) {
+      return Math.max(mapInfo.size_x, mapInfo.size_y);
+    }
+    const coordMax = events.reduce((max, event) => {
+      if (event.x === undefined || event.y === undefined) return max;
+      return Math.max(max, event.x, event.y);
+    }, 0);
+    return coordMax > 0 ? Math.max(base, coordMax * 1.05) : base;
+  }, [events, mapInfo, replay, summary]);
+
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [hoveredEntity, setHoveredEntity] = useState<{
+    name: string;
+    playerId?: number;
+    type: "unit" | "building";
+  } | null>(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const lastKeyTimeRef = useRef(0);
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const entityLookupRef = useRef<{
+    tileToAnchor: Map<string, string>;
+    buildings: Map<string, TimelineEvent>;
+    isoScale: number;
+    isoOriginX: number;
+    isoOriginY: number;
+    sizeX: number;
+    sizeY: number;
+  }>({
+    tileToAnchor: new Map(),
+    buildings: new Map(),
+    isoScale: 1,
+    isoOriginX: 0,
+    isoOriginY: 0,
+    sizeX: mapSize,
+    sizeY: mapSize,
+  });
 
   const players = useMemo(
     () => summarizePlayers(summary, replay),
@@ -99,10 +137,6 @@ export default function Home() {
     [events, duration, replay, players]
   );
 
-  const mapInfo = useMemo(
-    () => replay?.zheader?.map_info ?? null,
-    [replay]
-  );
 
   const clampPan = (pan: { x: number; y: number }) => {
     const container = mapContainerRef.current;
@@ -137,17 +171,6 @@ export default function Home() {
     };
   };
 
-  const mapSize = useMemo(() => {
-    const base = extractMapSize(replay, summary);
-    if (mapInfo?.size_x && mapInfo?.size_y) {
-      return Math.max(mapInfo.size_x, mapInfo.size_y);
-    }
-    const coordMax = events.reduce((max, event) => {
-      if (event.x === undefined || event.y === undefined) return max;
-      return Math.max(max, event.x, event.y);
-    }, 0);
-    return coordMax > 0 ? Math.max(base, coordMax * 1.05) : base;
-  }, [events, mapInfo, replay, summary]);
 
   const buildEventsForMap = useMemo(
     () =>
@@ -286,6 +309,7 @@ export default function Home() {
         currentUnitsMap.set(event.unitId, event);
       }
     });
+
 
     const drawTile = (
       tileX: number,
@@ -469,6 +493,15 @@ export default function Home() {
       });
     }
 
+    entityLookupRef.current = {
+      tileToAnchor: tileToAnchor,
+      buildings: anchorToEvent,
+      isoScale,
+      isoOriginX,
+      isoOriginY,
+      sizeX,
+      sizeY,
+    };
   }, [
     buildEventsForMap,
     events,
@@ -661,12 +694,56 @@ export default function Home() {
                 (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
               }}
               onPointerMove={(event) => {
-                if (mapZoom <= 1) return;
-                if (!isDraggingRef.current || !lastPointerRef.current) return;
-                const dx = event.clientX - lastPointerRef.current.x;
-                const dy = event.clientY - lastPointerRef.current.y;
-                lastPointerRef.current = { x: event.clientX, y: event.clientY };
-                setMapPan((prev) => clampPan({ x: prev.x + dx, y: prev.y + dy }));
+                if (mapZoom > 1 && isDraggingRef.current && lastPointerRef.current) {
+                  const dx = event.clientX - lastPointerRef.current.x;
+                  const dy = event.clientY - lastPointerRef.current.y;
+                  lastPointerRef.current = { x: event.clientX, y: event.clientY };
+                  setMapPan((prev) => clampPan({ x: prev.x + dx, y: prev.y + dy }));
+                }
+
+                // Hover handling
+                const canvas = canvasRef.current;
+                if (canvas) {
+                  const rect = canvas.getBoundingClientRect();
+                  const mouseX = event.clientX - rect.left;
+                  const mouseY = event.clientY - rect.top;
+                  const {
+                    tileToAnchor,
+                    buildings,
+                    isoScale,
+                    isoOriginX,
+                    isoOriginY,
+                    sizeX,
+                  } = entityLookupRef.current;
+
+                  const relX = mouseX - isoOriginX;
+                  const relY = mouseY - isoOriginY;
+
+                  const rx = relX / isoScale + (2 * relY) / isoScale;
+                  const ry = (2 * relY) / isoScale - relX / isoScale;
+
+                  const gameY = rx;
+                  const gameX = sizeX - ry;
+
+                  const tx = Math.floor(gameX);
+                  const ty = Math.floor(gameY);
+                  const tileKey = `${tx},${ty}`;
+
+                  const anchorKey = tileToAnchor.get(tileKey);
+                  const building = anchorKey ? buildings.get(anchorKey) : null;
+                  if (building) {
+                    setHoveredEntity({
+                      name:
+                        getBuildingName(building.buildingTypeId) ??
+                        "Unknown Building",
+                      playerId: building.playerId,
+                      type: "building",
+                    });
+                    setTooltipPos({ x: event.clientX, y: event.clientY });
+                  } else {
+                    setHoveredEntity(null);
+                  }
+                }
               }}
               onPointerUp={(event) => {
                 isDraggingRef.current = false;
@@ -678,6 +755,7 @@ export default function Home() {
                 isDraggingRef.current = false;
                 lastPointerRef.current = null;
                 setIsDragging(false);
+                setHoveredEntity(null);
               }}
               onWheel={(event) => {
                 const canvas = canvasRef.current;
@@ -760,6 +838,32 @@ export default function Home() {
                 </button>
               </div>
               <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
+
+              {hoveredEntity && (
+                <div
+                  className="pointer-events-none fixed z-50 rounded-lg border border-[color:var(--panel-strong)] bg-[color:var(--panel)] p-2 text-xs shadow-xl animate-in fade-in zoom-in duration-100"
+                  style={{
+                    left: tooltipPos.x + 12,
+                    top: tooltipPos.y + 12,
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    {hoveredEntity.playerId !== undefined && (
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ background: classifyColor(hoveredEntity.playerId) }}
+                      ></span>
+                    )}
+                    <span className="font-bold">{hoveredEntity.name}</span>
+                  </div>
+                  <div className="mt-0.5 text-[color:var(--muted)]">
+                    {hoveredEntity.type === "unit" ? "Unit" : "Building"}
+                    {hoveredEntity.playerId !== undefined && (
+                      <> • {players.find((p) => p.id === hoveredEntity.playerId)?.name}</>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <input
               type="range"
