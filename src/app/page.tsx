@@ -84,6 +84,8 @@ export default function Home() {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const terrainCacheKeyRef = useRef<string | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const lastKeyTimeRef = useRef(0);
   const isDraggingRef = useRef(false);
@@ -251,65 +253,76 @@ export default function Home() {
       return { x: isoX, y: isoY };
     };
 
-    const panelColor =
-      getComputedStyle(canvas).getPropertyValue("--panel")?.trim() ||
-      "#f1e5d4";
-    context.fillStyle = panelColor;
-    context.fillRect(0, 0, bounds.width, bounds.height);
+    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length}`;
 
-    const tiles = mapInfo?.tiles;
-    if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
-      for (let y = 0; y < sizeY; y += 1) {
-        for (let x = 0; x < sizeX; x += 1) {
-          const tile = tiles[y * sizeX + x] as { terrain_type?: number };
-          const terrainType = tile?.terrain_type ?? 14;
-          const color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
-
-          const x0 = x;
-          const y0 = y;
-          const x1 = x + 1;
-          const y1 = y + 1;
-
-          const p1 = toCanvas(x0, y0);
-          const p2 = toCanvas(x1, y0);
-          const p3 = toCanvas(x1, y1);
-          const p4 = toCanvas(x0, y1);
-
-          context.fillStyle = color;
-          context.beginPath();
-          context.moveTo(p1.x, p1.y);
-          context.lineTo(p2.x, p2.y);
-          context.lineTo(p3.x, p3.y);
-          context.lineTo(p4.x, p4.y);
-          context.closePath();
-          context.fill();
-        }
+    if (terrainCacheKeyRef.current !== terrainCacheKey || !offscreenCanvasRef.current) {
+      if (!offscreenCanvasRef.current) {
+        offscreenCanvasRef.current = document.createElement("canvas");
       }
+      const offCanvas = offscreenCanvasRef.current;
+      offCanvas.width = canvas.width;
+      offCanvas.height = canvas.height;
+      const offContext = offCanvas.getContext("2d");
+      if (offContext) {
+        offContext.scale(dpr, dpr);
+        const panelColor =
+          getComputedStyle(canvas).getPropertyValue("--panel")?.trim() ||
+          "#f1e5d4";
+        offContext.fillStyle = panelColor;
+        offContext.fillRect(0, 0, bounds.width, bounds.height);
+
+        const tiles = mapInfo?.tiles;
+        if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
+          for (let y = 0; y < sizeY; y += 1) {
+            for (let x = 0; x < sizeX; x += 1) {
+              const tile = tiles[y * sizeX + x] as { terrain_type?: number };
+              const terrainType = tile?.terrain_type ?? 14;
+              const color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+              const p1 = toCanvas(x, y);
+              const p2 = toCanvas(x + 1, y);
+              const p3 = toCanvas(x + 1, y + 1);
+              const p4 = toCanvas(x, y + 1);
+              offContext.fillStyle = color;
+              offContext.beginPath();
+              offContext.moveTo(p1.x, p1.y);
+              offContext.lineTo(p2.x, p2.y);
+              offContext.lineTo(p3.x, p3.y);
+              offContext.lineTo(p4.x, p4.y);
+              offContext.closePath();
+              offContext.fill();
+            }
+          }
+        }
+        offContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
+        offContext.lineWidth = 1;
+        offContext.beginPath();
+        const top = toCanvas(0, 0);
+        const right = toCanvas(sizeX, 0);
+        const bottom = toCanvas(sizeX, sizeY);
+        const left = toCanvas(0, sizeY);
+        offContext.moveTo(top.x, top.y);
+        offContext.lineTo(right.x, right.y);
+        offContext.lineTo(bottom.x, bottom.y);
+        offContext.lineTo(left.x, left.y);
+        offContext.closePath();
+        offContext.stroke();
+      }
+      terrainCacheKeyRef.current = terrainCacheKey;
     }
 
-    context.strokeStyle = "rgba(28, 22, 16, 0.2)";
-    context.lineWidth = 1;
-    context.beginPath();
-    const top = toCanvas(0, 0);
-    const right = toCanvas(sizeX, 0);
-    const bottom = toCanvas(sizeX, sizeY);
-    const left = toCanvas(0, sizeY);
-    context.moveTo(top.x, top.y);
-    context.lineTo(right.x, right.y);
-    context.lineTo(bottom.x, bottom.y);
-    context.lineTo(left.x, left.y);
-    context.closePath();
-    context.stroke();
+    if (offscreenCanvasRef.current) {
+      context.drawImage(offscreenCanvasRef.current, 0, 0, bounds.width, bounds.height);
+    }
 
     const currentUnitsMap = new Map<string | number, TimelineEvent>();
-    moveEvents.forEach((event) => {
-      if (event.time > selectedTime) return;
-      if (event.unitId === undefined) return;
+    for (const event of moveEvents) {
+      if (event.time > selectedTime) break;
+      if (event.unitId === undefined) continue;
       const existing = currentUnitsMap.get(event.unitId);
       if (!existing || existing.time < event.time) {
         currentUnitsMap.set(event.unitId, event);
       }
-    });
+    }
 
 
     const drawTile = (
@@ -619,11 +632,13 @@ export default function Home() {
       const now = performance.now();
       if (now - lastKeyTimeRef.current < 16) return;
       lastKeyTimeRef.current = now;
-      const step = event.shiftKey ? 60 : 15;
-      setSelectedTime((prev) => {
-        const next =
-          event.key === "ArrowRight" ? prev + step : prev - step;
-        return clamp(next, 0, Math.max(duration, 1));
+      const step = event.shiftKey ? 120 : 30;
+      requestAnimationFrame(() => {
+        setSelectedTime((prev) => {
+          const next =
+            event.key === "ArrowRight" ? prev + step : prev - step;
+          return clamp(next, 0, Math.max(duration, 1));
+        });
       });
     };
 
