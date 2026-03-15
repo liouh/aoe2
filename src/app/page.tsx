@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -109,7 +109,7 @@ export default function Home() {
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
-  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("timeline");
+  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("units");
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -1206,15 +1206,6 @@ export default function Home() {
             <div className="flex flex-col gap-6">
               <div className="flex border-b border-white/10">
                 <button
-                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "timeline"
-                    ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "text-white/40 hover:text-white/70"
-                    }`}
-                  onClick={() => setActiveTab("timeline")}
-                >
-                  Timeline
-                </button>
-                <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "units"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "text-white/40 hover:text-white/70"
@@ -1222,6 +1213,15 @@ export default function Home() {
                   onClick={() => setActiveTab("units")}
                 >
                   Units
+                </button>
+                <button
+                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "timeline"
+                    ? "border-b-2 border-[color:var(--accent)] text-white"
+                    : "text-white/40 hover:text-white/70"
+                    }`}
+                  onClick={() => setActiveTab("timeline")}
+                >
+                  Timeline
                 </button>
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "info"
@@ -1476,9 +1476,16 @@ export default function Home() {
                       return (
                         <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
                           <div className="flex items-center justify-between">
-                            <h3 className="headline text-lg">{player.name}</h3>
+                            <div className="flex flex-col">
+                              <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                              <div className="flex items-center gap-2 text-xs text-white/40">
+                                <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                <span>•</span>
+                                <span>Team {player.teamId !== undefined ? player.teamId + 1 : "—"}</span>
+                              </div>
+                            </div>
                             <span
-                              className="h-3 w-3 rounded-full"
+                              className="h-3 w-3 rounded-full shrink-0"
                               style={{ background: classifyColor(player.id) }}
                             ></span>
                           </div>
@@ -1545,22 +1552,24 @@ export default function Home() {
                             key={player.id}
                             className="panel-strong rounded-2xl p-4"
                           >
-                            <div className="flex items-top justify-between">
-                              <div>
-                                <h3 className="headline text-lg flex items-start">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">
                                   {player.name}
-                                  {player.won && <span className="ml-1 text-xl leading-none">👑</span>}
+                                  {player.won && <sup className="ml-1">👑</sup>}
                                 </h3>
-                                <p className="text-xs text-[color:var(--muted)]">
-                                  {getCivName(player.civId) ?? ("Civ " + (player.civId ?? "—"))} • Team {player.teamId ?? "—"}
-                                </p>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId !== undefined ? player.teamId + 1 : "—"}</span>
+                                </div>
                               </div>
                               <span
-                                className="h-3 w-3 rounded-full"
+                                className="h-3 w-3 rounded-full shrink-0"
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
-                            <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">APM</p>
                                 <p className="text-lg font-semibold">{formatOptional(stats?.apm)}</p>
