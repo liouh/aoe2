@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -41,48 +41,76 @@ const formatOptional = (value?: number) =>
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
-function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 20) {
+const isEconomic = (name: string) => {
+  const lower = name.toLowerCase();
+  return (
+    lower.includes("villager") ||
+    lower.includes("trade cart") ||
+    lower.includes("trade cog") ||
+    lower.includes("fishing ship") ||
+    lower.includes("transport ship") ||
+    lower.includes("llama") ||
+    lower.includes("cow") ||
+    lower.includes("sheep") ||
+    lower.includes("turkey") ||
+    lower.includes("goat") ||
+    lower.includes("goose") ||
+    lower.includes("pig") ||
+    lower.includes("mule cart")
+  );
+};
+
+function consolidateEvents(events: TimelineEvent[], windowSeconds: number = 5) {
   if (events.length === 0) return [];
 
-  const consolidated: (TimelineEvent & { count: number })[] = [];
-  // Use a map to track active groups currently in their window
-  // Key: identity string (category + relevant ID)
-  const activeGroups = new Map<string, TimelineEvent & { count: number }>();
+  const consolidated: (TimelineEvent & {
+    count: number;
+    isMilitary?: boolean;
+    items: Map<string, number>;
+  })[] = [];
+
+  const activeGroups = new Map<string, any>();
 
   for (const event of events) {
-    // Generate identity key based on category
-    let identity = "";
-    if (event.category === "build") {
-      identity = `build-${event.buildingTypeId}`;
-    } else if (event.category === "train") {
-      identity = `train-${event.unitTypeId}`;
-    } else if (event.category === "research") {
-      identity = `research-${event.techId}`;
-    } else {
-      identity = `other-${event.type}-${event.label}-${event.unitTypeId}-${event.buildingTypeId}-${event.techId}`;
-    }
-
+    const identity = event.category;
     const current = activeGroups.get(identity);
 
     const amount = typeof event.raw?.amount === "number" && event.raw.amount > 0
       ? event.raw.amount
       : 1;
 
+    let itemLabel = event.label;
+    if (event.category === "build") {
+      itemLabel = getBuildingName(event.buildingTypeId) ?? event.label;
+    } else if (event.category === "train") {
+      itemLabel = getUnitName(event.unitTypeId) ?? event.label;
+    }
+
+    const isMil = event.category === "train" && !isEconomic(itemLabel);
+
     if (current && event.time - current.time <= windowSeconds) {
       current.count += amount;
+      current.items.set(itemLabel, (current.items.get(itemLabel) || 0) + amount);
+      if (isMil) current.isMilitary = true;
     } else {
-      // If there was an existing group but it's now out of window, 
-      // we don't necessarily push it yet because other groups might still be active.
-      // However, for the timeline, we want to maintain chronological order of 
-      // the START of these groups.
-      const newGroup = { ...event, count: amount };
+      const newGroup = {
+        ...event,
+        count: amount,
+        isMilitary: isMil,
+        items: new Map([[itemLabel, amount]])
+      };
       consolidated.push(newGroup);
       activeGroups.set(identity, newGroup);
     }
   }
 
-  // Sorting is crucial here because interleaved grouping can slightly disrupt 
-  // chronological order if multiple groups start at different times.
+  for (const group of consolidated) {
+    const parts = Array.from(group.items.entries()).map(([name, count]) =>
+      (count > 1 && group.category !== "research") ? `${name} x${count}` : name
+    );
+    group.label = parts.join(" + ");
+  }
+
   return consolidated.sort((a, b) => a.time - b.time);
 }
 
@@ -356,24 +384,6 @@ export default function Home() {
       }
     });
 
-    const isEconomic = (name: string) => {
-      const lower = name.toLowerCase();
-      return (
-        lower.includes("villager") ||
-        lower.includes("trade cart") ||
-        lower.includes("trade cog") ||
-        lower.includes("fishing ship") ||
-        lower.includes("transport ship") ||
-        lower.includes("llama") ||
-        lower.includes("cow") ||
-        lower.includes("sheep") ||
-        lower.includes("turkey") ||
-        lower.includes("goat") ||
-        lower.includes("goose") ||
-        lower.includes("pig") ||
-        lower.includes("mule cart")
-      );
-    };
 
     const result = new Map<number, { military: { name: string; count: number }[], economic: { name: string; count: number }[] }>();
     statsMap.forEach((playerMap, playerId) => {
@@ -1384,67 +1394,40 @@ export default function Home() {
                                   return (
                                     <div
                                       key={`marker-${markerTime}`}
-                                      className="absolute left-1/2 w-full -translate-x-1/2 border-t border-[color:var(--panel)]"
+                                      className="absolute left-0 w-full border-t border-[color:var(--panel)]"
                                       style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
                                     >
-                                      {i !== 0 && (<span className="absolute left-0 text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-30">
+                                      {i !== 0 && (<span className="absolute left-[2px] text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-30">
                                         {markerTime / 60 + "'"}
                                       </span>)}
                                     </div>
                                   );
                                 })}
 
-                                <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 bg-[color:var(--panel)]"></div>
-                                {consolidateEvents(playerBuilds).map((event) => {
-                                  const buildingName =
-                                    getBuildingName(event.buildingTypeId) ?? event.label;
-                                  const label = event.count > 1 ? `${buildingName} x${event.count}` : buildingName;
-                                  return (
-                                    <div
-                                      key={event.id}
-                                      className="absolute left-1/2 flex -translate-x-full items-center justify-end"
-                                      style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                      title={`${label} @ ${formatClock(event.time)}`}
-                                    >
-                                      <span className="text-[10px] text-[color:var(--muted)] pr-3">
-                                        {formatClock(event.time)} · {label}
-                                      </span>
-                                      <span className="absolute right-0 translate-x-1/2 text-[8px]">⚪</span>
-                                    </div>
-                                  );
-                                })}
-                                {consolidateEvents(playerTrains).map((event) => {
-                                  const unitName = getUnitName(event.unitTypeId) ?? event.label;
-                                  const label = event.count > 1 ? `${unitName} x${event.count}` : unitName;
-                                  return (
-                                    <div
-                                      key={event.id}
-                                      className="absolute left-1/2 flex items-center"
-                                      style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                      title={`${label} @ ${formatClock(event.time)}`}
-                                    >
-                                      <span className="absolute left-0 -translate-x-1/2 text-[8px]">🟤</span>
-                                      <span className="text-[10px] text-[color:var(--muted)] pl-3">
-                                        {formatClock(event.time)} · {label}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
-                                {consolidateEvents(playerResearch).map((event) => {
-                                  return (
-                                    <div
-                                      key={event.id}
-                                      className="absolute left-1/2 flex items-center"
-                                      style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
-                                      title={`${event.label} @ ${formatClock(event.time)}`}
-                                    >
-                                      <span className="absolute left-0 -translate-x-1/2 text-[8px] text-[color:var(--accent)] font-bold">🟢</span>
-                                      <span className="text-[10px] text-[color:var(--muted)] pl-3">
-                                        {formatClock(event.time)} · {event.label}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
+                                <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)]"></div>
+                                {consolidateEvents(playerBuilds).map((event) => (
+                                  <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
+                                    <div className="h-[1px] w-4 bg-white/10" />
+                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+                                  </div>
+                                ))}
+                                {consolidateEvents(playerTrains).map((event) => (
+                                  <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
+                                      {event.isMilitary ? "🗡️" : "🙂"}
+                                    </span>
+                                    <div className="h-[1px] w-[6rem] bg-white/10" />
+                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+                                  </div>
+                                ))}
+                                {consolidateEvents(playerResearch).map((event) => (
+                                  <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
+                                    <div className="h-[1px] w-[12rem] bg-white/10" />
+                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+                                  </div>
+                                ))}
                                 {/* Age Up Markers */}
                                 {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
                                   const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
@@ -1659,4 +1642,3 @@ export default function Home() {
     </div>
   );
 }
-
