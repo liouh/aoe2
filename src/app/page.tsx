@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -143,6 +143,7 @@ export default function Home() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const lastKeyTimeRef = useRef(0);
   const isDraggingRef = useRef(false);
+  const pendingScrollRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const zoomLimitTimestampRef = useRef<number | null>(null);
   const entityLookupRef = useRef<{
@@ -209,9 +210,27 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
+  useEffect(() => {
+    if (activeTab === "timeline" && pendingScrollRef.current && timelineRef.current) {
+      pendingScrollRef.current = false;
+      const pxPerSecond = 3;
+      const targetOffset = selectedTime * pxPerSecond;
+      const containerTop =
+        timelineRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: containerTop + targetOffset,
+        behavior: "smooth",
+      });
+    }
+  }, [activeTab, selectedTime]);
+
 
   const jumpToTimeline = () => {
-    if (!timelineRef.current) return;
+    setActiveTab("timeline");
+    if (!timelineRef.current) {
+      pendingScrollRef.current = true;
+      return;
+    }
     const pxPerSecond = 3;
     const targetOffset = selectedTime * pxPerSecond;
     const containerTop =
