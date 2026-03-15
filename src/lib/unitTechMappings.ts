@@ -572,7 +572,7 @@ const RESOURCE_TECH_NAME_MAP: Record<
   wood: ["Double Bit Axe", "Bow Saw", "Two Man Saw"],
   gold: ["Gold Mining", "Gold Shaft Mining"],
   stone: ["Stone Mining", "Stone Shaft Mining"],
-  economy: ["Wheelbarrow", "Hand Cart", "Loom"],
+  economy: ["Wheelbarrow", "Hand Cart"],
 };
 
 export const RESOURCE_TECH_IDS = Object.entries(RESOURCE_TECH_NAME_MAP).reduce<

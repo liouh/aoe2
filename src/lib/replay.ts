@@ -317,6 +317,12 @@ const detectType = (event: Record<string, unknown>): string => {
 
 const detectCategory = (type: string, event: Record<string, unknown>) => {
   const lower = type.toLowerCase();
+  if (lower.includes("research") || lower.includes("tech")) {
+    return "research";
+  }
+  if (lower.includes("train") || lower.includes("queue")) {
+    return "train";
+  }
   if (lower.includes("build") || lower.includes("wall") || "building" in event || "building_id" in event) {
     return "build";
   }
@@ -327,12 +333,6 @@ const detectCategory = (type: string, event: Record<string, unknown>) => {
     "target" in event
   ) {
     return "move";
-  }
-  if (lower.includes("research") || lower.includes("tech")) {
-    return "research";
-  }
-  if (lower.includes("train") || lower.includes("queue")) {
-    return "train";
   }
   return "other";
 };

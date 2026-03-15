@@ -60,7 +60,7 @@ body {
 .toggle-pill-track {
   width: 40px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  background: #333;
   border-radius: 999px;
   transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;

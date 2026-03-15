@@ -58,6 +58,9 @@ export default function Home() {
   const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
+  const [timelineShowUnits, setTimelineShowUnits] = useState(true);
+  const [timelineShowResearch, setTimelineShowResearch] = useState(true);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -203,8 +206,8 @@ export default function Home() {
 
 
   const buildEventsTimeline = useMemo(
-    () => events.filter((event) => event.category === "build"),
-    [events]
+    () => events.filter((event) => event.category === "build" && timelineShowBuildings),
+    [events, timelineShowBuildings]
   );
 
   const moveEvents = useMemo(
@@ -219,8 +222,13 @@ export default function Home() {
   );
 
   const trainEvents = useMemo(
-    () => events.filter((event) => event.category === "train"),
-    [events]
+    () => events.filter((event) => event.category === "train" && timelineShowUnits),
+    [events, timelineShowUnits]
+  );
+
+  const researchEvents = useMemo(
+    () => events.filter((event) => event.category === "research" && timelineShowResearch),
+    [events, timelineShowResearch]
   );
 
 
@@ -994,8 +1002,58 @@ export default function Home() {
           {replay && (
             <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
               <div className="panel flex flex-col gap-6 rounded-3xl p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="headline text-2xl">Timeline</h2>
+                  <div className="flex flex-wrap items-center gap-4 bg-[color:var(--panel-strong)] px-4 py-2 rounded-2xl border border-[color:var(--panel)]">
+                    <label className="toggle-pill gap-2 group">
+                      <div className="relative scale-75">
+                        <input
+                          type="checkbox"
+                          className="peer sr-only"
+                          checked={timelineShowBuildings}
+                          onChange={(e) => setTimelineShowBuildings(e.target.checked)}
+                        />
+                        <div className="toggle-pill-track h-5 w-9">
+                          <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
+                        Buildings
+                      </span>
+                    </label>
+                    <label className="toggle-pill gap-2 group border-l border-[color:var(--panel)] pl-4">
+                      <div className="relative scale-75">
+                        <input
+                          type="checkbox"
+                          className="peer sr-only"
+                          checked={timelineShowUnits}
+                          onChange={(e) => setTimelineShowUnits(e.target.checked)}
+                        />
+                        <div className="toggle-pill-track h-5 w-9">
+                          <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
+                        Units
+                      </span>
+                    </label>
+                    <label className="toggle-pill gap-2 group border-l border-[color:var(--panel)] pl-4">
+                      <div className="relative scale-75">
+                        <input
+                          type="checkbox"
+                          className="peer sr-only"
+                          checked={timelineShowResearch}
+                          onChange={(e) => setTimelineShowResearch(e.target.checked)}
+                        />
+                        <div className="toggle-pill-track h-5 w-9">
+                          <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
+                        Research
+                      </span>
+                    </label>
+                  </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   {[leftPlayerId, rightPlayerId]
@@ -1007,6 +1065,9 @@ export default function Home() {
                         (event) => event.playerId === player?.id
                       );
                       const playerTrains = trainEvents.filter(
+                        (event) => event.playerId === player?.id
+                      );
+                      const playerResearch = researchEvents.filter(
                         (event) => event.playerId === player?.id
                       );
                       return (
@@ -1096,9 +1157,22 @@ export default function Home() {
                                 style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
                                 title={`${getUnitName(event.unitTypeId) ?? event.label} @ ${formatClock(event.time)}`}
                               >
-                                <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚫</span>
+                                <span className="absolute left-0 -translate-x-1/2 text-[8px]">⚪</span>
                                 <span className="text-[10px] text-[color:var(--muted)] pl-3">
                                   {formatClock(event.time)} · {getUnitName(event.unitTypeId) ?? event.label}
+                                </span>
+                              </div>
+                            ))}
+                            {playerResearch.map((event) => (
+                              <div
+                                key={event.id}
+                                className="absolute left-1/2 flex items-center"
+                                style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+                                title={`${event.label} @ ${formatClock(event.time)}`}
+                              >
+                                <span className="absolute left-0 -translate-x-1/2 text-[8px] text-[color:var(--accent)] font-bold">🟢</span>
+                                <span className="text-[10px] text-[color:var(--muted)] pl-3">
+                                  {formatClock(event.time)} · {event.label}
                                 </span>
                               </div>
                             ))}
@@ -1112,14 +1186,6 @@ export default function Home() {
                                 </span>
                               </div>
                             </div>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-2 text-xs text-[color:var(--muted)]">
-                            <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
-                              Build events: {playerBuilds.length}
-                            </span>
-                            <span className="rounded-full bg-[color:var(--panel)] px-2 py-1">
-                              Unit creation events: {playerTrains.length}
-                            </span>
                           </div>
                         </div>
                       );
