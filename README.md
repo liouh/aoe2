@@ -32,3 +32,11 @@ Open `http://localhost:3000` in your browser.
 
 - The minimap and timelines are generated from replay data and update as you scrub time.
 - This app does not upload replays to a server; parsing stays local in the browser.
+
+## TODO
+
+- Starting town centers
+- Walls
+- Track destroyed buildings
+- Add missing building mappings (e.g. krepost)
+- More metrics

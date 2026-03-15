@@ -406,7 +406,7 @@ const normalizeEventLabel = (
   const unitName = getUnitName(unitTypeId);
   const techName = getTechName(techId);
   if (type === "Research") {
-    return techName ? `Research ${techName}` : baseLabel;
+    return techName ?? baseLabel;
   }
   if (type === "DeQueue") {
     if (unitName) return `Dequeue ${unitName}`;
