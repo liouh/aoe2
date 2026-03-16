@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -138,7 +138,7 @@ export default function Home() {
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
-  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("info");
+  const [activeTab, setActiveTab] = useState<"timeline" | "stats" | "game">("game");
 
   const LOADING_STEPS = [
     "Loading replay...",
@@ -921,7 +921,7 @@ export default function Home() {
                 <span className="text-[color:var(--muted)]">AoE2</span> Replay Viewer
               </h1>
               <p className="max-w-2xl text-base text-[color:var(--muted)] md:text-lg">
-                Upload a replay to see minimap playback, key metrics, and build timelines.
+                Upload a replay to see minimap playback, key stats, and build timelines.
               </p>
             </div>
             <label
@@ -1283,22 +1283,22 @@ export default function Home() {
             <div className="flex flex-col gap-6">
               <div className="flex border-b border-white/10">
                 <button
-                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "info"
+                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "game"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "text-white/40 hover:text-white/70"
                     }`}
-                  onClick={() => setActiveTab("info")}
+                  onClick={() => setActiveTab("game")}
                 >
-                  Info
+                  Game
                 </button>
                 <button
-                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "units"
+                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "stats"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "text-white/40 hover:text-white/70"
                     }`}
-                  onClick={() => setActiveTab("units")}
+                  onClick={() => setActiveTab("stats")}
                 >
-                  Units
+                  Stats
                 </button>
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "timeline"
@@ -1383,7 +1383,7 @@ export default function Home() {
                             (event) => event.playerId === player?.id
                           );
                           return (
-                            <div key={`${player.id}-${index}`} className="panel-strong rounded-2xl">
+                            <div key={`${player.id}-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
                               <div className="flex items-center justify-between gap-2 p-4">
                                 <div className="flex items-center">
                                   <span
@@ -1517,7 +1517,7 @@ export default function Home() {
                     </div>
                   </div>
                 </section>
-              ) : activeTab === "units" ? (
+              ) : activeTab === "stats" ? (
                 <section className="panel rounded-3xl p-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h2 className="headline text-2xl">Units Trained</h2>
