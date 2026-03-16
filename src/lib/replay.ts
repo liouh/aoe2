@@ -1,6 +1,3 @@
-import { getUnitName } from "@/lib/entityNames";
-import { getTechName } from "@/lib/techMappings";
-
 export type TimelineEvent = {
   id: string;
   time: number;
@@ -55,10 +52,10 @@ const AGE_MATCH = [
   { match: /castle/i, label: "Castle" },
   { match: /imperial/i, label: "Imperial" },
 ];
-const AGE_TECH_NAMES = {
-  Feudal: "Feudal Age",
-  Castle: "Castle Age",
-  Imperial: "Imperial Age",
+const AGE_TECH_IDS = {
+  Feudal: 101,
+  Castle: 102,
+  Imperial: 103,
 };
 const AGE_TECH_DURATIONS: Record<string, number> = {
   Feudal: 130,
@@ -216,20 +213,20 @@ const detectType = (event: Record<string, unknown>): string => {
 
 const detectCategory = (type: string, event: Record<string, unknown>) => {
   const lower = type.toLowerCase();
-  if (lower.includes("research") || lower.includes("tech")) {
+  if (lower.includes("research")) {
     return "research";
   }
-  if (lower.includes("train") || lower.includes("queue")) {
+  if (lower.includes("queue")) {
     return "train";
   }
-  if (lower.includes("build") || lower.includes("wall") || "building" in event || "building_id" in event) {
+  if (lower.includes("build") || lower.includes("wall")) {
     return "build";
   }
   if (
     lower.includes("move") ||
     lower.includes("patrol") ||
     lower.includes("attack") ||
-    "target" in event
+    lower.includes("follow")
   ) {
     return "move";
   }
@@ -299,47 +296,13 @@ const detectBuildingId = (event: Record<string, unknown>) => {
 
 
 const detectLabel = (event: Record<string, unknown>, type: string) => {
-  const label =
-    stringFromValue(event.name) ??
-    stringFromValue(event.unit_name) ??
-    stringFromValue(event.building_name) ??
-    stringFromValue(event.tech_name) ??
-    stringFromValue(event.action_name);
-
-  if (label) return label;
-
-  const unitCount = Array.isArray(event.unit_ids) ? event.unit_ids.length : undefined;
-  if (type === "Move" && unitCount) return `Move (${unitCount} units)`;
-  if (type === "Patrol" && unitCount) return `Patrol (${unitCount} units)`;
   if (type === "Build") return "Build structure";
-  if (type === "Wall") return "Build wall segment";
+  if (type === "Wall") return "Build wall";
   if (type === "Research") return "Research technology";
-  if (type === "Train") return "Train unit";
-  if (type === "Gatherpoint") return "Set gather point";
-  if (type === "Interact") return "Interact";
-  if (type === "Order") return "Issue order";
+  if (type === "Dequeue") return "Train unit";
   if (type === "Resign") return "Resign";
 
   return type;
-};
-
-const normalizeEventLabel = (
-  type: string,
-  baseLabel: string,
-  unitTypeId?: number,
-  techId?: number
-) => {
-  const unitName = getUnitName(unitTypeId);
-  const techName = getTechName(techId);
-  if (type === "Research") {
-    return techName ?? baseLabel;
-  }
-  if (type === "DeQueue") {
-    if (unitName) return `Dequeue ${unitName}`;
-    if (techName) return `Dequeue ${techName}`;
-    return "Dequeue";
-  }
-  return baseLabel;
 };
 
 const shouldSkipEvent = (type: string, label: string) =>
@@ -429,6 +392,7 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         (Array.isArray(payload?.data)
           ? extractPositionFromData(payload.data as number[], bounds)
           : undefined);
+
       const category = detectCategory(actionType, payload ?? {});
       const age = detectAgeFromEvent(payload ?? {});
       const unitId = Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined;
@@ -455,8 +419,7 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
           : actionType === "Delete" && Array.isArray(payload?.data)
             ? extractDeleteTargetId(payload.data as number[])
             : undefined;
-      const baseLabel = detectLabel(payload ?? {}, actionType);
-      const label = normalizeEventLabel(actionType, baseLabel, unitTypeId, techId);
+      const label = detectLabel(payload ?? {}, actionType);
       if (shouldSkipEvent(actionType, label)) return;
 
       // Expand wall commands into per-tile events
@@ -539,8 +502,7 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         (Array.isArray(event.data)
           ? extractIdFromData(event.data as number[])
           : undefined);
-      const baseLabel = detectLabel(event, type);
-      const label = normalizeEventLabel(type, baseLabel, unitTypeId, techId);
+      const label = detectLabel(event, type);
       if (shouldSkipEvent(type, label)) return;
       const id = `${type}-${playerId ?? "p"}-${time}-${index}`;
       if (used.has(id)) return;
@@ -648,11 +610,10 @@ export const extractPlayerStats = (
     const ageTimings: Record<string, number> = {};
 
     playerEvents.forEach((event) => {
-      // 1. Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
-      if (event.type === "Research" && event.label) {
-        const lower = event.label.toLowerCase();
-        Object.entries(AGE_TECH_NAMES).forEach(([age, name]) => {
-          if (lower.includes(name.toLowerCase())) {
+      // Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
+      if (event.type === "Research" && event.techId) {
+        Object.entries(AGE_TECH_IDS).forEach(([age, id]) => {
+          if (event.techId === id) {
             let duration = AGE_TECH_DURATIONS[age] ?? 0;
 
             // Apply Civ Bonuses
@@ -677,10 +638,6 @@ export const extractPlayerStats = (
             }
           }
         });
-      }
-      // 2. Check for age-tagged events (fallback)
-      if (event.age && ageTimings[event.age] === undefined) {
-        ageTimings[event.age] = event.time;
       }
     });
 

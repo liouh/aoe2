@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +16,7 @@ import {
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
+import { getTechName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
@@ -77,6 +78,8 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = CONS
       itemLabel = getBuildingName(event.buildingTypeId) ?? event.label;
     } else if (event.category === "train") {
       itemLabel = getUnitName(event.unitTypeId) ?? event.label;
+    } else if (event.category === "research") {
+      itemLabel = getTechName(event.techId) ?? event.label;
     }
 
     const isMil = event.category === "train" && !isEconomic(itemLabel);
@@ -321,7 +324,6 @@ export default function Home() {
     };
   };
 
-
   const buildEventsForMap = useMemo(
     () =>
       events.filter(
@@ -333,8 +335,7 @@ export default function Home() {
     [events]
   );
 
-
-  const buildEventsTimeline = useMemo(
+  const buildEvents = useMemo(
     () => events.filter((event) => event.category === "build" && timelineShowBuildings),
     [events, timelineShowBuildings]
   );
@@ -1373,7 +1374,7 @@ export default function Home() {
                         .map((playerId, index) => {
                           const player = players.find((item) => item.id === playerId);
                           if (!player) return null;
-                          const playerBuilds = buildEventsTimeline.filter(
+                          const playerBuilds = buildEvents.filter(
                             (event) => event.playerId === player?.id
                           );
                           const playerTrains = trainEvents.filter(
