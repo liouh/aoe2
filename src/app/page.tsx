@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1651,7 +1651,7 @@ export default function Home() {
 
                   {matchInfo && (
                     <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-                      <h2 className="headline text-2xl">Match Info</h2>
+                      <h2 className="headline text-2xl">Game Info</h2>
                       <div className="grid gap-6 md:grid-cols-4">
                         {matchInfo.gameTypeId !== undefined && (
                           <div className="flex flex-col gap-1">
