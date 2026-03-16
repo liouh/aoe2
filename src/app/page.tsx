@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -983,7 +983,7 @@ export default function Home() {
               </div>
             </div>
             <div
-              className="relative w-full aspect-[2/1] min-h-[480px]"
+              className="relative w-full aspect-[2/1]"
               ref={mapContainerRef}
               style={{
                 touchAction: "none",
