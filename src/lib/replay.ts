@@ -1,4 +1,5 @@
-import { getTechName, getUnitName } from "@/lib/techMappings";
+import { getUnitName } from "@/lib/entityNames";
+import { getTechName } from "@/lib/techMappings";
 
 export type TimelineEvent = {
   id: string;
@@ -34,7 +35,6 @@ export type PlayerStats = {
   ageTimings?: Record<string, number>;
 };
 
-const AGE_LABELS = ["Dark", "Feudal", "Castle", "Imperial"];
 
 const TIME_KEYS = ["time", "timestamp", "tick", "t", "world_time", "game_time"];
 const PLAYER_KEYS = [
@@ -699,24 +699,6 @@ export const formatClock = (seconds: number) => {
   const mins = Math.floor(total / 60);
   const secs = Math.floor(total % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-};
-
-export const buildOrdersByAge = (events: TimelineEvent[]) => {
-  const orders = events.filter((event) =>
-    ["build", "train", "research"].includes(event.category)
-  );
-  const byAge = new Map<string, TimelineEvent[]>();
-  orders.forEach((event) => {
-    const age = event.age ?? "Unknown";
-    const list = byAge.get(age) ?? [];
-    list.push(event);
-    byAge.set(age, list);
-  });
-  AGE_LABELS.forEach((label) => {
-    if (!byAge.has(label)) byAge.set(label, []);
-  });
-  if (!byAge.has("Unknown")) byAge.set("Unknown", []);
-  return byAge;
 };
 
 export const determineDuration = (

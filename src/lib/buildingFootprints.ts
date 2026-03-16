@@ -233,9 +233,6 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   2560: { w: 3, h: 3 }, // Settlement
 };
 
-// Building names are now in entityNames.ts (generated from de.csv)
-export { getBuildingName } from "@/lib/entityNames";
-
 export const getBuildingFootprint = (
   buildingTypeId?: number
 ): BuildingFootprint => {

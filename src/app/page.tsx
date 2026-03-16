@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -14,8 +14,8 @@ import {
   type TimelineEvent,
 } from "@/lib/replay";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
-import { getBuildingFootprint, getBuildingName } from "@/lib/buildingFootprints";
-import { getUnitName } from "@/lib/techMappings";
+import { getBuildingFootprint } from "@/lib/buildingFootprints";
+import { getUnitName, getBuildingName } from "@/lib/entityNames";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 

@@ -1,5 +1,3 @@
-export { getUnitName } from "@/lib/entityNames";
-// Unit/building names are now in entityNames.ts (generated from de.csv)
 // This file contains technology (research) mappings.
 
 const TECH_NAMES: Record<number, string> = {
@@ -555,31 +553,3 @@ const TECH_NAMES: Record<number, string> = {
 };
 
 export const getTechName = (id?: number) => (id ? TECH_NAMES[id] : undefined);
-
-const TECH_NAME_TO_ID = Object.entries(TECH_NAMES).reduce<Record<string, number>>(
-  (acc, [id, name]) => {
-    acc[name] = Number(id);
-    return acc;
-  },
-  {}
-);
-
-const RESOURCE_TECH_NAME_MAP: Record<
-  "food" | "wood" | "gold" | "stone" | "economy",
-  string[]
-> = {
-  food: ["Horse Collar", "Heavy Plow", "Crop Rotation"],
-  wood: ["Double Bit Axe", "Bow Saw", "Two Man Saw"],
-  gold: ["Gold Mining", "Gold Shaft Mining"],
-  stone: ["Stone Mining", "Stone Shaft Mining"],
-  economy: ["Wheelbarrow", "Hand Cart"],
-};
-
-export const RESOURCE_TECH_IDS = Object.entries(RESOURCE_TECH_NAME_MAP).reduce<
-  Record<string, number[]>
->((acc, [resource, names]) => {
-  acc[resource] = names
-    .map((name) => TECH_NAME_TO_ID[name])
-    .filter((id): id is number => typeof id === "number");
-  return acc;
-}, {});

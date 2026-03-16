@@ -37,6 +37,7 @@ export const MAP_SIZES: Record<number, string> = {
 };
 
 export const getMapSizeName = (id?: number) => (id !== undefined ? MAP_SIZES[id] : undefined);
+
 export const MAP_TYPES: Record<number, string> = {
   9: "Arabia",
   10: "Archipelago",
