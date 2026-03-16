@@ -49,13 +49,6 @@ const isEconomic = (name: string) => {
     lower.includes("trade cog") ||
     lower.includes("fishing ship") ||
     lower.includes("transport ship") ||
-    lower.includes("llama") ||
-    lower.includes("cow") ||
-    lower.includes("sheep") ||
-    lower.includes("turkey") ||
-    lower.includes("goat") ||
-    lower.includes("goose") ||
-    lower.includes("pig") ||
     lower.includes("mule cart")
   );
 };
