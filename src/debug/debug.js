@@ -10,20 +10,19 @@ __aoe2rec.operations.filter((item) => {
         && !item.Action.action_data.Game
         && !item.Action.action_data.Resign
         && !item.Action.action_data.Flare
+        && !item.Action.action_data.Interact
+        && !item.Action.action_data.Order
 
         && !item.Action.action_data.Move
         && !item.Action.action_data.DeAttackMove
         && !item.Action.action_data.Patrol
         && !item.Action.action_data.Follow
-        && !item.Action.action_data.Stop
         && !item.Action.action_data.AttackGround
 
+        && !item.Action.action_data.Stop
         && !item.Action.action_data.Stance
         && !item.Action.action_data.Formation
         && !item.Action.action_data.Autoscout
-
-        && !item.Action.action_data.Interact
-        && !item.Action.action_data.Order
 
         && !item.Action.action_data.Gatherpoint
         && !item.Action.action_data.BackToWork

@@ -199,23 +199,19 @@ const detectType = (event: Record<string, unknown>): string => {
 };
 
 const detectCategory = (type: string, event: Record<string, unknown>) => {
-  const lower = type.toLowerCase();
-  if (lower.includes("research")) {
-    return "research";
-  }
-  if (lower.includes("queue")) {
-    return "train";
-  }
-  if (lower.includes("build") || lower.includes("wall")) {
-    return "build";
-  }
-  if (
-    lower.includes("move") ||
-    lower.includes("patrol") ||
-    lower.includes("attack") ||
-    lower.includes("follow")
-  ) {
-    return "move";
+  switch (type) {
+    case "Research": return "research";
+    case "DeQueue": return "train";
+    case "Build": return "build";
+    case "Wall": return "build";
+    case "Move": return "move";
+    case "Patrol": return "move";
+    case "DeAttack": return "move";
+    case "Follow": return "move";
+    case "AttackGround": return "move";
+    case "Autoscout": return "autoscout";
+    case "Buy": return "market";
+    case "Sell": return "market";
   }
   return "other";
 };
