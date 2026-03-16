@@ -241,9 +241,9 @@ export default function Home() {
           setIsPlaying(false);
           return prev;
         }
-        return Math.min(prev + 10, duration);
+        return Math.min(prev + 5, duration);
       });
-    }, 100);
+    }, 50);
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
