@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1171,7 +1171,7 @@ export default function Home() {
                     }}
                     title="Jump to timeline position"
                   >
-                    ⏲
+                    ▾
                   </button>
                 </div>
               )}
