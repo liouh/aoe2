@@ -4,7 +4,7 @@ export type TimelineEvent = {
   playerId?: number;
   type: string;
   label: string;
-  category: "build" | "move" | "research" | "train" | "other";
+  category: "build" | "move" | "research" | "train" | "autoscout" | "market" | "other";
   x?: number;
   y?: number;
   unitId?: string | number;
@@ -46,12 +46,6 @@ const PLAYER_KEYS = [
 const POSITION_KEYS = ["pos", "position", "coords", "target", "to", "location"];
 const TYPE_KEYS = ["type", "action", "kind", "name", "command", "event"];
 
-const AGE_MATCH = [
-  { match: /dark/i, label: "Dark" },
-  { match: /feudal/i, label: "Feudal" },
-  { match: /castle/i, label: "Castle" },
-  { match: /imperial/i, label: "Imperial" },
-];
 const AGE_TECH_IDS = {
   Feudal: 101,
   Castle: 102,
@@ -87,13 +81,6 @@ const stringFromValue = (value: unknown): string | undefined => {
   if (typeof value === "string") return value;
   if (typeof value === "number") return String(value);
   return undefined;
-};
-
-const extractAge = (value: unknown): string | undefined => {
-  const raw = stringFromValue(value);
-  if (!raw) return undefined;
-  const match = AGE_MATCH.find((entry) => entry.match.test(raw));
-  return match?.label;
 };
 
 const extractPosition = (event: Record<string, unknown>) => {
@@ -231,15 +218,6 @@ const detectCategory = (type: string, event: Record<string, unknown>) => {
     return "move";
   }
   return "other";
-};
-
-const detectAgeFromEvent = (event: Record<string, unknown>) => {
-  for (const key of ["age", "age_id", "ageId", "tech", "research"]) {
-    const age = extractAge(event[key]);
-    if (age) return age;
-  }
-  const type = detectType(event);
-  return extractAge(type);
 };
 
 const detectPlayerId = (event: Record<string, unknown>): number | undefined => {
@@ -394,7 +372,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
           : undefined);
 
       const category = detectCategory(actionType, payload ?? {});
-      const age = detectAgeFromEvent(payload ?? {});
       const unitId = Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined;
       let unitTypeId =
         extractUnitTypeId(payload ?? {}) ??
@@ -445,7 +422,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
               buildingTypeId: wall.buildingTypeId,
               targetId,
               techId,
-              age,
               raw: payload ?? {},
             });
           });
@@ -474,7 +450,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         buildingTypeId,
         targetId,
         techId,
-        age,
         raw: payload ?? {},
       });
     });
@@ -491,7 +466,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
       const position = extractPosition(event);
       const playerId = detectPlayerId(event);
       const category = detectCategory(type, event);
-      const age = detectAgeFromEvent(event);
       let unitTypeId =
         extractUnitTypeId(event) ??
         (Array.isArray(event.data)
@@ -520,7 +494,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         unitTypeId,
         buildingId: detectBuildingId(event),
         techId,
-        age,
         raw: event,
       });
     });
