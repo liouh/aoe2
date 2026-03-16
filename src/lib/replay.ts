@@ -28,25 +28,9 @@ export type PlayerSummary = {
   won?: boolean;
 };
 
-export type TimeSeriesPoint = {
-  time: number;
-  value: number;
-};
-
-export type ResourceSeries = {
-  food: TimeSeriesPoint[];
-  wood: TimeSeriesPoint[];
-  gold: TimeSeriesPoint[];
-  stone: TimeSeriesPoint[];
-};
-
 export type PlayerStats = {
   playerId: number;
   apm: number;
-  villagerPeak?: number;
-  villagerSeries?: TimeSeriesPoint[];
-  militaryPeak?: number;
-  resources?: ResourceSeries;
   ageTimings?: Record<string, number>;
 };
 
@@ -65,16 +49,6 @@ const PLAYER_KEYS = [
 const POSITION_KEYS = ["pos", "position", "coords", "target", "to", "location"];
 const TYPE_KEYS = ["type", "action", "kind", "name", "command", "event"];
 
-const RESOURCE_KEYS = {
-  food: ["food", "food_workers", "villagers_food", "vils_food"],
-  wood: ["wood", "wood_workers", "villagers_wood", "vils_wood"],
-  gold: ["gold", "gold_workers", "villagers_gold", "vils_gold"],
-  stone: ["stone", "stone_workers", "villagers_stone", "vils_stone"],
-};
-
-const VILLAGER_KEYS = ["villagers", "villager_count", "vils", "villagers_total"];
-const MILITARY_KEYS = ["military", "military_count", "army", "units_military"];
-
 const AGE_MATCH = [
   { match: /dark/i, label: "Dark" },
   { match: /feudal/i, label: "Feudal" },
@@ -91,16 +65,6 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Castle: 160,
   Imperial: 190,
 };
-const CHAT_KEYS = [
-  "chat",
-  "message",
-  "msg",
-  "text",
-  "chat_message",
-  "chat_text",
-  "message_text",
-  "chatMessage",
-];
 
 const MAX_SCAN_DEPTH = 6;
 const MAX_ARRAY_SCAN = 5000;
@@ -133,14 +97,6 @@ const extractAge = (value: unknown): string | undefined => {
   if (!raw) return undefined;
   const match = AGE_MATCH.find((entry) => entry.match.test(raw));
   return match?.label;
-};
-
-const extractChatText = (event: Record<string, unknown>) => {
-  for (const key of CHAT_KEYS) {
-    const value = stringFromValue(event[key]);
-    if (value) return value;
-  }
-  return undefined;
 };
 
 const extractPosition = (event: Record<string, unknown>) => {
@@ -666,36 +622,6 @@ export const summarizePlayers = (
   return players;
 };
 
-const extractSeriesFromArray = (
-  items: Record<string, unknown>[],
-  key: string
-): TimeSeriesPoint[] =>
-  items
-    .map((item) => {
-      const time = extractTimeValue(item);
-      const value = pickNumber(item[key]);
-      if (time === undefined || value === undefined) return undefined;
-      return { time, value };
-    })
-    .filter((point): point is TimeSeriesPoint => Boolean(point))
-    .sort((a, b) => a.time - b.time);
-
-const findSeries = (
-  source: unknown,
-  keys: string[]
-): { key: string; series: TimeSeriesPoint[] } | undefined => {
-  if (!source) return undefined;
-  const arrays = collectEventArrays(source);
-  for (const array of arrays) {
-    for (const key of keys) {
-      if (array.some((item) => key in item)) {
-        return { key, series: extractSeriesFromArray(array, key) };
-      }
-    }
-  }
-  return undefined;
-};
-
 export const extractPlayerStats = (
   events: TimelineEvent[],
   durationSeconds: number | undefined,
@@ -717,31 +643,6 @@ export const extractPlayerStats = (
   const stats: PlayerStats[] = [];
   eventsByPlayer.forEach((playerEvents, playerId) => {
     const apm = Math.round(playerEvents.length / durationMinutes);
-    const resourceSeries: ResourceSeries = {
-      food: [],
-      wood: [],
-      gold: [],
-      stone: [],
-    };
-
-    Object.entries(RESOURCE_KEYS).forEach(([resource, keys]) => {
-      const found = findSeries(replay, keys);
-      if (found) {
-        resourceSeries[resource as keyof ResourceSeries] = found.series;
-      }
-    });
-
-    const villSeries =
-      findSeries(replay, VILLAGER_KEYS)?.series ??
-      (resourceSeries.food.length
-        ? resourceSeries.food.map((point) => ({
-          time: point.time,
-          value: point.value,
-        }))
-        : undefined);
-
-    const militarySeries = findSeries(replay, MILITARY_KEYS)?.series;
-
     const player = players?.find((p) => p.id === playerId);
     const civId = player?.civId;
     const ageTimings: Record<string, number> = {};
@@ -786,14 +687,6 @@ export const extractPlayerStats = (
     stats.push({
       playerId,
       apm,
-      villagerSeries: villSeries,
-      villagerPeak: villSeries
-        ? Math.max(...villSeries.map((point) => point.value))
-        : undefined,
-      militaryPeak: militarySeries
-        ? Math.max(...militarySeries.map((point) => point.value))
-        : undefined,
-      resources: resourceSeries,
       ageTimings,
     });
   });
