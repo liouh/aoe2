@@ -1164,7 +1164,7 @@ export default function Home() {
                   </button>
                   <button
                     type="button"
-                    className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    className="mt-2 p-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       jumpToTimeline();
