@@ -145,10 +145,10 @@ export default function Home() {
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
-  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("units");
+  const [activeTab, setActiveTab] = useState<"timeline" | "units" | "info">("info");
 
   const LOADING_STEPS = [
-    "Parsing replay...",
+    "Loading replay...",
     "Preparing viewer..."
   ];
 
@@ -810,11 +810,18 @@ export default function Home() {
 
   useEffect(() => {
     const loadDefault = async () => {
+      const SAMPLE_REPLAYS = [
+        "hera-1v1.aoe2record",
+        "hera-1v7.aoe2record",
+      ];
+      const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
+
       setLoading(true);
       setError(null);
       try {
         setLoadingStep(0);
-        const response = await fetch("default.aoe2record");
+        const response = await fetch(randomFile);
+        if (!response.ok) throw new Error("Sample file not found");
         const buffer = await response.arrayBuffer();
 
         const parsed = parse_rec(buffer);
@@ -1283,6 +1290,15 @@ export default function Home() {
             <div className="flex flex-col gap-6">
               <div className="flex border-b border-white/10">
                 <button
+                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "info"
+                    ? "border-b-2 border-[color:var(--accent)] text-white"
+                    : "text-white/40 hover:text-white/70"
+                    }`}
+                  onClick={() => setActiveTab("info")}
+                >
+                  Info
+                </button>
+                <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "units"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "text-white/40 hover:text-white/70"
@@ -1299,15 +1315,6 @@ export default function Home() {
                   onClick={() => setActiveTab("timeline")}
                 >
                   Timeline
-                </button>
-                <button
-                  className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "info"
-                    ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "text-white/40 hover:text-white/70"
-                    }`}
-                  onClick={() => setActiveTab("info")}
-                >
-                  Info
                 </button>
               </div>
 
