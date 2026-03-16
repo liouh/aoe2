@@ -1643,6 +1643,9 @@ export default function Home() {
                                   <p className="text-sm">—</p>
                                 )}
                               </div>
+                              <div>
+                                {stats?.autoscoutUsage ? (<p className="text-xs text-[color:var(--muted)]">Used auto scout</p>) : null}
+                              </div>
                             </div>
                           </div>
                         );

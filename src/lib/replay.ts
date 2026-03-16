@@ -30,6 +30,7 @@ export type PlayerStats = {
   playerId: number;
   apm: number;
   ageTimings?: Record<string, number>;
+  autoscoutUsage?: number;
 };
 
 
@@ -578,7 +579,11 @@ export const extractPlayerStats = (
     const civId = player?.civId;
     const ageTimings: Record<string, number> = {};
 
+    let autoscoutUsage = 0;
+
     playerEvents.forEach((event) => {
+      if (event.category === "autoscout") autoscoutUsage++;
+
       // Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
       if (event.type === "Research" && event.techId) {
         Object.entries(AGE_TECH_IDS).forEach(([age, id]) => {
@@ -614,6 +619,7 @@ export const extractPlayerStats = (
       playerId,
       apm,
       ageTimings,
+      autoscoutUsage,
     });
   });
 
