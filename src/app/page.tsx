@@ -925,11 +925,12 @@ export default function Home() {
               </p>
             </div>
             <label
-              className="panel flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl px-6 py-4 text-sm font-semibold text-[color:var(--foreground)]"
+              className="panel flex cursor-pointer flex-row items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-semibold text-[color:var(--foreground)] md:flex-col md:px-6 md:py-4 md:text-sm"
               onClick={() => setIsPlaying(false)}
             >
-              <span className="text-2xl">📁</span>
-              <span>Open .aoe2record replay file</span>
+              <span className="text-xl md:text-2xl">📁</span>
+              <span className="hidden md:inline">Open .aoe2record replay file</span>
+              <span className="md:hidden">Open Replay</span>
               <input
                 type="file"
                 accept=".aoe2record,.mgz"
@@ -1106,72 +1107,74 @@ export default function Home() {
               }}
             >
               {/* Map Floating Controls */}
-              <div
-                className="absolute right-0"
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm">
+              {!loading && !error && (
+                <div
+                  className="absolute right-0 z-10"
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm">
+                    <button
+                      type="button"
+                      className="py-1 w-full transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMapZoom((prev) => {
+                          const next = clamp(prev * 1.25, 1, MAX_ZOOM);
+                          if (next === prev) return prev;
+                          const scaleChange = next / prev;
+                          setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
+                          return next;
+                        });
+                      }}
+                    >
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      className="py-1 w-full transition hover:bg-white/20 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMapZoom((prev) => {
+                          const next = clamp(prev * 0.8, 1, MAX_ZOOM);
+                          if (next === prev) return prev;
+                          if (next <= 1) {
+                            setMapPan({ x: 0, y: 0 });
+                            return next;
+                          }
+                          const scaleChange = next / prev;
+                          setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
+                          return next;
+                        });
+                      }}
+                    >
+                      -
+                    </button>
+                  </div>
                   <button
                     type="button"
-                    className="py-1 w-full transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
+                    className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMapZoom((prev) => {
-                        const next = clamp(prev * 1.25, 1, MAX_ZOOM);
-                        if (next === prev) return prev;
-                        const scaleChange = next / prev;
-                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
-                        return next;
-                      });
+                      setMapZoom(1);
+                      setMapPan({ x: 0, y: 0 });
                     }}
+                    title="Reset zoom"
                   >
-                    +
+                    ⛶
                   </button>
                   <button
                     type="button"
-                    className="py-1 w-full transition hover:bg-white/20 cursor-pointer"
+                    className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMapZoom((prev) => {
-                        const next = clamp(prev * 0.8, 1, MAX_ZOOM);
-                        if (next === prev) return prev;
-                        if (next <= 1) {
-                          setMapPan({ x: 0, y: 0 });
-                          return next;
-                        }
-                        const scaleChange = next / prev;
-                        setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
-                        return next;
-                      });
+                      jumpToTimeline();
                     }}
+                    title="Jump to timeline position"
                   >
-                    -
+                    ⏲
                   </button>
                 </div>
-                <button
-                  type="button"
-                  className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMapZoom(1);
-                    setMapPan({ x: 0, y: 0 });
-                  }}
-                  title="Reset zoom"
-                >
-                  ⛶
-                </button>
-                <button
-                  type="button"
-                  className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    jumpToTimeline();
-                  }}
-                  title="Jump to timeline position"
-                >
-                  ⏲
-                </button>
-              </div>
+              )}
               <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
 
               {loading && (
