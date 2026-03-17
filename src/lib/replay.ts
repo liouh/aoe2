@@ -40,19 +40,6 @@ export type PlayerStats = {
   marketUsage?: MarketUsage;
 };
 
-const TIME_KEYS = ["time", "timestamp", "tick", "t", "world_time", "game_time"];
-const PLAYER_KEYS = [
-  "player",
-  "player_id",
-  "playerId",
-  "owner",
-  "sourcePlayer",
-  "source_player",
-  "player_number",
-];
-const POSITION_KEYS = ["pos", "position", "coords", "target", "to", "location"];
-const TYPE_KEYS = ["type", "action", "kind", "name", "command", "event"];
-
 const AGE_TECH_IDS = {
   Feudal: 101,
   Castle: 102,
@@ -63,11 +50,6 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Castle: 160,
   Imperial: 190,
 };
-const MAX_SCAN_DEPTH = 6;
-const MAX_ARRAY_SCAN = 5000;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const pickNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
@@ -83,32 +65,9 @@ const normalizeTime = (value: number, scale?: number): number => {
   return value / appliedScale;
 };
 
-const stringFromValue = (value: unknown): string | undefined => {
-  if (typeof value === "string") return value;
-  if (typeof value === "number") return String(value);
-  return undefined;
-};
-
 const extractPosition = (event: Record<string, unknown>) => {
   if (typeof event.x === "number" && typeof event.y === "number") {
     return { x: event.x, y: event.y };
-  }
-  for (const key of POSITION_KEYS) {
-    const candidate = event[key];
-    if (isRecord(candidate)) {
-      const x = pickNumber(candidate.x);
-      const y = pickNumber(candidate.y);
-      if (x !== undefined && y !== undefined) {
-        return { x, y };
-      }
-    }
-    if (Array.isArray(candidate) && candidate.length >= 2) {
-      const x = pickNumber(candidate[0]);
-      const y = pickNumber(candidate[1]);
-      if (x !== undefined && y !== undefined) {
-        return { x, y };
-      }
-    }
   }
   return undefined;
 };
@@ -196,14 +155,6 @@ const extractDeleteTargetId = (data: number[]) => {
   return value;
 };
 
-const detectType = (event: Record<string, unknown>): string => {
-  for (const key of TYPE_KEYS) {
-    const value = stringFromValue(event[key]);
-    if (value) return value;
-  }
-  return "event";
-};
-
 const detectCategory = (type: string, event: Record<string, unknown>) => {
   switch (type) {
     case "Research": return "research";
@@ -220,100 +171,6 @@ const detectCategory = (type: string, event: Record<string, unknown>) => {
     case "Sell": return "market";
   }
   return "other";
-};
-
-const detectPlayerId = (event: Record<string, unknown>): number | undefined => {
-  for (const key of PLAYER_KEYS) {
-    const value = pickNumber(event[key]);
-    if (value !== undefined) return value;
-  }
-  return undefined;
-};
-
-const detectUnitId = (event: Record<string, unknown>) => {
-  const value =
-    event.unit_id ?? event.unitId ?? event.entity_id ?? event.entityId ?? event.unit;
-  return typeof value === "string" || typeof value === "number" ? value : undefined;
-};
-
-const extractUnitTypeId = (event: Record<string, unknown>) => {
-  const keys = [
-    "unit_type_id",
-    "unit_type",
-    "unitTypeId",
-    "unitType",
-    "train_unit_id",
-    "train_unit_type",
-  ];
-  for (const key of keys) {
-    const value = pickNumber(event[key]);
-    if (value !== undefined) return value;
-  }
-  return undefined;
-};
-
-const extractTechId = (event: Record<string, unknown>) => {
-  const keys = [
-    "tech_id",
-    "technology_id",
-    "research_id",
-    "technology_type",
-    "techId",
-    "tech",
-  ];
-  for (const key of keys) {
-    const value = pickNumber(event[key]);
-    if (value !== undefined) return value;
-  }
-  return undefined;
-};
-
-const detectBuildingId = (event: Record<string, unknown>) => {
-  const value =
-    event.building_id ?? event.buildingId ?? event.structure_id ?? event.structureId;
-  return typeof value === "string" || typeof value === "number" ? value : undefined;
-};
-
-const extractTimeValue = (event: Record<string, unknown>) => {
-  for (const key of TIME_KEYS) {
-    const value = pickNumber(event[key]);
-    if (value !== undefined) {
-      return normalizeTime(value);
-    }
-  }
-  return undefined;
-};
-
-const collectEventArrays = (
-  value: unknown,
-  depth = 0,
-  arrays: Record<string, unknown>[][] = [],
-  seen = new Set<unknown>()
-) => {
-  if (depth > MAX_SCAN_DEPTH) return arrays;
-  if (!value || typeof value !== "object") return arrays;
-  if (seen.has(value)) return arrays;
-  seen.add(value);
-
-  if (Array.isArray(value)) {
-    const sample = value.find((item) => isRecord(item));
-    if (sample && extractTimeValue(sample)) {
-      arrays.push(value.filter(isRecord).slice(0, MAX_ARRAY_SCAN));
-      return arrays;
-    }
-    value.slice(0, 100).forEach((entry) => {
-      collectEventArrays(entry, depth + 1, arrays, seen);
-    });
-    return arrays;
-  }
-
-  if (isRecord(value)) {
-    Object.values(value).forEach((entry) => {
-      collectEventArrays(entry, depth + 1, arrays, seen);
-    });
-  }
-
-  return arrays;
 };
 
 export const buildTimeline = (replay: unknown): TimelineEvent[] => {
@@ -360,18 +217,8 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
 
       const category = detectCategory(actionType, payload ?? {});
       const unitId = Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined;
-      let unitTypeId =
-        extractUnitTypeId(payload ?? {}) ??
-        (Array.isArray(payload?.data) ? extractIdFromData(payload.data as number[]) : undefined);
-      if (actionType === "DeQueue" && unitTypeId === undefined) {
-        const dequeueUnit = pickNumber(payload?.unit_id);
-        if (dequeueUnit !== undefined) {
-          unitTypeId = dequeueUnit;
-        }
-      }
-      let techId =
-        extractTechId(payload ?? {}) ??
-        (Array.isArray(payload?.data) ? extractIdFromData(payload.data as number[]) : undefined);
+      let unitTypeId = pickNumber(payload?.unit_id);
+      let techId = pickNumber(payload?.technology_type);
       const buildingId = payload?.building_id;
       const buildingTypeId =
         Array.isArray(payload?.data) && (actionType === "Build" || actionType === "Wall")
@@ -440,46 +287,7 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
     return events.sort((a, b) => a.time - b.time);
   }
 
-  const arrays = collectEventArrays(replay);
-  arrays.forEach((array) => {
-    array.forEach((event, index) => {
-      const time = extractTimeValue(event);
-      if (time === undefined) return;
-      const type = detectType(event);
-      const position = extractPosition(event);
-      const playerId = detectPlayerId(event);
-      const category = detectCategory(type, event);
-      let unitTypeId =
-        extractUnitTypeId(event) ??
-        (Array.isArray(event.data)
-          ? extractIdFromData(event.data as number[])
-          : undefined);
-      let techId =
-        extractTechId(event) ??
-        (Array.isArray(event.data)
-          ? extractIdFromData(event.data as number[])
-          : undefined);
-      const id = `${type}-${playerId ?? "p"}-${time}-${index}`;
-      if (used.has(id)) return;
-      used.add(id);
-      events.push({
-        id,
-        time,
-        playerId,
-        type,
-        category,
-        x: position?.x,
-        y: position?.y,
-        unitId: detectUnitId(event),
-        unitTypeId,
-        buildingId: detectBuildingId(event),
-        techId,
-        raw: event,
-      });
-    });
-  });
-
-  return events.sort((a, b) => a.time - b.time);
+  return events;
 };
 
 export const summarizePlayers = (
