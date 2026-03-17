@@ -1597,7 +1597,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Market Use</h2>
+                      <h2 className="headline text-2xl">Market Usage</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player) => {
@@ -1629,9 +1629,9 @@ export default function Home() {
                                   <div key={res} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
                                     <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
                                     <span className="text-sm tabular-nums font-medium flex items-center gap-1">
-                                      <span className={bought > 0 ? "text-white" : "text-white/10"}>+{formatNum(bought)}</span>
+                                      <span className={bought > 0 ? "text-green-400/70" : "text-white/10"}>+{formatNum(bought)}</span>
                                       <span className="text-white/5 mx-0.5">/</span>
-                                      <span className={sold > 0 ? "text-white" : "text-white/10"}>-{formatNum(sold)}</span>
+                                      <span className={sold > 0 ? "text-[color:var(--accent)]" : "text-white/10"}>-{formatNum(sold)}</span>
                                     </span>
                                   </div>
                                 );
