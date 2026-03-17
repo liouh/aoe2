@@ -1501,11 +1501,11 @@ export default function Home() {
                             <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
-                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
+                                <p className="text-xl tabular-nums font-medium">{formatOptional(stats?.apm)}</p>
                               </div>
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.peakApm)}</p>
+                                <p className="text-xl tabular-nums font-medium">{formatOptional(stats?.peakApm)}</p>
                               </div>
                             </div>
                           </div>
@@ -1550,7 +1550,7 @@ export default function Home() {
                                     stats.military.map((u, idx) => (
                                       <div key={idx} className="flex items-center justify-between text-sm">
                                         <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                        <span className="tabular-nums shrink-0 font-medium">{u.count}</span>
                                       </div>
                                     ))
                                   ) : (
@@ -1570,7 +1570,7 @@ export default function Home() {
                                     stats.economic.map((u, idx) => (
                                       <div key={idx} className="flex items-center justify-between text-sm">
                                         <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                        <span className="tabular-nums shrink-0 font-medium">{u.count}</span>
                                       </div>
                                     ))
                                   ) : (
@@ -1619,13 +1619,13 @@ export default function Home() {
                                     <div className="flex flex-col gap-1.5">
                                       <div className="flex items-center justify-between text-sm">
                                         <span className="text-[color:var(--muted)]">Bought</span>
-                                        <span className="tabular-nums font-bold">
+                                        <span className="tabular-nums font-medium">
                                           {bought > 0 ? "+" : ""}{formatNum(bought)}
                                         </span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
                                         <span className="text-[color:var(--muted)]">Sold</span>
-                                        <span className="tabular-nums font-bold">
+                                        <span className="tabular-nums font-medium">
                                           {sold > 0 ? "-" : ""}{formatNum(sold)}
                                         </span>
                                       </div>
