@@ -3,7 +3,6 @@ export type TimelineEvent = {
   time: number;
   playerId?: number;
   type: string;
-  label: string;
   category: "build" | "move" | "research" | "train" | "autoscout" | "market" | "other";
   x?: number;
   y?: number;
@@ -275,21 +274,6 @@ const detectBuildingId = (event: Record<string, unknown>) => {
   return typeof value === "string" || typeof value === "number" ? value : undefined;
 };
 
-
-const detectLabel = (event: Record<string, unknown>, type: string) => {
-  if (type === "Build") return "Build structure";
-  if (type === "Wall") return "Build wall";
-  if (type === "Research") return "Research technology";
-  if (type === "Dequeue") return "Train unit";
-  if (type === "Resign") return "Resign";
-
-  return type;
-};
-
-const shouldSkipEvent = (type: string, label: string) =>
-  type === "Order" || label === "Issue order";
-
-
 const extractTimeValue = (event: Record<string, unknown>) => {
   for (const key of TIME_KEYS) {
     const value = pickNumber(event[key]);
@@ -399,8 +383,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
           : actionType === "Delete" && Array.isArray(payload?.data)
             ? extractDeleteTargetId(payload.data as number[])
             : undefined;
-      const label = detectLabel(payload ?? {}, actionType);
-      if (shouldSkipEvent(actionType, label)) return;
 
       // Expand wall commands into per-tile events
       if (actionType === "Wall" && Array.isArray(payload?.data)) {
@@ -415,7 +397,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
               time,
               playerId,
               type: actionType,
-              label,
               category,
               x: tile.x,
               y: tile.y,
@@ -440,7 +421,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         time,
         playerId,
         type: actionType,
-        label,
         category,
         x: position?.x,
         y: position?.y,
@@ -479,8 +459,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         (Array.isArray(event.data)
           ? extractIdFromData(event.data as number[])
           : undefined);
-      const label = detectLabel(event, type);
-      if (shouldSkipEvent(type, label)) return;
       const id = `${type}-${playerId ?? "p"}-${time}-${index}`;
       if (used.has(id)) return;
       used.add(id);
@@ -489,7 +467,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         time,
         playerId,
         type,
-        label,
         category,
         x: position?.x,
         y: position?.y,

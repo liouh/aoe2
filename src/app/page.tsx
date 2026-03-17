@@ -102,6 +102,7 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
     count: number;
     isMilitary?: boolean;
     items: Map<string, number>;
+    label?: string;
   })[] = [];
 
   const activeGroups = new Map<string, any>();
@@ -114,7 +115,7 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
       ? event.raw.amount
       : 1;
 
-    let itemLabel = event.label;
+    let itemLabel = "Unknown Event";
     if (event.category === "build") {
       itemLabel = getBuildingName(event.buildingTypeId);
     } else if (event.category === "train") {
