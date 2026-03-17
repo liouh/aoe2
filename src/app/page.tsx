@@ -52,6 +52,7 @@ const MINIMAP_MAX_ZOOM = 5;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
 const MINIMAP_ICON_BORDER = 16;
+const MINIMAP_HOVER_OUTLINE = 2;
 const MINIMAP_UNIT_ALPHA = 0.8;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_BORDER = 2;
@@ -771,7 +772,7 @@ export default function Home() {
 
         context.save();
         context.strokeStyle = "#ffffff";
-        context.lineWidth = 2;
+        context.lineWidth = MINIMAP_HOVER_OUTLINE;
         context.beginPath();
         context.moveTo(p1.x, p1.y);
         context.lineTo(p2.x, p2.y);
