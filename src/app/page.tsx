@@ -50,6 +50,7 @@ const PLAYER_OUTLINES = [
   "#000000", // 8 orange
 ];
 
+const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MAX_ZOOM = 5;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
@@ -262,6 +263,57 @@ export default function Home() {
     const colorId = playerIdToColorId.get(playerId);
     if (colorId === undefined || colorId < 0) return "#ffffff";
     return PLAYER_OUTLINES[(colorId) % PLAYER_OUTLINES.length];
+  };
+
+  const handleZoom = (targetX: number, targetY: number, zoomFactor: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+
+    setMapZoom((prev) => {
+      const next = clamp(prev * zoomFactor, 1, MINIMAP_MAX_ZOOM);
+      if (next === prev) return prev;
+
+      const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
+      const wScale = (rect.width - 2) / mapSpan;
+      const hScale = rect.height / (mapSpan * 0.5);
+      const baseScale = Math.min(wScale, hScale);
+
+      const prevIsoScale = Math.max(1, baseScale * prev);
+      const nextIsoScale = Math.max(1, baseScale * next);
+
+      // 1. Where is the diamond origin right now?
+      const prevOriginX = rect.width * 0.5 + mapPan.x;
+      const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
+      const prevOriginY = (rect.height - prevDiamondHeight) / 2 + mapPan.y;
+
+      // 2. What are the isometric coordinates (rx, ry) under the target point?
+      const relX = targetX - prevOriginX;
+      const relY = targetY - prevOriginY;
+      const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
+      const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
+
+      // 3. Where would those SAME coordinates land at the NEXT scale if pan was 0?
+      const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
+      const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
+      const nextOriginX_noPan = rect.width * 0.5;
+
+      const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
+      const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
+
+      // 4. The new pan is the offset needed to put that point back under the target point
+      setMapPan(() =>
+        clampPan(
+          {
+            x: targetX - nextIsoX_noPan,
+            y: targetY - nextIsoY_noPan,
+          },
+          next
+        )
+      );
+
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -1082,53 +1134,7 @@ export default function Home() {
                 const rect = canvas.getBoundingClientRect();
                 const cursorX = event.clientX - rect.left;
                 const cursorY = event.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                setMapZoom((prev) => {
-                  const next = clamp(prev * 1.5, 1, MINIMAP_MAX_ZOOM);
-                  if (next === prev) return prev;
-
-                  const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
-                  const wScale = (rect.width - 2) / mapSpan;
-                  const hScale = rect.height / (mapSpan * 0.5);
-                  const baseScale = Math.min(wScale, hScale);
-
-                  const prevIsoScale = Math.max(1, baseScale * prev);
-                  const nextIsoScale = Math.max(1, baseScale * next);
-
-                  // 1. Where is the diamond origin right now?
-                  const prevOriginX = rect.width * 0.5 + mapPan.x;
-                  const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
-                  const prevOriginY = (rect.height - prevDiamondHeight) / 2 + mapPan.y;
-
-                  // 2. What are the isometric coordinates (rx, ry) under the cursor?
-                  const relX = cursorX - prevOriginX;
-                  const relY = cursorY - prevOriginY;
-                  const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
-                  const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
-
-                  // 3. Where would those SAME coordinates land at the NEXT scale if pan was 0?
-                  const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
-                  const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
-                  const nextOriginX_noPan = rect.width * 0.5;
-
-                  const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
-                  const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
-
-                  // 4. The new pan is the offset needed to put that point back under the cursor
-                  setMapPan((_) =>
-                    clampPan(
-                      {
-                        x: cursorX - nextIsoX_noPan,
-                        y: cursorY - nextIsoY_noPan,
-                      },
-                      next
-                    )
-                  );
-
-                  return next;
-                });
+                handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
               }}
             >
               {/* Map Floating Controls */}
@@ -1147,49 +1153,7 @@ export default function Home() {
                         const canvas = canvasRef.current;
                         if (!canvas) return;
                         const rect = canvas.getBoundingClientRect();
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-
-                        setMapZoom((prev) => {
-                          const next = clamp(prev * 1.5, 1, MINIMAP_MAX_ZOOM);
-                          if (next === prev) return prev;
-
-                          const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
-                          const wScale = (rect.width - 2) / mapSpan;
-                          const hScale = rect.height / (mapSpan * 0.5);
-                          const baseScale = Math.min(wScale, hScale);
-
-                          const prevIsoScale = Math.max(1, baseScale * prev);
-                          const nextIsoScale = Math.max(1, baseScale * next);
-
-                          const prevOriginX = rect.width * 0.5 + mapPan.x;
-                          const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
-                          const prevOriginY = (rect.height - prevDiamondHeight) / 2 + mapPan.y;
-
-                          const relX = centerX - prevOriginX;
-                          const relY = centerY - prevOriginY;
-                          const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
-                          const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
-
-                          const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
-                          const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
-                          const nextOriginX_noPan = rect.width * 0.5;
-
-                          const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
-                          const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
-
-                          setMapPan((_) =>
-                            clampPan(
-                              {
-                                x: centerX - nextIsoX_noPan,
-                                y: centerY - nextIsoY_noPan,
-                              },
-                              next
-                            )
-                          );
-
-                          return next;
-                        });
+                        handleZoom(rect.width / 2, rect.height / 2, MINIMAP_ZOOM_FACTOR);
                       }}
                     >
                       +
@@ -1202,49 +1166,7 @@ export default function Home() {
                         const canvas = canvasRef.current;
                         if (!canvas) return;
                         const rect = canvas.getBoundingClientRect();
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-
-                        setMapZoom((prev) => {
-                          const next = clamp(prev / 1.5, 1, MINIMAP_MAX_ZOOM);
-                          if (next === prev) return prev;
-
-                          const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
-                          const wScale = (rect.width - 2) / mapSpan;
-                          const hScale = rect.height / (mapSpan * 0.5);
-                          const baseScale = Math.min(wScale, hScale);
-
-                          const prevIsoScale = Math.max(1, baseScale * prev);
-                          const nextIsoScale = Math.max(1, baseScale * next);
-
-                          const prevOriginX = rect.width * 0.5 + mapPan.x;
-                          const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
-                          const prevOriginY = (rect.height - prevDiamondHeight) / 2 + mapPan.y;
-
-                          const relX = centerX - prevOriginX;
-                          const relY = centerY - prevOriginY;
-                          const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
-                          const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
-
-                          const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
-                          const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
-                          const nextOriginX_noPan = rect.width * 0.5;
-
-                          const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
-                          const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
-
-                          setMapPan((_) =>
-                            clampPan(
-                              {
-                                x: centerX - nextIsoX_noPan,
-                                y: centerY - nextIsoY_noPan,
-                              },
-                              next
-                            )
-                          );
-
-                          return next;
-                        });
+                        handleZoom(rect.width / 2, rect.height / 2, 1 / MINIMAP_ZOOM_FACTOR);
                       }}
                     >
                       -
