@@ -19,17 +19,15 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
-}
-
-.gradient-shell {
   background:
     radial-gradient(circle at 10% 20%, rgba(178, 74, 42, 0.12), transparent 55%),
     radial-gradient(circle at 90% 10%, rgba(48, 79, 109, 0.15), transparent 50%),
     linear-gradient(180deg, #181614 0%, #13110f 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
 }
+
 
 .panel {
   background-color: var(--panel);

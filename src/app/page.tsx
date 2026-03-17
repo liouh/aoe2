@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -943,7 +943,7 @@ export default function Home() {
   }, [mapZoom]);
 
   return (
-    <div className="gradient-shell min-h-screen">
+    <div className="min-h-screen">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-6 lg:px-10">
         <header className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
