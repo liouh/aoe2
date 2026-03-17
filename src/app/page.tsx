@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1397,9 +1397,15 @@ export default function Home() {
                               ></span>
                             </div>
                             <div className="mt-6 flex flex-col gap-4 text-sm">
-                              <div>
-                                <p className="text-xs text-[color:var(--muted)]">APM</p>
-                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
+                                  <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
+                                  <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.peakApm)}</p>
+                                </div>
                               </div>
                               <div className="pt-3">
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">

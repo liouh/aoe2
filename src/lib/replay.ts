@@ -34,6 +34,7 @@ export type MarketUsage = {
 export type PlayerStats = {
   playerId: number;
   apm: number;
+  peakApm: number;
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
@@ -558,7 +559,11 @@ export const extractPlayerStats = (
       sold: { food: 0, wood: 0, stone: 0 },
     };
 
+    const minuteBuckets = new Map<number, number>();
     playerEvents.forEach((event) => {
+      const minute = Math.floor(event.time / 60);
+      minuteBuckets.set(minute, (minuteBuckets.get(minute) ?? 0) + 1);
+
       if (event.category === "autoscout") autoscoutUsage++;
 
       if (event.category === "market" && Array.isArray(event.raw?.data)) {
@@ -612,9 +617,12 @@ export const extractPlayerStats = (
       }
     });
 
+    const peakApm = minuteBuckets.size > 0 ? Math.max(...Array.from(minuteBuckets.values())) : 0;
+
     stats.push({
       playerId,
       apm,
+      peakApm,
       ageTimings,
       autoscoutUsage,
       marketUsage,
