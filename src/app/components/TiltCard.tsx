@@ -39,7 +39,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
       const rotateX = ((centerY - y) / centerY) * maxRotation; // Negative so it tilts towards mouse
 
       setTransform(
-        `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`
+        `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale}) translateZ(0)`
       );
     },
     [maxRotation, perspective, scale]
@@ -64,6 +64,8 @@ export const TiltCard: React.FC<TiltCardProps> = ({
       style={{
         transform: isHovering ? transform : "none",
         transformStyle: "preserve-3d",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
         zIndex: isHovering ? 20 : 1,
         position: "relative",
       }}

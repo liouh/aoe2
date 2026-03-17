@@ -98,6 +98,8 @@ body {
 .player-card-3d-base {
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: translateZ(0);
   will-change: transform, box-shadow;
 }
 
