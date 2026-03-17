@@ -1464,7 +1464,7 @@ export default function Home() {
                               </div>
                               <div
                                 className="relative mt-1 w-full"
-                                style={{ height: timelineHeight, minHeight: MIN_TIMELINE_HEIGHT }}
+                                style={{ height: timelineHeight, minHeight: TIMELINE_MIN_HEIGHT }}
                               >
                                 {/* Time Markers */}
                                 {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
