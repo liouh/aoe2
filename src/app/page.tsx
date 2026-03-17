@@ -48,18 +48,19 @@ const PLAYER_OUTLINES = [
   "#000000", // 8 orange
 ];
 
-const UNIT_FADE_SECONDS = 150;
-const MAX_ZOOM = 5;
-const SCALE_BOOST = 1.0;
-const PX_PER_SECOND = 2;
-const MIN_TIMELINE_HEIGHT = 520;
-const UNIT_CIRCLE_RADIUS = 4;
+const MINIMAP_MAX_ZOOM = 5;
+const MINIMAP_ICON_MIN_SIZE = 20;
+const MINIMAP_ICON_SCALE_FACTOR = 3;
+const MINIMAP_ICON_BORDER = 16;
+const MINIMAP_UNIT_ALPHA = 0.8;
+const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
+const MINIMAP_UNIT_BORDER = 2;
+const MINIMAP_UNIT_FADE_SECONDS = 120;
+
+const TIMELINE_MIN_HEIGHT = 600;
 const TIMELINE_MARKER_INTERVAL = 300;
-const CONSOLIDATION_WINDOW_SECONDS = 5;
-const ISO_ICON_MIN_SIZE = 20;
-const ISO_ICON_SCALE_FACTOR = 3;
-const PAD_TOP = 0;
-const PAD_BOTTOM = 0;
+const TIMELINE_PX_PER_SECOND = 2;
+const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -84,7 +85,7 @@ const isEconomic = (name: string) => {
   );
 };
 
-function consolidateEvents(events: TimelineEvent[], windowSeconds: number = CONSOLIDATION_WINDOW_SECONDS) {
+function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIMELINE_CONSOLIDATION_WINDOW_SECONDS) {
   if (events.length === 0) return [];
 
   const consolidated: (TimelineEvent & {
@@ -286,7 +287,7 @@ export default function Home() {
   useEffect(() => {
     if (activeTab === "timeline" && pendingScrollRef.current && timelineRef.current) {
       pendingScrollRef.current = false;
-      const targetOffset = selectedTime * PX_PER_SECOND;
+      const targetOffset = selectedTime * TIMELINE_PX_PER_SECOND;
       const containerTop =
         timelineRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
@@ -304,7 +305,7 @@ export default function Home() {
       pendingScrollRef.current = true;
       return;
     }
-    const targetOffset = selectedTime * PX_PER_SECOND;
+    const targetOffset = selectedTime * TIMELINE_PX_PER_SECOND;
     const containerTop =
       timelineRef.current.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({
@@ -325,8 +326,8 @@ export default function Home() {
     const mapSpan = Math.max(sizeX, sizeY);
 
     const widthScale = (rect.width - 2) / mapSpan;
-    const heightScale = (rect.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
-    const isoScale = Math.max(1, Math.min(widthScale, heightScale) * SCALE_BOOST * z);
+    const heightScale = rect.height / (mapSpan * 0.5);
+    const isoScale = Math.max(1, Math.min(widthScale, heightScale) * z);
 
     const diamondWidth = mapSpan * isoScale;
     const diamondHeight = mapSpan * isoScale * 0.5;
@@ -342,12 +343,12 @@ export default function Home() {
     }
 
     let minPanY, maxPanY;
-    const containerEffectiveHeight = rect.height - PAD_BOTTOM - PAD_TOP;
+    const containerEffectiveHeight = rect.height;
     if (diamondHeight <= containerEffectiveHeight) {
       minPanY = 0;
       maxPanY = 0;
     } else {
-      const baseOriginY = (rect.height - PAD_BOTTOM - diamondHeight) / 2 + PAD_TOP;
+      const baseOriginY = (rect.height - diamondHeight) / 2;
       const boundTop = -baseOriginY;
       const boundBottom = rect.height - diamondHeight - baseOriginY;
       minPanY = Math.min(boundTop, boundBottom);
@@ -442,7 +443,7 @@ export default function Home() {
 
 
   const timelineHeight = useMemo(() => {
-    return Math.max(MIN_TIMELINE_HEIGHT, duration * PX_PER_SECOND);
+    return Math.max(TIMELINE_MIN_HEIGHT, duration * TIMELINE_PX_PER_SECOND);
   }, [duration]);
 
   useEffect(() => {
@@ -463,15 +464,15 @@ export default function Home() {
     const sizeY = mapInfo?.size_y ?? mapSize;
     const mapSpan = Math.max(sizeX, sizeY);
     const widthScale = (bounds.width - 2) / mapSpan;
-    const heightScale = (bounds.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
+    const heightScale = bounds.height / (mapSpan * 0.5);
     const isoScale = Math.max(
       1,
-      Math.min(widthScale, heightScale) * SCALE_BOOST * mapZoom
+      Math.min(widthScale, heightScale) * mapZoom
     );
     const isoOriginX = bounds.width * 0.5 + mapPan.x;
     const diamondHeight = mapSpan * isoScale * 0.5;
     const isoOriginY =
-      (bounds.height - PAD_BOTTOM - diamondHeight) / 2 + PAD_TOP + mapPan.y;
+      (bounds.height - diamondHeight) / 2 + mapPan.y;
 
     const toCanvas = (x: number, y: number) => {
       const rx = y;
@@ -701,13 +702,13 @@ export default function Home() {
         const centerTileX = baseX + footprint.w / 2;
         const centerTileY = baseY + footprint.h / 2;
         const center = toCanvas(centerTileX, centerTileY);
-        const iconSize = Math.max(ISO_ICON_MIN_SIZE, isoScale * ISO_ICON_SCALE_FACTOR);
+        const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
         const iconPath = isCastle(event.buildingTypeId) ? castlePath : townCenterPath;
         context.save();
         context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
         context.scale(iconSize / 100, iconSize / 100);
         context.fillStyle = classifyColor(event.playerId);
-        context.lineWidth = 12;
+        context.lineWidth = MINIMAP_ICON_BORDER;
         context.lineJoin = "round";
         context.strokeStyle = classifyOutline(event.playerId);
         context.stroke(iconPath);
@@ -720,15 +721,14 @@ export default function Home() {
       currentUnitsMap.forEach((event) => {
         if (event.x === undefined || event.y === undefined) return;
         const age = selectedTime - event.time;
-        if (age < 0 || age > UNIT_FADE_SECONDS) return;
+        if (age < 0 || age > MINIMAP_UNIT_FADE_SECONDS) return;
         const pos = toCanvas(event.x, event.y);
-        const alpha = 1 - age / UNIT_FADE_SECONDS;
-        context.globalAlpha = alpha;
+        context.globalAlpha = MINIMAP_UNIT_ALPHA;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
-        context.arc(pos.x, pos.y, UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, MINIMAP_UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
         context.fill();
-        context.lineWidth = 1;
+        context.lineWidth = MINIMAP_UNIT_BORDER;
         context.strokeStyle = classifyOutline(event.playerId);
         context.stroke();
         context.globalAlpha = 1;
@@ -912,8 +912,8 @@ export default function Home() {
     const container = mapContainerRef.current;
     if (!container) return;
     const handleWheel = (event: WheelEvent) => {
-      // If zooming in and not yet at MAX_ZOOM
-      if (event.deltaY < 0 && mapZoom < MAX_ZOOM) {
+      // If zooming in and not yet at max zoom
+      if (event.deltaY < 0 && mapZoom < MINIMAP_MAX_ZOOM) {
         zoomLimitTimestampRef.current = null;
         event.preventDefault();
       }
@@ -923,7 +923,7 @@ export default function Home() {
         event.preventDefault();
       }
       // At a limit and continuing to scroll in that direction
-      else if ((event.deltaY < 0 && mapZoom >= MAX_ZOOM) || (event.deltaY > 0 && mapZoom <= 1)) {
+      else if ((event.deltaY < 0 && mapZoom >= MINIMAP_MAX_ZOOM) || (event.deltaY > 0 && mapZoom <= 1)) {
         if (zoomLimitTimestampRef.current === null) {
           zoomLimitTimestampRef.current = Date.now();
         }
@@ -1104,7 +1104,7 @@ export default function Home() {
                 const centerY = rect.height / 2;
                 const zoomDelta = -event.deltaY * 0.0015;
                 setMapZoom((prev) => {
-                  const next = clamp(prev * (1 + zoomDelta), 1, MAX_ZOOM);
+                  const next = clamp(prev * (1 + zoomDelta), 1, MINIMAP_MAX_ZOOM);
                   if (next === prev) return prev;
 
                   if (next <= 1) {
@@ -1115,14 +1115,14 @@ export default function Home() {
                   const rectMap = canvas.getBoundingClientRect();
                   const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
                   const wScale = (rectMap.width - 2) / mapSpan;
-                  const hScale = (rectMap.height - PAD_BOTTOM - PAD_TOP) / (mapSpan * 0.5);
-                  const baseScale = Math.min(wScale, hScale) * SCALE_BOOST;
+                  const hScale = (rectMap.height) / (mapSpan * 0.5);
+                  const baseScale = Math.min(wScale, hScale);
 
                   const prevIsoScale = Math.max(1, baseScale * prev);
                   const nextIsoScale = Math.max(1, baseScale * next);
                   const scaleChange = nextIsoScale / prevIsoScale;
 
-                  const centerY = (rectMap.height - PAD_BOTTOM) / 2 + PAD_TOP;
+                  const centerY = rectMap.height / 2;
 
                   setMapPan((pan) =>
                     clampPan(
@@ -1150,7 +1150,7 @@ export default function Home() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setMapZoom((prev) => {
-                          const next = clamp(prev * 1.25, 1, MAX_ZOOM);
+                          const next = clamp(prev * 1.25, 1, MINIMAP_MAX_ZOOM);
                           if (next === prev) return prev;
                           const scaleChange = next / prev;
                           setMapPan((pan) => clampPan({ x: pan.x * scaleChange, y: pan.y * scaleChange }, next));
@@ -1166,7 +1166,7 @@ export default function Home() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setMapZoom((prev) => {
-                          const next = clamp(prev * 0.8, 1, MAX_ZOOM);
+                          const next = clamp(prev * 0.8, 1, MINIMAP_MAX_ZOOM);
                           if (next === prev) return prev;
                           if (next <= 1) {
                             setMapPan({ x: 0, y: 0 });
