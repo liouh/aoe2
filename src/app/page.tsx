@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -8,7 +8,6 @@ import {
   extractMapSize,
   extractPlayerStats,
   extractMatchInfo,
-  formatClock,
   summarizePlayers,
   type MatchInfo,
   type TimelineEvent,
@@ -66,6 +65,15 @@ const LOADING_STEPS = [
   "Loading replay...",
   "Preparing viewer..."
 ];
+
+const formatClock = (seconds: number) => {
+  const total = Math.max(seconds, 0);
+  const mins = Math.floor(total / 60);
+  const secs = Math.floor(total % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
 const formatOptional = (value?: number) =>
   value === undefined || Number.isNaN(value) ? "—" : value.toString();
@@ -159,7 +167,7 @@ export default function Home() {
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
-  const [activeTab, setActiveTab] = useState<"timeline" | "stats" | "game">("game");
+  const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -1342,12 +1350,242 @@ export default function Home() {
                 </button>
               </div>
 
-              {activeTab === "timeline" ? (
+              {activeTab === "game" ? (
+                <div className="flex flex-col gap-6">
+                  <section className="panel rounded-3xl p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Players</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const stats = timelineStats.find(
+                          (item) => item.playerId === player.id
+                        );
+                        return (
+                          <div
+                            key={player.id}
+                            className="panel-strong rounded-2xl p-4"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">
+                                  {player.name}
+                                  {player.won && <sup className="ml-1">👑</sup>}
+                                </h3>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId}</span>
+                                </div>
+                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                            </div>
+                            <div className="mt-6 grid grid-cols-2 gap-1 text-sm">
+                              <div>
+                                <p className="text-xs text-[color:var(--muted)]">APM</p>
+                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
+                              </div>
+                              <div>
+                                {stats?.ageTimings ? (
+                                  <div className="space-y-1 text-m text-[color:var(--muted)]">
+                                    {Object.entries(stats.ageTimings).map(([age, time]) => (
+                                      <div key={age} className="flex justify-between items-center">
+                                        <span>{age}</span>
+                                        <span className="text-white tabular-nums pl-2">{formatClock(time)}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm">—</p>
+                                )}
+                              </div>
+                              <div>
+                                {stats?.autoscoutUsage ? (<p className="text-xs text-[color:var(--muted)]">Used auto scout</p>) : null}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  {matchInfo && (
+                    <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+                      <h2 className="headline text-2xl">Game Info</h2>
+                      <div className="grid gap-6 md:grid-cols-4">
+                        {matchInfo.gameTypeId !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game Mode</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.mapTypeId !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Name</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.mapSizeId !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Size</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </section>
+                  )}
+                </div>
+              ) : activeTab === "stats" ? (
+                <div className="flex flex-col gap-6">
+                  <section className="panel rounded-3xl p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Units Trained</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const stats = unitStats.get(player.id) || { military: [], economic: [] };
+                        const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
+                        const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
+
+                        return (
+                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId}</span>
+                                </div>
+                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                            </div>
+
+                            <div className="space-y-4">
+                              {/* Military Section */}
+                              <div>
+                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                  <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
+                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                                </div>
+                                <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                  {stats.military.length > 0 ? (
+                                    stats.military.map((u, idx) => (
+                                      <div key={idx} className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-[10px] text-white/20 italic">No military trained</p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Economic Section */}
+                              <div>
+                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                  <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
+                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
+                                </div>
+                                <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                  {stats.economic.length > 0 ? (
+                                    stats.economic.map((u, idx) => (
+                                      <div key={idx} className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-[10px] text-white/20 italic">No eco units trained</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                  <section className="panel rounded-3xl p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Market Usage</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {
+                          bought: { food: 0, wood: 0, stone: 0 },
+                          sold: { food: 0, wood: 0, stone: 0 }
+                        };
+
+                        return (
+                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId}</span>
+                                </div>
+                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                              {(["wood", "food", "stone"] as const).map((res) => {
+                                const bought = usage.bought[res];
+                                const sold = usage.sold[res];
+                                return (
+                                  <div key={res}>
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                      <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)]">Bought</span>
+                                        <span className="tabular-nums font-bold">
+                                          {bought > 0 ? "+" : ""}{formatNum(bought)}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)]">Sold</span>
+                                        <span className="tabular-nums font-bold">
+                                          {sold > 0 ? "-" : ""}{formatNum(sold)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                </div>
+              ) : (
                 <section ref={timelineRef} className="w-full">
                   <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <h2 className="headline text-2xl">Timeline</h2>
-                      <div className="flex flex-wrap items-center gap-4 pr-2 py-2 rounded-2xl">
+                      <div className="flex flex-wrap items-center gap-4 pr-2 rounded-2xl">
                         <label className="toggle-pill gap-1 group">
                           <div className="relative scale-75">
                             <input
@@ -1548,238 +1786,6 @@ export default function Home() {
                     </div>
                   </div>
                 </section>
-              ) : activeTab === "stats" ? (
-                <div className="flex flex-col gap-6">
-                  <section className="panel rounded-3xl p-6">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Units Trained</h2>
-                    </div>
-                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
-                        const stats = unitStats.get(player.id) || { military: [], economic: [] };
-                        const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
-                        const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
-
-                        return (
-                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
-                            <div className="flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
-                                <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                  <span>•</span>
-                                  <span>Team {player.teamId}</span>
-                                </div>
-                              </div>
-                              <span
-                                className="h-3 w-3 rounded-full shrink-0"
-                                style={{ background: classifyColor(player.id) }}
-                              ></span>
-                            </div>
-
-                            <div className="space-y-4">
-                              {/* Military Section */}
-                              <div>
-                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                  <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
-                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
-                                </div>
-                                <div className="flex flex-col gap-1.5 min-h-[20px]">
-                                  {stats.military.length > 0 ? (
-                                    stats.military.map((u, idx) => (
-                                      <div key={idx} className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <p className="text-[10px] text-white/20 italic">No military trained</p>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Economic Section */}
-                              <div>
-                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                  <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
-                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
-                                </div>
-                                <div className="flex flex-col gap-1.5 min-h-[20px]">
-                                  {stats.economic.length > 0 ? (
-                                    stats.economic.map((u, idx) => (
-                                      <div key={idx} className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <p className="text-[10px] text-white/20 italic">No eco units trained</p>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-                  <section className="panel rounded-3xl p-6">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Market Usage</h2>
-                    </div>
-                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
-                        const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {
-                          bought: { food: 0, wood: 0, stone: 0 },
-                          sold: { food: 0, wood: 0, stone: 0 }
-                        };
-
-                        const formatNum = (n: number) => new Intl.NumberFormat().format(n);
-
-                        return (
-                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
-                            <div className="flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
-                                <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                  <span>•</span>
-                                  <span>Team {player.teamId}</span>
-                                </div>
-                              </div>
-                              <span
-                                className="h-3 w-3 rounded-full shrink-0"
-                                style={{ background: classifyColor(player.id) }}
-                              ></span>
-                            </div>
-
-                            <div className="flex flex-col gap-4">
-                              {(["wood", "food", "stone"] as const).map((res) => {
-                                const bought = usage.bought[res];
-                                const sold = usage.sold[res];
-                                return (
-                                  <div key={res}>
-                                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                      <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-1.5">
-                                      <div className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)]">Bought</span>
-                                        <span className="tabular-nums font-bold">
-                                          {bought > 0 ? "+" : ""}{formatNum(bought)}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)]">Sold</span>
-                                        <span className="tabular-nums font-bold">
-                                          {sold > 0 ? "-" : ""}{formatNum(sold)}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-6">
-                  <section className="panel rounded-3xl p-6">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Players</h2>
-                    </div>
-                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
-                        const stats = timelineStats.find(
-                          (item) => item.playerId === player.id
-                        );
-                        return (
-                          <div
-                            key={player.id}
-                            className="panel-strong rounded-2xl p-4"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">
-                                  {player.name}
-                                  {player.won && <sup className="ml-1">👑</sup>}
-                                </h3>
-                                <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                  <span>•</span>
-                                  <span>Team {player.teamId}</span>
-                                </div>
-                              </div>
-                              <span
-                                className="h-3 w-3 rounded-full shrink-0"
-                                style={{ background: classifyColor(player.id) }}
-                              ></span>
-                            </div>
-                            <div className="mt-6 grid grid-cols-2 gap-1 text-sm">
-                              <div>
-                                <p className="text-xs text-[color:var(--muted)]">APM</p>
-                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
-                              </div>
-                              <div>
-                                {stats?.ageTimings ? (
-                                  <div className="space-y-1 text-m text-[color:var(--muted)]">
-                                    {Object.entries(stats.ageTimings).map(([age, time]) => (
-                                      <div key={age} className="flex justify-between items-center">
-                                        <span>{age}</span>
-                                        <span className="text-white tabular-nums pl-2">{formatClock(time)}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-sm">—</p>
-                                )}
-                              </div>
-                              <div>
-                                {stats?.autoscoutUsage ? (<p className="text-xs text-[color:var(--muted)]">Used auto scout</p>) : null}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  {matchInfo && (
-                    <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-                      <h2 className="headline text-2xl">Game Info</h2>
-                      <div className="grid gap-6 md:grid-cols-4">
-                        {matchInfo.gameTypeId !== undefined && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game Mode</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
-                            </span>
-                          </div>
-                        )}
-                        {matchInfo.mapTypeId !== undefined && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Name</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
-                            </span>
-                          </div>
-                        )}
-                        {matchInfo.mapSizeId !== undefined && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Size</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </section>
-                  )}
-                </div>
               )}
             </div>
           )}

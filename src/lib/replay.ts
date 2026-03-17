@@ -39,7 +39,6 @@ export type PlayerStats = {
   marketUsage?: MarketUsage;
 };
 
-
 const TIME_KEYS = ["time", "timestamp", "tick", "t", "world_time", "game_time"];
 const PLAYER_KEYS = [
   "player",
@@ -63,7 +62,6 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Castle: 160,
   Imperial: 190,
 };
-
 const MAX_SCAN_DEPTH = 6;
 const MAX_ARRAY_SCAN = 5000;
 
@@ -567,7 +565,7 @@ export const extractPlayerStats = (
         const data = event.raw.data as number[];
         const resourceType = data[0]; // 0=food, 1=wood, 2=stone
         const amount = (data[2] ?? 0) * 100;
-        
+
         const resourceMap: Record<number, keyof MarketUsage["bought"]> = {
           0: "food",
           1: "wood",
@@ -624,13 +622,6 @@ export const extractPlayerStats = (
   });
 
   return stats;
-};
-
-export const formatClock = (seconds: number) => {
-  const total = Math.max(seconds, 0);
-  const mins = Math.floor(total / 60);
-  const secs = Math.floor(total % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 export const determineDuration = (
