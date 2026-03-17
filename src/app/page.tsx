@@ -278,6 +278,19 @@ export default function Home() {
     [events, duration, replay, players]
   );
 
+  const fastestAges = useMemo(() => {
+    const fastest: Record<string, number> = {};
+    timelineStats.forEach((stats) => {
+      if (!stats.ageTimings) return;
+      Object.entries(stats.ageTimings).forEach(([age, time]) => {
+        if (fastest[age] === undefined || time < fastest[age]) {
+          fastest[age] = time;
+        }
+      });
+    });
+    return fastest;
+  }, [timelineStats]);
+
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
@@ -1383,28 +1396,40 @@ export default function Home() {
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
-                            <div className="mt-6 grid grid-cols-2 gap-1 text-sm">
+                            <div className="mt-6 flex flex-col gap-4 text-sm">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">APM</p>
                                 <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
                               </div>
-                              <div>
+                              <div className="pt-3">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                  <span className="text-xs font-bold uppercase tracking-wider text-white/30">Age up time</span>
+                                </div>
                                 {stats?.ageTimings ? (
-                                  <div className="space-y-1 text-m text-[color:var(--muted)]">
+                                  <div className="space-y-1.5">
                                     {Object.entries(stats.ageTimings).map(([age, time]) => (
-                                      <div key={age} className="flex justify-between items-center">
-                                        <span>{age}</span>
-                                        <span className="text-white tabular-nums pl-2">{formatClock(time)}</span>
+                                      <div key={age} className="flex justify-between items-center group/age">
+                                        <div className="flex items-center gap-1.5">
+                                          <span className="text-[color:var(--muted)]">{age}</span>
+                                          {time === fastestAges[age] && (
+                                            <span title="Fastest" className="text-[10px] select-none">🥇</span>
+                                          )}
+                                        </div>
+                                        <span className="text-white tabular-nums pl-2 font-medium">{formatClock(time)}</span>
                                       </div>
                                     ))}
                                   </div>
                                 ) : (
-                                  <p className="text-sm">—</p>
+                                  <p className="text-sm text-white/20 italic">—</p>
                                 )}
                               </div>
-                              <div>
-                                {stats?.autoscoutUsage ? (<p className="text-xs text-[color:var(--muted)]">Used auto scout</p>) : null}
-                              </div>
+                              {stats?.autoscoutUsage ? (
+                                <div className="mt-auto pt-2">
+                                  <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                                    Auto Scouted
+                                  </span>
+                                </div>
+                              ) : null}
                             </div>
                           </div>
                         );
