@@ -506,50 +506,19 @@ export const summarizePlayers = (
 ): PlayerSummary[] => {
   const players: PlayerSummary[] = [];
 
-  // 1. Identify raw players from summary or replay
   const summaryTeams = summary?.teams ?? [];
   summaryTeams.forEach((team: any, teamIndex: number) => {
     (team?.players ?? []).forEach((player: any) => {
       players.push({
-        id: player.player_number ?? players.length + 1,
-        name: player.name ?? `Player ${players.length + 1}`,
-        colorId: player.color_id ?? player.selected_color,
+        id: player.player_number,
+        name: player.name ?? `Player ${player.player_number}`,
+        colorId: player.color_id,
         civId: player.civ_id,
-        teamId: player.resolved_team_id ?? teamIndex + 1,
-        won: player.victory === true || player.won === true,
+        teamId: teamIndex + 1,
+        won: team.winner,
       });
     });
   });
-
-  if (!players.length) {
-    const replayPlayers =
-      replay?.players ?? replay?.player ?? replay?.player_settings ?? [];
-    replayPlayers.forEach((player: any, index: number) => {
-      players.push({
-        id: player.player_number ?? index + 1,
-        name: player.name ?? `Player ${index + 1}`,
-        colorId: player.color_id ?? player.selected_color,
-        civId: player.civ_id,
-        teamId: player.team_id,
-        won: player.victory === true || player.won === true,
-      });
-    });
-  }
-
-  // 2. Winner inference fallback using Resign events
-  const explicitWinner = players.some((p) => p.won);
-  if (!explicitWinner && events.length > 0) {
-    const resigners = new Set(
-      events.filter((e) => e.type === "Resign").map((e) => e.playerId)
-    );
-    if (resigners.size > 0 && resigners.size < players.length) {
-      players.forEach((p) => {
-        if (!resigners.has(p.id)) {
-          p.won = true;
-        }
-      });
-    }
-  }
 
   return players;
 };

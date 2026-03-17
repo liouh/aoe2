@@ -20,6 +20,12 @@ import { getTechName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
+const SAMPLE_REPLAYS = [
+  "hera-1v1.aoe2record",
+  "hera-1v2.aoe2record",
+  "hera-1v7.aoe2record",
+];
+
 const PLAYER_COLORS = [
   "#3252FF",
   "#FF0000",
@@ -31,10 +37,23 @@ const PLAYER_COLORS = [
   "#FF9100",
 ];
 
-const classifyColor = (playerId?: number) => {
-  if (!playerId || playerId < 1) return "#6b5b4d";
-  return PLAYER_COLORS[(playerId - 1) % PLAYER_COLORS.length];
-};
+const UNIT_FADE_SECONDS = 200;
+const MAX_ZOOM = 5;
+const SCALE_BOOST = 1.0;
+const PX_PER_SECOND = 2;
+const MIN_TIMELINE_HEIGHT = 520;
+const UNIT_CIRCLE_RADIUS = 4;
+const TIMELINE_MARKER_INTERVAL = 300;
+const CONSOLIDATION_WINDOW_SECONDS = 5;
+const ISO_ICON_MIN_SIZE = 12;
+const ISO_ICON_SCALE_FACTOR = 3;
+const PAD_TOP = 0;
+const PAD_BOTTOM = 0;
+
+const LOADING_STEPS = [
+  "Loading replay...",
+  "Preparing viewer..."
+];
 
 const formatOptional = (value?: number) =>
   value === undefined || Number.isNaN(value) ? "—" : value.toString();
@@ -110,19 +129,6 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = CONS
   return consolidated.sort((a, b) => a.time - b.time);
 }
 
-const UNIT_FADE_SECONDS = 200;
-const MAX_ZOOM = 5;
-const SCALE_BOOST = 1.0;
-const PX_PER_SECOND = 2;
-const MIN_TIMELINE_HEIGHT = 520;
-const UNIT_CIRCLE_RADIUS = 4;
-const TIMELINE_MARKER_INTERVAL = 300;
-const CONSOLIDATION_WINDOW_SECONDS = 5;
-const ISO_ICON_MIN_SIZE = 12;
-const ISO_ICON_SCALE_FACTOR = 3;
-const PAD_TOP = 0;
-const PAD_BOTTOM = 0;
-
 export default function Home() {
   const [replay, setReplay] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
@@ -142,11 +148,6 @@ export default function Home() {
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"timeline" | "stats" | "game">("game");
-
-  const LOADING_STEPS = [
-    "Loading replay...",
-    "Preparing viewer..."
-  ];
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -205,6 +206,23 @@ export default function Home() {
     () => summarizePlayers(summary, replay, events),
     [summary, replay, events]
   );
+
+  const playerIdToColorId = useMemo(() => {
+    const map = new Map<number, number>();
+    players.forEach((p) => {
+      if (p.id !== undefined && p.colorId !== undefined) {
+        map.set(p.id, p.colorId);
+      }
+    });
+    return map;
+  }, [players]);
+
+  const classifyColor = (playerId?: number) => {
+    if (playerId === undefined) return "#000000";
+    const colorId = playerIdToColorId.get(playerId);
+    if (colorId === undefined || colorId < 0) return "#000000";
+    return PLAYER_COLORS[(colorId) % PLAYER_COLORS.length];
+  };
 
   useEffect(() => {
     if (!players.length) {
@@ -671,7 +689,7 @@ export default function Home() {
         context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
         context.scale(iconSize / 100, iconSize / 100);
         context.fillStyle = classifyColor(event.playerId);
-        context.lineWidth = 10;
+        context.lineWidth = 12;
         context.lineJoin = "round";
         context.strokeStyle = "#ffffff";
         context.stroke(iconPath);
@@ -712,8 +730,6 @@ export default function Home() {
         context.save();
         context.strokeStyle = "#ffffff";
         context.lineWidth = 2;
-        context.shadowBlur = 4;
-        context.shadowColor = "rgba(0,0,0,0.5)";
         context.beginPath();
         context.moveTo(p1.x, p1.y);
         context.lineTo(p2.x, p2.y);
@@ -804,11 +820,6 @@ export default function Home() {
 
   useEffect(() => {
     const loadDefault = async () => {
-      const SAMPLE_REPLAYS = [
-        "hera-1v1.aoe2record",
-        "hera-1v2.aoe2record",
-        "hera-1v7.aoe2record",
-      ];
       const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
 
       setLoading(true);
@@ -1397,7 +1408,7 @@ export default function Home() {
                                     <div className="flex items-center gap-2 text-xs text-white/40">
                                       <span>{getCivName(player.civId) || "Unknown Civ"}</span>
                                       <span>•</span>
-                                      <span>Team {player.teamId !== undefined ? player.teamId + 1 : "—"}</span>
+                                      <span>Team {player.teamId}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -1538,7 +1549,7 @@ export default function Home() {
                               <div className="flex items-center gap-2 text-xs text-white/40">
                                 <span>{getCivName(player.civId) || "Unknown Civ"}</span>
                                 <span>•</span>
-                                <span>Team {player.teamId !== undefined ? player.teamId + 1 : "—"}</span>
+                                <span>Team {player.teamId}</span>
                               </div>
                             </div>
                             <span
@@ -1618,7 +1629,7 @@ export default function Home() {
                                 <div className="flex items-center gap-2 text-xs text-white/40">
                                   <span>{getCivName(player.civId) || "Unknown Civ"}</span>
                                   <span>•</span>
-                                  <span>Team {player.teamId !== undefined ? player.teamId + 1 : "—"}</span>
+                                  <span>Team {player.teamId}</span>
                                 </div>
                               </div>
                               <span
