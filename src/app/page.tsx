@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -408,7 +408,7 @@ export default function Home() {
   );
 
   const buildEvents = useMemo(
-    () => events.filter((event) => event.category === "build" && timelineShowBuildings),
+    () => events.filter((event) => event.category === "build" && timelineShowBuildings && !event.raw?.isInitial),
     [events, timelineShowBuildings]
   );
 
@@ -1640,6 +1640,22 @@ export default function Home() {
                             <input
                               type="checkbox"
                               className="peer sr-only"
+                              checked={timelineShowResearch}
+                              onChange={(e) => setTimelineShowResearch(e.target.checked)}
+                            />
+                            <div className="toggle-pill-track h-5 w-9">
+                              <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
+                            Research
+                          </span>
+                        </label>
+                        <label className="toggle-pill gap-1 group">
+                          <div className="relative scale-75">
+                            <input
+                              type="checkbox"
+                              className="peer sr-only"
                               checked={timelineShowBuildings}
                               onChange={(e) => setTimelineShowBuildings(e.target.checked)}
                             />
@@ -1665,22 +1681,6 @@ export default function Home() {
                           </div>
                           <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
                             Units
-                          </span>
-                        </label>
-                        <label className="toggle-pill gap-1 group">
-                          <div className="relative scale-75">
-                            <input
-                              type="checkbox"
-                              className="peer sr-only"
-                              checked={timelineShowResearch}
-                              onChange={(e) => setTimelineShowResearch(e.target.checked)}
-                            />
-                            <div className="toggle-pill-track h-5 w-9">
-                              <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
-                            </div>
-                          </div>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
-                            Research
                           </span>
                         </label>
                       </div>
@@ -1760,25 +1760,25 @@ export default function Home() {
                                 })}
 
                                 <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)]"></div>
-                                {consolidateEvents(playerBuilds).map((event) => (
+                                {consolidateEvents(playerResearch).map((event) => (
                                   <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
                                     <div className="h-[1px] w-4 bg-white/10" />
                                     <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
                                   </div>
                                 ))}
-                                {consolidateEvents(playerTrains).map((event) => (
+                                {consolidateEvents(playerBuilds).map((event) => (
                                   <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
-                                      {event.isMilitary ? "🗡️" : "🙂"}
-                                    </span>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
                                     <div className="h-[1px] w-[6rem] bg-white/10" />
                                     <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
                                   </div>
                                 ))}
-                                {consolidateEvents(playerResearch).map((event) => (
+                                {consolidateEvents(playerTrains).map((event) => (
                                   <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
+                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
+                                      {event.isMilitary ? "🗡️" : "🙂"}
+                                    </span>
                                     <div className="h-[1px] w-[12rem] bg-white/10" />
                                     <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
                                   </div>
