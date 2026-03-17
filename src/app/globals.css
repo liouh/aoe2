@@ -18,7 +18,12 @@
   --font-mono: var(--font-body);
 }
 
+html {
+  background-color: #13110f;
+}
+
 body {
+  background-color: #13110f;
   background:
     radial-gradient(circle at 10% 20%, rgba(178, 74, 42, 0.12), transparent 55%),
     radial-gradient(circle at 90% 10%, rgba(48, 79, 109, 0.15), transparent 50%),
