@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -316,6 +316,7 @@ export default function Home() {
     });
   };
 
+  // Sync player selection when player data changes or is loaded
   useEffect(() => {
     if (!players.length) {
       if (leftPlayerId !== null) setLeftPlayerId(null);
@@ -356,6 +357,7 @@ export default function Home() {
     return fastest;
   }, [timelineStats]);
 
+  // Manage the playback timer: increments selectedTime when playing
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
@@ -370,6 +372,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
+  // Automatic scrolling for the timeline view as time progresses
   useEffect(() => {
     if (activeTab === "timeline" && pendingScrollRef.current && timelineRef.current) {
       pendingScrollRef.current = false;
@@ -532,6 +535,7 @@ export default function Home() {
     return Math.max(TIMELINE_MIN_HEIGHT, duration * TIMELINE_PX_PER_SECOND);
   }, [duration]);
 
+  // The core minimap rendering effect: draws terrain, buildings, and units on canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -898,6 +902,7 @@ export default function Home() {
     reader.readAsArrayBuffer(file);
   };
 
+  // Load a random sample replay on initial component mount
   useEffect(() => {
     const loadDefault = async () => {
       const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
@@ -951,6 +956,7 @@ export default function Home() {
     loadDefault();
   }, []);
 
+  // Global keyboard listener for seeking (Left/Right arrows)
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
