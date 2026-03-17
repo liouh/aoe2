@@ -74,6 +74,7 @@ const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
 
 const LOADING_STEPS = [
   "Loading replay...",
+  "Building timeline...",
   "Preparing viewer..."
 ];
 
@@ -802,20 +803,29 @@ export default function Home() {
     setError(null);
     setLoadingStep(0);
     const reader = new FileReader();
-    reader.addEventListener("loadend", () => {
+    reader.addEventListener("loadend", async () => {
       try {
         const buffer = reader.result as ArrayBuffer;
+
+        setLoadingStep(1);
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const parsed = parse_rec(buffer);
         const parsedSummary = parse_rec_summary(buffer);
         if (typeof window !== "undefined") {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const timeline = buildTimeline(parsed, parsedSummary);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
-        setLoadingStep(1);
+        setLoadingStep(2);
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         setReplay(parsed);
         setSummary(parsedSummary);
         setMatchInfo(extractedInfo);
@@ -849,17 +859,25 @@ export default function Home() {
         if (!response.ok) throw new Error("Sample file not found");
         const buffer = await response.arrayBuffer();
 
+        setLoadingStep(1);
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const parsed = parse_rec(buffer);
         const parsedSummary = parse_rec_summary(buffer);
         if (typeof window !== "undefined") {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const timeline = buildTimeline(parsed, parsedSummary);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
-        setLoadingStep(1);
+        setLoadingStep(2);
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         setReplay(parsed);
         setSummary(parsedSummary);
         setMatchInfo(extractedInfo);
@@ -1220,7 +1238,7 @@ export default function Home() {
                     </div>
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5 ring-1 ring-white/5">
                       <div
-                        className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-400 transition-all duration-700 ease-in-out"
+                        className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-400"
                         style={{ width: `${((loadingStep + 1) / LOADING_STEPS.length) * 100}%` }}
                       />
                     </div>
