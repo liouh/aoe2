@@ -552,4 +552,4 @@ const TECH_NAMES: Record<number, string> = {
   1509: "Blank Technology 39",
 };
 
-export const getTechName = (id?: number) => (id ? TECH_NAMES[id] : undefined);
+export const getTechName = (id?: number) => (id ? TECH_NAMES[id] : "Unknown Technology");

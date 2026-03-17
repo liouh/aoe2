@@ -2530,5 +2530,5 @@ const ENTITY_NAMES: Record<number, string> = {
 };
 
 export const getEntityName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined);
-export const getUnitName = getEntityName;
-export const getBuildingName = getEntityName;
+export const getUnitName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined) ?? "Unknown Unit";
+export const getBuildingName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined) ?? "Unknown Building";

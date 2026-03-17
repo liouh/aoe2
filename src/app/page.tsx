@@ -116,11 +116,11 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
 
     let itemLabel = event.label;
     if (event.category === "build") {
-      itemLabel = getBuildingName(event.buildingTypeId) ?? event.label;
+      itemLabel = getBuildingName(event.buildingTypeId);
     } else if (event.category === "train") {
-      itemLabel = getUnitName(event.unitTypeId) ?? event.label;
+      itemLabel = getUnitName(event.unitTypeId);
     } else if (event.category === "research") {
-      itemLabel = getTechName(event.techId) ?? event.label;
+      itemLabel = getTechName(event.techId);
     }
 
     const isMil = event.category === "train" && !isEconomic(itemLabel);
@@ -443,7 +443,7 @@ export default function Home() {
         existing.count += amount;
       } else {
         playerMap.set(event.unitTypeId, {
-          name: getUnitName(event.unitTypeId) ?? "Unknown Unit",
+          name: getUnitName(event.unitTypeId),
           count: amount,
         });
       }
@@ -1092,9 +1092,7 @@ export default function Home() {
                   const building = anchorKey ? buildings.get(anchorKey) : null;
                   if (building) {
                     setHoveredEntity({
-                      name:
-                        getBuildingName(building.buildingTypeId) ??
-                        "Unknown Building",
+                      name: getBuildingName(building.buildingTypeId),
                       playerId: building.playerId,
                       type: "building",
                       anchorKey,
