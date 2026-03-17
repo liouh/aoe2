@@ -10,7 +10,6 @@ export type TimelineEvent = {
   unitTypeId?: number;
   buildingId?: string | number;
   buildingTypeId?: number;
-  targetId?: number;
   techId?: number;
   age?: string;
   raw: Record<string, unknown>;
@@ -130,15 +129,6 @@ const extractWallSegments = (data: number[]) => {
   return { tiles, buildingTypeId };
 };
 
-const extractDeleteTargetId = (data: number[]) => {
-  const bytes = Uint8Array.from(data);
-  if (bytes.length < 4) return undefined;
-  const view = new DataView(bytes.buffer);
-  const value = view.getInt32(0, true);
-  if (!Number.isFinite(value) || value <= 0) return undefined;
-  return value;
-};
-
 const detectCategory = (type: string, event: Record<string, unknown>) => {
   switch (type) {
     case "Research": return "research";
@@ -199,9 +189,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         Array.isArray(payload?.data) && (actionType === "Build" || actionType === "Wall")
           ? extractBuildingTypeId(payload.data as number[])
           : undefined;
-      const targetId = actionType === "Delete" && Array.isArray(payload?.data)
-        ? extractDeleteTargetId(payload.data as number[])
-        : undefined;
 
       // Expand wall commands into per-tile events
       if (actionType === "Wall" && Array.isArray(payload?.data)) {
@@ -223,7 +210,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
               unitTypeId,
               buildingId: undefined,
               buildingTypeId: wall.buildingTypeId,
-              targetId,
               techId,
               raw: payload ?? {},
             });
@@ -250,7 +236,6 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
             ? buildingId
             : undefined,
         buildingTypeId,
-        targetId,
         techId,
         raw: payload ?? {},
       });

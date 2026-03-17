@@ -620,28 +620,13 @@ export default function Home() {
     const iconBuildings: TimelineEvent[] = [];
 
     const destroyedTiles = new Set<string>();
-    const targetPositions = new Map<number, { x: number; y: number }>();
     const buildingIdToAnchor = new Map<number, string>();
     const tileToAnchor = new Map<string, string>();
     const anchorToFootprint = new Map<string, { w: number; h: number }>();
     const anchorToEvent = new Map<string, TimelineEvent>();
 
-    const markAnchorDestroyed = (anchorKey: string) => {
-      const footprint = anchorToFootprint.get(anchorKey) ?? { w: 1, h: 1 };
-      const [ax, ay] = anchorKey.split(",").map(Number);
-      for (let dx = 0; dx < footprint.w; dx += 1) {
-        for (let dy = 0; dy < footprint.h; dy += 1) {
-          destroyedTiles.add(`${ax + dx},${ay + dy}`);
-        }
-      }
-      anchorToEvent.delete(anchorKey);
-    };
-
     for (const event of events) {
       if (event.time > selectedTime) break;
-      if (event.targetId && event.x !== undefined && event.y !== undefined) {
-        targetPositions.set(event.targetId, { x: event.x, y: event.y });
-      }
       if (event.category === "build" && event.x !== undefined && event.y !== undefined) {
         const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
         const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
@@ -674,23 +659,6 @@ export default function Home() {
           anchorToEvent.delete(oldAnchor);
         }
       }
-      if (event.type === "Delete" && event.targetId) {
-        // Try direct lookup via buildingId → anchorKey first
-        const directAnchor = buildingIdToAnchor.get(event.targetId);
-        if (directAnchor) {
-          markAnchorDestroyed(directAnchor);
-        } else {
-          // Fall back to position-based lookup
-          const pos = targetPositions.get(event.targetId);
-          if (pos) {
-            const tileX = Math.max(0, Math.min(sizeX - 1, Math.floor(pos.x)));
-            const tileY = Math.max(0, Math.min(sizeY - 1, Math.floor(pos.y)));
-            const tileKey = `${tileX},${tileY}`;
-            const anchorKey = tileToAnchor.get(tileKey) ?? tileKey;
-            markAnchorDestroyed(anchorKey);
-          }
-        }
-      }
     }
 
     const drawBuilding = (event: TimelineEvent) => {
@@ -701,7 +669,6 @@ export default function Home() {
       const footprint = getBuildingFootprint(event.buildingTypeId);
       const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
       const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-      const anchorKey = `${baseX},${baseY}`;
       for (let dx = 0; dx < footprint.w; dx += 1) {
         for (let dy = 0; dy < footprint.h; dy += 1) {
           const tileX = baseX + dx;
