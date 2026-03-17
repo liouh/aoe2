@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -14,6 +14,7 @@ import {
 } from "@/lib/replay";
 import { APMChart } from "./components/APMChart";
 import { PlayerSelect } from "./components/PlayerSelect";
+import { TiltCard } from "./components/TiltCard";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
@@ -1378,9 +1379,9 @@ export default function Home() {
                           (item) => item.playerId === player.id
                         );
                         return (
-                          <div
+                          <TiltCard
                             key={player.id}
-                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6"
+                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
@@ -1430,7 +1431,7 @@ export default function Home() {
                                 </div>
                               ) : null}
                             </div>
-                          </div>
+                          </TiltCard>
                         );
                       })}
                     </div>
@@ -1488,7 +1489,7 @@ export default function Home() {
                       {players.map((player) => {
                         const stats = timelineStats.find((s) => s.playerId === player.id);
                         return (
-                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-4">
+                          <TiltCard key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-4 player-card-3d-base">
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
@@ -1508,7 +1509,7 @@ export default function Home() {
                                 <p className="text-xl tabular-nums font-medium">{formatOptional(stats?.peakApm)}</p>
                               </div>
                             </div>
-                          </div>
+                          </TiltCard>
                         );
                       })}
                     </div>
@@ -1524,7 +1525,10 @@ export default function Home() {
                         const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
 
                         return (
-                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                          <TiltCard
+                            key={player.id}
+                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
@@ -1579,7 +1583,7 @@ export default function Home() {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </TiltCard>
                         );
                       })}
                     </div>
@@ -1596,7 +1600,10 @@ export default function Home() {
                         };
 
                         return (
-                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                          <TiltCard
+                            key={player.id}
+                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
@@ -1623,7 +1630,7 @@ export default function Home() {
                                 );
                               })}
                             </div>
-                          </div>
+                          </TiltCard>
                         );
                       })}
                     </div>
