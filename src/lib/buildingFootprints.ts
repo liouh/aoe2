@@ -211,6 +211,9 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1807: { w: 2, h: 2 }, // Svan Tower
   1808: { w: 1, h: 1 }, // Mule Cart
   1836: { w: 3, h: 3 }, // Chapel
+  1889: { w: 4, h: 4 }, // Pasture
+  1893: { w: 4, h: 4 }, // Pasture
+  1897: { w: 4, h: 4 }, // Pasture
   2120: { w: 3, h: 3 }, // Dock
   2121: { w: 3, h: 3 }, // Dock
   2122: { w: 3, h: 3 }, // Dock
