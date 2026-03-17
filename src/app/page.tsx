@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -52,6 +52,7 @@ const PLAYER_OUTLINES = [
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MAX_ZOOM = 5;
+const MINIMAP_MOBILE_MAX_ZOOM = 11;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
 const MINIMAP_ICON_BORDER = 16;
@@ -186,6 +187,11 @@ export default function Home() {
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
+  const isMobile = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
+  }, []);
+
   const mapSize = useMemo(() => {
     const base = extractMapSize(replay, summary);
     if (mapInfo?.size_x && mapInfo?.size_y) {
@@ -272,7 +278,8 @@ export default function Home() {
     const rect = canvas.getBoundingClientRect();
 
     setMapZoom((prev) => {
-      const next = clamp(prev * zoomFactor, 1, MINIMAP_MAX_ZOOM);
+      const maxZoom = isMobile ? MINIMAP_MOBILE_MAX_ZOOM : MINIMAP_MAX_ZOOM;
+      const next = clamp(prev * zoomFactor, 1, maxZoom);
       if (next === prev) return prev;
 
       const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
