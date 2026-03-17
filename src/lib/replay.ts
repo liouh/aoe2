@@ -15,6 +15,8 @@ export type TimelineEvent = {
   raw: Record<string, unknown>;
 };
 
+import { determineStartingLocations } from "./tcPlacement";
+
 export type PlayerSummary = {
   id: number;
   name: string;
@@ -147,7 +149,7 @@ const detectCategory = (type: string, event: Record<string, unknown>) => {
   return "other";
 };
 
-export const buildTimeline = (replay: unknown): TimelineEvent[] => {
+export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] => {
   if (!replay) return [];
   const replayRecord = replay as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
@@ -241,16 +243,18 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
       });
     });
 
-    return events.sort((a, b) => a.time - b.time);
+    const sortedEvents = events.sort((a, b) => a.time - b.time);
+    const players = summarizePlayers(summary);
+    const startingEvents = determineStartingLocations(players, sortedEvents);
+
+    return [...startingEvents, ...sortedEvents].sort((a, b) => a.time - b.time);
   }
 
   return events;
 };
 
 export const summarizePlayers = (
-  summary: any,
-  replay: any,
-  events: TimelineEvent[] = []
+  summary: any
 ): PlayerSummary[] => {
   const players: PlayerSummary[] = [];
 
@@ -274,7 +278,6 @@ export const summarizePlayers = (
 export const extractPlayerStats = (
   events: TimelineEvent[],
   durationSeconds: number | undefined,
-  replay: any,
   players?: PlayerSummary[]
 ): PlayerStats[] => {
   const durationMinutes = Math.max(durationSeconds ?? 0, 1) / 60;

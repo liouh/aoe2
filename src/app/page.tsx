@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -236,8 +236,8 @@ export default function Home() {
   });
 
   const players = useMemo(
-    () => summarizePlayers(summary, replay, events),
-    [summary, replay, events]
+    () => summarizePlayers(summary),
+    [summary]
   );
 
   const playerIdToColorId = useMemo(() => {
@@ -287,8 +287,8 @@ export default function Home() {
   }, [leftPlayerId, players, rightPlayerId]);
 
   const timelineStats = useMemo(
-    () => extractPlayerStats(events, duration, replay, players),
-    [events, duration, replay, players]
+    () => extractPlayerStats(events, duration, players),
+    [events, duration, players]
   );
 
   const fastestAges = useMemo(() => {
@@ -811,7 +811,7 @@ export default function Home() {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
-        const timeline = buildTimeline(parsed);
+        const timeline = buildTimeline(parsed, parsedSummary);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
@@ -855,7 +855,7 @@ export default function Home() {
           (window as any).__aoe2rec = parsed;
           (window as any).__aoe2summary = parsedSummary;
         }
-        const timeline = buildTimeline(parsed);
+        const timeline = buildTimeline(parsed, parsedSummary);
         const gameDuration = determineDuration(parsedSummary, timeline);
         const extractedInfo = extractMatchInfo(parsedSummary);
 
