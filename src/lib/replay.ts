@@ -54,15 +54,8 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
 const pickNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
 
-const timeScaleFromValue = (value: number): number => {
-  if (value > 100_000) return 1000;
-  if (value > 10_000) return 100;
-  return 1;
-};
-
-const normalizeTime = (value: number, scale?: number): number => {
-  const appliedScale = scale ?? timeScaleFromValue(value);
-  return value / appliedScale;
+const normalizeTime = (value: number): number => {
+  return value / 1000;
 };
 
 const extractPosition = (event: Record<string, unknown>) => {
@@ -179,21 +172,12 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
       mapInfo?.size_x && mapInfo?.size_y
         ? { x: mapInfo.size_x, y: mapInfo.size_y }
         : undefined;
-    let maxWorldTime = 0;
-    operations.forEach((op) => {
-      const action = op.Action as Record<string, unknown> | undefined;
-      if (!action) return;
-      const rawTime = pickNumber(action.world_time);
-      if (rawTime !== undefined && rawTime > maxWorldTime) {
-        maxWorldTime = rawTime;
-      }
-    });
-    const timeScale = timeScaleFromValue(maxWorldTime);
+
 
     operations.forEach((op, index) => {
       const action = op.Action as Record<string, unknown> | undefined;
       if (!action) return;
-      const time = normalizeTime(pickNumber(action.world_time) ?? 0, timeScale);
+      const time = normalizeTime(pickNumber(action.world_time) ?? 0);
       const actionData = action.action_data as Record<string, unknown> | undefined;
       if (!actionData) return;
       const actionType = Object.keys(actionData)[0];
@@ -417,7 +401,7 @@ export const determineDuration = (
   const rawSummaryDuration = pickNumber(summary?.duration);
   const summaryDuration =
     rawSummaryDuration !== undefined
-      ? normalizeTime(rawSummaryDuration, timeScaleFromValue(rawSummaryDuration))
+      ? normalizeTime(rawSummaryDuration)
       : undefined;
   if (!events.length) return 0;
   const lastEventTime = events[events.length - 1]?.time ?? 0;
