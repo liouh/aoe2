@@ -1373,7 +1373,7 @@ export default function Home() {
                         return (
                           <TiltCard
                             key={player.id}
-                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
+                            className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
@@ -1481,7 +1481,7 @@ export default function Home() {
                       {players.map((player) => {
                         const stats = timelineStats.find((s) => s.playerId === player.id);
                         return (
-                          <TiltCard key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-4 player-card-3d-base">
+                          <TiltCard key={player.id} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
@@ -1519,7 +1519,7 @@ export default function Home() {
                         return (
                           <TiltCard
                             key={player.id}
-                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
+                            className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
@@ -1594,7 +1594,7 @@ export default function Home() {
                         return (
                           <TiltCard
                             key={player.id}
-                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6 player-card-3d-base"
+                            className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
@@ -1634,7 +1634,7 @@ export default function Home() {
                   <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <h2 className="headline text-2xl">Timeline</h2>
-                      <div className="flex flex-wrap items-center gap-4 pr-2 rounded-2xl">
+                      <div className="flex flex-wrap items-center gap-4 pr-2">
                         <label className="toggle-pill gap-1 group">
                           <div className="relative scale-75">
                             <input
