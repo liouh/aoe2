@@ -1607,29 +1607,18 @@ export default function Home() {
                               ></span>
                             </div>
 
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-2">
                               {(["wood", "food", "stone"] as const).map((res) => {
                                 const bought = usage.bought[res];
                                 const sold = usage.sold[res];
                                 return (
-                                  <div key={res}>
-                                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                      <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-1.5">
-                                      <div className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)]">Bought</span>
-                                        <span className="tabular-nums font-medium">
-                                          {bought > 0 ? "+" : ""}{formatNum(bought)}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center justify-between text-sm">
-                                        <span className="text-[color:var(--muted)]">Sold</span>
-                                        <span className="tabular-nums font-medium">
-                                          {sold > 0 ? "-" : ""}{formatNum(sold)}
-                                        </span>
-                                      </div>
-                                    </div>
+                                  <div key={res} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
+                                    <span className="text-sm tabular-nums font-medium flex items-center gap-1">
+                                      <span className={bought > 0 ? "text-white" : "text-white/10"}>+{formatNum(bought)}</span>
+                                      <span className="text-white/5 mx-0.5">/</span>
+                                      <span className={sold > 0 ? "text-white" : "text-white/10"}>-{formatNum(sold)}</span>
+                                    </span>
                                   </div>
                                 );
                               })}
