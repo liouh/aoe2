@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -217,7 +217,6 @@ export default function Home() {
   const isDraggingRef = useRef(false);
   const pendingScrollRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
-  const zoomLimitTimestampRef = useRef<number | null>(null);
   const entityLookupRef = useRef<{
     tileToAnchor: Map<string, string>;
     buildings: Map<string, TimelineEvent>;
@@ -927,40 +926,6 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [duration]);
 
-  useEffect(() => {
-    const container = mapContainerRef.current;
-    if (!container) return;
-    const handleWheel = (event: WheelEvent) => {
-      // If zooming in and not yet at max zoom
-      if (event.deltaY < 0 && mapZoom < MINIMAP_MAX_ZOOM) {
-        zoomLimitTimestampRef.current = null;
-        event.preventDefault();
-      }
-      // If zooming out and not yet at 1
-      else if (event.deltaY > 0 && mapZoom > 1) {
-        zoomLimitTimestampRef.current = null;
-        event.preventDefault();
-      }
-      // At a limit and continuing to scroll in that direction
-      else if ((event.deltaY < 0 && mapZoom >= MINIMAP_MAX_ZOOM) || (event.deltaY > 0 && mapZoom <= 1)) {
-        if (zoomLimitTimestampRef.current === null) {
-          zoomLimitTimestampRef.current = Date.now();
-        }
-
-        const elapsed = Date.now() - zoomLimitTimestampRef.current;
-        if (elapsed < 300) {
-          event.preventDefault();
-        }
-      }
-      // Scrolling AWAY from a limit
-      else {
-        zoomLimitTimestampRef.current = null;
-      }
-    };
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
-  }, [mapZoom]);
-
   return (
     <div className="min-h-screen">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-6 lg:px-10">
@@ -1110,48 +1075,6 @@ export default function Home() {
                 lastPointerRef.current = null;
                 setIsDragging(false);
                 setHoveredEntity(null);
-              }}
-              onWheel={(event) => {
-                const canvas = canvasRef.current;
-                if (!canvas) return;
-                const rect = canvas.getBoundingClientRect();
-                const cursorX = event.clientX - rect.left;
-                const cursorY = event.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const zoomDelta = -event.deltaY * 0.0015;
-                setMapZoom((prev) => {
-                  const next = clamp(prev * (1 + zoomDelta), 1, MINIMAP_MAX_ZOOM);
-                  if (next === prev) return prev;
-
-                  if (next <= 1) {
-                    setMapPan({ x: 0, y: 0 });
-                    return next;
-                  }
-
-                  const rectMap = canvas.getBoundingClientRect();
-                  const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
-                  const wScale = (rectMap.width - 2) / mapSpan;
-                  const hScale = (rectMap.height) / (mapSpan * 0.5);
-                  const baseScale = Math.min(wScale, hScale);
-
-                  const prevIsoScale = Math.max(1, baseScale * prev);
-                  const nextIsoScale = Math.max(1, baseScale * next);
-                  const scaleChange = nextIsoScale / prevIsoScale;
-
-                  const centerY = rectMap.height / 2;
-
-                  setMapPan((pan) =>
-                    clampPan(
-                      {
-                        x: pan.x + (1 - scaleChange) * (cursorX - centerX - pan.x),
-                        y: pan.y + (1 - scaleChange) * (cursorY - centerY - pan.y),
-                      },
-                      next
-                    )
-                  );
-                  return next;
-                });
               }}
             >
               {/* Map Floating Controls */}
