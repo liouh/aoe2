@@ -37,7 +37,18 @@ const PLAYER_COLORS = [
   "#FF9100",
 ];
 
-const UNIT_FADE_SECONDS = 200;
+const PLAYER_OUTLINES = [
+  "#ffffff", // 1 blue
+  "#ffffff", // 2 red
+  "#000000", // 3 green
+  "#000000", // 4 yellow
+  "#000000", // 5 cyan
+  "#ffffff", // 6 purple
+  "#ffffff", // 7 grey
+  "#000000", // 8 orange
+];
+
+const UNIT_FADE_SECONDS = 150;
 const MAX_ZOOM = 5;
 const SCALE_BOOST = 1.0;
 const PX_PER_SECOND = 2;
@@ -45,7 +56,7 @@ const MIN_TIMELINE_HEIGHT = 520;
 const UNIT_CIRCLE_RADIUS = 4;
 const TIMELINE_MARKER_INTERVAL = 300;
 const CONSOLIDATION_WINDOW_SECONDS = 5;
-const ISO_ICON_MIN_SIZE = 12;
+const ISO_ICON_MIN_SIZE = 20;
 const ISO_ICON_SCALE_FACTOR = 3;
 const PAD_TOP = 0;
 const PAD_BOTTOM = 0;
@@ -222,6 +233,13 @@ export default function Home() {
     const colorId = playerIdToColorId.get(playerId);
     if (colorId === undefined || colorId < 0) return "#000000";
     return PLAYER_COLORS[(colorId) % PLAYER_COLORS.length];
+  };
+
+  const classifyOutline = (playerId?: number) => {
+    if (playerId === undefined) return "#ffffff";
+    const colorId = playerIdToColorId.get(playerId);
+    if (colorId === undefined || colorId < 0) return "#ffffff";
+    return PLAYER_OUTLINES[(colorId) % PLAYER_OUTLINES.length];
   };
 
   useEffect(() => {
@@ -691,7 +709,7 @@ export default function Home() {
         context.fillStyle = classifyColor(event.playerId);
         context.lineWidth = 12;
         context.lineJoin = "round";
-        context.strokeStyle = "#ffffff";
+        context.strokeStyle = classifyOutline(event.playerId);
         context.stroke(iconPath);
         context.fill(iconPath);
         context.restore();
@@ -704,14 +722,14 @@ export default function Home() {
         const age = selectedTime - event.time;
         if (age < 0 || age > UNIT_FADE_SECONDS) return;
         const pos = toCanvas(event.x, event.y);
-        const alpha = clamp(1 - age / UNIT_FADE_SECONDS, 0.15, 1);
+        const alpha = 1 - age / UNIT_FADE_SECONDS;
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
         context.arc(pos.x, pos.y, UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
         context.fill();
         context.lineWidth = 1;
-        context.strokeStyle = "#ffffff";
+        context.strokeStyle = classifyOutline(event.playerId);
         context.stroke();
         context.globalAlpha = 1;
       });
