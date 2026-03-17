@@ -21,14 +21,14 @@ import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
 const PLAYER_COLORS = [
-  "#2e6bdc",
-  "#d64545",
-  "#2f8f3a",
-  "#f2c94c",
-  "#3bc9c9",
-  "#7b3dbf",
-  "#8a8d91",
-  "#f2994a",
+  "#3252FF",
+  "#FF0000",
+  "#00FF00",
+  "#FFFF00",
+  "#00FFFF",
+  "#B030B0",
+  "#707070",
+  "#FF9100",
 ];
 
 const classifyColor = (playerId?: number) => {
@@ -794,7 +794,7 @@ export default function Home() {
         setMapPan({ x: 0, y: 0 });
         setHoveredEntity(null);
       } catch (err) {
-        setError("The replay file could not be parsed. Try another file.");
+        setError("The replay file could not be parsed. Try another file. Games with AI players are not supported yet.");
       } finally {
         setLoading(false);
       }
@@ -806,6 +806,7 @@ export default function Home() {
     const loadDefault = async () => {
       const SAMPLE_REPLAYS = [
         "hera-1v1.aoe2record",
+        "hera-1v2.aoe2record",
         "hera-1v7.aoe2record",
       ];
       const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
