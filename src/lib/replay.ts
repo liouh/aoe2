@@ -137,15 +137,6 @@ const extractWallSegments = (data: number[]) => {
   return { tiles, buildingTypeId };
 };
 
-const extractIdFromData = (data: number[], offset = 0) => {
-  const bytes = Uint8Array.from(data);
-  if (bytes.length < offset + 4) return undefined;
-  const view = new DataView(bytes.buffer);
-  const value = view.getInt32(offset, true);
-  if (!Number.isFinite(value) || value <= 0) return undefined;
-  return value;
-};
-
 const extractDeleteTargetId = (data: number[]) => {
   const bytes = Uint8Array.from(data);
   if (bytes.length < 4) return undefined;
@@ -224,12 +215,9 @@ export const buildTimeline = (replay: unknown): TimelineEvent[] => {
         Array.isArray(payload?.data) && (actionType === "Build" || actionType === "Wall")
           ? extractBuildingTypeId(payload.data as number[])
           : undefined;
-      const targetId =
-        actionType === "Interact" && typeof payload?.target_id === "number"
-          ? payload.target_id
-          : actionType === "Delete" && Array.isArray(payload?.data)
-            ? extractDeleteTargetId(payload.data as number[])
-            : undefined;
+      const targetId = actionType === "Delete" && Array.isArray(payload?.data)
+        ? extractDeleteTargetId(payload.data as number[])
+        : undefined;
 
       // Expand wall commands into per-tile events
       if (actionType === "Wall" && Array.isArray(payload?.data)) {
