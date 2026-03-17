@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -74,8 +74,8 @@ const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
 
 const LOADING_STEPS = [
   "Loading replay...",
-  "Building timeline...",
-  "Preparing viewer..."
+  "Loading timeline...",
+  "Loading viewer..."
 ];
 
 const formatClock = (seconds: number) => {
