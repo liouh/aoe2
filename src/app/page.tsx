@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1686,14 +1686,12 @@ export default function Home() {
                             <div key={`${player.id}-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
                               <div className="flex items-center justify-between gap-2 p-4">
                                 <div className="flex items-center">
-                                  <span
-                                    className="h-3 w-3 rounded-full shrink-0"
-                                    style={{ background: classifyColor(player.id) }}
-                                  ></span>
-                                  <div className="flex flex-col ml-4">
+                                  <div className="flex flex-col">
                                     <h3 className="headline text-lg leading-tight">{player.name}</h3>
                                     <div className="flex items-center gap-2 text-xs text-white/40">
                                       <span>{getCivName(player.civId)}</span>
+                                      <span>•</span>
+                                      <span>Team {player.teamId}</span>
                                     </div>
                                   </div>
                                 </div>
