@@ -64,4 +64,4 @@ export const CIV_NAMES: Record<number, string> = {
   65539: "Full Random",
 };
 
-export const getCivName = (id?: number) => (id ? CIV_NAMES[id] : undefined);
+export const getCivName = (id?: number) => (id ? CIV_NAMES[id] : "Unknown Civ");

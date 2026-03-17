@@ -35,6 +35,7 @@ export type PlayerStats = {
   playerId: number;
   apm: number;
   peakApm: number;
+  apmHistory: { minute: number; apm: number }[];
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
@@ -618,11 +619,15 @@ export const extractPlayerStats = (
     });
 
     const peakApm = minuteBuckets.size > 0 ? Math.max(...Array.from(minuteBuckets.values())) : 0;
+    const apmHistory = Array.from(minuteBuckets.entries())
+      .map(([minute, count]) => ({ minute, apm: count }))
+      .sort((a, b) => a.minute - b.minute);
 
     stats.push({
       playerId,
       apm,
       peakApm,
+      apmHistory,
       ageTimings,
       autoscoutUsage,
       marketUsage,

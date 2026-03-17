@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,6 +12,7 @@ import {
   type MatchInfo,
   type TimelineEvent,
 } from "@/lib/replay";
+import { APMChart } from "./components/APMChart";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
@@ -77,6 +78,7 @@ const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
 const formatOptional = (value?: number) =>
   value === undefined || Number.isNaN(value) ? "—" : value.toString();
+
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -1377,7 +1379,7 @@ export default function Home() {
                         return (
                           <div
                             key={player.id}
-                            className="panel-strong rounded-2xl p-4"
+                            className="panel-strong rounded-2xl p-4 flex flex-col gap-6"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
@@ -1386,7 +1388,7 @@ export default function Home() {
                                   {player.won && <sup className="ml-1">👑</sup>}
                                 </h3>
                                 <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>{getCivName(player.civId)}</span>
                                   <span>•</span>
                                   <span>Team {player.teamId}</span>
                                 </div>
@@ -1396,18 +1398,8 @@ export default function Home() {
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
-                            <div className="mt-6 flex flex-col gap-4 text-sm">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
-                                  <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                                  <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.peakApm)}</p>
-                                </div>
-                              </div>
-                              <div className="pt-3">
+                            <div className="flex flex-col gap-4 text-sm">
+                              <div>
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                                   <span className="text-xs font-bold uppercase tracking-wider text-white/30">Age up time</span>
                                 </div>
@@ -1477,9 +1469,52 @@ export default function Home() {
                 </div>
               ) : activeTab === "stats" ? (
                 <div className="flex flex-col gap-6">
+                  <section className="panel rounded-3xl p-6 flex flex-col gap-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Actions per Minute</h2>
+                    </div>
+
+                    <APMChart
+                      data={players.map(p => ({
+                        playerId: p.id,
+                        history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
+                      }))}
+                      players={players}
+                      classifyColor={classifyColor}
+                    />
+
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const stats = timelineStats.find((s) => s.playerId === player.id);
+                        return (
+                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
+                              <div>
+                                <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
+                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
+                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.peakApm)}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Units Trained</h2>
+                      <h2 className="headline text-2xl">Favorite Units</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player) => {
@@ -1493,9 +1528,7 @@ export default function Home() {
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
                                 <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                  <span>•</span>
-                                  <span>Team {player.teamId}</span>
+                                  <span>{getCivName(player.civId)}</span>
                                 </div>
                               </div>
                               <span
@@ -1552,7 +1585,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Market Usage</h2>
+                      <h2 className="headline text-2xl">Market Use</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player) => {
@@ -1566,11 +1599,6 @@ export default function Home() {
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight">{player.name}</h3>
-                                <div className="flex items-center gap-2 text-xs text-white/40">
-                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                  <span>•</span>
-                                  <span>Team {player.teamId}</span>
-                                </div>
                               </div>
                               <span
                                 className="h-3 w-3 rounded-full shrink-0"
@@ -1610,6 +1638,7 @@ export default function Home() {
                       })}
                     </div>
                   </section>
+
                 </div>
               ) : (
                 <section ref={timelineRef} className="w-full">
@@ -1693,9 +1722,7 @@ export default function Home() {
                                   <div className="flex flex-col ml-4">
                                     <h3 className="headline text-lg leading-tight">{player.name}</h3>
                                     <div className="flex items-center gap-2 text-xs text-white/40">
-                                      <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                      <span>•</span>
-                                      <span>Team {player.teamId}</span>
+                                      <span>{getCivName(player.civId)}</span>
                                     </div>
                                   </div>
                                 </div>
