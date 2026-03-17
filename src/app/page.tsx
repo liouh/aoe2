@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -59,6 +59,13 @@ const MINIMAP_UNIT_ALPHA = 0.8;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_BORDER = 2;
 const MINIMAP_UNIT_FADE_SECONDS = 120;
+
+const KEYBOARD_STEP_SECONDS = 30;
+const KEYBOARD_STEP_SHIFT_SECONDS = 120;
+// Playback speed = 1000 / PLAYBACK_INTERVAL_MS * PLAYBACK_STEP_SECONDS
+// 1000 / 66 * 4 = 60x speed
+const PLAYBACK_STEP_SECONDS = 4;
+const PLAYBACK_INTERVAL_MS = 66;
 
 const TIMELINE_MIN_HEIGHT = 600;
 const TIMELINE_MARKER_INTERVAL = 300;
@@ -305,9 +312,9 @@ export default function Home() {
           setIsPlaying(false);
           return prev;
         }
-        return Math.min(prev + 5, duration);
+        return Math.min(prev + PLAYBACK_STEP_SECONDS, duration);
       });
-    }, 50);
+    }, PLAYBACK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
@@ -921,7 +928,7 @@ export default function Home() {
       const now = performance.now();
       if (now - lastKeyTimeRef.current < 16) return;
       lastKeyTimeRef.current = now;
-      const step = event.shiftKey ? 120 : 30;
+      const step = event.shiftKey ? KEYBOARD_STEP_SHIFT_SECONDS : KEYBOARD_STEP_SECONDS;
       requestAnimationFrame(() => {
         setSelectedTime((prev) => {
           const next =
