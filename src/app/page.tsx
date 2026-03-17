@@ -1702,7 +1702,7 @@ export default function Home() {
                           );
                           return (
                             <div key={`${player.id}-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
-                              <div className="flex items-center justify-between gap-2 p-4">
+                              <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
                                 <div className="flex items-center">
                                   <div className="flex flex-col">
                                     <h3 className="headline text-lg leading-tight">{player.name}</h3>
