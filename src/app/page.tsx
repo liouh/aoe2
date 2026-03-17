@@ -1215,7 +1215,7 @@ export default function Home() {
                       <span className="text-[color:var(--accent)] uppercase">
                         {LOADING_STEPS[loadingStep]}
                       </span>
-                      <span className="font-mono text-[color:var(--muted-foreground)]">
+                      <span className="tabular-nums text-[color:var(--muted-foreground)]">
                         {Math.round(((loadingStep + 1) / LOADING_STEPS.length) * 100)}%
                       </span>
                     </div>
@@ -1535,7 +1535,7 @@ export default function Home() {
                                 >
                                   {index === 0 && (
                                     <div className="absolute left-0 -translate-y-1/2 -translate-x-[120%] pl-2">
-                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold text-[color:var(--panel)] shadow-sm">
+                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
                                         {formatClock(selectedTime)}
                                       </span>
                                     </div>
@@ -1549,79 +1549,143 @@ export default function Home() {
                   </div>
                 </section>
               ) : activeTab === "stats" ? (
-                <section className="panel rounded-3xl p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="headline text-2xl">Units Trained</h2>
-                  </div>
-                  <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {players.map((player) => {
-                      const stats = unitStats.get(player.id) || { military: [], economic: [] };
-                      const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
-                      const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
+                <div className="flex flex-col gap-6">
+                  <section className="panel rounded-3xl p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Units Trained</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const stats = unitStats.get(player.id) || { military: [], economic: [] };
+                        const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
+                        const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
 
-                      return (
-                        <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <h3 className="headline text-lg leading-tight">{player.name}</h3>
-                              <div className="flex items-center gap-2 text-xs text-white/40">
-                                <span>{getCivName(player.civId) || "Unknown Civ"}</span>
-                                <span>•</span>
-                                <span>Team {player.teamId}</span>
+                        return (
+                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId}</span>
+                                </div>
+                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
+                            </div>
+
+                            <div className="space-y-4">
+                              {/* Military Section */}
+                              <div>
+                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                  <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
+                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                                </div>
+                                <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                  {stats.military.length > 0 ? (
+                                    stats.military.map((u, idx) => (
+                                      <div key={idx} className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-[10px] text-white/20 italic">No military trained</p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Economic Section */}
+                              <div>
+                                <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                  <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
+                                  <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
+                                </div>
+                                <div className="flex flex-col gap-1.5 min-h-[20px]">
+                                  {stats.economic.length > 0 ? (
+                                    stats.economic.map((u, idx) => (
+                                      <div key={idx} className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
+                                        <span className="tabular-nums font-bold shrink-0">{u.count}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-[10px] text-white/20 italic">No eco units trained</p>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                            <span
-                              className="h-3 w-3 rounded-full shrink-0"
-                              style={{ background: classifyColor(player.id) }}
-                            ></span>
                           </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                  <section className="panel rounded-3xl p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="headline text-2xl">Market Usage</h2>
+                    </div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {players.map((player) => {
+                        const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {
+                          bought: { food: 0, wood: 0, stone: 0 },
+                          sold: { food: 0, wood: 0, stone: 0 }
+                        };
 
-                          <div className="space-y-4">
-                            {/* Military Section */}
-                            <div>
-                              <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
-                                <span className="text-xs font-mono bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                        const formatNum = (n: number) => new Intl.NumberFormat().format(n);
+
+                        return (
+                          <div key={player.id} className="panel-strong rounded-2xl p-4 flex flex-col gap-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <div className="flex items-center gap-2 text-xs text-white/40">
+                                  <span>{getCivName(player.civId) || "Unknown Civ"}</span>
+                                  <span>•</span>
+                                  <span>Team {player.teamId}</span>
+                                </div>
                               </div>
-                              <div className="flex flex-col gap-1.5 min-h-[20px]">
-                                {stats.military.length > 0 ? (
-                                  stats.military.map((u, idx) => (
-                                    <div key={idx} className="flex items-center justify-between text-sm">
-                                      <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                      <span className="font-mono font-bold shrink-0">{u.count}</span>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <p className="text-[10px] text-white/20 italic">No military trained</p>
-                                )}
-                              </div>
+                              <span
+                                className="h-3 w-3 rounded-full shrink-0"
+                                style={{ background: classifyColor(player.id) }}
+                              ></span>
                             </div>
 
-                            {/* Economic Section */}
-                            <div>
-                              <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
-                                <span className="text-xs font-mono bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
-                              </div>
-                              <div className="flex flex-col gap-1.5 min-h-[20px]">
-                                {stats.economic.length > 0 ? (
-                                  stats.economic.map((u, idx) => (
-                                    <div key={idx} className="flex items-center justify-between text-sm">
-                                      <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                                      <span className="font-mono font-bold shrink-0">{u.count}</span>
+                            <div className="flex flex-col gap-4">
+                              {(["wood", "food", "stone"] as const).map((res) => {
+                                const bought = usage.bought[res];
+                                const sold = usage.sold[res];
+                                return (
+                                  <div key={res}>
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                                      <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
                                     </div>
-                                  ))
-                                ) : (
-                                  <p className="text-[10px] text-white/20 italic">No eco units trained</p>
-                                )}
-                              </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)]">Bought</span>
+                                        <span className="tabular-nums font-bold">
+                                          {bought > 0 ? "+" : ""}{formatNum(bought)}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="text-[color:var(--muted)]">Sold</span>
+                                        <span className="tabular-nums font-bold">
+                                          {sold > 0 ? "-" : ""}{formatNum(sold)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
+                        );
+                      })}
+                    </div>
+                  </section>
+                </div>
               ) : (
                 <div className="flex flex-col gap-6">
                   <section className="panel rounded-3xl p-6">
@@ -1655,17 +1719,18 @@ export default function Home() {
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
-                            <div className="mt-6 grid grid-cols-2 gap-2 text-sm">
+                            <div className="mt-6 grid grid-cols-2 gap-1 text-sm">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">APM</p>
-                                <p className="text-lg font-semibold">{formatOptional(stats?.apm)}</p>
+                                <p className="text-lg tabular-nums font-semibold">{formatOptional(stats?.apm)}</p>
                               </div>
                               <div>
                                 {stats?.ageTimings ? (
                                   <div className="space-y-1 text-m text-[color:var(--muted)]">
                                     {Object.entries(stats.ageTimings).map(([age, time]) => (
-                                      <div key={age}>
-                                        {age}<span className="text-white pl-2">{formatClock(time)}</span>
+                                      <div key={age} className="flex justify-between items-center">
+                                        <span>{age}</span>
+                                        <span className="text-white tabular-nums pl-2">{formatClock(time)}</span>
                                       </div>
                                     ))}
                                   </div>

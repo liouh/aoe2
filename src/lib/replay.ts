@@ -26,11 +26,17 @@ export type PlayerSummary = {
   won?: boolean;
 };
 
+export type MarketUsage = {
+  bought: { food: number; wood: number; stone: number };
+  sold: { food: number; wood: number; stone: number };
+};
+
 export type PlayerStats = {
   playerId: number;
   apm: number;
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
+  marketUsage?: MarketUsage;
 };
 
 
@@ -549,9 +555,33 @@ export const extractPlayerStats = (
     const ageTimings: Record<string, number> = {};
 
     let autoscoutUsage = 0;
+    const marketUsage: MarketUsage = {
+      bought: { food: 0, wood: 0, stone: 0 },
+      sold: { food: 0, wood: 0, stone: 0 },
+    };
 
     playerEvents.forEach((event) => {
       if (event.category === "autoscout") autoscoutUsage++;
+
+      if (event.category === "market" && Array.isArray(event.raw?.data)) {
+        const data = event.raw.data as number[];
+        const resourceType = data[0]; // 0=food, 1=wood, 2=stone
+        const amount = (data[2] ?? 0) * 100;
+        
+        const resourceMap: Record<number, keyof MarketUsage["bought"]> = {
+          0: "food",
+          1: "wood",
+          2: "stone",
+        };
+        const resource = resourceMap[resourceType];
+        if (resource) {
+          if (event.type === "Buy") {
+            marketUsage.bought[resource] += amount;
+          } else if (event.type === "Sell") {
+            marketUsage.sold[resource] += amount;
+          }
+        }
+      }
 
       // Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
       if (event.type === "Research" && event.techId) {
@@ -589,6 +619,7 @@ export const extractPlayerStats = (
       apm,
       ageTimings,
       autoscoutUsage,
+      marketUsage,
     });
   });
 
