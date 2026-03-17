@@ -386,7 +386,6 @@ export default function Home() {
     }
   }, [activeTab, selectedTime]);
 
-
   const jumpToTimeline = () => {
     setIsPlaying(false);
     setActiveTab("timeline");
@@ -1149,6 +1148,10 @@ export default function Home() {
                   className="absolute right-0 z-10"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
+                  onPointerMove={(e) => {
+                    e.stopPropagation();
+                    setHoveredEntity(null);
+                  }}
                 >
                   <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm">
                     <button
