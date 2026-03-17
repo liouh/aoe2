@@ -13,6 +13,7 @@ import {
   type TimelineEvent,
 } from "@/lib/replay";
 import { APMChart } from "./components/APMChart";
+import { PlayerSelect } from "./components/PlayerSelect";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
@@ -1726,11 +1727,11 @@ export default function Home() {
                                     </div>
                                   </div>
                                 </div>
-                                <select
-                                  className="rounded-full border border-transparent bg-[color:var(--panel)] px-2 py-1 text-xs text-[color:var(--muted)]"
-                                  value={player.id}
-                                  onChange={(event) => {
-                                    const value = Number(event.target.value);
+                                <PlayerSelect
+                                  players={players}
+                                  selectedPlayerId={player.id}
+                                  classifyColor={classifyColor}
+                                  onSelect={(value) => {
                                     if (index === 0) {
                                       setLeftPlayerId(value);
                                       if (value === rightPlayerId && players.length > 1) {
@@ -1750,16 +1751,10 @@ export default function Home() {
                                       }
                                     }
                                   }}
-                                >
-                                  {players.map((option) => (
-                                    <option key={option.id} value={option.id}>
-                                      {option.name}
-                                    </option>
-                                  ))}
-                                </select>
+                                />
                               </div>
                               <div
-                                className="relative mt-1 w-full"
+                                className="relative w-full bg-[#1c1610] rounded-b-xl"
                                 style={{ height: timelineHeight, minHeight: TIMELINE_MIN_HEIGHT }}
                               >
                                 {/* Time Markers */}
