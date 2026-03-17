@@ -218,6 +218,7 @@ export default function Home() {
   const isDraggingRef = useRef(false);
   const pendingScrollRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const entityLookupRef = useRef<{
     tileToAnchor: Map<string, string>;
     buildings: Map<string, TimelineEvent>;
@@ -1063,6 +1064,23 @@ export default function Home() {
                 cursor: mapZoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
               }}
               onPointerDown={(event) => {
+                const now = performance.now();
+                const rect = event.currentTarget.getBoundingClientRect();
+                const cursorX = event.clientX - rect.left;
+                const cursorY = event.clientY - rect.top;
+
+                if (lastTapRef.current && now - lastTapRef.current.time < 300) {
+                  const dx = cursorX - lastTapRef.current.x;
+                  const dy = cursorY - lastTapRef.current.y;
+                  if (Math.hypot(dx, dy) < 30) {
+                    handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
+                    lastTapRef.current = null;
+                    event.preventDefault();
+                    return;
+                  }
+                }
+                lastTapRef.current = { time: now, x: cursorX, y: cursorY };
+
                 if (mapZoom <= 1) return;
                 event.preventDefault();
                 isDraggingRef.current = true;
@@ -1132,14 +1150,6 @@ export default function Home() {
                 lastPointerRef.current = null;
                 setIsDragging(false);
                 setHoveredEntity(null);
-              }}
-              onDoubleClick={(event) => {
-                const canvas = canvasRef.current;
-                if (!canvas) return;
-                const rect = canvas.getBoundingClientRect();
-                const cursorX = event.clientX - rect.left;
-                const cursorY = event.clientY - rect.top;
-                handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
               }}
             >
               {/* Map Floating Controls */}
