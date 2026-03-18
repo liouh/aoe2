@@ -1014,24 +1014,7 @@ export default function Home() {
 
         <main className="flex flex-col gap-6">
           <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
-            <div className="flex flex-wrap items-center justify-between">
-              {!loading && !error && (
-                <div className="flex flex-wrap items-center gap-4">
-                  <Select
-                    options={minimapPlayers}
-                    selectedId={minimapPlayerId}
-                    onSelect={setMinimapPlayerId}
-                    align="left"
-                  />
-                  <Select
-                    options={minimapViewOptions}
-                    selectedId={minimapViewMode}
-                    onSelect={setMinimapViewMode}
-                    align="left"
-                  />
-                </div>
-              )}
-            </div>
+
             <div
               className="relative w-full aspect-[2/1]"
               ref={mapContainerRef}
@@ -1128,10 +1111,36 @@ export default function Home() {
                 setHoveredEntity(null);
               }}
             >
+              {/* Map Floating Selects */}
+              {!loading && !error && (
+                <div
+                  className="absolute left-4 top-4 z-20 flex items-center gap-2"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                  onPointerMove={(e) => {
+                    e.stopPropagation();
+                    setHoveredEntity(null);
+                  }}
+                >
+                  <Select
+                    options={minimapPlayers}
+                    selectedId={minimapPlayerId}
+                    onSelect={setMinimapPlayerId}
+                    align="left"
+                  />
+                  <Select
+                    options={minimapViewOptions}
+                    selectedId={minimapViewMode}
+                    onSelect={setMinimapViewMode}
+                    align="left"
+                  />
+                </div>
+              )}
+
               {/* Map Floating Controls */}
               {!loading && !error && (
                 <div
-                  className="absolute right-0 z-10"
+                  className="absolute right-4 top-4 z-10"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
