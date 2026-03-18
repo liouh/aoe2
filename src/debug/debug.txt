@@ -1,9 +1,18 @@
+// find first
+__aoe2rec.operations.find((item) => {
+    if (item.Action && item.Action.action_data.Build) {
+        return true;
+    }
+});
+
+// find all
 __aoe2rec.operations.filter((item) => {
     if (item.Action && item.Action.action_data.DeQueue) {
         console.log(item.Action.action_data);
     }
 });
 
+// find all unhandled
 __aoe2rec.operations.filter((item) => {
     if (item.Action && (
         !item.Action.action_data.Transform
