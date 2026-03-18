@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1140,7 +1140,7 @@ export default function Home() {
               {/* Map Floating Controls */}
               {!loading && !error && (
                 <div
-                  className="absolute right-4 top-4 z-10"
+                  className="absolute right-4 top-4 z-10 flex flex-col gap-2 w-9"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
@@ -1148,10 +1148,10 @@ export default function Home() {
                     setHoveredEntity(null);
                   }}
                 >
-                  <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm">
+                  <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm flex flex-col">
                     <button
                       type="button"
-                      className="py-1 w-full transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
+                      className="flex h-9 items-center justify-center transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         const canvas = canvasRef.current;
@@ -1164,7 +1164,7 @@ export default function Home() {
                     </button>
                     <button
                       type="button"
-                      className="py-1 w-full transition hover:bg-white/20 cursor-pointer"
+                      className="flex h-9 items-center justify-center transition hover:bg-white/20 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         const canvas = canvasRef.current;
@@ -1178,7 +1178,7 @@ export default function Home() {
                   </div>
                   <button
                     type="button"
-                    className="mt-2 py-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom(1);
@@ -1190,7 +1190,7 @@ export default function Home() {
                   </button>
                   <button
                     type="button"
-                    className="mt-2 p-1 pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       jumpToTimeline();
