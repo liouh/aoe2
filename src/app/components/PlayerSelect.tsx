@@ -8,6 +8,7 @@ interface PlayerSelectProps {
   selectedPlayerId: number;
   onSelect: (playerId: number) => void;
   classifyColor: (playerId?: number) => string;
+  align?: "left" | "right";
 }
 
 export function PlayerSelect({
@@ -15,6 +16,7 @@ export function PlayerSelect({
   selectedPlayerId,
   onSelect,
   classifyColor,
+  align = "right",
 }: PlayerSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,11 +58,11 @@ export function PlayerSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100">
+        <div className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}>
           <div className="max-h-60 overflow-y-auto">
             {players.map((player) => (
               <button
-                key={player.id}
+                key={player.id ?? "all"}
                 type="button"
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition hover:bg-white/10 cursor-pointer ${
                   player.id === selectedPlayerId ? "bg-white/5" : ""

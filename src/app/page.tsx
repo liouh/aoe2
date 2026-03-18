@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -184,6 +184,7 @@ export default function Home() {
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
+  const [minimapPlayerId, setMinimapPlayerId] = useState<number | undefined>(undefined);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -247,6 +248,10 @@ export default function Home() {
     () => summarizePlayers(summary),
     [summary]
   );
+
+  const minimapPlayers = useMemo(() => {
+    return [{ id: undefined as any, name: "All Players" }, ...players];
+  }, [players]);
 
   const playerIdToColorId = useMemo(() => {
     const map = new Map<number, number>();
@@ -479,9 +484,10 @@ export default function Home() {
         (event) =>
           event.category === "move" &&
           event.x !== undefined &&
-          event.y !== undefined
+          event.y !== undefined &&
+          (minimapPlayerId === undefined || event.playerId === minimapPlayerId)
       ),
-    [events]
+    [events, minimapPlayerId]
   );
 
   const trainEvents = useMemo(
@@ -696,6 +702,7 @@ export default function Home() {
         const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
         const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
         const anchorKey = `${baseX},${baseY}`;
+
         anchorToFootprint.set(anchorKey, footprint);
         anchorToEvent.set(anchorKey, event);
         // Remove any old buildings whose tiles overlap with this new building
@@ -751,8 +758,15 @@ export default function Home() {
     };
 
     if (showBuildings) {
-      anchorToEvent.forEach((event) => drawBuilding(event));
+      anchorToEvent.forEach((event) => {
+        if (minimapPlayerId === undefined || event.playerId === minimapPlayerId) {
+          drawBuilding(event);
+        }
+      });
       iconBuildings.forEach((event) => {
+        if (minimapPlayerId !== undefined && event.playerId !== minimapPlayerId) {
+          return;
+        }
         if (event.x === undefined || event.y === undefined) return;
         const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
         const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
@@ -843,6 +857,7 @@ export default function Home() {
     moveEvents,
     trainEvents,
     hoveredEntity,
+    minimapPlayerId,
   ]);
 
   const loadReplayData = async (buffer: ArrayBuffer) => {
@@ -988,40 +1003,51 @@ export default function Home() {
         <main className="flex flex-col gap-6">
           <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
             <div className="flex flex-wrap items-center justify-between">
-              <div className="flex flex-wrap items-center gap-6">
-                <label className="toggle-pill gap-2 group">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
-                    Buildings
-                  </span>
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      checked={showBuildings}
-                      onChange={(event) => setShowBuildings(event.target.checked)}
+              {!loading && !error && (
+                <div className="flex flex-wrap items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <PlayerSelect
+                      players={minimapPlayers}
+                      selectedPlayerId={minimapPlayerId as any}
+                      onSelect={(id) => setMinimapPlayerId(id === undefined ? undefined : id)}
+                      classifyColor={(id) => (id === undefined ? "var(--foreground)" : classifyColor(id))}
+                      align="left"
                     />
-                    <div className="toggle-pill-track ring-1 ring-white/5 peer-focus:ring-var(--accent)/40">
-                      <div className="toggle-pill-thumb" />
-                    </div>
                   </div>
-                </label>
-                <label className="toggle-pill gap-2 group">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white peer-checked:text-white peer-checked:font-bold">
-                    Unit movements
-                  </span>
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      checked={showUnits}
-                      onChange={(event) => setShowUnits(event.target.checked)}
-                    />
-                    <div className="toggle-pill-track ring-1 ring-white/5 peer-focus:ring-var(--accent)/40">
-                      <div className="toggle-pill-thumb" />
+                  <label className="toggle-pill gap-2 group">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
+                      Buildings
+                    </span>
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        className="peer sr-only"
+                        checked={showBuildings}
+                        onChange={(event) => setShowBuildings(event.target.checked)}
+                      />
+                      <div className="toggle-pill-track">
+                        <div className="toggle-pill-thumb" />
+                      </div>
                     </div>
-                  </div>
-                </label>
-              </div>
+                  </label>
+                  <label className="toggle-pill gap-2 group">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
+                      Moves
+                    </span>
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        className="peer sr-only"
+                        checked={showUnits}
+                        onChange={(event) => setShowUnits(event.target.checked)}
+                      />
+                      <div className="toggle-pill-track">
+                        <div className="toggle-pill-thumb" />
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              )}
             </div>
             <div
               className="relative w-full aspect-[2/1]"
@@ -1594,8 +1620,11 @@ export default function Home() {
                   <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <h2 className="headline text-2xl">Timeline</h2>
-                      <div className="flex flex-wrap items-center gap-4 pr-2">
-                        <label className="toggle-pill gap-1 group">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <label className="toggle-pill group">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
+                            Research
+                          </span>
                           <div className="relative scale-75">
                             <input
                               type="checkbox"
@@ -1603,15 +1632,15 @@ export default function Home() {
                               checked={timelineShowResearch}
                               onChange={(e) => setTimelineShowResearch(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-5 w-9">
-                              <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                            <div className="toggle-pill-track h-6 w-9">
+                              <div className="toggle-pill-thumb"></div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
-                            Research
-                          </span>
                         </label>
-                        <label className="toggle-pill gap-1 group">
+                        <label className="toggle-pill group">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
+                            Buildings
+                          </span>
                           <div className="relative scale-75">
                             <input
                               type="checkbox"
@@ -1619,15 +1648,15 @@ export default function Home() {
                               checked={timelineShowBuildings}
                               onChange={(e) => setTimelineShowBuildings(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-5 w-9">
-                              <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                            <div className="toggle-pill-track h-6 w-9">
+                              <div className="toggle-pill-thumb"></div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
-                            Buildings
-                          </span>
                         </label>
-                        <label className="toggle-pill gap-1 group">
+                        <label className="toggle-pill group">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
+                            Units
+                          </span>
                           <div className="relative scale-75">
                             <input
                               type="checkbox"
@@ -1635,13 +1664,10 @@ export default function Home() {
                               checked={timelineShowUnits}
                               onChange={(e) => setTimelineShowUnits(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-5 w-9">
-                              <div className="toggle-pill-thumb h-3 w-3 top-1 left-1 peer-checked:translate-x-4"></div>
+                            <div className="toggle-pill-track h-6 w-9">
+                              <div className="toggle-pill-thumb"></div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--muted-foreground)] transition-colors group-hover:text-[color:var(--foreground)] peer-checked:text-[color:var(--foreground)]">
-                            Units
-                          </span>
                         </label>
                       </div>
                     </div>
