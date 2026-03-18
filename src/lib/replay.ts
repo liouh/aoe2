@@ -8,10 +8,8 @@ export type TimelineEvent = {
   y?: number;
   unitId?: string | number;
   unitTypeId?: number;
-  buildingId?: string | number;
   buildingTypeId?: number;
   techId?: number;
-  age?: string;
   raw: Record<string, unknown>;
 };
 
@@ -52,101 +50,148 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Imperial: 190,
 };
 
+// These are the only events we care about
+const classifyEvent = (type: string) => {
+  switch (type) {
+    case "Research":
+      return "research";
+    case "DeQueue":
+      return "train";
+    case "Build":
+    case "Wall":
+      return "build";
+    case "Move":
+    case "Patrol":
+    case "DeAttackMove":
+    case "AttackGround":
+      return "move";
+    case "Autoscout": return "autoscout";
+    case "Buy":
+    case "Sell":
+      return "market";
+  }
+  return "other";
+};
+
 const pickNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
 
-const normalizeTime = (value: number): number => {
-  return value / 1000;
-};
-
-const extractPosition = (event: Record<string, unknown>) => {
-  if (typeof event.x === "number" && typeof event.y === "number") {
-    return { x: event.x, y: event.y };
-  }
-  return undefined;
-};
-
-const extractPositionFromData = (
-  data: number[],
-  bounds?: { x: number; y: number }
-) => {
+const parseActionData = (type: string, data: number[]) => {
   const bytes = Uint8Array.from(data);
-  if (bytes.length < 8) return undefined;
+  if (bytes.length === 0) return undefined;
   const view = new DataView(bytes.buffer);
-  const maxX = bounds?.x ?? 512;
-  const maxY = bounds?.y ?? 512;
-  let best: { x: number; y: number; score: number } | undefined;
 
-  for (let i = 0; i + 8 <= bytes.length; i += 4) {
-    const x = view.getFloat32(i, true);
-    const y = view.getFloat32(i + 4, true);
-    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-    if (x === 0 && y === 0) continue;
-    if (x < 0 || y < 0 || x > maxX || y > maxY) continue;
-    const score = Math.min(x, y, maxX - x, maxY - y);
-    if (!best || score > best.score) {
-      best = { x, y, score };
+  try {
+    switch (type) {
+      case "Move": {
+        if (bytes.length < 20) return undefined;
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const selected = view.getInt16(12, true);
+        const unitIds: number[] = [];
+        if (selected > 0 && bytes.length >= 20 + selected * 4) {
+          for (let i = 0; i < selected; i++) {
+            unitIds.push(view.getUint32(20 + i * 4, true));
+          }
+        }
+        return { x, y, unitIds };
+      }
+      case "Patrol":
+      case "DeAttackMove": { // Maps to AttackMove (33)
+        if (bytes.length < 88) return undefined;
+        const selected = view.getUint32(0, true);
+        const x = view.getFloat32(8, true);
+        const y = view.getFloat32(48, true);
+        const unitIds: number[] = [];
+        if (selected > 0 && bytes.length >= 88 + selected * 4) {
+          for (let i = 0; i < selected; i++) {
+            unitIds.push(view.getUint32(88 + i * 4, true));
+          }
+        }
+        return { x, y, unitIds };
+      }
+      case "Build": {
+        if (bytes.length < 24) return undefined;
+        const unitCount = view.getUint32(0, true);
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const buildingTypeId = view.getUint32(12, true);
+        const unitIds: number[] = [];
+        if (unitCount > 0 && bytes.length >= 24 + unitCount * 4) {
+          for (let i = 0; i < unitCount; i++) {
+            unitIds.push(view.getUint32(24 + i * 4, true));
+          }
+        }
+        return { x, y, buildingTypeId, unitIds };
+      }
+      case "Wall": {
+        if (bytes.length < 20) return undefined;
+        const selected = view.getInt32(0, true);
+        const x1 = view.getInt16(4, true);
+        const y1 = view.getInt16(6, true);
+        const x2 = view.getInt16(8, true);
+        const y2 = view.getInt16(10, true);
+        const buildingTypeId = view.getInt32(12, true);
+        const unitIds: number[] = [];
+        if (selected > 0 && bytes.length >= 20 + selected * 4) {
+          for (let i = 0; i < selected; i++) {
+            unitIds.push(view.getUint32(20 + i * 4, true));
+          }
+        }
+        // Bresenham line interpolation for wall
+        const tiles: { x: number; y: number }[] = [];
+        let x_curr = x1, y_curr = y1;
+        const dx = Math.abs(x2 - x1), dy = Math.abs(y2 - y1);
+        const sx = x1 < x2 ? 1 : -1, sy = y1 < y2 ? 1 : -1;
+        let err = dx - dy;
+        for (let step = 0; step <= dx + dy + 1; step++) {
+          tiles.push({ x: x_curr, y: y_curr });
+          if (x_curr === x2 && y_curr === y2) break;
+          const e2 = 2 * err;
+          if (e2 > -dy) { err -= dy; x_curr += sx; }
+          if (e2 < dx) { err += dx; y_curr += sy; }
+        }
+        return { tiles, buildingTypeId, unitIds };
+      }
+      case "Research": {
+        if (bytes.length < 8) return undefined;
+        const techId = view.getUint16(6, true);
+        return { techId };
+      }
+      case "DeQueue": {
+        if (bytes.length < 12) return undefined;
+        const unitTypeId = view.getUint16(8, true);
+        const amount = view.getUint16(10, true);
+        return { unitTypeId, amount };
+      }
+      case "Sell":
+      case "Buy": {
+        if (bytes.length < 8) return undefined;
+        const resourceId = view.getUint16(0, true);
+        const amount = view.getUint16(2, true);
+        return { resourceId, amount };
+      }
+      case "Autoscout": {
+        return {};
+      }
+      case "AttackGround": {
+        if (bytes.length < 16) return undefined;
+        const selected = view.getInt32(0, true);
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const unitIds: number[] = [];
+        if (selected > 0 && bytes.length >= 16 + selected * 4) {
+          for (let i = 0; i < selected; i++) {
+            unitIds.push(view.getUint32(16 + i * 4, true));
+          }
+        }
+        return { x, y, unitIds };
+      }
     }
-  }
-
-  if (best && best.score >= 1) {
-    return { x: best.x, y: best.y };
+  } catch (e) {
+    console.error(`Error parsing action data for ${type}:`, e);
   }
   return undefined;
-};
-
-const extractBuildingTypeId = (data: number[]) => {
-  const bytes = Uint8Array.from(data);
-  if (bytes.length < 16) return undefined;
-  const view = new DataView(bytes.buffer);
-  const value = view.getInt32(12, true);
-  if (!Number.isFinite(value) || value <= 0) return undefined;
-  return value;
-};
-
-const extractWallSegments = (data: number[]) => {
-  const bytes = Uint8Array.from(data);
-  if (bytes.length < 14) return undefined;
-  const view = new DataView(bytes.buffer);
-  const startX = view.getUint16(4, true);
-  const startY = view.getUint16(6, true);
-  const endX = view.getUint16(8, true);
-  const endY = view.getUint16(10, true);
-  const buildingTypeId = view.getUint16(12, true);
-  if (startX > 512 || startY > 512 || endX > 512 || endY > 512) return undefined;
-  // Bresenham line interpolation
-  const tiles: { x: number; y: number }[] = [];
-  let x0 = startX, y0 = startY;
-  const x1 = endX, y1 = endY;
-  const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
-  const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
-  let err = dx - dy;
-  for (let step = 0; step <= dx + dy + 1; step++) {
-    tiles.push({ x: x0, y: y0 });
-    if (x0 === x1 && y0 === y1) break;
-    const e2 = 2 * err;
-    if (e2 > -dy) { err -= dy; x0 += sx; }
-    if (e2 < dx) { err += dx; y0 += sy; }
-  }
-  return { tiles, buildingTypeId };
-};
-
-const detectCategory = (type: string, event: Record<string, unknown>) => {
-  switch (type) {
-    case "Research": return "research";
-    case "DeQueue": return "train";
-    case "Build": return "build";
-    case "Wall": return "build";
-    case "Move": return "move";
-    case "Patrol": return "move";
-    case "DeAttack": return "move";
-    case "Follow": return "move";
-    case "AttackGround": return "move";
-    case "Autoscout": return "autoscout";
-    case "Buy": return "market";
-    case "Sell": return "market";
-  }
-  return "other";
 };
 
 export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] => {
@@ -156,73 +201,65 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   const events: TimelineEvent[] = [];
-  const used = new Set<string>();
 
   if (operations) {
-    const mapInfo = (replayRecord.zheader as any)?.map_info;
-    const bounds =
-      mapInfo?.size_x && mapInfo?.size_y
-        ? { x: mapInfo.size_x, y: mapInfo.size_y }
-        : undefined;
-
-
     operations.forEach((op, index) => {
       const action = op.Action as Record<string, unknown> | undefined;
       if (!action) return;
-      const time = normalizeTime(pickNumber(action.world_time) ?? 0);
+
+      const time = (pickNumber(action.world_time) ?? 0) / 1000;
       const actionData = action.action_data as Record<string, unknown> | undefined;
       if (!actionData) return;
+
       const actionType = Object.keys(actionData)[0];
       if (!actionType) return;
+
+      const category = classifyEvent(actionType);
+      if (category === "other") return;
+
       const payload = actionData[actionType] as Record<string, unknown>;
       const playerId = pickNumber(payload?.player_id);
-      const position =
-        extractPosition(payload) ??
-        (Array.isArray(payload?.data)
-          ? extractPositionFromData(payload.data as number[], bounds)
-          : undefined);
+      if (!playerId) return;
 
-      const category = detectCategory(actionType, payload ?? {});
-      const unitId = Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined;
-      let unitTypeId = pickNumber(payload?.unit_id);
-      let techId = pickNumber(payload?.technology_type);
-      const buildingId = payload?.building_id;
+      const data = Array.isArray(payload?.data) ? parseActionData(actionType, payload.data as number[]) : undefined;
+
+      const position =
+        (typeof payload.x === "number" && typeof payload.y === "number" ? { x: payload.x, y: payload.y } : undefined) ??
+        (data && "x" in data && typeof data.x === "number" ? { x: data.x, y: data.y as number } : undefined);
+
+      const unitId = (data && "unitIds" in data && Array.isArray(data.unitIds)) ? data.unitIds[0] : (Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined);
+
+      const unitTypeId = (data && "unitTypeId" in data) ? pickNumber(data.unitTypeId) : pickNumber(payload?.unit_id);
+
       const buildingTypeId =
-        Array.isArray(payload?.data) && (actionType === "Build" || actionType === "Wall")
-          ? extractBuildingTypeId(payload.data as number[])
-          : undefined;
+        (data && "buildingTypeId" in data) ? pickNumber(data.buildingTypeId) : undefined;
+
+      const techId = (data && "techId" in data) ? pickNumber(data.techId) : pickNumber(payload?.technology_type);
 
       // Expand wall commands into per-tile events
-      if (actionType === "Wall" && Array.isArray(payload?.data)) {
-        const wall = extractWallSegments(payload.data as number[]);
-        if (wall) {
-          wall.tiles.forEach((tile, tileIdx) => {
-            const tileId = `${actionType}-${playerId ?? "p"}-${time}-${index}-${tileIdx}`;
-            if (used.has(tileId)) return;
-            used.add(tileId);
-            events.push({
-              id: tileId,
-              time,
-              playerId,
-              type: actionType,
-              category,
-              x: tile.x,
-              y: tile.y,
-              unitId,
-              unitTypeId,
-              buildingId: undefined,
-              buildingTypeId: wall.buildingTypeId,
-              techId,
-              raw: payload ?? {},
-            });
+      if (actionType === "Wall" && data && "tiles" in data) {
+        const wall = data as { tiles: { x: number; y: number }[]; buildingTypeId: number };
+        wall.tiles.forEach((tile, tileIdx) => {
+          const tileId = `${actionType}-${playerId}-${index}-${tileIdx}`;
+          events.push({
+            id: tileId,
+            time,
+            playerId,
+            type: actionType,
+            category,
+            x: tile.x,
+            y: tile.y,
+            unitId,
+            unitTypeId,
+            buildingTypeId: wall.buildingTypeId,
+            techId,
+            raw: { ...(payload ?? {}), ...data },
           });
-          return;
-        }
+        });
+        return;
       }
 
-      const id = `${actionType}-${playerId ?? "p"}-${time}-${index}`;
-      if (used.has(id)) return;
-      used.add(id);
+      const id = `${actionType}-${playerId}-${index}`;
       events.push({
         id,
         time,
@@ -233,13 +270,9 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
         y: position?.y,
         unitId,
         unitTypeId,
-        buildingId:
-          typeof buildingId === "string" || typeof buildingId === "number"
-            ? buildingId
-            : undefined,
         buildingTypeId,
         techId,
-        raw: payload ?? {},
+        raw: { ...(payload ?? {}), ...data },
       });
     });
 
@@ -312,18 +345,17 @@ export const extractPlayerStats = (
 
       if (event.category === "autoscout") autoscoutUsage++;
 
-      if (event.category === "market" && Array.isArray(event.raw?.data)) {
-        const data = event.raw.data as number[];
-        const resourceType = data[0]; // 0=food, 1=wood, 2=stone
-        const amount = (data[2] ?? 0) * 100;
+      if (event.category === "market") {
+        const resourceId = pickNumber(event.raw?.resourceId);
+        const amount = (pickNumber(event.raw?.amount) ?? 0) * 100;
 
         const resourceMap: Record<number, keyof MarketUsage["bought"]> = {
           0: "food",
           1: "wood",
           2: "stone",
         };
-        const resource = resourceMap[resourceType];
-        if (resource) {
+        const resource = resourceId !== undefined ? resourceMap[resourceId] : undefined;
+        if (resource && amount > 0) {
           if (event.type === "Buy") {
             marketUsage.bought[resource] += amount;
           } else if (event.type === "Sell") {
@@ -389,7 +421,7 @@ export const determineDuration = (
   const rawSummaryDuration = pickNumber(summary?.duration);
   const summaryDuration =
     rawSummaryDuration !== undefined
-      ? normalizeTime(rawSummaryDuration)
+      ? rawSummaryDuration / 1000
       : undefined;
   if (!events.length) return 0;
   const lastEventTime = events[events.length - 1]?.time ?? 0;

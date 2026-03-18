@@ -60,7 +60,7 @@ const MINIMAP_HOVER_OUTLINE = 2;
 const MINIMAP_UNIT_ALPHA = 0.8;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_BORDER = 2;
-const MINIMAP_UNIT_FADE_SECONDS = 120;
+const MINIMAP_UNIT_FADE_SECONDS = 60;
 
 const KEYBOARD_STEP_SECONDS = 30;
 const KEYBOARD_STEP_SHIFT_SECONDS = 120;
@@ -683,7 +683,6 @@ export default function Home() {
     const iconBuildings: TimelineEvent[] = [];
 
     const destroyedTiles = new Set<string>();
-    const buildingIdToAnchor = new Map<number, string>();
     const tileToAnchor = new Map<string, string>();
     const anchorToFootprint = new Map<string, { w: number; h: number }>();
     const anchorToEvent = new Map<string, TimelineEvent>();
@@ -699,9 +698,6 @@ export default function Home() {
         const anchorKey = `${baseX},${baseY}`;
         anchorToFootprint.set(anchorKey, footprint);
         anchorToEvent.set(anchorKey, event);
-        if (typeof event.buildingId === "number" && event.buildingId > 0) {
-          buildingIdToAnchor.set(event.buildingId, anchorKey);
-        }
         // Remove any old buildings whose tiles overlap with this new building
         const displacedAnchors = new Set<string>();
         for (let dx = 0; dx < footprint.w; dx += 1) {
@@ -849,6 +845,49 @@ export default function Home() {
     hoveredEntity,
   ]);
 
+  const loadReplayData = async (buffer: ArrayBuffer) => {
+    setLoading(true);
+    setError(null);
+    setLoadingStep(0);
+    try {
+      setLoadingStep(1);
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const parsed = parse_rec(buffer);
+      const parsedSummary = parse_rec_summary(buffer);
+      if (typeof window !== "undefined") {
+        (window as any).__aoe2rec = parsed;
+        (window as any).__aoe2summary = parsedSummary;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const timeline = buildTimeline(parsed, parsedSummary);
+      const gameDuration = determineDuration(parsedSummary, timeline);
+      const extractedInfo = extractMatchInfo(parsedSummary);
+
+      setLoadingStep(2);
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      setReplay(parsed);
+      setSummary(parsedSummary);
+      setMatchInfo(extractedInfo);
+      setEvents(timeline);
+      setDuration(gameDuration);
+
+      // Reset interactive state
+      setIsPlaying(false);
+      setSelectedTime(0);
+      setMapZoom(1);
+      setMapPan({ x: 0, y: 0 });
+      setHoveredEntity(null);
+    } catch (err) {
+      setError("The replay file could not be parsed. Try another file. Games with AI players are not supported yet.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFile = (file: File) => {
     // Unload previous file first
     setReplay(null);
@@ -861,50 +900,10 @@ export default function Home() {
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
 
-    setLoading(true);
-    setError(null);
-    setLoadingStep(0);
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
-      try {
-        const buffer = reader.result as ArrayBuffer;
-
-        setLoadingStep(1);
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const parsed = parse_rec(buffer);
-        const parsedSummary = parse_rec_summary(buffer);
-        if (typeof window !== "undefined") {
-          (window as any).__aoe2rec = parsed;
-          (window as any).__aoe2summary = parsedSummary;
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const timeline = buildTimeline(parsed, parsedSummary);
-        const gameDuration = determineDuration(parsedSummary, timeline);
-        const extractedInfo = extractMatchInfo(parsedSummary);
-
-        setLoadingStep(2);
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        setReplay(parsed);
-        setSummary(parsedSummary);
-        setMatchInfo(extractedInfo);
-        setEvents(timeline);
-        setDuration(gameDuration);
-
-        // Reset interactive state
-        setIsPlaying(false);
-        setSelectedTime(0);
-        setMapZoom(1);
-        setMapPan({ x: 0, y: 0 });
-        setHoveredEntity(null);
-      } catch (err) {
-        setError("The replay file could not be parsed. Try another file. Games with AI players are not supported yet.");
-      } finally {
-        setLoading(false);
-      }
+      const buffer = reader.result as ArrayBuffer;
+      await loadReplayData(buffer);
     });
     reader.readAsArrayBuffer(file);
   };
@@ -913,52 +912,13 @@ export default function Home() {
   useEffect(() => {
     const loadDefault = async () => {
       const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
-
-      setLoading(true);
-      setError(null);
-      try {
-        setLoadingStep(0);
-        const response = await fetch(randomFile);
-        if (!response.ok) throw new Error("Sample file not found");
-        const buffer = await response.arrayBuffer();
-
-        setLoadingStep(1);
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const parsed = parse_rec(buffer);
-        const parsedSummary = parse_rec_summary(buffer);
-        if (typeof window !== "undefined") {
-          (window as any).__aoe2rec = parsed;
-          (window as any).__aoe2summary = parsedSummary;
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const timeline = buildTimeline(parsed, parsedSummary);
-        const gameDuration = determineDuration(parsedSummary, timeline);
-        const extractedInfo = extractMatchInfo(parsedSummary);
-
-        setLoadingStep(2);
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        setReplay(parsed);
-        setSummary(parsedSummary);
-        setMatchInfo(extractedInfo);
-        setEvents(timeline);
-        setDuration(gameDuration);
-
-        // Reset interactive state
-        setIsPlaying(false);
-        setSelectedTime(0);
-        setMapZoom(1);
-        setMapPan({ x: 0, y: 0 });
-        setHoveredEntity(null);
-      } catch (err) {
-        // setError("Could not load default replay file.");
-        // fail silently
-      } finally {
+      const response = await fetch(randomFile);
+      if (!response.ok) {
         setLoading(false);
+        return;
       }
+      const buffer = await response.arrayBuffer();
+      await loadReplayData(buffer);
     };
     loadDefault();
   }, []);
