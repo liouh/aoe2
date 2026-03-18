@@ -76,6 +76,7 @@ const classifyEvent = (type: string) => {
 const pickNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
 
+// Structs from https://github.com/aoe2ct/aoe2rec/blob/main/patterns/aoe2operations.hexpat
 const parseActionData = (type: string, data: number[]) => {
   const bytes = Uint8Array.from(data);
   if (bytes.length === 0) return undefined;
@@ -111,14 +112,14 @@ const parseActionData = (type: string, data: number[]) => {
         return { x, y, unitIds };
       }
       case "Build": {
-        if (bytes.length < 24) return undefined;
+        if (bytes.length < 28) return undefined;
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
         const buildingTypeId = view.getUint32(12, true);
         return { x, y, buildingTypeId };
       }
       case "Wall": {
-        if (bytes.length < 20) return undefined;
+        if (bytes.length < 24) return undefined;
         const x1 = view.getInt16(4, true);
         const y1 = view.getInt16(6, true);
         const x2 = view.getInt16(8, true);
@@ -140,7 +141,7 @@ const parseActionData = (type: string, data: number[]) => {
         return { tiles, buildingTypeId };
       }
       case "Research": {
-        if (bytes.length < 8) return undefined;
+        if (bytes.length < 13) return undefined;
         const techId = view.getUint16(6, true);
         return { techId };
       }
