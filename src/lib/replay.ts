@@ -202,8 +202,6 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       if (!actionType) return;
 
       const category = classifyEvent(actionType);
-      if (category === "other") return;
-
       const payload = actionData[actionType] as Record<string, unknown>;
       const playerId = pickNumber(payload?.player_id);
       if (!playerId) return;
