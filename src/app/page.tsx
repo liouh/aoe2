@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1015,7 +1015,7 @@ export default function Home() {
         <main className="flex flex-col gap-6">
           <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
             <div
-              className="relative w-full aspect-[2/1] pt-12 md:pt-0"
+              className="relative w-full aspect-[2/1] pt-11 md:pt-0"
               ref={mapContainerRef}
               style={{
                 touchAction: "none",
@@ -1136,7 +1136,7 @@ export default function Home() {
               )}
               {!loading && !error && (
                 <div
-                  className="absolute right-0 md:right-2 top-0 md:top-2 z-10 flex flex-col gap-2 w-9"
+                  className="absolute right-1 md:right-2 top-12 md:top-2 z-10 flex flex-col gap-2 w-9"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
