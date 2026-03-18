@@ -1014,9 +1014,8 @@ export default function Home() {
 
         <main className="flex flex-col gap-6">
           <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
-
             <div
-              className="relative w-full aspect-[2/1]"
+              className="relative w-full aspect-[2/1] pt-12 md:pt-0"
               ref={mapContainerRef}
               style={{
                 touchAction: "none",
@@ -1111,10 +1110,9 @@ export default function Home() {
                 setHoveredEntity(null);
               }}
             >
-              {/* Map Floating Selects */}
               {!loading && !error && (
                 <div
-                  className="absolute left-4 top-4 z-20 flex items-center gap-2"
+                  className="absolute left-0 md:left-2 top-0 md:top-2 z-20 flex items-center gap-2"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
@@ -1136,11 +1134,9 @@ export default function Home() {
                   />
                 </div>
               )}
-
-              {/* Map Floating Controls */}
               {!loading && !error && (
                 <div
-                  className="absolute right-4 top-4 z-10 flex flex-col gap-2 w-9"
+                  className="absolute right-0 md:right-2 top-0 md:top-2 z-10 flex flex-col gap-2 w-9"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
@@ -1148,6 +1144,20 @@ export default function Home() {
                     setHoveredEntity(null);
                   }}
                 >
+                  <button
+                    type="button"
+                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMapZoom(1);
+                      setMapPan({ x: 0, y: 0 });
+                      setMinimapPlayerId(undefined);
+                      setMinimapViewMode("both");
+                    }}
+                    title="Reset view"
+                  >
+                    ↺
+                  </button>
                   <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm flex flex-col">
                     <button
                       type="button"
@@ -1176,18 +1186,6 @@ export default function Home() {
                       -
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setMapZoom(1);
-                      setMapPan({ x: 0, y: 0 });
-                    }}
-                    title="Reset zoom"
-                  >
-                    ⛶
-                  </button>
                   <button
                     type="button"
                     className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
