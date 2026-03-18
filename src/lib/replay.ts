@@ -97,7 +97,7 @@ const parseActionData = (type: string, data: number[]) => {
         return { x, y, unitIds };
       }
       case "Patrol":
-      case "DeAttackMove": { // Maps to AttackMove (33)
+      case "DeAttackMove": {
         if (bytes.length < 88) return undefined;
         const selected = view.getUint32(0, true);
         const x = view.getFloat32(8, true);
@@ -112,32 +112,18 @@ const parseActionData = (type: string, data: number[]) => {
       }
       case "Build": {
         if (bytes.length < 24) return undefined;
-        const unitCount = view.getUint32(0, true);
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
         const buildingTypeId = view.getUint32(12, true);
-        const unitIds: number[] = [];
-        if (unitCount > 0 && bytes.length >= 24 + unitCount * 4) {
-          for (let i = 0; i < unitCount; i++) {
-            unitIds.push(view.getUint32(24 + i * 4, true));
-          }
-        }
-        return { x, y, buildingTypeId, unitIds };
+        return { x, y, buildingTypeId };
       }
       case "Wall": {
         if (bytes.length < 20) return undefined;
-        const selected = view.getInt32(0, true);
         const x1 = view.getInt16(4, true);
         const y1 = view.getInt16(6, true);
         const x2 = view.getInt16(8, true);
         const y2 = view.getInt16(10, true);
         const buildingTypeId = view.getInt32(12, true);
-        const unitIds: number[] = [];
-        if (selected > 0 && bytes.length >= 20 + selected * 4) {
-          for (let i = 0; i < selected; i++) {
-            unitIds.push(view.getUint32(20 + i * 4, true));
-          }
-        }
         // Bresenham line interpolation for wall
         const tiles: { x: number; y: number }[] = [];
         let x_curr = x1, y_curr = y1;
@@ -151,7 +137,7 @@ const parseActionData = (type: string, data: number[]) => {
           if (e2 > -dy) { err -= dy; x_curr += sx; }
           if (e2 < dx) { err += dx; y_curr += sy; }
         }
-        return { tiles, buildingTypeId, unitIds };
+        return { tiles, buildingTypeId };
       }
       case "Research": {
         if (bytes.length < 8) return undefined;
