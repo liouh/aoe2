@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -13,7 +13,7 @@ import {
   type TimelineEvent,
 } from "@/lib/replay";
 import { APMChart } from "./components/APMChart";
-import { PlayerSelect } from "./components/PlayerSelect";
+import { Select, type SelectOption } from "./components/Select";
 import { TiltCard } from "./components/TiltCard";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
@@ -174,8 +174,7 @@ export default function Home() {
   const [selectedTime, setSelectedTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showUnits, setShowUnits] = useState(true);
-  const [showBuildings, setShowBuildings] = useState(true);
+  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves">("both");
   const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -249,10 +248,6 @@ export default function Home() {
     [summary]
   );
 
-  const minimapPlayers = useMemo(() => {
-    return [{ id: undefined as any, name: "All Players" }, ...players];
-  }, [players]);
-
   const playerIdToColorId = useMemo(() => {
     const map = new Map<number, number>();
     players.forEach((p) => {
@@ -276,6 +271,23 @@ export default function Home() {
     if (colorId === undefined || colorId < 0) return "#ffffff";
     return PLAYER_OUTLINES[(colorId) % PLAYER_OUTLINES.length];
   };
+
+  const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
+    return [
+      { id: undefined, label: "All players", color: "var(--foreground)" },
+      ...players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id) }))
+    ];
+  }, [players, classifyColor]);
+
+  const minimapViewOptions: SelectOption<"both" | "buildings" | "moves">[] = [
+    { id: "both", label: "All data" },
+    { id: "buildings", label: "Buildings" },
+    { id: "moves", label: "Unit movements" },
+  ];
+
+  const showBuildings = minimapViewMode === "both" || minimapViewMode === "buildings";
+  const showUnits = minimapViewMode === "both" || minimapViewMode === "moves";
+
 
   const handleZoom = (targetX: number, targetY: number, zoomFactor: number) => {
     const canvas = canvasRef.current;
@@ -1004,48 +1016,19 @@ export default function Home() {
           <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
             <div className="flex flex-wrap items-center justify-between">
               {!loading && !error && (
-                <div className="flex flex-wrap items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <PlayerSelect
-                      players={minimapPlayers}
-                      selectedPlayerId={minimapPlayerId as any}
-                      onSelect={(id) => setMinimapPlayerId(id === undefined ? undefined : id)}
-                      classifyColor={(id) => (id === undefined ? "var(--foreground)" : classifyColor(id))}
-                      align="left"
-                    />
-                  </div>
-                  <label className="toggle-pill gap-2 group">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
-                      Buildings
-                    </span>
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        className="peer sr-only"
-                        checked={showBuildings}
-                        onChange={(event) => setShowBuildings(event.target.checked)}
-                      />
-                      <div className="toggle-pill-track">
-                        <div className="toggle-pill-thumb" />
-                      </div>
-                    </div>
-                  </label>
-                  <label className="toggle-pill gap-2 group">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
-                      Moves
-                    </span>
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        className="peer sr-only"
-                        checked={showUnits}
-                        onChange={(event) => setShowUnits(event.target.checked)}
-                      />
-                      <div className="toggle-pill-track">
-                        <div className="toggle-pill-thumb" />
-                      </div>
-                    </div>
-                  </label>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Select
+                    options={minimapPlayers}
+                    selectedId={minimapPlayerId}
+                    onSelect={setMinimapPlayerId}
+                    align="left"
+                  />
+                  <Select
+                    options={minimapViewOptions}
+                    selectedId={minimapViewMode}
+                    onSelect={setMinimapViewMode}
+                    align="left"
+                  />
                 </div>
               )}
             </div>
@@ -1699,10 +1682,9 @@ export default function Home() {
                                     </div>
                                   </div>
                                 </div>
-                                <PlayerSelect
-                                  players={players}
-                                  selectedPlayerId={player.id}
-                                  classifyColor={classifyColor}
+                                <Select
+                                  options={players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id) }))}
+                                  selectedId={player.id}
                                   onSelect={(value) => {
                                     if (index === 0) {
                                       setLeftPlayerId(value);
