@@ -453,9 +453,10 @@ export type MatchInfo = {
   difficultyId?: number;
   populationLimit?: number;
   victoryTypeId?: number;
+  filename?: string;
 };
 
-export const extractMatchInfo = (summary: any): MatchInfo => {
+export const extractMatchInfo = (summary: any, filename?: string): MatchInfo => {
   const settings = summary?.header?.game_settings;
   const replayData = summary?.header?.replay;
   return {
@@ -465,5 +466,6 @@ export const extractMatchInfo = (summary: any): MatchInfo => {
     difficultyId: pickNumber(settings?.difficulty),
     populationLimit: pickNumber(settings?.population_limit),
     victoryTypeId: pickNumber(settings?.victory_type_id),
+    filename,
   };
 };

@@ -864,7 +864,7 @@ export default function Home() {
     minimapPlayerId,
   ]);
 
-  const loadReplayData = async (buffer: ArrayBuffer) => {
+  const loadReplayData = async (buffer: ArrayBuffer, filename?: string) => {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
@@ -883,7 +883,7 @@ export default function Home() {
 
       const timeline = buildTimeline(parsed, parsedSummary);
       const gameDuration = determineDuration(parsedSummary, timeline);
-      const extractedInfo = extractMatchInfo(parsedSummary);
+      const extractedInfo = extractMatchInfo(parsedSummary, filename);
 
       setLoadingStep(2);
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -901,7 +901,7 @@ export default function Home() {
       setMapPan({ x: 0, y: 0 });
       setHoveredEntity(null);
     } catch (err) {
-      setError("The replay file could not be parsed. Try another file. Games with AI players are not supported yet.");
+      setError("The replay file could not be parsed. Try another file.");
     } finally {
       setLoading(false);
     }
@@ -922,7 +922,7 @@ export default function Home() {
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
       const buffer = reader.result as ArrayBuffer;
-      await loadReplayData(buffer);
+      await loadReplayData(buffer, file.name);
     });
     reader.readAsArrayBuffer(file);
   };
@@ -1406,6 +1406,14 @@ export default function Home() {
                     <section className="panel flex flex-col gap-4 rounded-3xl p-6">
                       <h2 className="headline text-2xl">Game Info</h2>
                       <div className="grid gap-6 md:grid-cols-3">
+                        {matchInfo.filename && (
+                          <div className="flex flex-col gap-1 md:col-span-full border-b border-white/5 pb-2">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
+                            <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
+                              {matchInfo.filename}
+                            </span>
+                          </div>
+                        )}
                         {matchInfo.gameTypeId !== undefined && (
                           <div className="flex flex-col gap-1">
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game Mode</span>
