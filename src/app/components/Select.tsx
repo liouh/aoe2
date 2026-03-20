@@ -7,6 +7,7 @@ export interface SelectOption<T> {
   label: string;
   color?: string;
   icon?: string;
+  isAi?: boolean;
 }
 
 interface SelectProps<T> {
@@ -58,6 +59,11 @@ export function Select<T extends string | number | undefined>({
         <span className="font-medium truncate max-w-[200px]">
           {selectedOption?.label || "Select..."}
         </span>
+        {selectedOption?.isAi && (
+          <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
+            AI
+          </span>
+        )}
         <svg
           className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
@@ -94,6 +100,11 @@ export function Select<T extends string | number | undefined>({
                 <span className={`font-medium ${option.id === selectedId ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
                   {option.label}
                 </span>
+                {option.isAi && (
+                  <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
+                    AI
+                  </span>
+                )}
                 {option.id === selectedId && (
                   <svg className="ml-auto h-3 w-3 text-[color:var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />

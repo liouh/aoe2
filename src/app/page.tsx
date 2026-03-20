@@ -267,7 +267,7 @@ export default function Home() {
   const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
     return [
       { id: undefined, label: "All players", color: "var(--foreground)" },
-      ...players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id) }))
+      ...players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id), isAi: p.ai }))
     ];
   }, [players, classifyColor]);
 
@@ -1345,8 +1345,13 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">
+                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
                                   {player.name}
+                                  {player.ai && (
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                      AI
+                                    </span>
+                                  )}
                                   {player.won && <sup className="ml-1">👑</sup>}
                                 </h3>
                                 <div className="flex items-center gap-2 text-xs text-white/40">
@@ -1452,7 +1457,14 @@ export default function Home() {
                           <TiltCard key={player.id} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                  {player.name}
+                                  {player.ai && (
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                      AI
+                                    </span>
+                                  )}
+                                </h3>
                               </div>
                               <span
                                 className="h-3 w-3 rounded-full shrink-0"
@@ -1491,7 +1503,14 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                  {player.name}
+                                  {player.ai && (
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                      AI
+                                    </span>
+                                  )}
+                                </h3>
                                 <div className="flex items-center gap-2 text-xs text-white/40">
                                   <span>{getCivName(player.civId)}</span>
                                 </div>
@@ -1566,7 +1585,14 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                  {player.name}
+                                  {player.ai && (
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                      AI
+                                    </span>
+                                  )}
+                                </h3>
                               </div>
                               <span
                                 className="h-3 w-3 rounded-full shrink-0"
@@ -1673,7 +1699,14 @@ export default function Home() {
                               <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
                                 <div className="flex items-center">
                                   <div className="flex flex-col">
-                                    <h3 className="headline text-lg leading-tight">{player.name}</h3>
+                                    <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                      {player.name}
+                                      {player.ai && (
+                                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                          AI
+                                        </span>
+                                      )}
+                                    </h3>
                                     <div className="flex items-center gap-2 text-xs text-white/40">
                                       <span>{getCivName(player.civId)}</span>
                                       <span>•</span>
@@ -1682,7 +1715,7 @@ export default function Home() {
                                   </div>
                                 </div>
                                 <Select
-                                  options={players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id) }))}
+                                  options={players.map(p => ({ id: p.id, label: p.name, color: classifyColor(p.id), isAi: p.ai }))}
                                   selectedId={player.id}
                                   onSelect={(value) => {
                                     if (index === 0) {
