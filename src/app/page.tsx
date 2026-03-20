@@ -11,7 +11,8 @@ import {
   summarizePlayers,
   type MatchInfo,
   type TimelineEvent,
-} from "@/lib/replay";
+} from "@/lib/replayProcessor";
+import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { APMChart } from "./components/APMChart";
 import { Select, type SelectOption } from "./components/Select";
 import { TiltCard } from "./components/TiltCard";
@@ -22,11 +23,6 @@ import { getTechName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
-const SAMPLE_REPLAYS = [
-  "hera-1v1.aoe2record",
-  "hera-1v2.aoe2record",
-  "hera-1v7.aoe2record",
-];
 
 const PLAYER_COLORS = [
   "#3252FF",
@@ -1369,7 +1365,7 @@ export default function Home() {
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                                   <span className="text-xs font-bold uppercase tracking-wider text-white/30">Age up time</span>
                                 </div>
-                                {stats?.ageTimings ? (
+                                 {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
                                   <div className="space-y-1.5">
                                     {Object.entries(stats.ageTimings).map(([age, time]) => (
                                       <div key={age} className="flex justify-between items-center group/age">

@@ -1,4 +1,4 @@
-import { TimelineEvent, PlayerSummary } from "./replay";
+import { TimelineEvent, PlayerSummary } from "./replayProcessor";
 import { getBuildingFootprint } from "./buildingFootprints";
 
 const FARM_IDS = [50, 1187];
