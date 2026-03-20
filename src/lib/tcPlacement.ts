@@ -27,7 +27,7 @@ export const determineStartingLocations = (
   players.forEach((player) => {
     // Key: "tx,ty" (true top-left anchor of 4x4 TC), Value: { weight, directions }
     const candidates = new Map<string, VotedLocation>();
-    const playerBuildings: { x: number; y: number; w: number; h: number }[] = [];
+    const playerBuildings: { x: number; y: number; w: number; h: number; time: number }[] = [];
     let firstPos: { x: number; y: number } | null = null;
 
     // First pass: collect buildings (converted to true top-left anchors)
@@ -44,7 +44,7 @@ export const determineStartingLocations = (
           // Calculate TRUE top-left anchor used by the viewer
           const ax = Math.floor(event.x) - Math.floor(w / 2);
           const ay = Math.floor(event.y) - Math.floor(h / 2);
-          playerBuildings.push({ x: ax, y: ay, w, h });
+          playerBuildings.push({ x: ax, y: ay, w, h, time: event.time });
         }
       }
     }
@@ -60,7 +60,7 @@ export const determineStartingLocations = (
         event.y !== undefined
       ) {
         const { w: bw, h: bh } = getBuildingFootprint(event.buildingTypeId);
-        
+
         // True anchor of this farm/pasture
         const fax = Math.floor(event.x) - Math.floor(bw / 2);
         const fay = Math.floor(event.y) - Math.floor(bh / 2);
@@ -106,9 +106,28 @@ export const determineStartingLocations = (
       // Filter 2: High Confidence Hole Detection
       // A good candidate should have neighbors on multiple sides
       const sideScore = data.directions.size;
-      if (sideScore < 2) continue;
 
-      const score = data.weight * sideScore;
+      // Filter 3: Overlap with future buildings
+      // If a building is built at (tx, ty) very early, it's definitely not the TC.
+      let overlapPenalty = 1.0;
+      for (const b of playerBuildings) {
+        // Overlap check (TC is 4x4)
+        const overlaps = !(tx + 4 <= b.x || tx >= b.x + b.w || ty + 4 <= b.y || ty >= b.y + b.h);
+        if (overlaps) {
+          if (b.time < 720) { // Big penalty if overlap with 0-12 min building
+            overlapPenalty *= 0.2;
+          } else {
+            // Smaller penalty for later buildings
+            overlapPenalty *= 0.5;
+          }
+        }
+      }
+
+      let score = data.weight * (1 + sideScore) * overlapPenalty;
+
+      // Bonus for perfect "holes" (surrounded on all 4 sides)
+      if (sideScore === 4) score += 10;
+
       if (score > maxScore) {
         maxScore = score;
         bestTrueAnchor = { x: tx, y: ty };
@@ -116,7 +135,7 @@ export const determineStartingLocations = (
     }
 
     // Translate best true anchor back to viewer coordinate (center-ish)
-    if (bestTrueAnchor && maxScore >= 20) {
+    if (bestTrueAnchor && maxScore > 1) {
       startEvents.push({
         id: `init-tc-${player.id}`,
         time: 0,
