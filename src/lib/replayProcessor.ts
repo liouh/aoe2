@@ -52,7 +52,7 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
 };
 
 // These are the only events we care about
-const classifyEvent = (type: string) => {
+const classifyEvent = (type: string, isAi?: boolean) => {
   switch (type) {
     case "Research":
       return "research";
@@ -88,17 +88,7 @@ const parseActionData = (type: string, data: number[]) => {
   try {
     switch (type) {
       case "Move": {
-        if (bytes.length < 20) return undefined;
-        const x = view.getFloat32(4, true);
-        const y = view.getFloat32(8, true);
-        const selected = view.getInt16(12, true);
-        const unitIds: number[] = [];
-        if (selected > 0 && bytes.length >= 20 + selected * 4) {
-          for (let i = 0; i < selected; i++) {
-            unitIds.push(view.getUint32(20 + i * 4, true));
-          }
-        }
-        return { x, y, unitIds };
+        return {};
       }
       case "AiMove": {
         if (bytes.length < 40) return undefined;
@@ -157,15 +147,10 @@ const parseActionData = (type: string, data: number[]) => {
         return { tiles, buildingTypeId };
       }
       case "Research": {
-        if (bytes.length < 13) return undefined;
-        const techId = view.getUint16(6, true);
-        return { techId };
+        return {};
       }
       case "DeQueue": {
-        if (bytes.length < 12) return undefined;
-        const unitTypeId = view.getUint16(8, true);
-        const amount = view.getUint16(10, true);
-        return { unitTypeId, amount };
+        return {};
       }
       case "AiQueue": {
         if (bytes.length < 12) return undefined;
@@ -210,6 +195,7 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     : null;
   const events: TimelineEvent[] = [];
 
+  const players = summarizePlayers(summary);
   if (operations) {
     operations.forEach((op, index) => {
       const action = op.Action as Record<string, unknown> | undefined;
@@ -222,11 +208,12 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       const actionType = Object.keys(actionData)[0];
       if (!actionType) return;
 
-      const category = classifyEvent(actionType);
       const payload = actionData[actionType] as Record<string, unknown>;
       const playerId = pickNumber(payload?.player_id);
       if (!playerId) return;
 
+      const isAi = players.find(p => p.id === playerId)?.ai;
+      const category = classifyEvent(actionType, isAi);
       const data = Array.isArray(payload?.data) ? parseActionData(actionType, payload.data as number[]) : undefined;
 
       const position =
@@ -240,7 +227,7 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       const buildingTypeId =
         (data && "buildingTypeId" in data) ? pickNumber(data.buildingTypeId) : undefined;
 
-      const techId = (data && "techId" in data) ? pickNumber(data.techId) : pickNumber(payload?.technology_type);
+      const techId = pickNumber(payload?.technology_type);
 
       // Expand wall commands into per-tile events
       if (actionType === "Wall" && data && "tiles" in data) {
@@ -283,7 +270,6 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     });
 
     const sortedEvents = events.sort((a, b) => a.time - b.time);
-    const players = summarizePlayers(summary);
     const startingEvents = determineStartingLocations(players, sortedEvents);
 
     return [...startingEvents, ...sortedEvents].sort((a, b) => a.time - b.time);
