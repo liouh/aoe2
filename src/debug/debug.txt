@@ -12,6 +12,13 @@ __aoe2rec.operations.filter((item) => {
     }
 });
 
+// find all by player
+__aoe2rec.operations.filter((item) => {
+    if (item.Action && item.Action.action_data && item.Action.action_data[Object.keys(item.Action.action_data)[0]].player_id === 1) {
+        console.log(item.Action.action_data);
+    }
+});
+
 // find all unhandled
 __aoe2rec.operations.filter((item) => {
     if (item.Action && item.Action.action_data && (
