@@ -55,11 +55,13 @@ const classifyEvent = (type: string) => {
   switch (type) {
     case "Research":
       return "research";
+    case "AiQueue":
     case "DeQueue":
       return "train";
     case "Build":
     case "Wall":
       return "build";
+    case "AiMove":
     case "Move":
     case "Patrol":
     case "DeAttackMove":
@@ -93,6 +95,19 @@ const parseActionData = (type: string, data: number[]) => {
         if (selected > 0 && bytes.length >= 20 + selected * 4) {
           for (let i = 0; i < selected; i++) {
             unitIds.push(view.getUint32(20 + i * 4, true));
+          }
+        }
+        return { x, y, unitIds };
+      }
+      case "AiMove": {
+        if (bytes.length < 40) return undefined;
+        const count = view.getInt32(0, true);
+        const x = view.getFloat32(20, true);
+        const y = view.getFloat32(24, true);
+        const unitIds: number[] = [];
+        if (count > 1 && bytes.length >= 40 + count * 4) {
+          for (let i = 0; i < count; i++) {
+            unitIds.push(view.getInt32(40 + i * 4, true));
           }
         }
         return { x, y, unitIds };
@@ -150,6 +165,11 @@ const parseActionData = (type: string, data: number[]) => {
         const unitTypeId = view.getUint16(8, true);
         const amount = view.getUint16(10, true);
         return { unitTypeId, amount };
+      }
+      case "AiQueue": {
+        if (bytes.length < 12) return undefined;
+        const unitTypeId = view.getInt32(8, true);
+        return { unitTypeId };
       }
       case "Sell":
       case "Buy": {

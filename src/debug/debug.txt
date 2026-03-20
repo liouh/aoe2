@@ -1,20 +1,20 @@
 // find first
 __aoe2rec.operations.find((item) => {
-    if (item.Action && item.Action.action_data.Build) {
+    if (item.Action && item.Action.action_data && item.Action.action_data.Build) {
         return true;
     }
 });
 
 // find all
 __aoe2rec.operations.filter((item) => {
-    if (item.Action && item.Action.action_data.DeQueue) {
+    if (item.Action && item.Action.action_data && item.Action.action_data.DeQueue) {
         console.log(item.Action.action_data);
     }
 });
 
 // find all unhandled
 __aoe2rec.operations.filter((item) => {
-    if (item.Action && (
+    if (item.Action && item.Action.action_data && (
         !item.Action.action_data.Transform
         && !item.Action.action_data.Game
         && !item.Action.action_data.Resign
