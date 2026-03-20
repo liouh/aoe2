@@ -21,7 +21,7 @@ import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
 import { getTechName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
-import { getGameTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
+import { getGameTypeName, getVictoryTypeName, getDifficultyName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
 
 const PLAYER_COLORS = [
@@ -1370,7 +1370,7 @@ export default function Home() {
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                                   <span className="text-xs font-bold uppercase tracking-wider text-white/30">Age up time</span>
                                 </div>
-                                 {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
+                                {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
                                   <div className="space-y-1.5">
                                     {Object.entries(stats.ageTimings).map(([age, time]) => (
                                       <div key={age} className="flex justify-between items-center group/age">
@@ -1405,7 +1405,7 @@ export default function Home() {
                   {matchInfo && (
                     <section className="panel flex flex-col gap-4 rounded-3xl p-6">
                       <h2 className="headline text-2xl">Game Info</h2>
-                      <div className="grid gap-6 md:grid-cols-4">
+                      <div className="grid gap-6 md:grid-cols-3">
                         {matchInfo.gameTypeId !== undefined && (
                           <div className="flex flex-col gap-1">
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game Mode</span>
@@ -1427,6 +1427,30 @@ export default function Home() {
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Size</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.difficultyId !== undefined && players.some(p => p.ai) && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI Difficulty</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getDifficultyName(matchInfo.difficultyId) ?? `Type ${matchInfo.difficultyId}`}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.populationLimit !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population Limit</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {matchInfo.populationLimit}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.victoryTypeId !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
                             </span>
                           </div>
                         )}

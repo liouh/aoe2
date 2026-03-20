@@ -465,10 +465,8 @@ export type MatchInfo = {
   mapSizeId?: number;
   gameTypeId?: number;
   difficultyId?: number;
-  startingAgeId?: number;
   populationLimit?: number;
-  speedId?: number;
-  cheats?: boolean;
+  victoryTypeId?: number;
 };
 
 export const extractMatchInfo = (summary: any): MatchInfo => {
@@ -479,9 +477,7 @@ export const extractMatchInfo = (summary: any): MatchInfo => {
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
     gameTypeId: pickNumber(settings?.game_type),
     difficultyId: pickNumber(settings?.difficulty),
-    startingAgeId: pickNumber(settings?.starting_age_id),
     populationLimit: pickNumber(settings?.population_limit),
-    speedId: pickNumber(settings?.speed) ?? pickNumber(replayData?.game_speed_id),
-    cheats: settings?.cheats === true || replayData?.cheats_enabled === true,
+    victoryTypeId: pickNumber(settings?.victory_type_id),
   };
 };

@@ -3,37 +3,46 @@ export const GAME_TYPES: Record<number, string> = {
   1: "Regicide",
   2: "Death Match",
   3: "Scenario",
-  4: "Campaign",
-  5: "King of the Hill",
-  6: "Wonder Race",
-  7: "Defend the Wonder",
-  8: "Turbo Random Map",
-  9: "Capture the Relic",
-  10: "Sudden Death",
-  11: "Battle Royale",
-  12: "Empire Wars",
+  11: "King of the Hill",
+  12: "Wonder Race",
+  13: "Defend the Wonder",
+  15: "Turbo Random Map",
+  16: "Empire Wars",
+  17: "Battle Royale",
 };
 
 export const getGameTypeName = (id?: number) => (id !== undefined ? GAME_TYPES[id] : undefined);
 
+export const VICTORY_TYPES: Record<number, string> = {
+  0: "Standard",
+  1: "Conquest",
+  2: "Time Limit",
+  3: "Score",
+  4: "Custom",
+};
+
+export const getVictoryTypeName = (id?: number) => (id !== undefined ? VICTORY_TYPES[id] : undefined);
+
+export const DIFFICULTY_TYPES: Record<number, string> = {
+  0: "Hardest",
+  1: "Hard",
+  2: "Moderate",
+  3: "Easy",
+  4: "Very Easy",
+  5: "Extreme",
+};
+
+export const getDifficultyName = (id?: number) => (id !== undefined ? DIFFICULTY_TYPES[id] : undefined);
+
 export const MAP_SIZES: Record<number, string> = {
-  // Enum values
-  0: "Tiny (2 player)",
-  1: "Small (3 player)",
-  2: "Medium (4 player)",
-  3: "Normal (6 player)",
-  4: "Large (8 player)",
-  5: "Giant",
-  6: "LudaKiris",
   // Map dimensions
   120: "Tiny (2 player)",
   144: "Small (3 player)",
   168: "Medium (4 player)",
   200: "Normal (6 player)",
-  240: "Large (8 player)",
-  255: "Giant",
-  256: "Giant",
-  480: "LudaKiris",
+  220: "Large (8 player)",
+  240: "Giant",
+  480: "Ludicrous",
 };
 
 export const getMapSizeName = (id?: number) => (id !== undefined ? MAP_SIZES[id] : undefined);
