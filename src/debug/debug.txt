@@ -19,6 +19,36 @@ __aoe2rec.operations.filter((item) => {
     }
 });
 
+// count actions for one player
+let actionCounts = {};
+__aoe2rec.operations.forEach((item) => {
+    const actionData = item.Action?.action_data;
+    if (actionData) {
+        const actionType = Object.keys(actionData)[0];
+        if (actionData[actionType]?.player_id === 1) {
+            actionCounts[actionType] = (actionCounts[actionType] || 0) + 1;
+        }
+    }
+});
+console.table(actionCounts);
+
+// count actions by player
+let playerActionStats = {};
+__aoe2rec.operations.forEach((item) => {
+    const actionData = item.Action?.action_data;
+    if (actionData) {
+        const actionType = Object.keys(actionData)[0];
+        const playerId = actionData[actionType]?.player_id;
+        if (playerId !== undefined) {
+            if (!playerActionStats[playerId]) {
+                playerActionStats[playerId] = {};
+            }
+            playerActionStats[playerId][actionType] = (playerActionStats[playerId][actionType] || 0) + 1;
+        }
+    }
+});
+console.table(playerActionStats);
+
 // find all unhandled
 __aoe2rec.operations.filter((item) => {
     if (item.Action && item.Action.action_data && (
