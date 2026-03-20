@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { parse_rec, parse_rec_summary } from "aoe2rec-js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -88,10 +88,6 @@ const formatClock = (seconds: number) => {
 };
 
 const formatNum = (n: number) => new Intl.NumberFormat().format(n);
-
-const formatOptional = (value?: number) =>
-  value === undefined || Number.isNaN(value) ? "—" : value.toString();
-
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -1470,11 +1466,11 @@ export default function Home() {
                             <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
-                                <p className="text-xl tabular-nums font-medium">{formatOptional(stats?.apm)}</p>
+                                <p className="text-xl tabular-nums font-medium">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
                               </div>
                               <div>
                                 <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                                <p className="text-xl tabular-nums font-medium">{formatOptional(stats?.peakApm)}</p>
+                                <p className="text-xl tabular-nums font-medium">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
                               </div>
                             </div>
                           </TiltCard>
