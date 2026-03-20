@@ -1,14 +1,20 @@
+// Based on https://github.com/happyleavesaoc/aoc-mgz/blob/master/mgz/enums.py
+
 export const GAME_TYPES: Record<number, string> = {
   0: "Random Map",
   1: "Regicide",
   2: "Death Match",
   3: "Scenario",
-  11: "King of the Hill",
-  12: "Wonder Race",
-  13: "Defend the Wonder",
-  15: "Turbo Random Map",
-  16: "Empire Wars",
-  17: "Battle Royale",
+  4: "Campaign",
+  5: "King of the Hill",
+  6: "Wonder Race",
+  7: "Defend the Wonder",
+  8: "Turbo Random Map",
+  10: "Capture the Relic",
+  11: "Sudden Death",
+  12: "Battle Royale",
+  13: "Empire Wars",
+  15: "Co-op Campaign",
 };
 
 export const getGameTypeName = (id?: number) => (id !== undefined ? GAME_TYPES[id] : undefined);
@@ -16,9 +22,9 @@ export const getGameTypeName = (id?: number) => (id !== undefined ? GAME_TYPES[i
 export const VICTORY_TYPES: Record<number, string> = {
   0: "Standard",
   1: "Conquest",
-  2: "Time Limit",
-  3: "Score",
-  4: "Custom",
+  7: "Time Limit",
+  8: "Score",
+  11: "Last Man Standing",
 };
 
 export const getVictoryTypeName = (id?: number) => (id !== undefined ? VICTORY_TYPES[id] : undefined);
@@ -46,6 +52,8 @@ export const MAP_SIZES: Record<number, string> = {
 };
 
 export const getMapSizeName = (id?: number) => (id !== undefined ? MAP_SIZES[id] : undefined);
+
+// Need a better mapping for map names
 
 export const MAP_TYPES: Record<number, string> = {
   9: "Arabia",
