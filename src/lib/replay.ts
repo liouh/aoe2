@@ -281,7 +281,7 @@ export const summarizePlayers = (
     (team?.players ?? []).forEach((player: any) => {
       players.push({
         id: player.player_number,
-        name: player.name ?? `Player ${player.player_number}`,
+        name: player.name && player.name.length > 0 ? player.name : `Player ${player.player_number}`,
         colorId: player.color_id,
         civId: player.civ_id,
         teamId: teamIndex + 1,
