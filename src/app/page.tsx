@@ -178,6 +178,20 @@ export default function Home() {
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
   const [showAiApm, setShowAiApm] = useState(false);
 
+  const resetGameState = () => {
+    setIsPlaying(false);
+    setSelectedTime(0);
+    setMapZoom(1);
+    setMapPan({ x: 0, y: 0 });
+    setHoveredEntity(null);
+    setSelectedPlayerIds([]);
+    setMinimapViewMode("both");
+    setActiveTab("game");
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
   const isMobile = useMemo(() => {
@@ -892,15 +906,7 @@ export default function Home() {
       setEvents(timeline);
       setDuration(gameDuration);
 
-      // Reset interactive state
-      setIsPlaying(false);
-      setSelectedTime(0);
-      setMapZoom(1);
-      setMapPan({ x: 0, y: 0 });
-      setHoveredEntity(null);
-      setSelectedPlayerIds([]);
-      setMinimapViewMode("both");
-      setActiveTab("game");
+      resetGameState();
     } catch (err) {
       setError(filename || "Try another file");
     } finally {
@@ -915,13 +921,7 @@ export default function Home() {
     setMatchInfo(null);
     setEvents([]);
     setDuration(0);
-    setSelectedTime(0);
-    setIsPlaying(false);
-    setMapZoom(1);
-    setMapPan({ x: 0, y: 0 });
-    setSelectedPlayerIds([]);
-    setMinimapViewMode("both");
-    setActiveTab("game");
+    resetGameState();
 
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
@@ -946,12 +946,19 @@ export default function Home() {
     loadDefault();
   }, []);
 
-  // Global keyboard listener for seeking (Left/Right arrows)
+  // Global keyboard listener for seeking (Left/Right arrows) and play/pause (Space)
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.code !== "Space") return;
       const target = event.target as HTMLElement;
       if (target?.tagName === "INPUT" && (target as HTMLInputElement).type !== "range") return;
+      if (target?.tagName === "TEXTAREA" || target?.isContentEditable) return;
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        setIsPlaying((prev) => !prev);
+        return;
+      }
 
       if (target?.tagName === "INPUT" && (target as HTMLInputElement).type === "range") {
         event.preventDefault();
