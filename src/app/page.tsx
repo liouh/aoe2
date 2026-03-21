@@ -901,6 +901,9 @@ export default function Home() {
       setMapZoom(1);
       setMapPan({ x: 0, y: 0 });
       setHoveredEntity(null);
+      setMinimapPlayerId(undefined);
+      setMinimapViewMode("both");
+      setActiveTab("game");
     } catch (err) {
       setError(filename || "Try another file");
     } finally {
@@ -919,6 +922,9 @@ export default function Home() {
     setIsPlaying(false);
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
+    setMinimapPlayerId(undefined);
+    setMinimapViewMode("both");
+    setActiveTab("game");
 
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {

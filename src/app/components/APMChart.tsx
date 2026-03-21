@@ -7,7 +7,7 @@ const formatClock = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
-export function APMChart({ data, players, classifyColor, selectedTime }: { 
+export function APMChart({ data, players, classifyColor, selectedTime }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[],
   players: any[],
   classifyColor: (id?: number) => string,
@@ -17,12 +17,12 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
   if (allPoints.length === 0) return null;
 
   const maxMinute = Math.max(...allPoints.map(p => p.minute), 1);
-  const maxApm = Math.max(...allPoints.map(p => p.apm), 100); 
-  
+  const maxApm = Math.max(...allPoints.map(p => p.apm), 50);
+
   const width = 800;
   const height = 240;
   const padding = { top: 20, right: 20, bottom: 40, left: 50 };
-  
+
   const getX = (m: number) => padding.left + (m / maxMinute) * (width - padding.left - padding.right);
   const getY = (a: number) => height - padding.bottom - (a / maxApm) * (height - padding.top - padding.bottom);
 
@@ -51,7 +51,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
             </g>
           );
         })}
-        
+
         {/* X Axis Grid & Labels */}
         {[0, 0.25, 0.5, 0.75, 1].map((p) => {
           const val = Math.round(p * maxMinute);
@@ -94,19 +94,19 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
         {data.map((playerData) => {
           const color = classifyColor(playerData.playerId);
           if (playerData.history.length < 2) return null;
-          
+
           // Use a smooth path
           let d = `M ${getX(playerData.history[0].minute)} ${getY(playerData.history[0].apm)}`;
           for (let i = 1; i < playerData.history.length; i++) {
             const p = playerData.history[i];
-            const prev = playerData.history[i-1];
+            const prev = playerData.history[i - 1];
             const cp1x = getX(prev.minute + (p.minute - prev.minute) / 2);
             const cp1y = getY(prev.apm);
             const cp2x = getX(prev.minute + (p.minute - prev.minute) / 2);
             const cp2y = getY(p.apm);
             d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${getX(p.minute)} ${getY(p.apm)}`;
           }
-          
+
           return (
             <path
               key={playerData.playerId}
