@@ -25,12 +25,12 @@ export const determineStartingLocations = (
   const startEvents: TimelineEvent[] = [];
 
   players.forEach((player) => {
-    // Nomad Check: if a Town Center is built in the first 5 minutes, skip starting TC inference.
+    // Nomad Check: if a Town Center is built in the first 10 minutes, skip starting TC inference.
     const hasEarlyTc = events.some(
       (e) =>
         e.playerId === player.id &&
         e.category === "build" &&
-        e.time < 300 &&
+        e.time < 600 &&
         (e.buildingTypeId === 109 || e.buildingTypeId === 621 || e.buildingTypeId === 71)
     );
     if (hasEarlyTc) return;
