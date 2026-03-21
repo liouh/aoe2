@@ -1,6 +1,6 @@
 "use client";
 
-import { parse_rec, parse_rec_summary } from "aoe2rec-js";
+import { parse_rec, parse_rec_summary } from "../aoe2rec-js/aoe2rec_js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildTimeline,
@@ -901,7 +901,7 @@ export default function Home() {
       setMapPan({ x: 0, y: 0 });
       setHoveredEntity(null);
     } catch (err) {
-      setError("The replay file could not be parsed. Try another file.");
+      setError(filename || "Try another file");
     } finally {
       setLoading(false);
     }
@@ -1219,7 +1219,7 @@ export default function Home() {
                   <div className="w-full max-w-lg px-10 flex flex-col items-center gap-4 text-center">
                     <div className="space-y-1">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-[color:var(--accent)]">
-                        Replay Error
+                        Error loading replay
                       </h3>
                       <p className="text-base font-medium text-[color:var(--foreground)] opacity-90">
                         {error}
@@ -1404,7 +1404,7 @@ export default function Home() {
 
                   {matchInfo && (
                     <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-                      <h2 className="headline text-2xl">Game Info</h2>
+                      <h2 className="headline text-2xl">Game info</h2>
                       <div className="grid gap-6 md:grid-cols-3">
                         {matchInfo.filename && (
                           <div className="flex flex-col gap-1 md:col-span-full border-b border-white/5 pb-2">
@@ -1470,7 +1470,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <section className="panel rounded-3xl p-6 flex flex-col gap-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Actions per Minute</h2>
+                      <h2 className="headline text-2xl">Actions per minute</h2>
                     </div>
 
                     <APMChart
@@ -1520,7 +1520,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Favorite Units</h2>
+                      <h2 className="headline text-2xl">Favorite units</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player) => {
@@ -1601,7 +1601,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Market Usage</h2>
+                      <h2 className="headline text-2xl">Market usage</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player) => {

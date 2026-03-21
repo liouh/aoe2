@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@next/third-parties": "16.1.6",
-    "aoe2rec-js": "^0.1.22",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

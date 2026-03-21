@@ -1,0 +1,26 @@
+{
+  "name": "aoe2rec-js",
+  "type": "module",
+  "collaborators": [
+    "Stéphane Bisinger <stephane@sbisinger.ch>"
+  ],
+  "description": "WASM version of aoe2rec to parse Age of Empires II: Definitive Edition recorded games in the browser",
+  "version": "0.1.22",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aoe2ct/aoe2rec"
+  },
+  "files": [
+    "aoe2rec_js_bg.wasm",
+    "aoe2rec_js.js",
+    "aoe2rec_js_bg.js",
+    "aoe2rec_js.d.ts"
+  ],
+  "main": "aoe2rec_js.js",
+  "types": "aoe2rec_js.d.ts",
+  "sideEffects": [
+    "./aoe2rec_js.js",
+    "./snippets/*"
+  ]
+}

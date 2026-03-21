@@ -34,7 +34,7 @@ export const DIFFICULTY_TYPES: Record<number, string> = {
   1: "Hard",
   2: "Moderate",
   3: "Easy",
-  4: "Very Easy",
+  4: "Easiest",
   5: "Extreme",
 };
 
