@@ -52,42 +52,6 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.toggle-pill {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-}
-
-.toggle-pill-track {
-  width: 40px;
-  height: 20px;
-  background: #333;
-  border-radius: 999px;
-  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.toggle-pill-thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 14px;
-  height: 14px;
-  background: #f6efe4;
-  border-radius: 50%;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.peer:checked+.toggle-pill-track {
-  background: var(--accent);
-}
-
-.peer:checked+.toggle-pill-track .toggle-pill-thumb {
-  transform: translateX(20px);
-}
 
 .headline {
   font-family: var(--font-display), "Times New Roman", serif;

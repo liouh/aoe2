@@ -176,6 +176,7 @@ export default function Home() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
   const [minimapPlayerId, setMinimapPlayerId] = useState<number | undefined>(undefined);
+  const [showAiApm, setShowAiApm] = useState(true);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
@@ -1471,14 +1472,31 @@ export default function Home() {
                   <section className="panel rounded-3xl p-6 flex flex-col gap-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <h2 className="headline text-2xl">Actions per minute</h2>
+                      {players.some(p => p.ai) && (
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              className="sr-only"
+                              checked={showAiApm}
+                              onChange={(e) => setShowAiApm(e.target.checked)}
+                            />
+                            <div className={`block w-10 h-6 rounded-full transition-colors ${showAiApm ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showAiApm ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                          </div>
+                        </label>
+                      )}
                     </div>
 
                     <APMChart
-                      data={players.map(p => ({
-                        playerId: p.id,
-                        history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
-                      }))}
-                      players={players}
+                      data={players
+                        .filter(p => showAiApm || !p.ai)
+                        .map(p => ({
+                          playerId: p.id,
+                          history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
+                        }))}
+                      players={players.filter(p => showAiApm || !p.ai)}
                       classifyColor={classifyColor}
                     />
 
@@ -1661,52 +1679,43 @@ export default function Home() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <h2 className="headline text-2xl">Timeline</h2>
                       <div className="flex flex-wrap items-center gap-4">
-                        <label className="toggle-pill group">
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
-                            Research
-                          </span>
-                          <div className="relative scale-75">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
+                          <div className="relative">
                             <input
                               type="checkbox"
-                              className="peer sr-only"
+                              className="sr-only"
                               checked={timelineShowResearch}
                               onChange={(e) => setTimelineShowResearch(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-6 w-9">
-                              <div className="toggle-pill-thumb"></div>
-                            </div>
+                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
                         </label>
-                        <label className="toggle-pill group">
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
-                            Buildings
-                          </span>
-                          <div className="relative scale-75">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
+                          <div className="relative">
                             <input
                               type="checkbox"
-                              className="peer sr-only"
+                              className="sr-only"
                               checked={timelineShowBuildings}
                               onChange={(e) => setTimelineShowBuildings(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-6 w-9">
-                              <div className="toggle-pill-thumb"></div>
-                            </div>
+                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
                         </label>
-                        <label className="toggle-pill group">
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 transition-colors group-hover:text-white">
-                            Units
-                          </span>
-                          <div className="relative scale-75">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
+                          <div className="relative">
                             <input
                               type="checkbox"
-                              className="peer sr-only"
+                              className="sr-only"
                               checked={timelineShowUnits}
                               onChange={(e) => setTimelineShowUnits(e.target.checked)}
                             />
-                            <div className="toggle-pill-track h-6 w-9">
-                              <div className="toggle-pill-thumb"></div>
-                            </div>
+                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
                         </label>
                       </div>
