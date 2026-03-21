@@ -197,6 +197,36 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
 
   const players = summarizePlayers(summary);
   if (operations) {
+    // First pass: identify unique player IDs in events to handle mismatches
+    const rawEventPlayerIds = new Set<number>();
+    operations.forEach((op) => {
+      const action = op.Action as Record<string, unknown> | undefined;
+      const actionData = action?.action_data as Record<string, unknown> | undefined;
+      if (actionData) {
+        const actionType = Object.keys(actionData)[0];
+        const payload = actionData[actionType] as Record<string, unknown>;
+        const pid = pickNumber(payload?.player_id);
+        if (pid !== undefined && pid !== 0) {
+          rawEventPlayerIds.add(pid);
+        }
+      }
+    });
+
+    const sortedEventIds = Array.from(rawEventPlayerIds).sort((a, b) => a - b);
+    const sortedSummaryIds = players.map(p => p.id).sort((a, b) => a - b);
+
+    // Create a mapping from event ID to summary ID
+    const playerMapping = new Map<number, number>();
+    if (sortedEventIds.length === sortedSummaryIds.length) {
+      // Perfect match in count - map by relative order
+      sortedEventIds.forEach((eid, idx) => {
+        playerMapping.set(eid, sortedSummaryIds[idx]);
+      });
+    } else {
+      // Fallback: identify mapping or identity
+      sortedEventIds.forEach(eid => playerMapping.set(eid, eid));
+    }
+
     operations.forEach((op, index) => {
       const action = op.Action as Record<string, unknown> | undefined;
       if (!action) return;
@@ -209,8 +239,11 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       if (!actionType) return;
 
       const payload = actionData[actionType] as Record<string, unknown>;
-      const playerId = pickNumber(payload?.player_id);
-      if (!playerId) return;
+      const rawPlayerId = pickNumber(payload?.player_id);
+      if (!rawPlayerId) return;
+
+      // Adjust player ID based on mapping
+      const playerId = playerMapping.get(rawPlayerId) ?? rawPlayerId;
 
       const isAi = players.find(p => p.id === playerId)?.ai;
       const category = classifyEvent(actionType, isAi);

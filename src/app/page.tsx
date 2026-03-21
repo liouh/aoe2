@@ -1341,13 +1341,13 @@ export default function Home() {
                       <h2 className="headline text-2xl">Players</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
+                      {players.map((player, index) => {
                         const stats = timelineStats.find(
                           (item) => item.playerId === player.id
                         );
                         return (
                           <TiltCard
-                            key={player.id}
+                            key={`${player.id}-${index}`}
                             className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
@@ -1508,10 +1508,10 @@ export default function Home() {
                     />
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
+                      {players.map((player, index) => {
                         const stats = timelineStats.find((s) => s.playerId === player.id);
                         return (
-                          <TiltCard key={player.id} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
+                          <TiltCard key={`${player.id}-${index}`} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <h3 className="headline text-lg leading-tight flex items-center gap-2">
@@ -1548,14 +1548,14 @@ export default function Home() {
                       <h2 className="headline text-2xl">Favorite units</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
+                      {players.map((player, index) => {
                         const stats = unitStats.get(player.id) || { military: [], economic: [] };
                         const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
                         const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
 
                         return (
                           <TiltCard
-                            key={player.id}
+                            key={`${player.id}-${index}`}
                             className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">
@@ -1629,7 +1629,7 @@ export default function Home() {
                       <h2 className="headline text-2xl">Market usage</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {players.map((player) => {
+                      {players.map((player, index) => {
                         const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {
                           bought: { food: 0, wood: 0, stone: 0 },
                           sold: { food: 0, wood: 0, stone: 0 }
@@ -1637,7 +1637,7 @@ export default function Home() {
 
                         return (
                           <TiltCard
-                            key={player.id}
+                            key={`${player.id}-${index}`}
                             className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
                           >
                             <div className="flex items-center justify-between">

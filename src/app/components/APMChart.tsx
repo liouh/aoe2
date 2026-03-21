@@ -31,8 +31,8 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <h3 className="text-sm font-bold uppercase tracking-widest text-white/30">APM Over Time</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2">
-          {players.map(p => (
-            <div key={p.id} className="flex items-center gap-1.5 whitespace-nowrap">
+          {players.map((p, idx) => (
+            <div key={`${p.id}-${idx}`} className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="w-2 h-2 rounded-full" style={{ background: classifyColor(p.id) }}></span>
               <span className="text-[10px] text-white/50">{p.name}</span>
             </div>
@@ -91,7 +91,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
         )}
 
         {/* Lines */}
-        {data.map((playerData) => {
+        {data.map((playerData, idx) => {
           const color = classifyColor(playerData.playerId);
           if (playerData.history.length < 2) return null;
 
@@ -109,7 +109,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
 
           return (
             <path
-              key={playerData.playerId}
+              key={`${playerData.playerId}-${idx}`}
               d={d}
               fill="none"
               stroke={color}

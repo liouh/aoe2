@@ -79,7 +79,7 @@ export function Select<T extends string | number | undefined>({
           <div className="max-h-80 overflow-y-auto">
             {options.map((option, idx) => (
               <button
-                key={option.id !== undefined && option.id !== null ? String(option.id) : `opt-${idx}`}
+                key={`${option.id}-${idx}`}
                 type="button"
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition hover:bg-white/10 cursor-pointer ${option.id === selectedId ? "bg-white/5" : ""
                   }`}
