@@ -35,11 +35,10 @@ export const determineStartingLocations = (
       if (event.playerId !== player.id) continue;
 
       if (event.x !== undefined && event.y !== undefined) {
-        if (!firstPos) {
-          firstPos = { x: event.x, y: event.y };
-        }
-
         if (event.category === "build") {
+          if (!firstPos) {
+            firstPos = { x: event.x, y: event.y };
+          }
           const { w, h } = getBuildingFootprint(event.buildingTypeId);
           // Calculate TRUE top-left anchor used by the viewer
           const ax = Math.floor(event.x) - Math.floor(w / 2);
@@ -79,14 +78,14 @@ export const determineStartingLocations = (
         };
 
         // A TC (4x4) at true anchor (tx, ty) has neighbors:
-        // North: fay = ty - bh => ty = fay + bh
-        for (let tx = fax - 4; tx <= fax + bw; tx++) vote(tx, fay + bh, "N");
-        // South: fay = ty + 4  => ty = fay - 4
-        for (let tx = fax - 4; tx <= fax + bw; tx++) vote(tx, fay - 4, "S");
-        // West:  fax = tx + 4  => tx = fax - 4
-        for (let ty = fay - 4; ty <= fay + bh; ty++) vote(fax - 4, ty, "E");
-        // East:  fax = tx - bw => tx = fax + bw
-        for (let ty = fay - 4; ty <= fay + bh; ty++) vote(fax + bw, ty, "W");
+        // North: fay = ty - bh => ty = fay + bh (TC is below farm)
+        for (let tx = fax - 3; tx < fax + bw; tx++) vote(tx, fay + bh, "N");
+        // South: fay = ty + 4  => ty = fay - 4  (TC is above farm)
+        for (let tx = fax - 3; tx < fax + bw; tx++) vote(tx, fay - 4, "S");
+        // West:  fax = tx + 4  => tx = fax - 4  (TC is left of farm)
+        for (let ty = fay - 3; ty < fay + bh; ty++) vote(fax - 4, ty, "E");
+        // East:  fax = tx - bw => tx = fax + bw (TC is right of farm)
+        for (let ty = fay - 3; ty < fay + bh; ty++) vote(fax + bw, ty, "W");
       }
     }
 
@@ -97,7 +96,7 @@ export const determineStartingLocations = (
     for (const [key, data] of candidates.entries()) {
       const [tx, ty] = key.split(",").map(Number);
 
-      // Filter 1: Spatial Proximity (within 30 tiles of start)
+      // Spatial Proximity (within 30 tiles of start)
       if (firstPos) {
         const distSq = (tx - firstPos.x) ** 2 + (ty - firstPos.y) ** 2;
         if (distSq > 30 * 30) continue;
@@ -107,26 +106,25 @@ export const determineStartingLocations = (
       // A good candidate should have neighbors on multiple sides
       const sideScore = data.directions.size;
 
-      // Filter 3: Overlap with future buildings
-      // If a building is built at (tx, ty) very early, it's definitely not the TC.
+      // Filter: Overlap with future buildings
       let overlapPenalty = 1.0;
       for (const b of playerBuildings) {
         // Overlap check (TC is 4x4)
         const overlaps = !(tx + 4 <= b.x || tx >= b.x + b.w || ty + 4 <= b.y || ty >= b.y + b.h);
         if (overlaps) {
           if (b.time < 720) { // Big penalty if overlap with 0-12 min building
-            overlapPenalty *= 0.2;
+            overlapPenalty *= 0.1;
           } else {
-            // Smaller penalty for later buildings
             overlapPenalty *= 0.5;
           }
         }
       }
 
-      let score = data.weight * (1 + sideScore) * overlapPenalty;
+      // Exponentially reward more sides
+      let score = data.weight * Math.pow(2, sideScore) * overlapPenalty;
 
-      // Bonus for perfect "holes" (surrounded on all 4 sides)
-      if (sideScore === 4) score += 10;
+      // Massive bonus for perfect "holes" (surrounded on all 4 sides)
+      if (sideScore === 4) score += 100;
 
       if (score > maxScore) {
         maxScore = score;

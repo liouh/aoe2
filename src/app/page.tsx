@@ -1152,7 +1152,7 @@ export default function Home() {
                     }}
                     title="Reset view"
                   >
-                    ↺
+                    ⛶
                   </button>
                   <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm flex flex-col">
                     <button
