@@ -258,6 +258,10 @@ export default function Home() {
     [summary]
   );
 
+  const allPlayersWon = useMemo(() => {
+    return players.length > 1 && players.every(p => p.won);
+  }, [players]);
+
   const playerIdToColorId = useMemo(() => {
     const map = new Map<number, number>();
     players.forEach((p) => {
@@ -1399,7 +1403,7 @@ export default function Home() {
                                       AI
                                     </span>
                                   )}
-                                  {player.won && <sup className="ml-1">👑</sup>}
+                                  {player.won && !allPlayersWon && <sup>👑</sup>}
                                 </h3>
                                 <div className="flex items-center gap-2 text-xs text-white/40">
                                   <span>{getCivName(player.civId)}</span>
