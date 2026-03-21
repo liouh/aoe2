@@ -1474,7 +1474,6 @@ export default function Home() {
                       <h2 className="headline text-2xl">Actions per minute</h2>
                       {players.some(p => p.ai) && (
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
                           <div className="relative">
                             <input
                               type="checkbox"
@@ -1485,6 +1484,7 @@ export default function Home() {
                             <div className={`block w-10 h-6 rounded-full transition-colors ${showAiApm ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
                             <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showAiApm ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
                         </label>
                       )}
                     </div>
@@ -1681,7 +1681,6 @@ export default function Home() {
                       <h2 className="headline text-2xl">Timeline</h2>
                       <div className="flex flex-wrap items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
                           <div className="relative">
                             <input
                               type="checkbox"
@@ -1692,9 +1691,9 @@ export default function Home() {
                             <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
                             <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
                           <div className="relative">
                             <input
                               type="checkbox"
@@ -1705,9 +1704,9 @@ export default function Home() {
                             <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
                             <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
                           <div className="relative">
                             <input
                               type="checkbox"
@@ -1718,6 +1717,7 @@ export default function Home() {
                             <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
                             <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-4' : 'translate-x-0'}`}></div>
                           </div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
                         </label>
                       </div>
                     </div>
