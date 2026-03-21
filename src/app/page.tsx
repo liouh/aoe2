@@ -1135,7 +1135,7 @@ export default function Home() {
               )}
               {!loading && !error && (
                 <div
-                  className="absolute right-1 md:right-2 top-12 md:top-2 z-10 flex flex-col gap-2 w-9"
+                  className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9"
                   onPointerDown={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onPointerMove={(e) => {
@@ -1261,7 +1261,7 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 px-0.5 md:px-1.5">
               <button
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:scale-105 active:scale-95 cursor-pointer"
@@ -1295,7 +1295,7 @@ export default function Home() {
                   className="w-full accent-[color:var(--accent)] cursor-pointer"
                   onChange={(event) => setSelectedTime(Number(event.target.value))}
                 />
-                <div className="absolute bottom-0 right-0 text-[10px] font-medium tabular-nums text-[color:var(--muted-foreground)] pointer-events-none translate-y-1.5">
+                <div className="absolute bottom-0 left-0 text-[10px] font-medium tabular-nums text-[color:var(--muted-foreground)] pointer-events-none translate-y-1.5">
                   {formatClock(selectedTime)} / {formatClock(duration)}
                 </div>
               </div>
@@ -1423,7 +1423,7 @@ export default function Home() {
                         )}
                         {matchInfo.gameTypeId !== undefined && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game Mode</span>
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
                             </span>
@@ -1431,7 +1431,7 @@ export default function Home() {
                         )}
                         {matchInfo.mapTypeId !== undefined && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Name</span>
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
                             </span>
@@ -1439,7 +1439,7 @@ export default function Home() {
                         )}
                         {matchInfo.mapSizeId !== undefined && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map Size</span>
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map size</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
                             </span>
@@ -1447,7 +1447,7 @@ export default function Home() {
                         )}
                         {matchInfo.difficultyId !== undefined && players.some(p => p.ai) && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI Difficulty</span>
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getDifficultyName(matchInfo.difficultyId) ?? `Type ${matchInfo.difficultyId}`}
                             </span>
@@ -1455,7 +1455,7 @@ export default function Home() {
                         )}
                         {matchInfo.populationLimit !== undefined && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population Limit</span>
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {matchInfo.populationLimit}
                             </span>
