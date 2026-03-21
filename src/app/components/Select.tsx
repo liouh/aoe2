@@ -28,6 +28,7 @@ export function Select<T extends string | number | undefined>({
   multi = false,
 }: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const isSelected = (id: T) => {
@@ -50,6 +51,47 @@ export function Select<T extends string | number | undefined>({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      const currentIndex = options.findIndex(o => isSelected(o.id));
+      setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
+    } else {
+      setHighlightedIndex(-1);
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === "Enter" || e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        setIsOpen(true);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev + 1) % options.length);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev - 1 + options.length) % options.length);
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+          onSelect(options[highlightedIndex].id);
+          if (!multi) setIsOpen(false);
+        }
+        break;
+      case "Escape":
+      case "Tab":
+        setIsOpen(false);
+        break;
+    }
+  };
+
   const getButtonLabel = () => {
     if (!multi) return primaryOption?.label || "Select...";
     if (selectedOptions.length === 0) return "All players";
@@ -59,11 +101,17 @@ export function Select<T extends string | number | undefined>({
   };
 
   return (
-    <div className={`relative ${className}`} ref={containerRef}>
+    <div
+      className={`relative ${className}`}
+      ref={containerRef}
+      onKeyDown={handleKeyDown}
+    >
       <button
         type="button"
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-[color:var(--panel)] px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/5 cursor-pointer h-8"
+        className="flex items-center gap-2 rounded-full border border-white/10 bg-[color:var(--panel)] px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/5 cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white"
         onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
       >
         {!multi && primaryOption?.color && (
           <span
@@ -93,19 +141,32 @@ export function Select<T extends string | number | undefined>({
       </button>
 
       {isOpen && (
-        <div className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}>
+        <div
+          className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}
+          role="listbox"
+        >
           <div className="max-h-80 overflow-y-auto">
             {options.map((option, idx) => {
               const selected = isSelected(option.id);
+              const highlighted = idx === highlightedIndex;
               return (
                 <button
                   key={`${option.id}-${idx}`}
                   type="button"
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition hover:bg-white/10 cursor-pointer ${selected ? "bg-white/5" : ""
-                    }`}
+                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${selected ? "bg-white/5" : ""
+                    } ${highlighted ? "bg-white/10" : ""}`}
                   onClick={() => {
                     onSelect(option.id);
                     if (!multi) setIsOpen(false);
+                  }}
+                  onMouseEnter={() => setHighlightedIndex(idx)}
+                  role="option"
+                  aria-selected={selected}
+                  tabIndex={-1}
+                  ref={(el) => {
+                    if (highlighted && el) {
+                      el.scrollIntoView({ block: "nearest" });
+                    }
                   }}
                 >
                   {option.color && (

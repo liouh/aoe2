@@ -164,6 +164,10 @@ export default function Home() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [duration, setDuration] = useState(0);
   const [selectedTime, setSelectedTime] = useState(0);
+  const selectedTimeRef = useRef(selectedTime);
+  useEffect(() => {
+    selectedTimeRef.current = selectedTime;
+  }, [selectedTime]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves">("both");
@@ -176,7 +180,7 @@ export default function Home() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
-  const [showAiApm, setShowAiApm] = useState(false);
+  const [showAiApm, setShowAiApm] = useState(true);
 
   const resetGameState = () => {
     setIsPlaying(false);
@@ -956,7 +960,12 @@ export default function Home() {
 
       if (event.code === "Space") {
         event.preventDefault();
-        setIsPlaying((prev) => !prev);
+        if (selectedTimeRef.current >= duration) {
+          setSelectedTime(0);
+          setIsPlaying(true);
+        } else {
+          setIsPlaying((prev) => !prev);
+        }
         return;
       }
 
@@ -987,20 +996,19 @@ export default function Home() {
         <header className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="headline text-xl font-semibold text-[color:var(--foreground)] md:text-4xl">
+              <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
                 <span className="text-[color:var(--muted)]">AoE2</span> Replay Viewer
               </h1>
-              <p className="max-w-2xl text-base text-[color:var(--muted)] md:text-lg">
-                Upload a replay to see minimap playback, key stats, and build timelines.
+              <p className="max-w-2xl text-xs text-[color:var(--muted)] lg:text-lg">
+                Upload a replay for minimap playback, key stats, and build timelines.
               </p>
             </div>
             <label
-              className="panel flex cursor-pointer flex-row items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-semibold text-[color:var(--foreground)] md:flex-col md:px-6 md:py-4 md:text-sm"
+              className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 lg:py-3 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white"
               onClick={() => setIsPlaying(false)}
             >
-              <span className="text-xl md:text-2xl">📁</span>
-              <span className="hidden md:inline">Open .aoe2record replay file</span>
-              <span className="md:hidden">Open Replay</span>
+              <span className="text-xl lg:text-2xl">📁</span>
+              <span className="lg:inline">Open .aoe2record replay file</span>
               <input
                 type="file"
                 accept=".aoe2record,.mgz"
@@ -1160,7 +1168,8 @@ export default function Home() {
                 >
                   <button
                     type="button"
-                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+                    tabIndex={-1}
                     onClick={(e) => {
                       e.stopPropagation();
                       setMapZoom(1);
@@ -1172,10 +1181,11 @@ export default function Home() {
                   >
                     ⛶
                   </button>
-                  <div className="pointer-events-auto w-full overflow-hidden rounded-xl bg-white/10 shadow-lg border border-white/10 font-semibold text-xl text-white select-none backdrop-blur-sm flex flex-col">
+                  <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
                     <button
                       type="button"
-                      className="flex h-9 items-center justify-center transition hover:bg-white/20 border-b border-white/10 cursor-pointer"
+                      className="flex h-9 items-center justify-center rounded-t-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                      tabIndex={-1}
                       onClick={(e) => {
                         e.stopPropagation();
                         const canvas = canvasRef.current;
@@ -1188,7 +1198,8 @@ export default function Home() {
                     </button>
                     <button
                       type="button"
-                      className="flex h-9 items-center justify-center transition hover:bg-white/20 cursor-pointer"
+                      className="flex h-9 items-center justify-center rounded-b-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                      tabIndex={-1}
                       onClick={(e) => {
                         e.stopPropagation();
                         const canvas = canvasRef.current;
@@ -1202,7 +1213,8 @@ export default function Home() {
                   </div>
                   <button
                     type="button"
-                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm"
+                    className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+                    tabIndex={-1}
                     onClick={(e) => {
                       e.stopPropagation();
                       jumpToTimeline();
@@ -1495,7 +1507,7 @@ export default function Home() {
                       <h2 className="headline text-2xl">Actions per minute</h2>
                       {players.some(p => p.ai) && (
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative">
+                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
                             <input
                               type="checkbox"
                               className="sr-only"
@@ -1560,7 +1572,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Favorite units</h2>
+                      <h2 className="headline text-2xl">Unit production</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player, index) => {
@@ -1702,7 +1714,7 @@ export default function Home() {
                       <h2 className="headline text-2xl">Timeline</h2>
                       <div className="flex flex-wrap items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative">
+                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
                             <input
                               type="checkbox"
                               className="sr-only"
@@ -1715,7 +1727,7 @@ export default function Home() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative">
+                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
                             <input
                               type="checkbox"
                               className="sr-only"
@@ -1728,7 +1740,7 @@ export default function Home() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative">
+                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
                             <input
                               type="checkbox"
                               className="sr-only"
