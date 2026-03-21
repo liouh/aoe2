@@ -175,7 +175,7 @@ export default function Home() {
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
-  const [minimapPlayerId, setMinimapPlayerId] = useState<number | undefined>(undefined);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
   const [showAiApm, setShowAiApm] = useState(false);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
@@ -490,9 +490,9 @@ export default function Home() {
           event.category === "move" &&
           event.x !== undefined &&
           event.y !== undefined &&
-          (minimapPlayerId === undefined || event.playerId === minimapPlayerId)
+          (selectedPlayerIds.length === 0 || (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId)))
       ),
-    [events, minimapPlayerId]
+    [events, selectedPlayerIds]
   );
 
   const trainEvents = useMemo(
@@ -756,12 +756,12 @@ export default function Home() {
 
     if (showBuildings) {
       anchorToEvent.forEach((event) => {
-        if (minimapPlayerId === undefined || event.playerId === minimapPlayerId) {
+        if (selectedPlayerIds.length === 0 || (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))) {
           drawBuilding(event);
         }
       });
       iconBuildings.forEach((event) => {
-        if (minimapPlayerId !== undefined && event.playerId !== minimapPlayerId) {
+        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
           return;
         }
         if (event.x === undefined || event.y === undefined) return;
@@ -859,7 +859,7 @@ export default function Home() {
     moveEvents,
     trainEvents,
     hoveredEntity,
-    minimapPlayerId,
+    selectedPlayerIds,
   ]);
 
   const loadReplayData = async (buffer: ArrayBuffer, filename?: string) => {
@@ -898,7 +898,7 @@ export default function Home() {
       setMapZoom(1);
       setMapPan({ x: 0, y: 0 });
       setHoveredEntity(null);
-      setMinimapPlayerId(undefined);
+      setSelectedPlayerIds([]);
       setMinimapViewMode("both");
       setActiveTab("game");
     } catch (err) {
@@ -919,7 +919,7 @@ export default function Home() {
     setIsPlaying(false);
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
-    setMinimapPlayerId(undefined);
+    setSelectedPlayerIds([]);
     setMinimapViewMode("both");
     setActiveTab("game");
 
@@ -1118,8 +1118,19 @@ export default function Home() {
                 >
                   <Select
                     options={minimapPlayers}
-                    selectedId={minimapPlayerId}
-                    onSelect={setMinimapPlayerId}
+                    selectedId={selectedPlayerIds}
+                    onSelect={(id) => {
+                      if (id === undefined) {
+                        setSelectedPlayerIds([]);
+                      } else {
+                        setSelectedPlayerIds(prev =>
+                          prev.includes(id as number)
+                            ? prev.filter(p => p !== id)
+                            : [...prev, id as number]
+                        );
+                      }
+                    }}
+                    multi
                     align="left"
                   />
                   <Select
@@ -1147,7 +1158,7 @@ export default function Home() {
                       e.stopPropagation();
                       setMapZoom(1);
                       setMapPan({ x: 0, y: 0 });
-                      setMinimapPlayerId(undefined);
+                      setSelectedPlayerIds([]);
                       setMinimapViewMode("both");
                     }}
                     title="Reset view"
