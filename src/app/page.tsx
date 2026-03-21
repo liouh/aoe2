@@ -957,7 +957,7 @@ export default function Home() {
 
       if (event.code === "Space") {
         if (
-          target?.tagName === "INPUT" ||
+          (target?.tagName === "INPUT" && (target as HTMLInputElement).type !== "range") ||
           target?.tagName === "TEXTAREA" ||
           target?.tagName === "BUTTON" ||
           target?.tagName === "SELECT" ||
