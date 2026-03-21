@@ -1280,18 +1280,18 @@ export default function Home() {
                   </svg>
                 )}
               </button>
-              <div className="flex-1">
+              <div className="flex-1 relative h-10 flex items-center group">
                 <input
                   type="range"
                   min={0}
                   max={Math.max(duration, 1)}
                   value={selectedTime}
-                  className="w-full accent-[color:var(--accent)]"
+                  className="w-full accent-[color:var(--accent)] cursor-pointer"
                   onChange={(event) => setSelectedTime(Number(event.target.value))}
                 />
-              </div>
-              <div className="text-sm font-semibold tabular-nums text-[color:var(--muted-foreground)]">
-                {formatClock(selectedTime)} / {formatClock(duration)}
+                <div className="absolute bottom-0 right-0 text-[10px] font-medium tabular-nums text-[color:var(--muted-foreground)] pointer-events-none translate-y-1.5">
+                  {formatClock(selectedTime)} / {formatClock(duration)}
+                </div>
               </div>
             </div>
           </section>
