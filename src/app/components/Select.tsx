@@ -62,7 +62,7 @@ export function Select<T extends string | number | undefined>({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
-      if (e.key === "Enter" || e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -79,6 +79,7 @@ export function Select<T extends string | number | undefined>({
         setHighlightedIndex(prev => (prev - 1 + options.length) % options.length);
         break;
       case "Enter":
+      case " ":
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < options.length) {
           onSelect(options[highlightedIndex].id);

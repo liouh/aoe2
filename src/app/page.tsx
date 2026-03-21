@@ -955,10 +955,17 @@ export default function Home() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.code !== "Space") return;
       const target = event.target as HTMLElement;
-      if (target?.tagName === "INPUT" && (target as HTMLInputElement).type !== "range") return;
-      if (target?.tagName === "TEXTAREA" || target?.isContentEditable) return;
 
       if (event.code === "Space") {
+        if (
+          target?.tagName === "INPUT" ||
+          target?.tagName === "TEXTAREA" ||
+          target?.tagName === "BUTTON" ||
+          target?.tagName === "SELECT" ||
+          target?.isContentEditable
+        ) {
+          return;
+        }
         event.preventDefault();
         if (selectedTimeRef.current >= duration) {
           setSelectedTime(0);
@@ -969,8 +976,14 @@ export default function Home() {
         return;
       }
 
-      if (target?.tagName === "INPUT" && (target as HTMLInputElement).type === "range") {
-        event.preventDefault();
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        if (
+          (target?.tagName === "INPUT" && (target as HTMLInputElement).type !== "range") ||
+          target?.tagName === "TEXTAREA" ||
+          target?.isContentEditable
+        ) {
+          return;
+        }
       }
 
       const now = performance.now();
@@ -1319,7 +1332,8 @@ export default function Home() {
                   min={0}
                   max={Math.max(duration, 1)}
                   value={selectedTime}
-                  className="w-full accent-[color:var(--accent)] cursor-pointer"
+                  className="w-full accent-[color:var(--accent)] cursor-pointer outline-none"
+                  tabIndex={-1}
                   onChange={(event) => setSelectedTime(Number(event.target.value))}
                 />
                 <div className="absolute bottom-0 left-0 text-[10px] font-medium tabular-nums text-[color:var(--muted-foreground)] pointer-events-none translate-y-1.5">
