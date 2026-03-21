@@ -65,7 +65,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
         })}
 
         {/* Current Time Indicator */}
-        {selectedTime !== undefined && (
+        {selectedTime !== undefined && selectedTime > 0 && (
           <g>
             <line
               x1={getX(selectedTime / 60)}
@@ -77,7 +77,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
             />
             <foreignObject
               x={getX(selectedTime / 60) - 25}
-              y={height - padding.bottom - 2}
+              y={padding.top - 14}
               width="50"
               height="30"
             >

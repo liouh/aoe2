@@ -1481,10 +1481,10 @@ export default function Home() {
                               checked={showAiApm}
                               onChange={(e) => setShowAiApm(e.target.checked)}
                             />
-                            <div className={`block w-10 h-6 rounded-full transition-colors ${showAiApm ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showAiApm ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                            <div className={`block w-8 h-5 rounded-full transition-colors ${showAiApm ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${showAiApm ? 'translate-x-3' : 'translate-x-0'}`}></div>
                           </div>
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
                         </label>
                       )}
                     </div>
@@ -1688,10 +1688,10 @@ export default function Home() {
                               checked={timelineShowResearch}
                               onChange={(e) => setTimelineShowResearch(e.target.checked)}
                             />
-                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-3' : 'translate-x-0'}`}></div>
                           </div>
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div className="relative">
@@ -1701,10 +1701,10 @@ export default function Home() {
                               checked={timelineShowBuildings}
                               onChange={(e) => setTimelineShowBuildings(e.target.checked)}
                             />
-                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-3' : 'translate-x-0'}`}></div>
                           </div>
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div className="relative">
@@ -1714,10 +1714,10 @@ export default function Home() {
                               checked={timelineShowUnits}
                               onChange={(e) => setTimelineShowUnits(e.target.checked)}
                             />
-                            <div className={`block w-10 h-6 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
+                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-3' : 'translate-x-0'}`}></div>
                           </div>
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
                         </label>
                       </div>
                     </div>
@@ -1848,18 +1848,20 @@ export default function Home() {
                                   );
                                 })}
 
-                                <div
-                                  className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
-                                  style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-                                >
-                                  {index === 0 && (
-                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
-                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
-                                        {formatClock(selectedTime)}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
+                                {selectedTime > 0 && (
+                                  <div
+                                    className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
+                                    style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
+                                  >
+                                    {index === 0 && (
+                                      <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
+                                        <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
+                                          {formatClock(selectedTime)}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
