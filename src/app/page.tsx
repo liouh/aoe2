@@ -274,7 +274,7 @@ export default function Home() {
 
   const minimapViewOptions: SelectOption<"both" | "buildings" | "moves">[] = [
     { id: "both", label: "All data" },
-    { id: "buildings", label: "Buildings" },
+    { id: "buildings", label: "Buildings only" },
     { id: "moves", label: "Unit movements" },
   ];
 
