@@ -1767,7 +1767,7 @@ export default function Home() {
                         </label>
                       </div>
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2">
                       {[leftPlayerId, rightPlayerId]
                         .filter((id): id is number => typeof id === "number")
                         .map((playerId, index) => {
