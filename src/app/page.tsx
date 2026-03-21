@@ -1009,7 +1009,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
               <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
-                <span className="text-[color:var(--muted)]">AoE2</span> Replay Viewer
+                <span className="text-[color:var(--muted)] font-black">AoE2</span> Replay Viewer
               </h1>
               <p className="max-w-2xl text-xs text-[color:var(--muted)] lg:text-lg">
                 Upload a replay for minimap playback, key stats, and build timelines.
@@ -1378,7 +1378,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Players</h2>
+                      <h2 className="headline text-2xl font-semibold">Players</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player, index) => {
@@ -1392,10 +1392,10 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                                   {player.name}
                                   {player.ai && (
-                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
                                       AI
                                     </span>
                                   )}
@@ -1415,7 +1415,7 @@ export default function Home() {
                             <div className="flex flex-col gap-4 text-sm">
                               <div>
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                  <span className="text-xs font-bold uppercase tracking-wider text-white/30">Age up time</span>
+                                  <span className="text-xs uppercase tracking-wider text-white/30">Age up time</span>
                                 </div>
                                 {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
                                   <div className="space-y-1.5">
@@ -1451,7 +1451,7 @@ export default function Home() {
 
                   {matchInfo && (
                     <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-                      <h2 className="headline text-2xl">Game info</h2>
+                      <h2 className="headline text-2xl font-semibold">Game info</h2>
                       <div className="grid gap-6 md:grid-cols-3">
                         {matchInfo.filename && (
                           <div className="flex flex-col gap-1 md:col-span-full border-b border-white/5 pb-2">
@@ -1517,7 +1517,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <section className="panel rounded-3xl p-6 flex flex-col gap-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Actions per minute</h2>
+                      <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
                       {players.some(p => p.ai) && (
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
@@ -1554,10 +1554,10 @@ export default function Home() {
                           <TiltCard key={`${player.id}-${index}`} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                                   {player.name}
                                   {player.ai && (
-                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
                                       AI
                                     </span>
                                   )}
@@ -1585,7 +1585,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Unit production</h2>
+                      <h2 className="headline text-2xl font-semibold">Unit production</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player, index) => {
@@ -1600,10 +1600,10 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                                   {player.name}
                                   {player.ai && (
-                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
                                       AI
                                     </span>
                                   )}
@@ -1622,7 +1622,7 @@ export default function Home() {
                               {/* Military Section */}
                               <div>
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                  <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--accent)]">Military</span>
+                                  <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Military</span>
                                   <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
                                 </div>
                                 <div className="flex flex-col gap-1.5 min-h-[20px]">
@@ -1642,7 +1642,7 @@ export default function Home() {
                               {/* Economic Section */}
                               <div>
                                 <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                                  <span className="text-xs font-bold uppercase tracking-wider text-green-400/70">Economic</span>
+                                  <span className="text-xs uppercase tracking-wider text-green-400/70">Economic</span>
                                   <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
                                 </div>
                                 <div className="flex flex-col gap-1.5 min-h-[20px]">
@@ -1666,7 +1666,7 @@ export default function Home() {
                   </section>
                   <section className="panel rounded-3xl p-6">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="headline text-2xl">Market usage</h2>
+                      <h2 className="headline text-2xl font-semibold">Market usage</h2>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {players.map((player, index) => {
@@ -1682,10 +1682,10 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
-                                <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                                   {player.name}
                                   {player.ai && (
-                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                    <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
                                       AI
                                     </span>
                                   )}
@@ -1703,7 +1703,7 @@ export default function Home() {
                                 const sold = usage.sold[res];
                                 return (
                                   <div key={res} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-white/30">{res}</span>
+                                    <span className="text-xs uppercase tracking-wider text-white/30">{res}</span>
                                     <span className="text-sm tabular-nums font-medium flex items-center gap-1">
                                       <span className={bought > 0 ? "text-green-400/70" : "text-white/10"}>+{formatNum(bought)}</span>
                                       <span className="text-white/5 mx-0.5">/</span>
@@ -1724,7 +1724,7 @@ export default function Home() {
                 <section ref={timelineRef} className="w-full">
                   <div className="panel flex flex-col gap-6 rounded-3xl p-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <h2 className="headline text-2xl">Timeline</h2>
+                      <h2 className="headline text-2xl font-semibold">Timeline</h2>
                       <div className="flex flex-wrap items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                           <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
@@ -1787,10 +1787,10 @@ export default function Home() {
                               <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
                                 <div className="flex items-center">
                                   <div className="flex flex-col">
-                                    <h3 className="headline text-lg leading-tight flex items-center gap-2">
+                                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                                       {player.name}
                                       {player.ai && (
-                                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10">
+                                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
                                           AI
                                         </span>
                                       )}
@@ -1883,7 +1883,7 @@ export default function Home() {
                                       <div className="absolute left-0 w-full border-t border-dotted border-[color:var(--accent)]" />
                                       {/* Roman numeral badge on the far left */}
                                       <div
-                                        className="relative -translate-x-1/2 bg-[color:var(--accent)] text-[color:var(--panel)] w-5 h-5 flex items-center justify-center rounded-sm font-black text-s shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
+                                        className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-s shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
                                         title={`${ageName} Age reached @ ${formatClock(time)}`}
                                       >
                                         {ageNumeral}
@@ -1896,7 +1896,7 @@ export default function Home() {
                                   style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
                                 >
                                   {index === 0 && (
-                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
+                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2 z-10">
                                       <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
                                         {formatClock(selectedTime)}
                                       </span>

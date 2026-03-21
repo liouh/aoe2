@@ -127,7 +127,7 @@ export function Select<T extends string | number | undefined>({
           {getButtonLabel()}
         </span>
         {!multi && primaryOption?.isAi && (
-          <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
+          <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
             AI
           </span>
         )}
@@ -183,7 +183,7 @@ export function Select<T extends string | number | undefined>({
                     {option.label}
                   </span>
                   {option.isAi && (
-                    <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
+                    <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
                       AI
                     </span>
                   )}
