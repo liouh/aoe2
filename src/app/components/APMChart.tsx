@@ -1,5 +1,12 @@
 import React from "react";
 
+const formatClock = (seconds: number) => {
+  const total = Math.max(seconds, 0);
+  const mins = Math.floor(total / 60);
+  const secs = Math.floor(total % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
 export function APMChart({ data, players, classifyColor, selectedTime }: { 
   data: { playerId: number; history: { minute: number; apm: number }[] }[],
   players: any[],
@@ -65,18 +72,21 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
               y1={padding.top}
               x2={getX(selectedTime / 60)}
               y2={height - padding.bottom}
-              stroke="var(--accent)"
+              stroke="var(--foreground)"
               strokeWidth="2"
-              strokeDasharray="4 2"
-              className="drop-shadow-[0_0_4px_var(--accent)] opacity-50"
             />
-            <circle
-              cx={getX(selectedTime / 60)}
-              cy={padding.top}
-              r="3"
-              fill="var(--accent)"
-              className="drop-shadow-[0_0_4px_var(--accent)]"
-            />
+            <foreignObject
+              x={getX(selectedTime / 60) - 25}
+              y={height - padding.bottom - 2}
+              width="50"
+              height="30"
+            >
+              <div className="flex justify-center">
+                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm whitespace-nowrap">
+                  {formatClock(selectedTime)}
+                </span>
+              </div>
+            </foreignObject>
           </g>
         )}
 
