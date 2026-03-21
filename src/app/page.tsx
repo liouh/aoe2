@@ -176,7 +176,7 @@ export default function Home() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
   const [minimapPlayerId, setMinimapPlayerId] = useState<number | undefined>(undefined);
-  const [showAiApm, setShowAiApm] = useState(true);
+  const [showAiApm, setShowAiApm] = useState(false);
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
