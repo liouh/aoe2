@@ -13,9 +13,9 @@ interface TiltCardProps {
 export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = "",
-  maxRotation = 10,
+  maxRotation = 5,
   perspective = 1000,
-  scale = 1.02,
+  scale = 1.01,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState("");

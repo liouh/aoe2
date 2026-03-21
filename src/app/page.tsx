@@ -65,7 +65,6 @@ const KEYBOARD_STEP_SHIFT_SECONDS = 120;
 const PLAYBACK_STEP_SECONDS = 4;
 const PLAYBACK_INTERVAL_MS = 66;
 
-const TIMELINE_MIN_HEIGHT = 600;
 const TIMELINE_MARKER_INTERVAL = 300;
 const TIMELINE_PX_PER_SECOND = 2;
 const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
@@ -568,7 +567,7 @@ export default function Home() {
 
 
   const timelineHeight = useMemo(() => {
-    return Math.max(TIMELINE_MIN_HEIGHT, duration * TIMELINE_PX_PER_SECOND);
+    return duration * TIMELINE_PX_PER_SECOND;
   }, [duration]);
 
   // The core minimap rendering effect: draws terrain, buildings, and units on canvas
@@ -1830,7 +1829,7 @@ export default function Home() {
                               </div>
                               <div
                                 className="relative w-full bg-[#1c1610] rounded-b-xl"
-                                style={{ height: timelineHeight, minHeight: TIMELINE_MIN_HEIGHT }}
+                                style={{ height: timelineHeight }}
                               >
                                 {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
                                   const markerTime = i * TIMELINE_MARKER_INTERVAL;
