@@ -418,12 +418,6 @@ export const determineDuration = (
       : undefined;
   if (!events.length) return 0;
   const lastEventTime = events[events.length - 1]?.time ?? 0;
-  const lastResign = [...events]
-    .reverse()
-    .find((event) => event.type === "Resign")?.time;
-  if (lastResign !== undefined) {
-    return lastResign;
-  }
   if (summaryDuration === undefined) return lastEventTime;
   if (summaryDuration > lastEventTime * 1.2) {
     return lastEventTime;
