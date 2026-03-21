@@ -53,10 +53,10 @@ const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
 const MINIMAP_ICON_BORDER = 16;
 const MINIMAP_HOVER_OUTLINE = 2;
-const MINIMAP_UNIT_ALPHA = 0.8;
+const MINIMAP_UNIT_ALPHA = 1;
+const MINIMAP_UNIT_BORDER = 1;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
-const MINIMAP_UNIT_BORDER = 2;
-const MINIMAP_UNIT_FADE_SECONDS = 60;
+const MINIMAP_UNIT_FADE_SECONDS = 50;
 
 const KEYBOARD_STEP_SECONDS = 30;
 const KEYBOARD_STEP_SHIFT_SECONDS = 120;
@@ -651,15 +651,7 @@ export default function Home() {
       context.drawImage(offscreenCanvasRef.current, 0, 0, bounds.width, bounds.height);
     }
 
-    const currentUnitsMap = new Map<string | number, TimelineEvent>();
-    for (const event of moveEvents) {
-      if (event.time > selectedTime) break;
-      if (event.unitId === undefined) continue;
-      const existing = currentUnitsMap.get(event.unitId);
-      if (!existing || existing.time < event.time) {
-        currentUnitsMap.set(event.unitId, event);
-      }
-    }
+
 
 
     const drawTile = (
@@ -797,12 +789,17 @@ export default function Home() {
     }
 
     if (showUnits) {
-      currentUnitsMap.forEach((event) => {
-        if (event.x === undefined || event.y === undefined) return;
+      for (let i = moveEvents.length - 1; i >= 0; i--) {
+        const event = moveEvents[i];
+        if (event.time > selectedTime) continue;
         const age = selectedTime - event.time;
-        if (age < 0 || age > MINIMAP_UNIT_FADE_SECONDS) return;
+        if (age > MINIMAP_UNIT_FADE_SECONDS) break;
+
+        if (event.x === undefined || event.y === undefined) continue;
+
+        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - age / MINIMAP_UNIT_FADE_SECONDS));
         const pos = toCanvas(event.x, event.y);
-        context.globalAlpha = MINIMAP_UNIT_ALPHA;
+        context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = classifyColor(event.playerId);
         context.arc(pos.x, pos.y, MINIMAP_UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
@@ -810,8 +807,8 @@ export default function Home() {
         context.lineWidth = MINIMAP_UNIT_BORDER;
         context.strokeStyle = classifyOutline(event.playerId);
         context.stroke();
-        context.globalAlpha = 1;
-      });
+      }
+      context.globalAlpha = 1;
     }
 
     if (showBuildings && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {

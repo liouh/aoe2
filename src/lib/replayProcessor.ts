@@ -51,14 +51,14 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Imperial: 190,
 };
 
-// These are the only events we care about
 const classifyEvent = (type: string, isAi?: boolean) => {
   switch (type) {
     case "Research":
       return "research";
     case "AiQueue":
-    case "DeQueue":
       return "train";
+    case "DeQueue":
+      return isAi ? "other" : "train";  // DeQueue is only for human players
     case "Build":
     case "Wall":
       return "build";
@@ -67,8 +67,6 @@ const classifyEvent = (type: string, isAi?: boolean) => {
     case "Patrol":
     case "DeAttackMove":
     case "AttackGround":
-    case "Interact":
-    case "AiInteract":
       return "move";
     case "Autoscout": return "autoscout";
     case "Buy":
@@ -90,34 +88,20 @@ const parseActionData = (type: string, data: number[]) => {
   try {
     switch (type) {
       case "Move": {
-        return {};
+        return {};  // handled by parser
       }
       case "AiMove": {
         if (bytes.length < 40) return undefined;
-        const count = view.getInt32(0, true);
         const x = view.getFloat32(20, true);
         const y = view.getFloat32(24, true);
-        const unitIds: number[] = [];
-        if (count > 1 && bytes.length >= 40 + count * 4) {
-          for (let i = 0; i < count; i++) {
-            unitIds.push(view.getInt32(40 + i * 4, true));
-          }
-        }
-        return { x, y, unitIds };
+        return { x, y };
       }
       case "Patrol":
       case "DeAttackMove": {
         if (bytes.length < 88) return undefined;
-        const selected = view.getUint32(0, true);
         const x = view.getFloat32(8, true);
         const y = view.getFloat32(48, true);
-        const unitIds: number[] = [];
-        if (selected > 0 && bytes.length >= 88 + selected * 4) {
-          for (let i = 0; i < selected; i++) {
-            unitIds.push(view.getUint32(88 + i * 4, true));
-          }
-        }
-        return { x, y, unitIds };
+        return { x, y };
       }
       case "Build": {
         if (bytes.length < 28) return undefined;
@@ -149,10 +133,10 @@ const parseActionData = (type: string, data: number[]) => {
         return { tiles, buildingTypeId };
       }
       case "Research": {
-        return {};
+        return {};  // handled by parser
       }
       case "DeQueue": {
-        return {};
+        return {};  // handled by parser
       }
       case "AiQueue": {
         if (bytes.length < 12) return undefined;
@@ -171,24 +155,9 @@ const parseActionData = (type: string, data: number[]) => {
       }
       case "AttackGround": {
         if (bytes.length < 16) return undefined;
-        const selected = view.getInt32(0, true);
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
-        const unitIds: number[] = [];
-        if (selected > 0 && bytes.length >= 16 + selected * 4) {
-          for (let i = 0; i < selected; i++) {
-            unitIds.push(view.getUint32(16 + i * 4, true));
-          }
-        }
-        return { x, y, unitIds };
-      }
-      case "Interact":
-      case "AiInteract": {
-        if (bytes.length < 16) return undefined;
-        const unitId = view.getInt32(0, true);
-        const x = view.getFloat32(4, true);
-        const y = view.getFloat32(8, true);
-        return { x, y, unitId };
+        return { x, y };
       }
     }
   } catch (e) {
