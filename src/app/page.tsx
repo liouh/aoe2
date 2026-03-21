@@ -1498,6 +1498,7 @@ export default function Home() {
                         }))}
                       players={players.filter(p => showAiApm || !p.ai)}
                       classifyColor={classifyColor}
+                      selectedTime={selectedTime}
                     />
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

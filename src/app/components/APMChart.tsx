@@ -1,9 +1,10 @@
 import React from "react";
 
-export function APMChart({ data, players, classifyColor }: { 
+export function APMChart({ data, players, classifyColor, selectedTime }: { 
   data: { playerId: number; history: { minute: number; apm: number }[] }[],
   players: any[],
-  classifyColor: (id?: number) => string
+  classifyColor: (id?: number) => string,
+  selectedTime?: number
 }) {
   const allPoints = data.flatMap(d => d.history);
   if (allPoints.length === 0) return null;
@@ -55,6 +56,29 @@ export function APMChart({ data, players, classifyColor }: {
             </g>
           );
         })}
+
+        {/* Current Time Indicator */}
+        {selectedTime !== undefined && (
+          <g>
+            <line
+              x1={getX(selectedTime / 60)}
+              y1={padding.top}
+              x2={getX(selectedTime / 60)}
+              y2={height - padding.bottom}
+              stroke="var(--accent)"
+              strokeWidth="2"
+              strokeDasharray="4 2"
+              className="drop-shadow-[0_0_4px_var(--accent)] opacity-50"
+            />
+            <circle
+              cx={getX(selectedTime / 60)}
+              cy={padding.top}
+              r="3"
+              fill="var(--accent)"
+              className="drop-shadow-[0_0_4px_var(--accent)]"
+            />
+          </g>
+        )}
 
         {/* Lines */}
         {data.map((playerData) => {
