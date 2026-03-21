@@ -67,6 +67,8 @@ const classifyEvent = (type: string, isAi?: boolean) => {
     case "Patrol":
     case "DeAttackMove":
     case "AttackGround":
+    case "Interact":
+    case "AiInteract":
       return "move";
     case "Autoscout": return "autoscout";
     case "Buy":
@@ -180,6 +182,14 @@ const parseActionData = (type: string, data: number[]) => {
         }
         return { x, y, unitIds };
       }
+      case "Interact":
+      case "AiInteract": {
+        if (bytes.length < 16) return undefined;
+        const unitId = view.getInt32(0, true);
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        return { x, y, unitId };
+      }
     }
   } catch (e) {
     console.error(`Error parsing action data for ${type}:`, e);
@@ -249,16 +259,29 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       const category = classifyEvent(actionType, isAi);
       const data = Array.isArray(payload?.data) ? parseActionData(actionType, payload.data as number[]) : undefined;
 
-      const position =
-        (typeof payload.x === "number" && typeof payload.y === "number" ? { x: payload.x, y: payload.y } : undefined) ??
-        (data && "x" in data && typeof data.x === "number" ? { x: data.x, y: data.y as number } : undefined);
+      let position: { x: number; y: number } | undefined;
+      if (typeof payload.x === "number" && typeof payload.y === "number") {
+        position = { x: payload.x, y: payload.y };
+      } else if (data && "x" in data && typeof data.x === "number" && "y" in data && typeof data.y === "number") {
+        position = { x: data.x, y: data.y };
+      }
 
-      const unitId = (data && "unitIds" in data && Array.isArray(data.unitIds)) ? data.unitIds[0] : (Array.isArray(payload?.unit_ids) ? payload?.unit_ids?.[0] : undefined);
+      let unitId: string | number | undefined;
+      if (data && "unitIds" in data && Array.isArray(data.unitIds) && data.unitIds.length > 0) {
+        unitId = data.unitIds[0];
+      } else if (data && "unitId" in data) {
+        unitId = data.unitId as string | number;
+      } else if (Array.isArray(payload?.unit_ids) && payload.unit_ids.length > 0) {
+        unitId = payload.unit_ids[0] as string | number;
+      }
 
-      const unitTypeId = (data && "unitTypeId" in data) ? pickNumber(data.unitTypeId) : pickNumber(payload?.unit_id);
+      const unitTypeId = (data && "unitTypeId" in data)
+        ? pickNumber(data.unitTypeId)
+        : pickNumber(payload?.unit_id);
 
-      const buildingTypeId =
-        (data && "buildingTypeId" in data) ? pickNumber(data.buildingTypeId) : undefined;
+      const buildingTypeId = (data && "buildingTypeId" in data)
+        ? pickNumber(data.buildingTypeId)
+        : undefined;
 
       const techId = pickNumber(payload?.technology_type);
 

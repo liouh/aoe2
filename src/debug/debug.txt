@@ -8,7 +8,7 @@ __aoe2rec.operations.find((item) => {
 // find all
 __aoe2rec.operations.filter((item) => {
     if (item.Action && item.Action.action_data && item.Action.action_data.DeQueue) {
-        console.log(item.Action.action_data);
+        return true;
     }
 });
 
@@ -16,7 +16,7 @@ __aoe2rec.operations.filter((item) => {
 __aoe2rec.operations.filter((item) => {
     if (item.Action && item.Action.action_data && item.Action.action_data.DeQueue
         && item.Action.action_data[Object.keys(item.Action.action_data)[0]].player_id === 1) {
-        console.log(item.Action.action_data);
+        return true;
     }
 });
 
@@ -86,7 +86,16 @@ __aoe2rec.operations.filter((item) => {
         && !item.Action.action_data.Buy
 
         && !item.Action.action_data.Research
+
+        && !item.Action.action_data.DeUnknown35
+        && !item.Action.action_data.DeUnknown37
+        && !item.Action.action_data.DeUnknown130
+        && !item.Action.action_data.Unknown45
+
+        && !item.Action.action_data.AiMove
+        && !item.Action.action_data.AiInteract
+        && !item.Action.action_data.AiQueue
     )) {
-        console.log(item.Action.action_data);
+        return true;
     }
 });
