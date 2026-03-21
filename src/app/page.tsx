@@ -1853,8 +1853,8 @@ export default function Home() {
                                   style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
                                 >
                                   {index === 0 && (
-                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-[120%] pl-2">
-                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[9px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
+                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
+                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
                                         {formatClock(selectedTime)}
                                       </span>
                                     </div>
