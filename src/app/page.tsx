@@ -1785,7 +1785,6 @@ export default function Home() {
                                 className="relative w-full bg-[#1c1610] rounded-b-xl"
                                 style={{ height: timelineHeight, minHeight: TIMELINE_MIN_HEIGHT }}
                               >
-                                {/* Time Markers */}
                                 {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
                                   const markerTime = i * TIMELINE_MARKER_INTERVAL;
                                   return (
@@ -1800,7 +1799,6 @@ export default function Home() {
                                     </div>
                                   );
                                 })}
-
                                 <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)]"></div>
                                 {consolidateEvents(playerResearch).map((event) => (
                                   <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
@@ -1847,21 +1845,18 @@ export default function Home() {
                                     </div>
                                   );
                                 })}
-
-                                {selectedTime > 0 && (
-                                  <div
-                                    className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
-                                    style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-                                  >
-                                    {index === 0 && (
-                                      <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
-                                        <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
-                                          {formatClock(selectedTime)}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
+                                <div
+                                  className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
+                                  style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
+                                >
+                                  {index === 0 && (
+                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2">
+                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
+                                        {formatClock(selectedTime)}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           );
