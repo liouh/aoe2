@@ -486,9 +486,10 @@ export type MatchInfo = {
   victoryTypeId?: number;
   cheats: boolean;
   filename?: string;
+  sourceUrl?: string;
 };
 
-export const extractMatchInfo = (source: any, filename?: string): MatchInfo => {
+export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string): MatchInfo => {
   const settings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
   const replayData = source?.header?.replay || source?.replay;
 
@@ -505,5 +506,6 @@ export const extractMatchInfo = (source: any, filename?: string): MatchInfo => {
     victoryTypeId: pickNumber(settings?.victory_type_id),
     cheats: settings?.cheats,
     filename,
+    sourceUrl,
   };
 };

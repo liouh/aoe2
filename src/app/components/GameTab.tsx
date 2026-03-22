@@ -123,14 +123,6 @@ export function GameTab({
         <section className="panel flex flex-col gap-4 rounded-3xl p-6">
           <h2 className="headline text-2xl font-semibold">Game info</h2>
           <div className="grid gap-6 md:grid-cols-3">
-            {matchInfo.filename && (
-              <div className="flex flex-col gap-1 md:col-span-full border-b border-white/5 pb-2">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
-                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
-                  {matchInfo.filename}
-                </span>
-              </div>
-            )}
             {matchInfo.gameTypeId !== undefined && (
               <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
@@ -184,6 +176,22 @@ export function GameTab({
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
                 <span className="font-semibold text-[color:var(--foreground)]">
                   {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`}
+                </span>
+              </div>
+            )}
+            {matchInfo.filename && (
+              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
+                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
+                  {matchInfo.filename}
+                </span>
+              </div>
+            )}
+            {matchInfo.sourceUrl && (
+              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
+                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.sourceUrl}>
+                  {matchInfo.sourceUrl}
                 </span>
               </div>
             )}

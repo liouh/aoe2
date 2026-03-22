@@ -19,6 +19,7 @@ import { TimelineTab } from "./components/TimelineTab";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
+import JSZip from "jszip";
 
 const PLAYER_COLORS = [
   "#3252FF",
@@ -106,6 +107,17 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
   const [pendingJump, setPendingJump] = useState(false);
+  const [replayUrl, setReplayUrl] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
+
+  const unloadReplay = () => {
+    setReplay(null);
+    setSummary(null);
+    setMatchInfo(null);
+    setEvents([]);
+    setDuration(0);
+    resetGameState();
+  };
 
   const resetGameState = () => {
     setIsPlaying(false);
@@ -674,7 +686,7 @@ export default function Home() {
     selectedPlayerIds,
   ]);
 
-  const loadReplayData = async (buffer: ArrayBuffer, filename?: string) => {
+  const loadReplayData = async (buffer: ArrayBuffer, filename?: string, sourceUrl?: string) => {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
@@ -693,7 +705,7 @@ export default function Home() {
 
       const timeline = buildTimeline(parsed, parsedSummary);
       const gameDuration = determineDuration(parsedSummary, timeline);
-      const extractedInfo = extractMatchInfo(parsed, filename);
+      const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
 
       setLoadingStep(2);
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -713,13 +725,7 @@ export default function Home() {
   };
 
   const handleFile = (file: File) => {
-    // Unload previous file first
-    setReplay(null);
-    setSummary(null);
-    setMatchInfo(null);
-    setEvents([]);
-    setDuration(0);
-    resetGameState();
+    unloadReplay();
 
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
@@ -727,6 +733,69 @@ export default function Home() {
       await loadReplayData(buffer, file.name);
     });
     reader.readAsArrayBuffer(file);
+  };
+
+  const handleUrlLoad = async () => {
+    if (!replayUrl) return;
+
+    setShowUrlInput(false);
+    unloadReplay();
+
+    const lowerUrl = replayUrl.toLowerCase();
+    const isAllowed =
+      lowerUrl.includes("api.ageofempires.com") ||
+      lowerUrl.includes("aoe.ms");
+
+    if (!isAllowed) {
+      setError("Only https://api.ageofempires.com/ and https://aoe.ms/ links are supported.");
+      return;
+    }
+
+    let targetUrl = replayUrl;
+    if (replayUrl.includes("aoe.ms/replay")) {
+      try {
+        const url = new URL(replayUrl);
+        const gameId = url.searchParams.get("gameId");
+        const profileId = url.searchParams.get("profileId");
+        if (gameId && profileId) {
+          targetUrl = `https://api.ageofempires.com/api/GameStats/AgeII/GetMatchReplay/?matchId=${gameId}&profileId=${profileId}`;
+        }
+      } catch (e) {
+        // Fallback to original URL if parsing fails
+      }
+    }
+
+    setLoading(true);
+    setError(null);
+    setLoadingStep(0);
+    let replayUrlOrName = replayUrl;
+
+    try {
+      const response = await fetch(targetUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+      let buffer = await response.arrayBuffer();
+
+      // If it looks like a ZIP file (starts with PK), unzip it
+      const uint8 = new Uint8Array(buffer.slice(0, 4));
+      if (uint8[0] === 0x50 && uint8[1] === 0x4b && uint8[2] === 0x03 && uint8[3] === 0x04) {
+        const zip = await JSZip.loadAsync(buffer);
+        const recordFile = Object.values(zip.files).find(f =>
+          f.name.endsWith(".aoe2record")
+        );
+        if (recordFile) {
+          replayUrlOrName = recordFile.name;
+          buffer = await recordFile.async("arraybuffer");
+        }
+      }
+
+      await loadReplayData(buffer, replayUrlOrName, replayUrl);
+    } catch (err: any) {
+      setError(replayUrlOrName);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Load a random sample replay on initial component mount
@@ -801,32 +870,87 @@ export default function Home() {
     <div className="min-h-screen">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-6 lg:px-10">
         <header className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-stretch justify-between gap-4">
             <div className="space-y-1">
               <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
                 <span className="text-[color:var(--muted)] font-black">AoE2</span> Replay Viewer
               </h1>
-              <p className="max-w-2xl text-xs text-[color:var(--muted)] lg:text-lg">
-                Upload a replay for minimap playback, key stats, and build timelines.
+              <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg mb-3">
+                In-browser minimap playback + key stats + build timelines
               </p>
             </div>
-            <label
-              className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 lg:py-3 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white"
-              onClick={() => setIsPlaying(false)}
-            >
-              <span className="text-xl lg:text-2xl">📁</span>
-              <span className="lg:inline">Open .aoe2record replay file</span>
-              <input
-                type="file"
-                accept=".aoe2record,.mgz"
-                className="sr-only"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (!file) return;
-                  handleFile(file);
-                }}
-              />
-            </label>
+            <div className="flex flex-row gap-2">
+              {!showUrlInput ? (
+                <>
+                  <label
+                    className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all"
+                    onClick={() => setIsPlaying(false)}
+                  >
+                    <span className="text-xl lg:text-2xl">📁</span>
+                    <span className="lg:inline">Open .aoe2record file</span>
+                    <input
+                      id="replay-file-input"
+                      name="replay-file"
+                      type="file"
+                      accept=".aoe2record"
+                      className="sr-only"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        handleFile(file);
+                      }}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all"
+                    onClick={() => {
+                      setIsPlaying(false);
+                      setShowUrlInput(true);
+                      setReplayUrl("");
+                    }}
+                  >
+                    <span className="text-xl lg:text-2xl">🔗</span>
+                    <span className="lg:inline">Load replay from URL</span>
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-row items-center gap-2 w-full ml-auto self-stretch">
+                  <div className="flex-1 flex gap-2 items-center">
+                    <input
+                      autoFocus
+                      id="replay-url-input"
+                      name="replay-url"
+                      type="url"
+                      placeholder="Paste replay URL..."
+                      className="flex-1 rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-[color:var(--accent)] transition-colors h-10 lg:h-12"
+                      value={replayUrl}
+                      onChange={(e) => setReplayUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleUrlLoad();
+                        }
+                        if (e.key === "Escape") {
+                          setShowUrlInput(false);
+                        }
+                      }}
+                    />
+                    <button
+                      className="px-4 py-2 rounded-xl bg-[color:var(--accent)] text-xs lg:text-sm font-bold text-white shadow-lg lg:hover:shadow-[color:var(--accent)]/20 transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                      onClick={handleUrlLoad}
+                    >
+                      Load
+                    </button>
+                    <button
+                      className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 text-xs lg:text-sm font-bold text-white shadow-lg transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                      onClick={() => setShowUrlInput(false)}
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -1122,6 +1246,8 @@ export default function Home() {
               </button>
               <div className="flex-1 relative h-10 flex items-center group">
                 <input
+                  id="time-scrubber"
+                  name="time-scrubber"
                   type="range"
                   min={0}
                   max={Math.max(duration, 1)}
