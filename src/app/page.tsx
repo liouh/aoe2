@@ -57,6 +57,7 @@ const MINIMAP_UNIT_ALPHA = 1;
 const MINIMAP_UNIT_BORDER = 1;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
+const MINIMAP_ELEVATION_STEP = 4;
 
 const KEYBOARD_STEP_SECONDS = 30;
 const KEYBOARD_STEP_SHIFT_SECONDS = 120;
@@ -98,6 +99,15 @@ const isEconomic = (name: string) => {
     lower.includes("mule cart")
   );
 };
+
+function shadeColor(hex: string, percent: number) {
+  const num = parseInt(hex.replace("#", ""), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return "#" + (0x1000000 + (R < 255 ? R < 0 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 0 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 0 ? 0 : B : 255)).toString(16).slice(1);
+}
 
 function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIMELINE_CONSOLIDATION_WINDOW_SECONDS) {
   if (events.length === 0) return [];
@@ -633,9 +643,15 @@ export default function Home() {
         if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
-              const tile = tiles[y * sizeX + x] as { terrain_type?: number };
+              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
               const terrainType = tile?.terrain_type ?? 14;
-              const color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+              let color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+
+              if (tile?.elevation !== undefined) {
+                // Apply shading: +MINIMAP_ELEVATION_STEP% for each level of elevation
+                color = shadeColor(color, tile.elevation * MINIMAP_ELEVATION_STEP);
+              }
+
               const p1 = toCanvas(x, y);
               const p2 = toCanvas(x + 1, y);
               const p3 = toCanvas(x + 1, y + 1);
