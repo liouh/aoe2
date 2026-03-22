@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Select } from "./Select";
 import { isEconomic } from "./StatsTab";
+import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
 import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
@@ -155,6 +156,9 @@ export function TimelineTab({
                   </span>
                 )}
               </h3>
+              <div className="flex items-center gap-2 text-xs text-white/40">
+                <span>{getCivName(player.civId)}</span>
+              </div>
             </div>
           </div>
           <Select
