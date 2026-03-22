@@ -15,11 +15,10 @@ import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { Select, type SelectOption } from "./components/Select";
 import { GameTab } from "./components/GameTab";
 import { StatsTab, isEconomic } from "./components/StatsTab";
+import { TimelineTab } from "./components/TimelineTab";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
-import { getUnitName, getBuildingName } from "@/lib/entityNames";
-import { getTechName } from "@/lib/techMappings";
-import { getCivName } from "@/lib/civMappings";
+import { getBuildingName } from "@/lib/entityNames";
 
 const PLAYER_COLORS = [
   "#3252FF",
@@ -62,10 +61,6 @@ const KEYBOARD_STEP_SHIFT_SECONDS = 120;
 const PLAYBACK_STEP_SECONDS = 4;
 const PLAYBACK_INTERVAL_MS = 66;
 
-const TIMELINE_MARKER_INTERVAL = 300;
-const TIMELINE_PX_PER_SECOND = 2;
-const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
-
 const LOADING_STEPS = [
   "Loading replay...",
   "Loading timeline...",
@@ -91,64 +86,10 @@ function shadeColor(hex: string, percent: number) {
   return "#" + (0x1000000 + (R < 255 ? R < 0 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 0 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 0 ? 0 : B : 255)).toString(16).slice(1);
 }
 
-function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIMELINE_CONSOLIDATION_WINDOW_SECONDS) {
-  if (events.length === 0) return [];
-
-  const consolidated: (TimelineEvent & {
-    count: number;
-    isMilitary?: boolean;
-    items: Map<string, number>;
-    label?: string;
-  })[] = [];
-
-  const activeGroups = new Map<string, any>();
-
-  for (const event of events) {
-    const identity = event.category;
-    const current = activeGroups.get(identity);
-
-    const amount = typeof event.raw?.amount === "number" && event.raw.amount > 0
-      ? event.raw.amount
-      : 1;
-
-    let itemLabel = "Unknown Event";
-    if (event.category === "build") {
-      itemLabel = getBuildingName(event.buildingTypeId);
-    } else if (event.category === "train") {
-      itemLabel = getUnitName(event.unitTypeId);
-    } else if (event.category === "research") {
-      itemLabel = getTechName(event.techId);
-    }
-
-    const isMil = event.category === "train" && !isEconomic(itemLabel);
-
-    if (current && event.time - current.time <= windowSeconds) {
-      current.count += amount;
-      current.items.set(itemLabel, (current.items.get(itemLabel) || 0) + amount);
-      if (isMil) current.isMilitary = true;
-    } else {
-      const newGroup = {
-        ...event,
-        count: amount,
-        isMilitary: isMil,
-        items: new Map([[itemLabel, amount]])
-      };
-      consolidated.push(newGroup);
-      activeGroups.set(identity, newGroup);
-    }
-  }
-
-  for (const group of consolidated) {
-    const parts = Array.from(group.items.entries()).map(([name, count]) =>
-      (count > 1 && group.category !== "research") ? `${name} x${count}` : name
-    );
-    group.label = parts.join(" + ");
-  }
-
-  return consolidated.sort((a, b) => a.time - b.time);
-}
 
 export default function Home() {
+  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves">("both");
+  const [isPlaying, setIsPlaying] = useState(false);
   const [replay, setReplay] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
   const [matchInfo, setMatchInfo] = useState<MatchInfo | null>(null);
@@ -161,16 +102,10 @@ export default function Home() {
   }, [selectedTime]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves">("both");
-  const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
-  const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
-  const [timelineShowUnits, setTimelineShowUnits] = useState(true);
-  const [timelineShowResearch, setTimelineShowResearch] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+  const [pendingJump, setPendingJump] = useState(false);
 
   const resetGameState = () => {
     setIsPlaying(false);
@@ -206,12 +141,10 @@ export default function Home() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const timelineRef = useRef<HTMLElement>(null);
   const terrainCacheKeyRef = useRef<string | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const lastKeyTimeRef = useRef(0);
   const isDraggingRef = useRef(false);
-  const pendingScrollRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const entityLookupRef = useRef<{
@@ -331,28 +264,6 @@ export default function Home() {
   };
 
   // Sync player selection when player data changes or is loaded
-  useEffect(() => {
-    if (!players.length) {
-      if (leftPlayerId !== null) setLeftPlayerId(null);
-      if (rightPlayerId !== null) setRightPlayerId(null);
-      return;
-    }
-    const ids = new Set(players.map((player) => player.id));
-    const fallbackLeft = players[0]?.id ?? null;
-    let nextLeft =
-      leftPlayerId !== null && ids.has(leftPlayerId) ? leftPlayerId : fallbackLeft;
-    let nextRight =
-      rightPlayerId !== null && ids.has(rightPlayerId)
-        ? rightPlayerId
-        : players[1]?.id ?? nextLeft;
-    if (players.length > 1 && nextLeft !== null && nextRight === nextLeft) {
-      nextRight =
-        players.find((player) => player.id !== nextLeft)?.id ?? nextRight;
-    }
-    if (nextLeft !== leftPlayerId) setLeftPlayerId(nextLeft);
-    if (nextRight !== rightPlayerId) setRightPlayerId(nextRight);
-  }, [leftPlayerId, players, rightPlayerId]);
-
   const timelineStats = useMemo(
     () => extractPlayerStats(events, duration, players),
     [events, duration, players]
@@ -373,34 +284,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
 
-  // Automatic scrolling for the timeline view as time progresses
-  useEffect(() => {
-    if (activeTab === "timeline" && pendingScrollRef.current && timelineRef.current) {
-      pendingScrollRef.current = false;
-      const targetOffset = selectedTime * TIMELINE_PX_PER_SECOND;
-      const containerTop =
-        timelineRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: containerTop + targetOffset,
-        behavior: "smooth",
-      });
-    }
-  }, [activeTab, selectedTime]);
+
 
   const jumpToTimeline = () => {
     setIsPlaying(false);
     setActiveTab("timeline");
-    if (!timelineRef.current) {
-      pendingScrollRef.current = true;
-      return;
-    }
-    const targetOffset = selectedTime * TIMELINE_PX_PER_SECOND;
-    const containerTop =
-      timelineRef.current.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({
-      top: containerTop + targetOffset,
-      behavior: "smooth",
-    });
+    setPendingJump(true);
   };
 
   const clampPan = (pan: { x: number; y: number }, zoom?: number) => {
@@ -461,11 +350,6 @@ export default function Home() {
     [events]
   );
 
-  const buildEvents = useMemo(
-    () => events.filter((event) => event.category === "build" && timelineShowBuildings && !event.raw?.isInitial),
-    [events, timelineShowBuildings]
-  );
-
   const moveEvents = useMemo(
     () =>
       events.filter(
@@ -478,19 +362,7 @@ export default function Home() {
     [events, selectedPlayerIds]
   );
 
-  const trainEvents = useMemo(
-    () => events.filter((event) => event.category === "train" && timelineShowUnits),
-    [events, timelineShowUnits]
-  );
 
-  const researchEvents = useMemo(
-    () => events.filter((event) => event.category === "research" && timelineShowResearch),
-    [events, timelineShowResearch]
-  );
-
-  const timelineHeight = useMemo(() => {
-    return duration * TIMELINE_PX_PER_SECOND;
-  }, [duration]);
 
   // The core minimap rendering effect: draws terrain, buildings, and units on canvas
   useEffect(() => {
@@ -798,7 +670,6 @@ export default function Home() {
     showUnits,
     summary,
     moveEvents,
-    trainEvents,
     hoveredEntity,
     selectedPlayerIds,
   ]);
@@ -1315,194 +1186,18 @@ export default function Home() {
                   selectedTime={selectedTime}
                 />
               ) : (
-                <section ref={timelineRef} className="w-full">
-                  <div className="panel flex flex-col gap-6 rounded-3xl p-6">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <h2 className="headline text-2xl font-semibold">Timeline</h2>
-                      <div className="flex flex-wrap items-center gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={timelineShowResearch}
-                              onChange={(e) => setTimelineShowResearch(e.target.checked)}
-                            />
-                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-3' : 'translate-x-0'}`}></div>
-                          </div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={timelineShowBuildings}
-                              onChange={(e) => setTimelineShowBuildings(e.target.checked)}
-                            />
-                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-3' : 'translate-x-0'}`}></div>
-                          </div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer select-none group">
-                          <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={timelineShowUnits}
-                              onChange={(e) => setTimelineShowUnits(e.target.checked)}
-                            />
-                            <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                            <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-3' : 'translate-x-0'}`}></div>
-                          </div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      {[leftPlayerId, rightPlayerId]
-                        .filter((id): id is number => typeof id === "number")
-                        .map((playerId, index) => {
-                          const player = players.find((item) => item.id === playerId);
-                          if (!player) return null;
-                          const playerBuilds = buildEvents.filter(
-                            (event) => event.playerId === player?.id
-                          );
-                          const playerTrains = trainEvents.filter(
-                            (event) => event.playerId === player?.id
-                          );
-                          const playerResearch = researchEvents.filter(
-                            (event) => event.playerId === player?.id
-                          );
-                          return (
-                            <div key={`${player.id}-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
-                              <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
-                                <div className="flex items-center">
-                                  <div className="flex flex-col">
-                                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                                      {player.name}
-                                      {player.ai && (
-                                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                                          AI
-                                        </span>
-                                      )}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-xs text-white/40">
-                                      <span>{getCivName(player.civId)}</span>
-                                      <span>•</span>
-                                      <span>Team {player.teamId}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <Select
-                                  options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }))}
-                                  selectedId={player.id}
-                                  onSelect={(value) => {
-                                    if (index === 0) {
-                                      setLeftPlayerId(value);
-                                      if (value === rightPlayerId && players.length > 1) {
-                                        const alternative =
-                                          players.find((option) => option.id !== value)?.id ??
-                                          rightPlayerId;
-                                        setRightPlayerId(alternative);
-                                      }
-                                    }
-                                    if (index === 1) {
-                                      setRightPlayerId(value);
-                                      if (value === leftPlayerId && players.length > 1) {
-                                        const alternative =
-                                          players.find((option) => option.id !== value)?.id ??
-                                          leftPlayerId;
-                                        setLeftPlayerId(alternative);
-                                      }
-                                    }
-                                  }}
-                                />
-                              </div>
-                              <div
-                                className="relative w-full bg-[#1c1610] rounded-b-xl"
-                                style={{ height: timelineHeight }}
-                              >
-                                {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
-                                  const markerTime = i * TIMELINE_MARKER_INTERVAL;
-                                  return (
-                                    <div
-                                      key={`marker-${markerTime}`}
-                                      className="absolute left-0 w-full border-t border-[color:var(--panel)]"
-                                      style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
-                                    >
-                                      {i !== 0 && (<span className="absolute left-[2px] text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-30">
-                                        {markerTime / 60 + "'"}
-                                      </span>)}
-                                    </div>
-                                  );
-                                })}
-                                <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)]"></div>
-                                {consolidateEvents(playerResearch).map((event) => (
-                                  <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
-                                    <div className="h-[1px] w-4 bg-white/10" />
-                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
-                                  </div>
-                                ))}
-                                {consolidateEvents(playerBuilds).map((event) => (
-                                  <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
-                                    <div className="h-[1px] w-[6rem] bg-white/10" />
-                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
-                                  </div>
-                                ))}
-                                {consolidateEvents(playerTrains).map((event) => (
-                                  <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-                                    <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
-                                      {event.isMilitary ? "🗡️" : "🙂"}
-                                    </span>
-                                    <div className="h-[1px] w-[12rem] bg-white/10" />
-                                    <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
-                                  </div>
-                                ))}
-                                {/* Age Up Markers */}
-                                {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
-                                  const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
-                                  if (!ageNumeral) return null;
-                                  return (
-                                    <div
-                                      key={`age-${player.id}-${ageName}`}
-                                      className="absolute left-0 w-full flex items-center pointer-events-none z-10"
-                                      style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
-                                    >
-                                      {/* Thin dotted line spanning the entire column */}
-                                      <div className="absolute left-0 w-full border-t border-dotted border-[color:var(--accent)]" />
-                                      {/* Roman numeral badge on the far left */}
-                                      <div
-                                        className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-s shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
-                                        title={`${ageName} Age reached @ ${formatClock(time)}`}
-                                      >
-                                        {ageNumeral}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                                <div
-                                  className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)]"
-                                  style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-                                >
-                                  {index === 0 && (
-                                    <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2 z-10">
-                                      <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
-                                        {formatClock(selectedTime)}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
+                <section className="w-full">
+                  <TimelineTab
+                    players={players}
+                    events={events}
+                    duration={duration}
+                    timelineStats={timelineStats}
+                    selectedTime={selectedTime}
+                    getPlayerColor={getPlayerColor}
+                    formatClock={formatClock}
+                    pendingJump={pendingJump}
+                    onJumpComplete={() => setPendingJump(false)}
+                  />
                 </section>
               )}
             </div>
