@@ -30,12 +30,12 @@ export const VICTORY_TYPES: Record<number, string> = {
 export const getVictoryTypeName = (id?: number) => (id !== undefined ? VICTORY_TYPES[id] : undefined);
 
 export const DIFFICULTY_TYPES: Record<number, string> = {
+  "-1": "Extreme",
   0: "Hardest",
   1: "Hard",
   2: "Moderate",
   3: "Easy",
   4: "Easiest",
-  5: "Extreme",
 };
 
 export const getDifficultyName = (id?: number) => (id !== undefined ? DIFFICULTY_TYPES[id] : undefined);
@@ -80,6 +80,7 @@ export const MAP_TYPES: Record<number, string> = {
   32: "Ghost Lake",
   33: "Nomad",
   44: "Lombardia",
+  59: "Custom Map",
   67: "Acropolis",
   68: "Budapest",
   69: "Cenotes",
