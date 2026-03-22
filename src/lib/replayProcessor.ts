@@ -472,6 +472,7 @@ export type MatchInfo = {
   difficultyId?: number;
   populationLimit?: number;
   victoryTypeId?: number;
+  cheats: boolean;
   filename?: string;
 };
 
@@ -485,6 +486,7 @@ export const extractMatchInfo = (summary: any, filename?: string): MatchInfo => 
     difficultyId: pickNumber(settings?.difficulty),
     populationLimit: pickNumber(settings?.population_limit),
     victoryTypeId: pickNumber(settings?.victory_type_id),
+    cheats: settings?.cheats,
     filename,
   };
 };

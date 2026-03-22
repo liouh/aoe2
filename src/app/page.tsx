@@ -1489,14 +1489,6 @@ export default function Home() {
                             </span>
                           </div>
                         )}
-                        {matchInfo.difficultyId !== undefined && players.some(p => p.ai) && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
-                            <span className="font-semibold text-[color:var(--foreground)]">
-                              {getDifficultyName(matchInfo.difficultyId) ?? `Type ${matchInfo.difficultyId}`}
-                            </span>
-                          </div>
-                        )}
                         {matchInfo.populationLimit !== undefined && (
                           <div className="flex flex-col gap-1">
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
@@ -1510,6 +1502,22 @@ export default function Home() {
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
                               {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.cheats !== undefined && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats used</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {matchInfo.cheats ? "Yes" : "No"}
+                            </span>
+                          </div>
+                        )}
+                        {matchInfo.difficultyId !== undefined && players.some(p => p.ai) && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
+                            <span className="font-semibold text-[color:var(--foreground)]">
+                              {getDifficultyName(matchInfo.difficultyId) ?? `Type ${matchInfo.difficultyId}`}
                             </span>
                           </div>
                         )}
