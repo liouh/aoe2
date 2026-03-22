@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildTimeline,
   determineDuration,
-  extractMapSize,
   extractPlayerStats,
   extractMatchInfo,
   summarizePlayers,
@@ -21,7 +20,7 @@ import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
 import { getTechName } from "@/lib/techMappings";
 import { getCivName } from "@/lib/civMappings";
-import { getGameTypeName, getVictoryTypeName, getDifficultyName, getMapSizeName, getMapName } from "@/lib/gameMappings";
+import { getGameTypeName, getVictoryTypeName, getMapSizeName, getMapName } from "@/lib/gameMappings";
 
 
 const PLAYER_COLORS = [
@@ -57,7 +56,7 @@ const MINIMAP_UNIT_ALPHA = 1;
 const MINIMAP_UNIT_BORDER = 1;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
-const MINIMAP_ELEVATION_STEP = 4;
+const MINIMAP_ELEVATION_STEP = 3;
 
 const KEYBOARD_STEP_SECONDS = 30;
 const KEYBOARD_STEP_SHIFT_SECONDS = 120;
@@ -212,18 +211,6 @@ export default function Home() {
     return window.innerWidth < 768;
   }, []);
 
-  const mapSize = useMemo(() => {
-    const base = extractMapSize(replay, summary);
-    if (mapInfo?.size_x && mapInfo?.size_y) {
-      return Math.max(mapInfo.size_x, mapInfo.size_y);
-    }
-    const coordMax = events.reduce((max, event) => {
-      if (event.x === undefined || event.y === undefined) return max;
-      return Math.max(max, event.x, event.y);
-    }, 0);
-    return coordMax > 0 ? Math.max(base, coordMax * 1.05) : base;
-  }, [events, mapInfo, replay, summary]);
-
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -236,7 +223,7 @@ export default function Home() {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const timelineRef = useRef<HTMLElement>(null);
   const terrainCacheKeyRef = useRef<string | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -259,13 +246,13 @@ export default function Home() {
     isoScale: 1,
     isoOriginX: 0,
     isoOriginY: 0,
-    sizeX: mapSize,
-    sizeY: mapSize,
+    sizeX: 120,
+    sizeY: 120,
   });
 
   const players = useMemo(
-    () => summarizePlayers(summary),
-    [summary]
+    () => summarizePlayers(summary, replay),
+    [replay, summary]
   );
 
   const allPlayersWon = useMemo(() => {
@@ -323,7 +310,7 @@ export default function Home() {
       const next = clamp(prev * zoomFactor, 1, maxZoom);
       if (next === prev) return prev;
 
-      const mapSpan = Math.max(mapInfo?.size_x ?? mapSize, mapInfo?.size_y ?? mapSize);
+      const mapSpan = Math.max(mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120, mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120);
       const wScale = (rect.width - 2) / mapSpan;
       const hScale = rect.height / (mapSpan * 0.5);
       const baseScale = Math.min(wScale, hScale);
@@ -458,8 +445,8 @@ export default function Home() {
     if (!rect.width || !rect.height) return pan;
 
     const z = zoom ?? mapZoom;
-    const sizeX = mapInfo?.size_x ?? mapSize;
-    const sizeY = mapInfo?.size_y ?? mapSize;
+    const sizeX = mapInfo?.size_x;
+    const sizeY = mapInfo?.size_y;
     const mapSpan = Math.max(sizeX, sizeY);
 
     const widthScale = (rect.width - 2) / mapSpan;
@@ -599,8 +586,8 @@ export default function Home() {
 
     context.clearRect(0, 0, bounds.width, bounds.height);
 
-    const sizeX = mapInfo?.size_x ?? mapSize;
-    const sizeY = mapInfo?.size_y ?? mapSize;
+    const sizeX = mapInfo?.size_x;
+    const sizeY = mapInfo?.size_y;
     const mapSpan = Math.max(sizeX, sizeY);
     const widthScale = (bounds.width - 2) / mapSpan;
     const heightScale = bounds.height / (mapSpan * 0.5);
@@ -623,21 +610,21 @@ export default function Home() {
 
     const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${summary?.duration ?? 0},${events.length}`;
 
-    if (terrainCacheKeyRef.current !== terrainCacheKey || !offscreenCanvasRef.current) {
-      if (!offscreenCanvasRef.current) {
-        offscreenCanvasRef.current = document.createElement("canvas");
+    if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
+      if (!terrainCanvasRef.current) {
+        terrainCanvasRef.current = document.createElement("canvas");
       }
-      const offCanvas = offscreenCanvasRef.current;
-      offCanvas.width = canvas.width;
-      offCanvas.height = canvas.height;
-      const offContext = offCanvas.getContext("2d");
-      if (offContext) {
-        offContext.scale(dpr, dpr);
+      const terrainCanvas = terrainCanvasRef.current;
+      terrainCanvas.width = canvas.width;
+      terrainCanvas.height = canvas.height;
+      const terrainContext = terrainCanvas.getContext("2d");
+      if (terrainContext) {
+        terrainContext.scale(dpr, dpr);
         const panelColor =
           getComputedStyle(canvas).getPropertyValue("background-color")?.trim() ||
           "#1c1610";
-        offContext.fillStyle = panelColor;
-        offContext.fillRect(0, 0, bounds.width, bounds.height);
+        terrainContext.fillStyle = panelColor;
+        terrainContext.fillRect(0, 0, bounds.width, bounds.height);
 
         const tiles = mapInfo?.tiles;
         if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
@@ -656,40 +643,37 @@ export default function Home() {
               const p2 = toCanvas(x + 1, y);
               const p3 = toCanvas(x + 1, y + 1);
               const p4 = toCanvas(x, y + 1);
-              offContext.fillStyle = color;
-              offContext.beginPath();
-              offContext.moveTo(p1.x, p1.y);
-              offContext.lineTo(p2.x, p2.y);
-              offContext.lineTo(p3.x, p3.y);
-              offContext.lineTo(p4.x, p4.y);
-              offContext.closePath();
-              offContext.fill();
+              terrainContext.fillStyle = color;
+              terrainContext.beginPath();
+              terrainContext.moveTo(p1.x, p1.y);
+              terrainContext.lineTo(p2.x, p2.y);
+              terrainContext.lineTo(p3.x, p3.y);
+              terrainContext.lineTo(p4.x, p4.y);
+              terrainContext.closePath();
+              terrainContext.fill();
             }
           }
         }
-        offContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
-        offContext.lineWidth = 1;
-        offContext.beginPath();
+        terrainContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
+        terrainContext.lineWidth = 1;
+        terrainContext.beginPath();
         const top = toCanvas(0, 0);
         const right = toCanvas(sizeX, 0);
         const bottom = toCanvas(sizeX, sizeY);
         const left = toCanvas(0, sizeY);
-        offContext.moveTo(top.x, top.y);
-        offContext.lineTo(right.x, right.y);
-        offContext.lineTo(bottom.x, bottom.y);
-        offContext.lineTo(left.x, left.y);
-        offContext.closePath();
-        offContext.stroke();
+        terrainContext.moveTo(top.x, top.y);
+        terrainContext.lineTo(right.x, right.y);
+        terrainContext.lineTo(bottom.x, bottom.y);
+        terrainContext.lineTo(left.x, left.y);
+        terrainContext.closePath();
+        terrainContext.stroke();
       }
       terrainCacheKeyRef.current = terrainCacheKey;
     }
 
-    if (offscreenCanvasRef.current) {
-      context.drawImage(offscreenCanvasRef.current, 0, 0, bounds.width, bounds.height);
+    if (terrainCanvasRef.current) {
+      context.drawImage(terrainCanvasRef.current, 0, 0, bounds.width, bounds.height);
     }
-
-
-
 
     const drawTile = (
       tileX: number,
@@ -885,7 +869,6 @@ export default function Home() {
     buildEventsForMap,
     events,
     mapInfo,
-    mapSize,
     replay,
     mapPan,
     mapZoom,
@@ -918,7 +901,7 @@ export default function Home() {
 
       const timeline = buildTimeline(parsed, parsedSummary);
       const gameDuration = determineDuration(parsedSummary, timeline);
-      const extractedInfo = extractMatchInfo(parsedSummary, filename);
+      const extractedInfo = extractMatchInfo(parsed, filename);
 
       setLoadingStep(2);
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -1428,7 +1411,7 @@ export default function Home() {
                                 </div>
                               </div>
                               <span
-                                className="h-3 w-3 rounded-full shrink-0"
+                                className="ml-2 h-3 w-3 rounded-full shrink-0"
                                 style={{ background: classifyColor(player.id) }}
                               ></span>
                             </div>
@@ -1455,13 +1438,20 @@ export default function Home() {
                                   <p className="text-sm text-white/20 italic">—</p>
                                 )}
                               </div>
-                              {stats?.autoscoutUsage ? (
-                                <div className="mt-auto pt-2">
-                                  <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                                    Auto Scouted
-                                  </span>
+                              {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage) && (
+                                <div className="mt-auto pt-2 flex flex-wrap gap-2">
+                                  {player.handicap && player.handicap !== 100 && (
+                                    <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                                      {player.handicap}% handicap
+                                    </span>
+                                  )}
+                                  {!!stats?.autoscoutUsage && (
+                                    <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                                      Auto scouted
+                                    </span>
+                                  )}
                                 </div>
-                              ) : null}
+                              )}
                             </div>
                           </TiltCard>
                         );
@@ -1529,11 +1519,11 @@ export default function Home() {
                             </span>
                           </div>
                         )}
-                        {matchInfo.difficultyId !== undefined && players.some(p => p.ai) && (
+                        {(matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some(p => p.ai) && (
                           <div className="flex flex-col gap-1">
                             <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
                             <span className="font-semibold text-[color:var(--foreground)]">
-                              {getDifficultyName(matchInfo.difficultyId) ?? `Type ${matchInfo.difficultyId}`}
+                              {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`}
                             </span>
                           </div>
                         )}

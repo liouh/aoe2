@@ -29,17 +29,6 @@ export const VICTORY_TYPES: Record<number, string> = {
 
 export const getVictoryTypeName = (id?: number) => (id !== undefined ? VICTORY_TYPES[id] : undefined);
 
-export const DIFFICULTY_TYPES: Record<number, string> = {
-  "-1": "Extreme",
-  0: "Hardest",
-  1: "Hard",
-  2: "Moderate",
-  3: "Easy",
-  4: "Easiest",
-};
-
-export const getDifficultyName = (id?: number) => (id !== undefined ? DIFFICULTY_TYPES[id] : undefined);
-
 export const MAP_SIZES: Record<number, string> = {
   // Map dimensions
   120: "Tiny (2 player)",

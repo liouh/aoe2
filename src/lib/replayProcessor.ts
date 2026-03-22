@@ -23,6 +23,7 @@ export type PlayerSummary = {
   civId?: number;
   teamId?: number;
   won?: boolean;
+  handicap?: number;
 };
 
 export type MarketUsage = {
@@ -174,7 +175,7 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     : null;
   const events: TimelineEvent[] = [];
 
-  const players = summarizePlayers(summary);
+  const players = summarizePlayers(summary, replay);
   if (operations) {
     // First pass: identify unique player IDs in events to handle mismatches
     const rawEventPlayerIds = new Set<number>();
@@ -304,24 +305,49 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
 };
 
 export const summarizePlayers = (
-  summary: any
+  summary: any,
+  replay?: any
 ): PlayerSummary[] => {
   const players: PlayerSummary[] = [];
 
   const summaryTeams = summary?.teams ?? [];
   summaryTeams.forEach((team: any, teamIndex: number) => {
-    (team?.players ?? []).forEach((player: any) => {
+    (team?.players ?? []).forEach((p: any) => {
       players.push({
-        id: player.player_number,
-        ai: player.player_type === 4,
-        name: player.name && player.name.length > 0 ? player.name : `Player ${player.player_number}`,
-        colorId: player.color_id,
-        civId: player.civ_id,
+        id: p.player_number,
+        ai: p.player_type === 4,
+        name: p.name,
+        colorId: p.color_id,
+        civId: p.civ_id,
         teamId: teamIndex + 1,
         won: team.winner,
       });
     });
   });
+
+  const source = replay || summary;
+  const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
+
+  if (gameSettings?.players) {
+    gameSettings.players.forEach((p: any) => {
+      let player = players.find(sp => sp.id === p.player_number);
+      if (!player) {
+        player = {
+          id: p.player_number,
+          teamId: p.resolved_team_id ?? p.selected_team_id,
+          ai: p.player_type === 4,
+          name: p.name,
+        };
+        players.push(player);
+      }
+
+      const aiName = p.ai_name;
+      const displayName = aiName && aiName.length > 0 ? aiName : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`);
+
+      player.name = displayName;
+      player.handicap = p.handicap;
+    });
+  }
 
   return players;
 };
@@ -450,40 +476,31 @@ export const determineDuration = (
   return summaryDuration;
 };
 
-export const extractMapSize = (replay: any, summary: any): number => {
-  const candidates = [
-    replay?.zheader?.map_info?.size_x,
-    replay?.zheader?.map_info?.size_y,
-    replay?.map_size,
-    replay?.mapSize,
-    summary?.header?.game_settings?.map_size,
-  ];
-  for (const value of candidates) {
-    const num = pickNumber(value);
-    if (num !== undefined) return num;
-  }
-  return 200;
-};
-
 export type MatchInfo = {
   mapTypeId?: number;
   mapSizeId?: number;
   gameTypeId?: number;
   difficultyId?: number;
+  difficultyName?: string;
   populationLimit?: number;
   victoryTypeId?: number;
   cheats: boolean;
   filename?: string;
 };
 
-export const extractMatchInfo = (summary: any, filename?: string): MatchInfo => {
-  const settings = summary?.header?.game_settings;
-  const replayData = summary?.header?.replay;
+export const extractMatchInfo = (source: any, filename?: string): MatchInfo => {
+  const settings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
+  const replayData = source?.header?.replay || source?.replay;
+
+  const difficultyId = pickNumber(settings?.difficulty);
+  const difficultyName = typeof settings?.difficulty === "string" ? settings.difficulty : undefined;
+
   return {
     mapTypeId: pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id),
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
     gameTypeId: pickNumber(settings?.game_type),
-    difficultyId: pickNumber(settings?.difficulty),
+    difficultyId,
+    difficultyName,
     populationLimit: pickNumber(settings?.population_limit),
     victoryTypeId: pickNumber(settings?.victory_type_id),
     cheats: settings?.cheats,
