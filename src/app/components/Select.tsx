@@ -109,7 +109,7 @@ export function Select<T extends string | number | undefined>({
     >
       <button
         type="button"
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-[color:var(--panel)] px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/5 cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white"
+        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-[color:var(--panel)] cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white backdrop-blur-sm"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -154,8 +154,8 @@ export function Select<T extends string | number | undefined>({
                 <button
                   key={`${option.id}-${idx}`}
                   type="button"
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${selected ? "bg-white/5" : ""
-                    } ${highlighted ? "bg-white/10" : ""}`}
+                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${selected ? "bg-white/10" : ""
+                    } ${highlighted ? "bg-white/5" : ""}`}
                   onClick={() => {
                     onSelect(option.id);
                     if (!multi) setIsOpen(false);
