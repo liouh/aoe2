@@ -24,6 +24,7 @@ export const VICTORY_TYPES: Record<number, string> = {
   1: "Conquest",
   7: "Time Limit",
   8: "Score",
+  9: "Standard",
   11: "Last Man Standing",
 };
 
