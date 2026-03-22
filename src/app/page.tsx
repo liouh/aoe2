@@ -773,7 +773,7 @@ export default function Home() {
     try {
       const response = await fetch(targetUrl);
       if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
+        throw new Error(`Server responded with status ${response.status}`);
       }
       let buffer = await response.arrayBuffer();
 
@@ -792,7 +792,7 @@ export default function Home() {
 
       await loadReplayData(buffer, replayUrlOrName, replayUrl);
     } catch (err: any) {
-      setError(replayUrlOrName);
+      setError(`${err.message}: ${replayUrlOrName}`);
     } finally {
       setLoading(false);
     }
