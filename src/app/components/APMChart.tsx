@@ -7,10 +7,10 @@ const formatClock = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
-export function APMChart({ data, players, classifyColor, selectedTime }: {
+export function APMChart({ data, players, getPlayerColor, selectedTime }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[],
   players: any[],
-  classifyColor: (id?: number) => string,
+  getPlayerColor: (id?: number) => string,
   selectedTime?: number
 }) {
   const allPoints = data.flatMap(d => d.history);
@@ -33,7 +33,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
         <div className="flex flex-wrap gap-x-4 gap-y-2">
           {players.map((p, idx) => (
             <div key={`${p.id}-${idx}`} className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-2 h-2 rounded-full" style={{ background: classifyColor(p.id) }}></span>
+              <span className="w-2 h-2 rounded-full" style={{ background: getPlayerColor(p.id) }}></span>
               <span className="text-[10px] text-white/50">{p.name}</span>
             </div>
           ))}
@@ -92,7 +92,7 @@ export function APMChart({ data, players, classifyColor, selectedTime }: {
 
         {/* Lines */}
         {data.map((playerData, idx) => {
-          const color = classifyColor(playerData.playerId);
+          const color = getPlayerColor(playerData.playerId);
           if (playerData.history.length < 2) return null;
 
           // Use a smooth path
