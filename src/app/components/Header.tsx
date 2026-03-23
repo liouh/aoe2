@@ -7,8 +7,7 @@ interface HeaderProps {
   replayUrl: string;
   setReplayUrl: (val: string) => void;
   handleFile: (file: File) => void;
-  handleUrlLoad: (url?: string) => void;
-  handleReset: () => void;
+  handleUrlLoad: () => void;
 }
 
 export function Header({
@@ -19,16 +18,12 @@ export function Header({
   setReplayUrl,
   handleFile,
   handleUrlLoad,
-  handleReset,
 }: HeaderProps) {
   return (
     <header className="flex flex-col gap-4">
       <div className="flex flex-wrap items-stretch justify-between gap-4">
         <div className="space-y-1">
-          <h1
-            className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl cursor-pointer hover:opacity-80 transition-opacity active:scale-[0.98]"
-            onClick={handleReset}
-          >
+          <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
             <span className="text-[color:var(--muted)] font-black">AoE2</span> Replay Viewer
           </h1>
           <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg mb-3">
@@ -93,7 +88,7 @@ export function Header({
                 />
                 <button
                   className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--accent)] border border-white/20 hover:border-[color:var(--accent)] text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
-                  onClick={() => handleUrlLoad()}
+                  onClick={handleUrlLoad}
                 >
                   Load
                 </button>
