@@ -415,6 +415,7 @@ export function Minimap({
 
     for (const event of buildEvents) {
       if (event.time > selectedTime) break;
+      if (event.x === undefined || event.y === undefined) continue;
 
       const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
       const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
