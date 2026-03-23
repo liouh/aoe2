@@ -128,7 +128,7 @@ export function StatsTab({
                     </h3>
                   </div>
                   <span
-                    className="h-3 w-3 rounded-full shrink-0"
+                    className="ml-2 h-3 w-3 rounded-full shrink-0"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
@@ -178,7 +178,7 @@ export function StatsTab({
                     </div>
                   </div>
                   <span
-                    className="h-3 w-3 rounded-full shrink-0"
+                    className="ml-2 h-3 w-3 rounded-full shrink-0"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
@@ -258,7 +258,7 @@ export function StatsTab({
                     </h3>
                   </div>
                   <span
-                    className="h-3 w-3 rounded-full shrink-0"
+                    className="ml-2 h-3 w-3 rounded-full shrink-0"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
