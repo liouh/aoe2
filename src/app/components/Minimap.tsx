@@ -61,7 +61,6 @@ const clamp = (value: number, min: number, max: number) =>
 
 export function Minimap({
   replay,
-  summary,
   matchInfo,
   events,
   duration,
