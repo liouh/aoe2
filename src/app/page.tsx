@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { Header } from "./components/Header";
 import { Minimap } from "./components/Minimap";
 import { GameTab } from "./components/GameTab";
@@ -18,6 +18,7 @@ import {
 } from "@/lib/replayProcessor";
 import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import JSZip from "jszip";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const PLAYER_COLORS = [
   "#3252FF",
@@ -58,6 +59,23 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-[#0a0a0a]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[color:var(--accent)] border-t-transparent"></div>
+          <div className="animate-pulse text-sm font-bold uppercase tracking-[0.2em] text-white/40">
+            Initializing...
+          </div>
+        </div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [replay, setReplay] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
@@ -77,13 +95,38 @@ export default function Home() {
   const [replayUrl, setReplayUrl] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const unloadReplay = () => {
     setReplay(null);
     setSummary(null);
     setMatchInfo(null);
     setEvents([]);
     setDuration(0);
+    setReplayUrl("");
     resetGameState();
+  };
+
+  const loadDefault = async () => {
+    setLoading(true);
+    const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
+    const response = await fetch(randomFile);
+    if (!response.ok) {
+      setLoading(false);
+      return;
+    }
+    const buffer = await response.arrayBuffer();
+    await loadReplayData(buffer, randomFile);
+  };
+
+  const handleReset = () => {
+    unloadReplay();
+    if (searchParams.get("url")) {
+      router.push(pathname);
+    }
+    loadDefault();
   };
 
   const resetGameState = () => {
@@ -188,6 +231,11 @@ export default function Home() {
   const handleFile = (file: File) => {
     unloadReplay();
 
+    // Clear URL search params
+    if (searchParams.get("url")) {
+      router.push(pathname);
+    }
+
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
       const buffer = reader.result as ArrayBuffer;
@@ -196,13 +244,14 @@ export default function Home() {
     reader.readAsArrayBuffer(file);
   };
 
-  const handleUrlLoad = async () => {
-    if (!replayUrl) return;
+  const handleUrlLoad = async (urlToLoad?: string) => {
+    const targetUrlInput = urlToLoad || replayUrl;
+    if (!targetUrlInput) return;
 
     setShowUrlInput(false);
     unloadReplay();
 
-    const lowerUrl = replayUrl.toLowerCase();
+    const lowerUrl = targetUrlInput.toLowerCase();
     const isAllowed =
       lowerUrl.includes("api.ageofempires.com") ||
       lowerUrl.includes("aoe.ms");
@@ -212,10 +261,10 @@ export default function Home() {
       return;
     }
 
-    let targetUrl = replayUrl;
-    if (replayUrl.includes("aoe.ms/replay")) {
+    let targetUrl = targetUrlInput;
+    if (targetUrlInput.includes("aoe.ms/replay")) {
       try {
-        const url = new URL(replayUrl);
+        const url = new URL(targetUrlInput);
         const gameId = url.searchParams.get("gameId");
         const profileId = url.searchParams.get("profileId");
         if (gameId && profileId) {
@@ -229,7 +278,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
-    let replayUrlOrName = replayUrl;
+    let replayUrlOrName = targetUrlInput;
 
     try {
       const response = await fetch(targetUrl);
@@ -251,7 +300,14 @@ export default function Home() {
         }
       }
 
-      await loadReplayData(buffer, replayUrlOrName, replayUrl);
+      await loadReplayData(buffer, replayUrlOrName, targetUrlInput);
+
+      // Update URL search params
+      if (!urlToLoad) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("url", targetUrlInput);
+        router.push(`${pathname}?${params.toString()}`);
+      }
     } catch (err: any) {
       setError(`${err.message}: ${replayUrlOrName}`);
     } finally {
@@ -259,19 +315,16 @@ export default function Home() {
     }
   };
 
-  // Load a random sample replay on initial component mount
+  // Load a replay from URL param OR a random sample replay on initial component mount
   useEffect(() => {
-    const loadDefault = async () => {
-      const randomFile = SAMPLE_REPLAYS[Math.floor(Math.random() * SAMPLE_REPLAYS.length)];
-      const response = await fetch(randomFile);
-      if (!response.ok) {
-        setLoading(false);
-        return;
-      }
-      const buffer = await response.arrayBuffer();
-      await loadReplayData(buffer, randomFile);
-    };
-    loadDefault();
+    const initialUrl = searchParams.get("url");
+
+    if (initialUrl) {
+      setReplayUrl(initialUrl);
+      handleUrlLoad(initialUrl);
+    } else {
+      loadDefault();
+    }
   }, []);
 
   // Global keyboard listener for seeking (Left/Right arrows) and play/pause (Space)
@@ -338,6 +391,7 @@ export default function Home() {
           setReplayUrl={setReplayUrl}
           handleFile={handleFile}
           handleUrlLoad={handleUrlLoad}
+          handleReset={handleReset}
         />
 
         <main className="flex flex-col gap-6">
