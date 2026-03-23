@@ -727,7 +727,7 @@ export function Minimap({
           >
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
@@ -772,7 +772,7 @@ export function Minimap({
             </div>
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
@@ -850,7 +850,7 @@ export function Minimap({
       <div className="flex items-center gap-4 px-0.5 md:px-1.5">
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:scale-105 active:scale-95 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:border-white/20 hover:scale-105 active:scale-95 cursor-pointer"
           onClick={() => {
             if (selectedTime >= duration) {
               setSelectedTime(0);

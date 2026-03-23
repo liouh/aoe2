@@ -396,13 +396,13 @@ export default function Home() {
                       }}
                     />
                     <button
-                      className="px-4 py-2 rounded-xl bg-[color:var(--accent)] text-xs lg:text-sm font-bold text-white shadow-lg lg:hover:shadow-[color:var(--accent)]/20 transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                      className="px-4 py-2 rounded-xl bg-[color:var(--accent)] text-xs lg:text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 cursor-pointer h-10 lg:h-12"
                       onClick={handleUrlLoad}
                     >
                       Load
                     </button>
                     <button
-                      className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 text-xs lg:text-sm font-bold text-white shadow-lg transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                      className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
                       onClick={() => setShowUrlInput(false)}
                     >
                       Back
