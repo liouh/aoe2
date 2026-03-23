@@ -29,7 +29,7 @@ export function APMChart({ data, players, getPlayerColor, selectedTime }: {
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h3 className="text-sm uppercase tracking-widest text-white/30">APM over time</h3>
+        <h3 className="text-sm uppercase tracking-widest text-white/30 whitespace-nowrap">APM over time</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2">
           {players.map((p, idx) => (
             <div key={`${p.id}-${idx}`} className="flex items-center gap-1.5 whitespace-nowrap">

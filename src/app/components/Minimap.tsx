@@ -19,6 +19,7 @@ const MINIMAP_UNIT_BORDER = 1;
 const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
 const MINIMAP_ELEVATION_STEP = 3;
+const MINIMAP_TERRAIN_ALPHA = 1;
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -310,7 +311,7 @@ export function Minimap({
       return { x: isoX, y: isoY };
     };
 
-    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${summary?.duration ?? 0},${events.length}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${summary?.duration ?? 0},${events.length},${MINIMAP_TERRAIN_ALPHA}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -330,6 +331,7 @@ export function Minimap({
 
         const tiles = mapInfo?.tiles;
         if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
+          terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
               const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
@@ -354,6 +356,7 @@ export function Minimap({
               terrainContext.fill();
             }
           }
+          terrainContext.globalAlpha = 1.0;
         }
         terrainContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
         terrainContext.lineWidth = 1;

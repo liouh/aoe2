@@ -43,7 +43,7 @@ export function Header({
                   id="replay-file-input"
                   name="replay-file"
                   type="file"
-                  accept=".aoe2record"
+                  accept=".aoe2record,.zip"
                   className="sr-only"
                   onChange={(event) => {
                     const file = event.target.files?.[0];

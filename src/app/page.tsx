@@ -17,7 +17,7 @@ import {
   type TimelineEvent,
 } from "@/lib/replayProcessor";
 import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
-import JSZip from "jszip";
+import { ensureUnzipped } from "@/lib/zipUtils";
 
 const PLAYER_COLORS = [
   "#3252FF",
@@ -190,8 +190,14 @@ export default function Home() {
 
     const reader = new FileReader();
     reader.addEventListener("loadend", async () => {
-      const buffer = reader.result as ArrayBuffer;
-      await loadReplayData(buffer, file.name);
+      let buffer = reader.result as ArrayBuffer;
+      let filename = file.name;
+
+      const unzipped = await ensureUnzipped(buffer, filename);
+      buffer = unzipped.buffer;
+      filename = unzipped.filename;
+
+      await loadReplayData(buffer, filename);
     });
     reader.readAsArrayBuffer(file);
   };
@@ -238,18 +244,9 @@ export default function Home() {
       }
       let buffer = await response.arrayBuffer();
 
-      // If it looks like a ZIP file (starts with PK), unzip it
-      const uint8 = new Uint8Array(buffer.slice(0, 4));
-      if (uint8[0] === 0x50 && uint8[1] === 0x4b && uint8[2] === 0x03 && uint8[3] === 0x04) {
-        const zip = await JSZip.loadAsync(buffer);
-        const recordFile = Object.values(zip.files).find(f =>
-          f.name.endsWith(".aoe2record")
-        );
-        if (recordFile) {
-          replayUrlOrName = recordFile.name;
-          buffer = await recordFile.async("arraybuffer");
-        }
-      }
+      const unzipped = await ensureUnzipped(buffer, replayUrlOrName);
+      buffer = unzipped.buffer;
+      replayUrlOrName = unzipped.filename;
 
       await loadReplayData(buffer, replayUrlOrName, replayUrl);
     } catch (err: any) {
@@ -268,8 +265,14 @@ export default function Home() {
         setLoading(false);
         return;
       }
-      const buffer = await response.arrayBuffer();
-      await loadReplayData(buffer, randomFile);
+      let buffer = await response.arrayBuffer();
+      let filename = randomFile;
+
+      const unzipped = await ensureUnzipped(buffer, filename);
+      buffer = unzipped.buffer;
+      filename = unzipped.filename;
+
+      await loadReplayData(buffer, filename);
     };
     loadDefault();
   }, []);
