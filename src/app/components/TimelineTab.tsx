@@ -133,15 +133,26 @@ export function TimelineTab({
 
   const timelineHeight = useMemo(() => duration * TIMELINE_PX_PER_SECOND, [duration]);
 
+  // Memoize event filtering and consolidation for both columns
+  const columnData = useMemo(() => {
+    const getData = (playerId: number | null) => {
+      if (playerId === null) return { research: [], builds: [], trains: [] };
+      const pe = events.filter((e) => e.playerId === playerId);
+      return {
+        research: consolidateEvents(pe.filter((e) => e.category === "research" && timelineShowResearch)),
+        builds: consolidateEvents(pe.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial)),
+        trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits)),
+      };
+    };
+    return [getData(leftPlayerId), getData(rightPlayerId)];
+  }, [events, leftPlayerId, rightPlayerId, timelineShowResearch, timelineShowBuildings, timelineShowUnits]);
+
   const renderColumn = (playerId: number | null, index: number) => {
     if (playerId === null) return null;
     const player = players.find((p) => p.id === playerId);
     if (!player) return null;
 
-    const playerEvents = events.filter((e) => e.playerId === playerId);
-    const research = playerEvents.filter((e) => e.category === "research" && timelineShowResearch);
-    const builds = playerEvents.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial);
-    const trains = playerEvents.filter((e) => e.category === "train" && timelineShowUnits);
+    const { research, builds, trains } = columnData[index];
 
     return (
       <div key={`column-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
@@ -201,7 +212,7 @@ export function TimelineTab({
           })}
           <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)] pointer-events-none"></div>
 
-          {consolidateEvents(research).map((event) => (
+          {research.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
               <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
               <div className="h-[1px] w-4 bg-white/10" />
@@ -209,7 +220,7 @@ export function TimelineTab({
             </div>
           ))}
 
-          {consolidateEvents(builds).map((event) => (
+          {builds.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
               <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
               <div className="h-[1px] w-[6rem] bg-white/10" />
@@ -217,7 +228,7 @@ export function TimelineTab({
             </div>
           ))}
 
-          {consolidateEvents(trains).map((event) => (
+          {trains.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
               <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
                 {event.isMilitary ? "🗡️" : "🙂"}

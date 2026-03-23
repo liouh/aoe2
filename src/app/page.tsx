@@ -468,7 +468,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {activeTab === "game" ? (
+              <div className={activeTab === "game" ? "block" : "hidden"}>
                 <GameTab
                   players={players}
                   timelineStats={timelineStats}
@@ -476,7 +476,9 @@ export default function Home() {
                   getPlayerColor={getPlayerColor}
                   formatClock={formatClock}
                 />
-              ) : activeTab === "stats" ? (
+              </div>
+
+              <div className={activeTab === "stats" ? "block" : "hidden"}>
                 <StatsTab
                   players={players}
                   timelineStats={timelineStats}
@@ -484,7 +486,9 @@ export default function Home() {
                   getPlayerColor={getPlayerColor}
                   selectedTime={selectedTime}
                 />
-              ) : (
+              </div>
+
+              <div className={activeTab === "timeline" ? "block" : "hidden"}>
                 <section className="w-full">
                   <TimelineTab
                     players={players}
@@ -498,7 +502,7 @@ export default function Home() {
                     onJumpComplete={() => setPendingJump(false)}
                   />
                 </section>
-              )}
+              </div>
             </div>
           )}
         </main>
