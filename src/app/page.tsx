@@ -311,6 +311,7 @@ export default function Home() {
         ) {
           return;
         }
+        event.preventDefault();
       }
 
       const now = performance.now();
@@ -346,7 +347,6 @@ export default function Home() {
         <main className="flex flex-col gap-6">
           <Minimap
             replay={replay}
-            summary={summary}
             matchInfo={matchInfo}
             events={events}
             duration={duration}

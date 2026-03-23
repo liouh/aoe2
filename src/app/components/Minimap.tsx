@@ -29,7 +29,6 @@ const LOADING_STEPS = [
 
 interface MinimapProps {
   replay: any;
-  summary: any;
   matchInfo: MatchInfo | null;
   events: TimelineEvent[];
   duration: number;
@@ -252,7 +251,7 @@ export function Minimap({
     setPendingJump(true);
   };
 
-  const buildEventsForMap = useMemo(
+  const buildEvents = useMemo(
     () =>
       events.filter(
         (event) =>
@@ -311,7 +310,7 @@ export function Minimap({
       return { x: isoX, y: isoY };
     };
 
-    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${summary?.duration ?? 0},${events.length},${MINIMAP_TERRAIN_ALPHA}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -415,36 +414,35 @@ export function Minimap({
     const anchorToFootprint = new Map<string, { w: number; h: number }>();
     const anchorToEvent = new Map<string, TimelineEvent>();
 
-    for (const event of events) {
+    for (const event of buildEvents) {
       if (event.time > selectedTime) break;
-      if (event.category === "build" && event.x !== undefined && event.y !== undefined) {
-        const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-        const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-        const footprint = getBuildingFootprint(event.buildingTypeId);
-        const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-        const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-        const anchorKey = `${baseX},${baseY}`;
 
-        anchorToFootprint.set(anchorKey, footprint);
-        anchorToEvent.set(anchorKey, event);
-        const displacedAnchors = new Set<string>();
-        for (let dx = 0; dx < footprint.w; dx += 1) {
-          for (let dy = 0; dy < footprint.h; dy += 1) {
-            const tileX = baseX + dx;
-            const tileY = baseY + dy;
-            if (tileX >= (sizeX ?? 120) || tileY >= (sizeY ?? 120)) continue;
-            const tileKey = `${tileX},${tileY}`;
-            const oldAnchor = tileToAnchor.get(tileKey);
-            if (oldAnchor && oldAnchor !== anchorKey) {
-              displacedAnchors.add(oldAnchor);
-            }
-            tileToAnchor.set(tileKey, anchorKey);
-            destroyedTiles.delete(tileKey);
+      const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+      const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+      const footprint = getBuildingFootprint(event.buildingTypeId);
+      const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+      const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+      const anchorKey = `${baseX},${baseY}`;
+
+      anchorToFootprint.set(anchorKey, footprint);
+      anchorToEvent.set(anchorKey, event);
+      const displacedAnchors = new Set<string>();
+      for (let dx = 0; dx < footprint.w; dx += 1) {
+        for (let dy = 0; dy < footprint.h; dy += 1) {
+          const tileX = baseX + dx;
+          const tileY = baseY + dy;
+          if (tileX >= (sizeX ?? 120) || tileY >= (sizeY ?? 120)) continue;
+          const tileKey = `${tileX},${tileY}`;
+          const oldAnchor = tileToAnchor.get(tileKey);
+          if (oldAnchor && oldAnchor !== anchorKey) {
+            displacedAnchors.add(oldAnchor);
           }
+          tileToAnchor.set(tileKey, anchorKey);
+          destroyedTiles.delete(tileKey);
         }
-        for (const oldAnchor of displacedAnchors) {
-          anchorToEvent.delete(oldAnchor);
-        }
+      }
+      for (const oldAnchor of displacedAnchors) {
+        anchorToEvent.delete(oldAnchor);
       }
     }
 
@@ -569,8 +567,7 @@ export function Minimap({
       sizeY: sizeY ?? 120,
     };
   }, [
-    buildEventsForMap,
-    events,
+    buildEvents,
     mapInfo,
     replay,
     mapPan,
@@ -578,7 +575,6 @@ export function Minimap({
     selectedTime,
     showBuildings,
     showUnits,
-    summary,
     moveEvents,
     hoveredEntity,
     selectedPlayerIds,
