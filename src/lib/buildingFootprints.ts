@@ -28,7 +28,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   71: { w: 4, h: 4 }, // Town Center
   72: { w: 1, h: 1 }, // Palisade Wall
   78: { w: 1, h: 1 }, // Gate
-  79: { w: 2, h: 2 }, // Watch Tower
+  79: { w: 1, h: 1 }, // Watch Tower
   80: { w: 1, h: 1 }, // Fortified Gate
   81: { w: 1, h: 1 }, // Gate
   82: { w: 4, h: 4 }, // Castle
@@ -63,15 +63,15 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   155: { w: 1, h: 1 }, // Fortified Wall
   179: { w: 3, h: 3 }, // Trade Workshop
   182: { w: 4, h: 4 }, // Wonder
-  190: { w: 2, h: 2 }, // Fire Tower
+  190: { w: 1, h: 1 }, // Fire Tower
   191: { w: 2, h: 2 }, // House
   192: { w: 2, h: 2 }, // House
   199: { w: 1, h: 1 }, // Fish Trap
   209: { w: 4, h: 4 }, // University
   210: { w: 4, h: 4 }, // University
-  234: { w: 2, h: 2 }, // Guard Tower
-  235: { w: 2, h: 2 }, // Keep
-  236: { w: 2, h: 2 }, // Bombard Tower
+  234: { w: 1, h: 1 }, // Guard Tower
+  235: { w: 1, h: 1 }, // Keep
+  236: { w: 1, h: 1 }, // Bombard Tower
   241: { w: 1, h: 1 }, // Outpost
   276: { w: 4, h: 4 }, // Wonder
   463: { w: 2, h: 2 }, // House
@@ -90,7 +90,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   563: { w: 2, h: 2 }, // Lumber Camp
   564: { w: 2, h: 2 }, // Lumber Camp
   565: { w: 2, h: 2 }, // Lumber Camp
-  566: { w: 2, h: 2 }, // Watch Tower
+  566: { w: 1, h: 1 }, // Watch Tower
   584: { w: 2, h: 2 }, // Mining Camp
   585: { w: 2, h: 2 }, // Mining Camp
   586: { w: 2, h: 2 }, // Mining Camp
@@ -157,7 +157,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   888: { w: 2, h: 2 }, // Llama building
   1021: { w: 4, h: 4 }, // Feitoria
   1096: { w: 4, h: 4 }, // Palace
-  1102: { w: 2, h: 2 }, // Fortified Tower
+  1102: { w: 1, h: 1 }, // Fortified Tower
   1187: { w: 3, h: 3 }, // Rice Farm
   1189: { w: 3, h: 3 }, // Harbor
   1192: { w: 1, h: 1 }, // Gate
@@ -208,7 +208,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1734: { w: 2, h: 2 }, // Folwark
   1754: { w: 3, h: 3 }, // Caravanserai
   1806: { w: 3, h: 3 }, // Fortified Church
-  1807: { w: 2, h: 2 }, // Svan Tower
+  1807: { w: 1, h: 1 }, // Svan Tower
   1808: { w: 1, h: 1 }, // Mule Cart
   1836: { w: 3, h: 3 }, // Chapel
   1889: { w: 4, h: 4 }, // Pasture
