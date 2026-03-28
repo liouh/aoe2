@@ -231,7 +231,7 @@ export function TimelineTab({
           {trains.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
               <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
-                {event.isMilitary ? "🗡️" : "🙂"}
+                {event.isMilitary ? "⚔️" : "🙂"}
               </span>
               <div className="h-[1px] w-[12rem] bg-white/10" />
               <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>

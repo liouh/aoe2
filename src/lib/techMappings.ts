@@ -88,7 +88,7 @@ const TECH_NAMES: Record<number, string> = {
   218: "Heavy Cavalry Archer",
   219: "Ring Archer Armor",
   221: "Two Man Saw",
-  222: "Man AT Arms",
+  222: "Man at Arms",
   230: "Block Printing",
   231: "Sanctity",
   233: "Illumination",

@@ -203,12 +203,16 @@ export default function Home() {
   };
 
   const handleUrlLoad = async () => {
-    if (!replayUrl) return;
+    const trimmedUrl = replayUrl.trim();
+    if (!trimmedUrl) {
+      setReplayUrl("");
+      return;
+    }
 
     setShowUrlInput(false);
     unloadReplay();
 
-    const lowerUrl = replayUrl.toLowerCase();
+    const lowerUrl = trimmedUrl.toLowerCase();
     const isAllowed =
       lowerUrl.includes("api.ageofempires.com") ||
       lowerUrl.includes("aoe.ms");
@@ -218,10 +222,10 @@ export default function Home() {
       return;
     }
 
-    let targetUrl = replayUrl;
-    if (replayUrl.includes("aoe.ms/replay")) {
+    let targetUrl = trimmedUrl;
+    if (trimmedUrl.includes("aoe.ms/replay")) {
       try {
-        const url = new URL(replayUrl);
+        const url = new URL(trimmedUrl);
         const gameId = url.searchParams.get("gameId");
         const profileId = url.searchParams.get("profileId");
         if (gameId && profileId) {
@@ -235,7 +239,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
-    let replayUrlOrName = replayUrl;
+    let replayUrlOrName = trimmedUrl;
 
     try {
       const response = await fetch(targetUrl);
@@ -248,7 +252,7 @@ export default function Home() {
       buffer = unzipped.buffer;
       replayUrlOrName = unzipped.filename;
 
-      await loadReplayData(buffer, replayUrlOrName, replayUrl);
+      await loadReplayData(buffer, replayUrlOrName, trimmedUrl);
     } catch (err: any) {
       setError(`${err.message}: ${replayUrlOrName}`);
     } finally {
