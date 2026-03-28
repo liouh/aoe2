@@ -90,6 +90,7 @@ export function Minimap({
   } | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -119,9 +120,17 @@ export function Minimap({
 
   const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
 
-  const isMobile = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(false);
+  const [resizeKey, setResizeKey] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setResizeKey(prev => prev + 1);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
@@ -137,6 +146,41 @@ export function Minimap({
     { id: "moves", label: "Only unit movements" },
   ];
 
+  const toggleFullscreen = (value?: boolean) => {
+    const next = value ?? !isFullscreen;
+    setIsFullscreen(next);
+    setMapZoom(1);
+    setMapPan({ x: 0, y: 0 });
+  };
+
+  const filters = useMemo(() => (
+    <>
+      <Select
+        options={minimapPlayers}
+        selectedId={selectedPlayerIds}
+        onSelect={(id) => {
+          if (id === undefined) {
+            setSelectedPlayerIds([]);
+          } else {
+            setSelectedPlayerIds(prev =>
+              prev.includes(id as number)
+                ? prev.filter(p => p !== id)
+                : [...prev, id as number]
+            );
+          }
+        }}
+        multi
+        align="left"
+      />
+      <Select
+        options={minimapViewOptions}
+        selectedId={minimapViewMode}
+        onSelect={setMinimapViewMode}
+        align="left"
+      />
+    </>
+  ), [minimapPlayers, selectedPlayerIds, minimapViewMode, minimapViewOptions]);
+
   const showBuildings = minimapViewMode === "both" || minimapViewMode === "buildings";
   const showUnits = minimapViewMode === "both" || minimapViewMode === "moves";
 
@@ -147,7 +191,41 @@ export function Minimap({
     setSelectedPlayerIds([]);
     setMinimapViewMode("both");
     setHoveredEntity(null);
+    setIsFullscreen(false);
   }, [replay]);
+
+  // Handle Escape key to exit fullscreen
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        toggleFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isFullscreen]);
+
+  // Disable body scroll when full screen is active
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isFullscreen]);
+
+  // Handle window resize to redraw canvas
+  useEffect(() => {
+    const handleResize = () => {
+      setHoveredEntity(null);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const clampPan = (pan: { x: number; y: number }, zoom?: number) => {
     const container = mapContainerRef.current;
@@ -280,6 +358,8 @@ export function Minimap({
     if (!context) return;
 
     const bounds = canvas.getBoundingClientRect();
+    if (bounds.width <= 0 || bounds.height <= 0) return;
+
     const dpr = window.devicePixelRatio || 1;
     canvas.width = bounds.width * dpr;
     canvas.height = bounds.height * dpr;
@@ -373,8 +453,12 @@ export function Minimap({
       terrainCacheKeyRef.current = terrainCacheKey;
     }
 
-    if (terrainCanvasRef.current) {
-      context.drawImage(terrainCanvasRef.current, 0, 0, bounds.width, bounds.height);
+    if (terrainCanvasRef.current && terrainCanvasRef.current.width > 0 && terrainCanvasRef.current.height > 0) {
+      try {
+        context.drawImage(terrainCanvasRef.current, 0, 0, bounds.width, bounds.height);
+      } catch (e) {
+        console.error("Minimap drawImage failed:", e);
+      }
     }
 
     const drawTile = (
@@ -580,15 +664,29 @@ export function Minimap({
     selectedPlayerIds,
     getPlayerColor,
     getPlayerOutline,
+    isFullscreen,
+    resizeKey,
   ]);
 
   return (
-    <section className="panel-dark flex flex-col gap-4 rounded-3xl p-6">
+    <section
+      className={`panel-dark flex flex-col p-4 pb-6 gap-4 justify-center ${isFullscreen
+        ? `fixed inset-0 z-[100] rounded-none`
+        : "rounded-3xl"
+        }`}
+      style={isFullscreen ? { border: "none", outline: "none", boxShadow: "none" } : {}}
+    >
+      {!loading && !error && (
+        <div className="flex md:hidden items-center gap-2 px-1">
+          {filters}
+        </div>
+      )}
       <div
-        className="relative w-full aspect-[2/1] pt-11 md:pt-0"
+        className={`relative aspect-[2/1] w-full ${isFullscreen ? "max-h-screen mx-auto overflow-hidden" : ""
+          }`}
         ref={mapContainerRef}
         style={{
-          touchAction: "none",
+          touchAction: mapZoom > 1 ? "none" : "pan-y",
           cursor: mapZoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
         }}
         onPointerDown={(event) => {
@@ -681,7 +779,7 @@ export function Minimap({
       >
         {!loading && !error && (
           <div
-            className="absolute left-0 md:left-2 top-0 md:top-2 z-20 flex items-center gap-2"
+            className="absolute hidden md:flex left-2 top-2 z-20 items-center gap-2"
             onPointerDown={(e) => e.stopPropagation()}
             onDoubleClick={(e) => e.stopPropagation()}
             onPointerMove={(e) => {
@@ -689,32 +787,10 @@ export function Minimap({
               setHoveredEntity(null);
             }}
           >
-            <Select
-              options={minimapPlayers}
-              selectedId={selectedPlayerIds}
-              onSelect={(id) => {
-                if (id === undefined) {
-                  setSelectedPlayerIds([]);
-                } else {
-                  setSelectedPlayerIds(prev =>
-                    prev.includes(id as number)
-                      ? prev.filter(p => p !== id)
-                      : [...prev, id as number]
-                  );
-                }
-              }}
-              multi
-              align="left"
-            />
-            <Select
-              options={minimapViewOptions}
-              selectedId={minimapViewMode}
-              onSelect={setMinimapViewMode}
-              align="left"
-            />
+            {filters}
           </div>
         )}
-        {!loading && !error && (
+        {!loading && !error && replay && (
           <div
             className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9"
             onPointerDown={(e) => e.stopPropagation()}
@@ -730,14 +806,11 @@ export function Minimap({
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
-                setMapZoom(1);
-                setMapPan({ x: 0, y: 0 });
-                setSelectedPlayerIds([]);
-                setMinimapViewMode("both");
+                toggleFullscreen();
               }}
-              title="Reset view"
+              title={isFullscreen ? "Exit full screen" : "Full screen"}
             >
-              ⛶
+              {isFullscreen ? "×" : "⛶"}
             </button>
             <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
               <button
@@ -775,6 +848,7 @@ export function Minimap({
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
+                toggleFullscreen(false);
                 jumpToTimeline();
               }}
               title="Jump to timeline position"
@@ -823,7 +897,7 @@ export function Minimap({
 
         {hoveredEntity && (
           <div
-            className="pointer-events-none fixed z-50 rounded-lg border border-[color:var(--panel-strong)] bg-[color:var(--panel)] p-2 text-xs shadow-xl animate-in fade-in zoom-in duration-100"
+            className="pointer-events-none fixed z-[110] rounded-lg border border-[color:var(--panel-strong)] bg-[color:var(--panel)] p-2 text-xs shadow-xl animate-in fade-in zoom-in duration-100"
             style={{
               left: tooltipPos.x + 10,
               top: tooltipPos.y - 60,
@@ -846,7 +920,7 @@ export function Minimap({
           </div>
         )}
       </div>
-      <div className="flex items-center gap-4 px-0.5 md:px-1.5">
+      <div className={`flex items-center gap-4 px-0.5 md:px-1.5 ${isFullscreen ? "w-full max-w-6xl mx-auto" : ""}`}>
         <button
           type="button"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:border-white/20 hover:scale-105 active:scale-95 cursor-pointer"
@@ -877,7 +951,7 @@ export function Minimap({
             name="time-scrubber"
             type="range"
             min={0}
-            max={Math.max(duration, 1)}
+            max={duration}
             value={selectedTime}
             className="w-full accent-[color:var(--accent)] cursor-pointer outline-none"
             tabIndex={-1}
