@@ -1,7 +1,8 @@
 export const getBuildingIcon = (name: string): string | null => {
   let icon: string | null = null;
 
-  if (name.includes("Archery Range")) icon = "🏹";
+  if (name.includes("Farm") || name.includes("Pasture")) icon = "";
+  else if (name.includes("Archery Range")) icon = "🏹";
   else if (name.includes("Barracks")) icon = "⚔️";
   else if (name.includes("Blacksmith")) icon = "⚒️";
   else if (name.includes("Dock") || name.includes("Harbor")) icon = "⚓";
@@ -22,6 +23,7 @@ export const getBuildingIcon = (name: string): string | null => {
   else if (name.includes("University")) icon = "📖\uFE0E";
   else if (name.includes("Wall")) icon = "■";
   else if (name.includes("Wonder")) icon = "⭐";
+  else icon = "❓";
 
   // return icon ? `${icon}\uFE0E` : null;
   return icon;

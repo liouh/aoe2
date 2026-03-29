@@ -136,16 +136,17 @@ export default function Home() {
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      setSelectedTime((prev) => {
-        if (prev >= duration) {
-          setIsPlaying(false);
-          return prev;
-        }
-        return Math.min(prev + PLAYBACK_STEP_SECONDS, duration);
-      });
+      setSelectedTime((prev) => Math.min(prev + PLAYBACK_STEP_SECONDS, duration));
     }, PLAYBACK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [isPlaying, duration]);
+
+  // Handle playback auto-stop when reaching the end
+  useEffect(() => {
+    if (isPlaying && selectedTime >= duration) {
+      setIsPlaying(false);
+    }
+  }, [selectedTime, duration, isPlaying]);
 
   const loadReplayData = async (buffer: ArrayBuffer, filename: string, sourceUrl?: string) => {
     setLoading(true);
@@ -298,7 +299,7 @@ export default function Home() {
           return;
         }
         event.preventDefault();
-        if (selectedTimeRef.current >= duration) {
+        if (selectedTimeRef.current >= duration - 1) {
           setSelectedTime(0);
           setIsPlaying(true);
         } else {

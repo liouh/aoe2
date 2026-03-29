@@ -13,11 +13,11 @@ const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
 const MINIMAP_ZOOM_MAX = 7;
 const MINIMAP_ZOOM_MAX_MOBILE = 17;
 
-const MINIMAP_ICON_SIZE_MIN = 20;
-const MINIMAP_ICON_SCALE_FACTOR = 3;
-const MINIMAP_LANDMARK_ICON_BORDER_WIDTH = 14;
+const MINIMAP_ICON_SIZE_MIN = 25;
+const MINIMAP_ICON_SCALE_FACTOR = 2.5;
+const MINIMAP_LANDMARK_ICON_BORDER_WIDTH = 16;
 
-const MINIMAP_EMOJI_SCALE = 0.2;
+const MINIMAP_EMOJI_SCALE = 0.22;
 const MINIMAP_EMOJI_ALPHA = 0.8;
 const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.5;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
@@ -745,41 +745,41 @@ export function Minimap({
       // These show regardless of showBuildingIcons as long as buildings category is enabled
       if (showBuildingIcons) {
         iconBuildings.forEach((event) => {
-        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-          return;
-        }
-        if (event.x === undefined || event.y === undefined) return;
-        const name = getBuildingName(event.buildingTypeId);
-        const isLandmark = name.includes("Town Center") || name.includes("Castle");
+          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+            return;
+          }
+          if (event.x === undefined || event.y === undefined) return;
+          const name = getBuildingName(event.buildingTypeId);
+          const isLandmark = name.includes("Town Center") || name.includes("Castle");
 
-        if (isLandmark) {
-          const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-          const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-          const footprint = getBuildingFootprint(event.buildingTypeId);
-          const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-          const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-          const centerTileX = baseX + footprint.w / 2;
-          const centerTileY = baseY + footprint.h / 2;
-          const center = toCanvas(centerTileX, centerTileY);
-          const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+          if (isLandmark) {
+            const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+            const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+            const footprint = getBuildingFootprint(event.buildingTypeId);
+            const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+            const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+            const centerTileX = baseX + footprint.w / 2;
+            const centerTileY = baseY + footprint.h / 2;
+            const center = toCanvas(centerTileX, centerTileY);
+            const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR);
 
-          const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
-          const color = getPlayerColor(event.playerId);
-          const outline = getPlayerOutline(event.playerId);
-          context.save();
-          context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
-          context.scale(iconSize / 100, iconSize / 100);
-          context.fillStyle = color;
-          context.lineWidth = MINIMAP_LANDMARK_ICON_BORDER_WIDTH;
-          context.lineJoin = "round";
-          context.strokeStyle = outline;
-          context.stroke(iconPath);
-          context.fill(iconPath);
-          context.restore();
-        }
-      });
+            const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
+            const color = getPlayerColor(event.playerId);
+            const outline = getPlayerOutline(event.playerId);
+            context.save();
+            context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
+            context.scale(iconSize / 100, iconSize / 100);
+            context.fillStyle = color;
+            context.lineWidth = MINIMAP_LANDMARK_ICON_BORDER_WIDTH;
+            context.lineJoin = "round";
+            context.strokeStyle = outline;
+            context.stroke(iconPath);
+            context.fill(iconPath);
+            context.restore();
+          }
+        });
+      }
     }
-  }
 
     if (showUnits) {
       for (let i = moveEvents.length - 1; i >= 0; i--) {
@@ -1143,7 +1143,7 @@ export function Minimap({
           type="button"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:border-white/20 hover:scale-105 active:scale-95 cursor-pointer"
           onClick={() => {
-            if (selectedTime >= duration) {
+            if (selectedTime >= duration - 1) {
               setSelectedTime(0);
               setIsPlaying(true);
             } else {
