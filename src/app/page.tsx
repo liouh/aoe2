@@ -31,14 +31,14 @@ const PLAYER_COLORS_LEGACY = [
 ];
 
 const PLAYER_COLORS = [
-  "#1e40af", // 1
+  "#3252ff", // 1
   "#dc2626", // 2
-  "#4ade80", // 3
-  "#facc15", // 4
-  "#38bdf8", // 5
-  "#d946ef", // 6
-  "#52525b", // 7
-  "#f97316", // 8
+  "#00ff00", // 3
+  "#ffff00", // 4
+  "#00ffff", // 5
+  "#b030b0", // 6
+  "#434343", // 7
+  "#ff8201", // 8
 ];
 
 const PLAYER_OUTLINES = [

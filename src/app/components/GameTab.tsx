@@ -71,7 +71,7 @@ export function GameTab({
                     </div>
                   </div>
                   <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0"
+                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>

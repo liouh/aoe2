@@ -121,7 +121,7 @@ export function Select<T extends string | number | undefined>({
       >
         {!multi && primaryOption?.color && (
           <span
-            className="h-2 w-2 rounded-full shrink-0"
+            className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
             style={{ background: primaryOption.color }}
           ></span>
         )}
@@ -177,7 +177,7 @@ export function Select<T extends string | number | undefined>({
                 >
                   {option.color && (
                     <span
-                      className="h-2 w-2 rounded-full shrink-0"
+                      className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
                       style={{ background: option.color }}
                     ></span>
                   )}
