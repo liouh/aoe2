@@ -9,7 +9,7 @@ import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
-const MINIMAP_MOUSE_ZOOM_FACTOR = 1.2;
+const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
 const MINIMAP_MAX_ZOOM = 7;
 const MINIMAP_MOBILE_MAX_ZOOM = 17;
 const MINIMAP_ICON_MIN_SIZE = 20;
