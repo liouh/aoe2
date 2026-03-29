@@ -14,6 +14,7 @@ export type TimelineEvent = {
 };
 
 import { determineStartingLocations } from "./tcPlacement";
+import { getBuildingName } from "./entityNames";
 
 export type PlayerSummary = {
   id: number;
@@ -225,7 +226,9 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
       // Adjust player ID based on mapping
       const playerId = playerMapping.get(rawPlayerId) ?? rawPlayerId;
 
-      const isAi = players.find(p => p.id === playerId)?.ai;
+      const player = players.find(p => p.id === playerId);
+      const isAi = player?.ai;
+      const civId = player?.civId;
       const category = classifyEvent(actionType, isAi);
       const data = Array.isArray(payload?.data) ? parseActionData(actionType, payload.data as number[]) : undefined;
 
@@ -249,9 +252,15 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
         ? pickNumber(data.unitTypeId)
         : pickNumber(payload?.unit_id);
 
-      const buildingTypeId = (data && "buildingTypeId" in data)
+      let buildingTypeId = (data && "buildingTypeId" in data)
         ? pickNumber(data.buildingTypeId)
         : undefined;
+
+      // Handle Polish Folwark (replaces Mill)
+      const buildingName = getBuildingName(buildingTypeId);
+      if (civId === 38 && buildingName.includes("Mill")) {
+        buildingTypeId = 1711;
+      }
 
       const techId = pickNumber(payload?.technology_type);
 
