@@ -19,7 +19,7 @@ import {
 import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { ensureUnzipped } from "@/lib/zipUtils";
 
-const PLAYER_COLORS = [
+const PLAYER_COLORS_LEGACY = [
   "#0000FF",
   "#FF0000",
   "#00FF00",
@@ -30,15 +30,26 @@ const PLAYER_COLORS = [
   "#FF8201",
 ];
 
+const PLAYER_COLORS = [
+  "#1e40af", // 1
+  "#dc2626", // 2
+  "#4ade80", // 3
+  "#facc15", // 4
+  "#38bdf8", // 5
+  "#d946ef", // 6
+  "#52525b", // 7
+  "#f97316", // 8
+];
+
 const PLAYER_OUTLINES = [
-  "#FFFFFF", // 1 blue
-  "#FFFFFF", // 2 red
-  "#000000", // 3 green
-  "#000000", // 4 yellow
-  "#000000", // 5 cyan
-  "#000000", // 6 purple
-  "#FFFFFF", // 7 gray
-  "#000000", // 8 orange
+  "#FFFFFF", // 1
+  "#FFFFFF", // 2
+  "#000000", // 3
+  "#000000", // 4
+  "#000000", // 5
+  "#FFFFFF", // 6
+  "#FFFFFF", // 7
+  "#000000", // 8
 ];
 
 const KEYBOARD_STEP_SECONDS = 1;
