@@ -923,7 +923,7 @@ export function Minimap({
             />
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-black/40 text-xl text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               onClick={() => {
                 setIsPlaying(false);
                 fileInputRef.current?.click();
@@ -934,7 +934,7 @@ export function Minimap({
             </button>
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-black/40 text-xl text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               onClick={() => {
                 toggleFullscreen(false);
                 onShowUrlInput();
@@ -957,7 +957,7 @@ export function Minimap({
           >
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/20 bg-black/40 text-xl font-semibold text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
@@ -970,7 +970,7 @@ export function Minimap({
             <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
               <button
                 type="button"
-                className="flex h-9 items-center justify-center rounded-t-xl transition bg-black/40 hover:bg-white/20 border border-white/20 backdrop-blur-md shadow-2xl cursor-pointer outline-none"
+                className="flex h-9 items-center justify-center rounded-t-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
                 tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -984,7 +984,7 @@ export function Minimap({
               </button>
               <button
                 type="button"
-                className="flex h-9 items-center justify-center rounded-b-xl transition bg-black/40 hover:bg-white/20 border border-white/20 backdrop-blur-md shadow-2xl cursor-pointer outline-none"
+                className="flex h-9 items-center justify-center rounded-b-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
                 tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -999,7 +999,7 @@ export function Minimap({
             </div>
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/20 bg-black/40 text-xl font-semibold text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
