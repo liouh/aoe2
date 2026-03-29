@@ -9,8 +9,8 @@ import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
-const MINIMAP_MAX_ZOOM = 5;
-const MINIMAP_MOBILE_MAX_ZOOM = 11;
+const MINIMAP_MAX_ZOOM = 7;
+const MINIMAP_MOBILE_MAX_ZOOM = 17;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
 const MINIMAP_ICON_BORDER = 14;
@@ -91,7 +91,6 @@ export function Minimap({
   const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves" | "no_icons">("both");
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
   const [hoveredEntity, setHoveredEntity] = useState<{
     name: string;
     playerId?: number;
@@ -811,7 +810,6 @@ export function Minimap({
         ref={mapContainerRef}
         style={{
           touchAction: mapZoom > 1 ? "none" : "pan-y",
-          cursor: mapZoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
         }}
         onPointerDown={(event) => {
           const now = performance.now();
@@ -834,7 +832,6 @@ export function Minimap({
           if (mapZoom <= 1) return;
           event.preventDefault();
           isDraggingRef.current = true;
-          setIsDragging(true);
           lastPointerRef.current = { x: event.clientX, y: event.clientY };
           (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
         }}
@@ -891,13 +888,11 @@ export function Minimap({
         onPointerUp={(event) => {
           isDraggingRef.current = false;
           lastPointerRef.current = null;
-          setIsDragging(false);
           (event.currentTarget as HTMLDivElement).releasePointerCapture(event.pointerId);
         }}
         onPointerLeave={() => {
           isDraggingRef.current = false;
           lastPointerRef.current = null;
-          setIsDragging(false);
           setHoveredEntity(null);
         }}
       >
