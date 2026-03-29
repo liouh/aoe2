@@ -9,6 +9,7 @@ import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
+const MINIMAP_MOUSE_ZOOM_FACTOR = 1.2;
 const MINIMAP_MAX_ZOOM = 7;
 const MINIMAP_MOBILE_MAX_ZOOM = 17;
 const MINIMAP_ICON_MIN_SIZE = 20;
@@ -894,6 +895,17 @@ export function Minimap({
           isDraggingRef.current = false;
           lastPointerRef.current = null;
           setHoveredEntity(null);
+        }}
+        onWheel={(event) => {
+          if (!isFullscreen) return;
+          event.preventDefault();
+
+          const rect = event.currentTarget.getBoundingClientRect();
+          const targetX = event.clientX - rect.left;
+          const targetY = event.clientY - rect.top;
+
+          const zoomFactor = event.deltaY < 0 ? MINIMAP_MOUSE_ZOOM_FACTOR : 1 / MINIMAP_MOUSE_ZOOM_FACTOR;
+          handleZoom(targetX, targetY, zoomFactor);
         }}
       >
         {!loading && !error && (
