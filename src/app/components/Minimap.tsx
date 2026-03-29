@@ -6,17 +6,24 @@ import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
+import { getBuildingIcon } from "@/lib/buildingIcons";
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MAX_ZOOM = 5;
 const MINIMAP_MOBILE_MAX_ZOOM = 11;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
-const MINIMAP_ICON_BORDER = 16;
+const MINIMAP_ICON_BORDER = 14;
+const MINIMAP_EMOJI_SCALE = 0.25;
+const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 const MINIMAP_HOVER_OUTLINE = 2;
+const MINIMAP_ICON_OUTLINE_WIDTH = 1;
+const MINIMAP_ICON_OUTLINE_STEPS = 8;
 const MINIMAP_UNIT_ALPHA = 1;
-const MINIMAP_UNIT_BORDER = 1;
-const MINIMAP_UNIT_CIRCLE_RADIUS = 4;
+const MINIMAP_UNIT_CIRCLE_RADIUS_MOBILE = 3;
+const MINIMAP_UNIT_CIRCLE_RADIUS_DESKTOP = 5;
+const MINIMAP_UNIT_BORDER_MOBILE = 1;
+const MINIMAP_UNIT_BORDER_DESKTOP = 2;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
 const MINIMAP_ELEVATION_STEP = 3;
 const MINIMAP_TERRAIN_ALPHA = 1;
@@ -45,6 +52,8 @@ interface MinimapProps {
   formatClock: (seconds: number) => string;
   setActiveTab: (tab: "game" | "stats" | "timeline") => void;
   setPendingJump: (pending: boolean) => void;
+  onOpenFile: (file: File) => void;
+  onShowUrlInput: () => void;
 }
 
 function shadeColor(hex: string, percent: number) {
@@ -77,8 +86,10 @@ export function Minimap({
   formatClock,
   setActiveTab,
   setPendingJump,
+  onOpenFile,
+  onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves">("both");
+  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves" | "no_icons">("both");
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -99,6 +110,9 @@ export function Minimap({
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
   const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
+  const iconCacheRef = useRef<Map<string, HTMLCanvasElement>>(new Map());
+  const playButtonRef = useRef<HTMLButtonElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const entityLookupRef = useRef<{
     tileToAnchor: Map<string, string>;
@@ -140,8 +154,9 @@ export function Minimap({
     ];
   }, [players, getPlayerColor]);
 
-  const minimapViewOptions: SelectOption<"both" | "buildings" | "moves">[] = [
+  const minimapViewOptions: SelectOption<"both" | "buildings" | "moves" | "no_icons">[] = [
     { id: "both", label: "All data" },
+    { id: "no_icons", label: "No building icons" },
     { id: "buildings", label: "Only buildings" },
     { id: "moves", label: "Only unit movements" },
   ];
@@ -181,8 +196,9 @@ export function Minimap({
     </>
   ), [minimapPlayers, selectedPlayerIds, minimapViewMode, minimapViewOptions]);
 
-  const showBuildings = minimapViewMode === "both" || minimapViewMode === "buildings";
-  const showUnits = minimapViewMode === "both" || minimapViewMode === "moves";
+  const showBuildings = minimapViewMode === "both" || minimapViewMode === "buildings" || minimapViewMode === "no_icons";
+  const showUnits = minimapViewMode === "both" || minimapViewMode === "moves" || minimapViewMode === "no_icons";
+  const showBuildingIcons = minimapViewMode !== "no_icons";
 
   // Reset internal state when a new replay is loaded
   useEffect(() => {
@@ -191,7 +207,7 @@ export function Minimap({
     setSelectedPlayerIds([]);
     setMinimapViewMode("both");
     setHoveredEntity(null);
-    setIsFullscreen(false);
+    iconCacheRef.current.clear();
   }, [replay]);
 
   // Handle Escape key to exit fullscreen
@@ -216,6 +232,13 @@ export function Minimap({
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isFullscreen]);
+
+  // Focus play button when entering fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      playButtonRef.current?.focus();
+    }
   }, [isFullscreen]);
 
   // Handle window resize to redraw canvas
@@ -487,9 +510,20 @@ export function Minimap({
       "M25,85 H75 V40 L85,40 V15 H70 V25 H60 V15 H40 V25 H30 V15 H15 V40 L25,40 Z"
     );
 
-    const isTownCenter = (buildingTypeId?: number) =>
-      buildingTypeId === 109 || buildingTypeId === 621;
-    const isCastle = (buildingTypeId?: number) => buildingTypeId === 82;
+    const getBuildingEmoji = (id?: number) => {
+      const name = getBuildingName(id);
+      return getBuildingIcon(name);
+    };
+
+    const isIconBuilding = (id?: number) => {
+      const name = getBuildingName(id);
+      return (
+        name.includes("Town Center") ||
+        name.includes("Castle") ||
+        !!getBuildingEmoji(id)
+      );
+    };
+
     const iconBuildings: TimelineEvent[] = [];
 
     const destroyedTiles = new Set<string>();
@@ -529,7 +563,6 @@ export function Minimap({
         anchorToEvent.delete(oldAnchor);
       }
     }
-
     const drawBuilding = (event: TimelineEvent) => {
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
@@ -555,7 +588,7 @@ export function Minimap({
         }
       }
 
-      if (isTownCenter(event.buildingTypeId) || isCastle(event.buildingTypeId)) {
+      if (isIconBuilding(event.buildingTypeId)) {
         iconBuildings.push(event);
       }
     };
@@ -566,32 +599,134 @@ export function Minimap({
           drawBuilding(event);
         }
       });
-      iconBuildings.forEach((event) => {
-        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-          return;
-        }
-        if (event.x === undefined || event.y === undefined) return;
-        const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-        const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-        const footprint = getBuildingFootprint(event.buildingTypeId);
-        const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-        const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-        const centerTileX = baseX + footprint.w / 2;
-        const centerTileY = baseY + footprint.h / 2;
-        const center = toCanvas(centerTileX, centerTileY);
-        const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
-        const iconPath = isCastle(event.buildingTypeId) ? castlePath : townCenterPath;
-        context.save();
-        context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
-        context.scale(iconSize / 100, iconSize / 100);
-        context.fillStyle = getPlayerColor(event.playerId);
-        context.lineWidth = MINIMAP_ICON_BORDER;
-        context.lineJoin = "round";
-        context.strokeStyle = getPlayerOutline(event.playerId);
-        context.stroke(iconPath);
-        context.fill(iconPath);
-        context.restore();
-      });
+
+      if (showBuildingIcons) {
+        // First pass: Draw non-landmark (emoji) icons
+        (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) && iconBuildings.forEach((event) => {
+          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+            return;
+          }
+          if (event.x === undefined || event.y === undefined) return;
+          const name = getBuildingName(event.buildingTypeId);
+          const emoji = getBuildingEmoji(event.buildingTypeId);
+          const isLandmark = name.includes("Town Center") || name.includes("Castle");
+
+          if (!isLandmark && emoji) {
+            const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+            const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+            const footprint = getBuildingFootprint(event.buildingTypeId);
+            const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+            const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+            const centerTileX = baseX + footprint.w / 2;
+            const centerTileY = baseY + footprint.h / 2;
+            const center = toCanvas(centerTileX, centerTileY);
+            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+            const color = getPlayerColor(event.playerId);
+            const outline = getPlayerOutline(event.playerId);
+            const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
+            const cacheKey = `${emoji}-${color}-${outline}-${Math.round(emojiSize)}`;
+
+            let cachedCanvas = iconCacheRef.current.get(cacheKey);
+
+            if (!cachedCanvas) {
+              cachedCanvas = document.createElement("canvas");
+              const offCtx = cachedCanvas.getContext("2d");
+              if (offCtx) {
+                const canvasDim = emojiSize * 2;
+                cachedCanvas.width = canvasDim;
+                cachedCanvas.height = canvasDim;
+
+                offCtx.font = `bold ${emojiSize}px sans-serif`;
+                offCtx.textAlign = "center";
+                offCtx.textBaseline = "middle";
+
+                // 1. Draw mask
+                offCtx.globalCompositeOperation = "source-over";
+                offCtx.fillText(emoji, emojiSize, emojiSize);
+
+                // 2. Tint with player color
+                offCtx.globalCompositeOperation = "source-in";
+                offCtx.fillStyle = color;
+                offCtx.fillRect(0, 0, canvasDim, canvasDim);
+
+                // 3. Add drop-shadow for the player's specific outline
+                // We draw it to a temporary canvas first to flatten the overlaps and maintain color consistency
+                const shadowCanvas = document.createElement("canvas");
+                shadowCanvas.width = canvasDim;
+                shadowCanvas.height = canvasDim;
+                const shadowCtx = shadowCanvas.getContext("2d");
+                if (shadowCtx) {
+                  // Draw multiple offsets in a circle for a smooth, thick outline
+                  // This works perfectly for both text-style and colorful emoji icons
+                  for (let i = 0; i < MINIMAP_ICON_OUTLINE_STEPS; i++) {
+                    const angle = (i * Math.PI * 2) / MINIMAP_ICON_OUTLINE_STEPS;
+                    shadowCtx.drawImage(cachedCanvas, Math.cos(angle) * MINIMAP_ICON_OUTLINE_WIDTH, Math.sin(angle) * MINIMAP_ICON_OUTLINE_WIDTH);
+                    // Also fill in the 1px radius for total solid coverage
+                    if (MINIMAP_ICON_OUTLINE_WIDTH > 1) {
+                      shadowCtx.drawImage(cachedCanvas, Math.cos(angle) * 1, Math.sin(angle) * 1);
+                    }
+                  }
+
+                  // Flatten to the player's outline color
+                  shadowCtx.globalCompositeOperation = "source-in";
+                  shadowCtx.fillStyle = outline;
+                  shadowCtx.fillRect(0, 0, canvasDim, canvasDim);
+
+                  // Draw the flattened shadow behind the tinted icon
+                  offCtx.globalCompositeOperation = "destination-over";
+                  offCtx.drawImage(shadowCanvas, 0, 0);
+                }
+
+                iconCacheRef.current.set(cacheKey, cachedCanvas);
+              }
+            }
+
+            if (cachedCanvas) {
+              context.drawImage(
+                cachedCanvas,
+                center.x - emojiSize,
+                center.y - emojiSize
+              );
+            }
+          }
+        });
+
+        // Second pass: Draw landmark icons (Town Centers and Castles) on top
+        iconBuildings.forEach((event) => {
+          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+            return;
+          }
+          if (event.x === undefined || event.y === undefined) return;
+          const name = getBuildingName(event.buildingTypeId);
+          const isLandmark = name.includes("Town Center") || name.includes("Castle");
+
+          if (isLandmark) {
+            const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+            const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+            const footprint = getBuildingFootprint(event.buildingTypeId);
+            const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+            const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+            const centerTileX = baseX + footprint.w / 2;
+            const centerTileY = baseY + footprint.h / 2;
+            const center = toCanvas(centerTileX, centerTileY);
+            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+
+            const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
+            const color = getPlayerColor(event.playerId);
+            const outline = getPlayerOutline(event.playerId);
+            context.save();
+            context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
+            context.scale(iconSize / 100, iconSize / 100);
+            context.fillStyle = color;
+            context.lineWidth = MINIMAP_ICON_BORDER;
+            context.lineJoin = "round";
+            context.strokeStyle = outline;
+            context.stroke(iconPath);
+            context.fill(iconPath);
+            context.restore();
+          }
+        });
+      }
     }
 
     if (showUnits) {
@@ -608,9 +743,9 @@ export function Minimap({
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = getPlayerColor(event.playerId);
-        context.arc(pos.x, pos.y, MINIMAP_UNIT_CIRCLE_RADIUS, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, isMobile ? MINIMAP_UNIT_CIRCLE_RADIUS_MOBILE : MINIMAP_UNIT_CIRCLE_RADIUS_DESKTOP, 0, Math.PI * 2);
         context.fill();
-        context.lineWidth = MINIMAP_UNIT_BORDER;
+        context.lineWidth = isMobile ? MINIMAP_UNIT_BORDER_MOBILE : MINIMAP_UNIT_BORDER_DESKTOP;
         context.strokeStyle = getPlayerOutline(event.playerId);
         context.stroke();
       }
@@ -790,6 +925,51 @@ export function Minimap({
             {filters}
           </div>
         )}
+        {isFullscreen && (
+          <div
+            className="absolute hidden md:flex right-2 top-2 z-20 flex items-center gap-2"
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerMove={(e) => {
+              e.stopPropagation();
+              setHoveredEntity(null);
+            }}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".aoe2record,.zip"
+              className="sr-only"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  onOpenFile(file);
+                }
+              }}
+            />
+            <button
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              onClick={() => {
+                setIsPlaying(false);
+                fileInputRef.current?.click();
+              }}
+              title="Open .aoe2record file"
+            >
+              📁
+            </button>
+            <button
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              onClick={() => {
+                toggleFullscreen(false);
+                onShowUrlInput();
+              }}
+              title="Load replay from URL"
+            >
+              🔗
+            </button>
+          </div>
+        )}
         {!loading && !error && replay && (
           <div
             className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9"
@@ -922,6 +1102,7 @@ export function Minimap({
       </div>
       <div className={`flex items-center gap-4 px-0.5 md:px-1.5 ${isFullscreen ? "w-full max-w-6xl mx-auto" : ""}`}>
         <button
+          ref={playButtonRef}
           type="button"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:border-white/20 hover:scale-105 active:scale-95 cursor-pointer"
           onClick={() => {

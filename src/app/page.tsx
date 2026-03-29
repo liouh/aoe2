@@ -367,6 +367,12 @@ export default function Home() {
             formatClock={formatClock}
             setActiveTab={setActiveTab}
             setPendingJump={setPendingJump}
+            onOpenFile={handleFile}
+            onShowUrlInput={() => {
+              setIsPlaying(false);
+              setShowUrlInput(true);
+              setReplayUrl("");
+            }}
           />
 
           {replay && (
