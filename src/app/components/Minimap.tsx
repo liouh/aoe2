@@ -351,26 +351,40 @@ export function Minimap({
   };
 
   const buildEvents = useMemo(
-    () =>
-      events.filter(
+    () => {
+      const sizeX = mapInfo?.size_x ?? 120;
+      const sizeY = mapInfo?.size_y ?? 120;
+      return events.filter(
         (event) =>
           event.category === "build" &&
           event.x !== undefined &&
-          event.y !== undefined
-      ),
-    [events]
+          event.y !== undefined &&
+          event.x >= 0 &&
+          event.y >= 0 &&
+          event.x <= sizeX &&
+          event.y <= sizeY
+      );
+    },
+    [events, mapInfo]
   );
 
   const moveEvents = useMemo(
-    () =>
-      events.filter(
+    () => {
+      const sizeX = mapInfo?.size_x ?? 120;
+      const sizeY = mapInfo?.size_y ?? 120;
+      return events.filter(
         (event) =>
           event.category === "move" &&
           event.x !== undefined &&
           event.y !== undefined &&
+          event.x >= 0 &&
+          event.y >= 0 &&
+          event.x <= sizeX &&
+          event.y <= sizeY &&
           (selectedPlayerIds.length === 0 || (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId)))
-      ),
-    [events, selectedPlayerIds]
+      );
+    },
+    [events, selectedPlayerIds, mapInfo]
   );
 
   useEffect(() => {
