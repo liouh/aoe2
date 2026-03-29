@@ -14,11 +14,10 @@ const MINIMAP_MOBILE_MAX_ZOOM = 11;
 const MINIMAP_ICON_MIN_SIZE = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
 const MINIMAP_ICON_BORDER = 14;
-const MINIMAP_EMOJI_SCALE = 0.25;
+const MINIMAP_EMOJI_SCALE = 0.18;
+const MINIMAP_EMOJI_ALPHA = 0.5;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 const MINIMAP_HOVER_OUTLINE = 2;
-const MINIMAP_ICON_OUTLINE_WIDTH = 1;
-const MINIMAP_ICON_OUTLINE_STEPS = 8;
 const MINIMAP_UNIT_ALPHA = 1;
 const MINIMAP_UNIT_CIRCLE_RADIUS_MOBILE = 3;
 const MINIMAP_UNIT_CIRCLE_RADIUS_DESKTOP = 5;
@@ -620,7 +619,8 @@ export function Minimap({
             const centerTileX = baseX + footprint.w / 2;
             const centerTileY = baseY + footprint.h / 2;
             const center = toCanvas(centerTileX, centerTileY);
-            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+            const footprintScale = Math.max(footprint.w, footprint.h) / 2;
+            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
             const color = getPlayerColor(event.playerId);
             const outline = getPlayerOutline(event.playerId);
             const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
@@ -644,49 +644,23 @@ export function Minimap({
                 offCtx.globalCompositeOperation = "source-over";
                 offCtx.fillText(emoji, emojiSize, emojiSize);
 
-                // 2. Tint with player color
+                // 2. Tint with player outline color
                 offCtx.globalCompositeOperation = "source-in";
-                offCtx.fillStyle = color;
+                offCtx.fillStyle = outline;
                 offCtx.fillRect(0, 0, canvasDim, canvasDim);
-
-                // 3. Add drop-shadow for the player's specific outline
-                // We draw it to a temporary canvas first to flatten the overlaps and maintain color consistency
-                const shadowCanvas = document.createElement("canvas");
-                shadowCanvas.width = canvasDim;
-                shadowCanvas.height = canvasDim;
-                const shadowCtx = shadowCanvas.getContext("2d");
-                if (shadowCtx) {
-                  // Draw multiple offsets in a circle for a smooth, thick outline
-                  // This works perfectly for both text-style and colorful emoji icons
-                  for (let i = 0; i < MINIMAP_ICON_OUTLINE_STEPS; i++) {
-                    const angle = (i * Math.PI * 2) / MINIMAP_ICON_OUTLINE_STEPS;
-                    shadowCtx.drawImage(cachedCanvas, Math.cos(angle) * MINIMAP_ICON_OUTLINE_WIDTH, Math.sin(angle) * MINIMAP_ICON_OUTLINE_WIDTH);
-                    // Also fill in the 1px radius for total solid coverage
-                    if (MINIMAP_ICON_OUTLINE_WIDTH > 1) {
-                      shadowCtx.drawImage(cachedCanvas, Math.cos(angle) * 1, Math.sin(angle) * 1);
-                    }
-                  }
-
-                  // Flatten to the player's outline color
-                  shadowCtx.globalCompositeOperation = "source-in";
-                  shadowCtx.fillStyle = outline;
-                  shadowCtx.fillRect(0, 0, canvasDim, canvasDim);
-
-                  // Draw the flattened shadow behind the tinted icon
-                  offCtx.globalCompositeOperation = "destination-over";
-                  offCtx.drawImage(shadowCanvas, 0, 0);
-                }
 
                 iconCacheRef.current.set(cacheKey, cachedCanvas);
               }
             }
 
             if (cachedCanvas) {
+              context.globalAlpha = MINIMAP_EMOJI_ALPHA;
               context.drawImage(
                 cachedCanvas,
                 center.x - emojiSize,
                 center.y - emojiSize
               );
+              context.globalAlpha = 1.0;
             }
           }
         });
@@ -763,7 +737,7 @@ export function Minimap({
         const p4 = toCanvas(ax, ay + footprint.h);
 
         context.save();
-        context.strokeStyle = "#ffffff";
+        context.strokeStyle = getPlayerOutline(hoveredEntity.playerId);
         context.lineWidth = MINIMAP_HOVER_OUTLINE;
         context.beginPath();
         context.moveTo(p1.x, p1.y);
@@ -793,6 +767,7 @@ export function Minimap({
     mapZoom,
     selectedTime,
     showBuildings,
+    showBuildingIcons,
     showUnits,
     moveEvents,
     hoveredEntity,
@@ -948,7 +923,7 @@ export function Minimap({
             />
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-black/40 text-xl text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
               onClick={() => {
                 setIsPlaying(false);
                 fileInputRef.current?.click();
@@ -959,7 +934,7 @@ export function Minimap({
             </button>
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-black/40 text-xl text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
               onClick={() => {
                 toggleFullscreen(false);
                 onShowUrlInput();
@@ -982,7 +957,7 @@ export function Minimap({
           >
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/20 bg-black/40 text-xl font-semibold text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
@@ -995,7 +970,7 @@ export function Minimap({
             <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
               <button
                 type="button"
-                className="flex h-9 items-center justify-center rounded-t-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                className="flex h-9 items-center justify-center rounded-t-xl transition bg-black/40 hover:bg-white/20 border border-white/20 backdrop-blur-md shadow-2xl cursor-pointer outline-none"
                 tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1009,7 +984,7 @@ export function Minimap({
               </button>
               <button
                 type="button"
-                className="flex h-9 items-center justify-center rounded-b-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                className="flex h-9 items-center justify-center rounded-b-xl transition bg-black/40 hover:bg-white/20 border border-white/20 backdrop-blur-md shadow-2xl cursor-pointer outline-none"
                 tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1024,7 +999,7 @@ export function Minimap({
             </div>
             <button
               type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
+              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/20 bg-black/40 text-xl font-semibold text-white shadow-2xl transition hover:border-white/30 hover:bg-white/20 select-none cursor-pointer backdrop-blur-md outline-none"
               tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
