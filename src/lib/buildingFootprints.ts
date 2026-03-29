@@ -62,7 +62,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   153: { w: 3, h: 3 }, // Stable
   155: { w: 1, h: 1 }, // Fortified Wall
   179: { w: 3, h: 3 }, // Trade Workshop
-  182: { w: 4, h: 4 }, // Wonder
+  182: { w: 5, h: 5 }, // Wonder
   190: { w: 1, h: 1 }, // Fire Tower
   191: { w: 2, h: 2 }, // House
   192: { w: 2, h: 2 }, // House
@@ -73,7 +73,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   235: { w: 1, h: 1 }, // Keep
   236: { w: 1, h: 1 }, // Bombard Tower
   241: { w: 1, h: 1 }, // Outpost
-  276: { w: 4, h: 4 }, // Wonder
+  276: { w: 5, h: 5 }, // Wonder
   463: { w: 2, h: 2 }, // House
   464: { w: 2, h: 2 }, // House
   465: { w: 2, h: 2 }, // House
@@ -155,7 +155,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   826: { w: 2, h: 2 }, // Monument
   872: { w: 4, h: 4 }, // Cathedral
   888: { w: 2, h: 2 }, // Llama building
-  1021: { w: 4, h: 4 }, // Feitoria
+  1021: { w: 5, h: 5 }, // Feitoria
   1096: { w: 4, h: 4 }, // Palace
   1102: { w: 1, h: 1 }, // Fortified Tower
   1187: { w: 3, h: 3 }, // Rice Farm
@@ -201,12 +201,12 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1594: { w: 1, h: 1 }, // City Gate
   1646: { w: 4, h: 4 }, // Market
   1647: { w: 3, h: 3 }, // Trade Workshop
-  1665: { w: 3, h: 3 }, // Donjon
-  1711: { w: 2, h: 2 }, // Folwark
+  1665: { w: 2, h: 2 }, // Donjon
+  1711: { w: 3, h: 3 }, // Folwark
   1712: { w: 2, h: 2 }, // Pagan Shrine
-  1720: { w: 2, h: 2 }, // Folwark
-  1734: { w: 2, h: 2 }, // Folwark
-  1754: { w: 3, h: 3 }, // Caravanserai
+  1720: { w: 3, h: 3 }, // Folwark
+  1734: { w: 3, h: 3 }, // Folwark
+  1754: { w: 4, h: 4 }, // Caravanserai
   1806: { w: 3, h: 3 }, // Fortified Church
   1807: { w: 1, h: 1 }, // Svan Tower
   1808: { w: 1, h: 1 }, // Mule Cart
