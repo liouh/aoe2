@@ -10,23 +10,33 @@ import { getBuildingIcon } from "@/lib/buildingIcons";
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
-const MINIMAP_MAX_ZOOM = 7;
-const MINIMAP_MOBILE_MAX_ZOOM = 17;
-const MINIMAP_ICON_MIN_SIZE = 20;
+const MINIMAP_ZOOM_MAX = 7;
+const MINIMAP_ZOOM_MAX_MOBILE = 17;
+
+const MINIMAP_ICON_SIZE_MIN = 20;
 const MINIMAP_ICON_SCALE_FACTOR = 3;
-const MINIMAP_ICON_BORDER = 14;
-const MINIMAP_EMOJI_SCALE = 0.18;
+const MINIMAP_LANDMARK_ICON_BORDER_WIDTH = 14;
+
+const MINIMAP_EMOJI_SCALE = 0.2;
 const MINIMAP_EMOJI_ALPHA = 0.8;
+const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.5;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
-const MINIMAP_HOVER_OUTLINE = 2;
+
+const MINIMAP_BUILDING_OUTLINE_WIDTH = 0.5;
+const MINIMAP_BUILDING_OUTLINE_ALPHA = 0.7;
+const MINIMAP_BUILDING_HOVER_WIDTH = 2;
+
 const MINIMAP_UNIT_ALPHA = 1;
-const MINIMAP_UNIT_CIRCLE_RADIUS_MOBILE = 3;
-const MINIMAP_UNIT_CIRCLE_RADIUS_DESKTOP = 5;
-const MINIMAP_UNIT_BORDER_MOBILE = 1;
-const MINIMAP_UNIT_BORDER_DESKTOP = 2;
+const MINIMAP_UNIT_RADIUS_MOBILE = 3;
+const MINIMAP_UNIT_RADIUS_DESKTOP = 5;
+const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 1;
+const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 2;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
-const MINIMAP_ELEVATION_STEP = 3;
+
+const MINIMAP_TERRAIN_ELEVATION_STEP = 3;
 const MINIMAP_TERRAIN_ALPHA = 1;
+const MINIMAP_TERRAIN_BORDER_COLOR = "rgba(0, 0, 0, 0.05)";
+const MINIMAP_TERRAIN_BORDER_WIDTH = 0.5;
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -89,7 +99,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewMode, setMinimapViewMode] = useState<"both" | "buildings" | "moves" | "no_icons">("both");
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["footprints", "icons", "moves"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -99,7 +109,7 @@ export function Minimap({
     anchorKey?: string;
   } | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>(players.map(p => p.id));
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -147,17 +157,13 @@ export function Minimap({
   }, []);
 
   const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
-    return [
-      { id: undefined, label: "All players", color: "var(--foreground)" },
-      ...players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }))
-    ];
+    return players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }));
   }, [players, getPlayerColor]);
 
-  const minimapViewOptions: SelectOption<"both" | "buildings" | "moves" | "no_icons">[] = [
-    { id: "both", label: "All data" },
-    { id: "no_icons", label: "No building icons" },
-    { id: "buildings", label: "Only buildings" },
-    { id: "moves", label: "Only unit movements" },
+  const minimapViewOptions: SelectOption<string>[] = [
+    { id: "icons", label: "Building icons" },
+    { id: "footprints", label: "Building outlines" },
+    { id: "moves", label: "Unit movements" },
   ];
 
   const toggleFullscreen = (value?: boolean) => {
@@ -173,38 +179,46 @@ export function Minimap({
         options={minimapPlayers}
         selectedId={selectedPlayerIds}
         onSelect={(id) => {
-          if (id === undefined) {
-            setSelectedPlayerIds([]);
-          } else {
-            setSelectedPlayerIds(prev =>
-              prev.includes(id as number)
-                ? prev.filter(p => p !== id)
-                : [...prev, id as number]
-            );
-          }
+          setSelectedPlayerIds(prev =>
+            prev.includes(id as number)
+              ? prev.filter(p => p !== id)
+              : [...prev, id as number]
+          );
         }}
         multi
+        multiLabel="players"
+        placeholder="All players"
         align="left"
       />
       <Select
         options={minimapViewOptions}
-        selectedId={minimapViewMode}
-        onSelect={setMinimapViewMode}
+        selectedId={minimapViewFilters}
+        onSelect={(id) => {
+          setMinimapViewFilters(prev =>
+            prev.includes(id as string)
+              ? prev.filter(f => f !== id)
+              : [...prev, id as string]
+          );
+        }}
+        multi
+        multiLabel="layers"
+        placeholder="No layers"
         align="left"
       />
     </>
-  ), [minimapPlayers, selectedPlayerIds, minimapViewMode, minimapViewOptions]);
+  ), [minimapPlayers, selectedPlayerIds, minimapViewFilters, minimapViewOptions]);
 
-  const showBuildings = minimapViewMode === "both" || minimapViewMode === "buildings" || minimapViewMode === "no_icons";
-  const showUnits = minimapViewMode === "both" || minimapViewMode === "moves" || minimapViewMode === "no_icons";
-  const showBuildingIcons = minimapViewMode !== "no_icons";
+  const showBuildingOutlines = minimapViewFilters.includes("footprints");
+  const showBuildingIcons = minimapViewFilters.includes("icons");
+  const showUnits = minimapViewFilters.includes("moves");
+  const showBuildings = showBuildingOutlines || showBuildingIcons;
 
   // Reset internal state when a new replay is loaded
   useEffect(() => {
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
-    setSelectedPlayerIds([]);
-    setMinimapViewMode("both");
+    setSelectedPlayerIds(players.map(p => p.id));
+    setMinimapViewFilters(["footprints", "icons", "moves"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -302,7 +316,7 @@ export function Minimap({
     const rect = canvas.getBoundingClientRect();
 
     setMapZoom((prev) => {
-      const maxZoom = isMobile ? MINIMAP_MOBILE_MAX_ZOOM : MINIMAP_MAX_ZOOM;
+      const maxZoom = isMobile ? MINIMAP_ZOOM_MAX_MOBILE : MINIMAP_ZOOM_MAX;
       const next = clamp(prev * zoomFactor, 1, maxZoom);
       if (next === prev) return prev;
 
@@ -453,7 +467,7 @@ export function Minimap({
               let color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
 
               if (tile?.elevation !== undefined) {
-                color = shadeColor(color, tile.elevation * MINIMAP_ELEVATION_STEP);
+                color = shadeColor(color, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
               }
 
               const p1 = toCanvas(x, y);
@@ -468,6 +482,9 @@ export function Minimap({
               terrainContext.lineTo(p4.x, p4.y);
               terrainContext.closePath();
               terrainContext.fill();
+              terrainContext.strokeStyle = MINIMAP_TERRAIN_BORDER_COLOR;
+              terrainContext.lineWidth = MINIMAP_TERRAIN_BORDER_WIDTH;
+              terrainContext.stroke();
             }
           }
           terrainContext.globalAlpha = 1.0;
@@ -592,16 +609,36 @@ export function Minimap({
           if (destroyedTiles.has(tileKey)) return;
         }
       }
-      for (let dx = 0; dx < footprint.w; dx += 1) {
-        for (let dy = 0; dy < footprint.h; dy += 1) {
-          const tileX = baseX + dx;
-          const tileY = baseY + dy;
-          if (tileX >= (sizeX ?? 120) || tileY >= (sizeY ?? 120)) continue;
-          drawTile(tileX, tileY, getPlayerColor(event.playerId));
-        }
+      // Draw the building footprint as a single diamond shape
+      const p1 = toCanvas(baseX, baseY);
+      const p2 = toCanvas(baseX + footprint.w, baseY);
+      const p3 = toCanvas(baseX + footprint.w, baseY + footprint.h);
+      const p4 = toCanvas(baseX, baseY + footprint.h);
+
+      context.save();
+      context.beginPath();
+      context.moveTo(p1.x, p1.y);
+      context.lineTo(p2.x, p2.y);
+      context.lineTo(p3.x, p3.y);
+      context.lineTo(p4.x, p4.y);
+      context.closePath();
+
+      // 1. Fill the shape with player's color
+      if (showBuildingOutlines) {
+        context.fillStyle = getPlayerColor(event.playerId);
+        context.fill();
       }
 
-      if (isIconBuilding(event.buildingTypeId)) {
+      // 2. Add the thin building outline (conditional on zoom)
+      if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
+        context.globalAlpha = MINIMAP_BUILDING_OUTLINE_ALPHA;
+        context.strokeStyle = getPlayerOutline(event.playerId);
+        context.lineWidth = MINIMAP_BUILDING_OUTLINE_WIDTH;
+        context.stroke();
+      }
+      context.restore();
+
+      if (showBuildingIcons && isIconBuilding(event.buildingTypeId)) {
         iconBuildings.push(event);
       }
     };
@@ -612,6 +649,30 @@ export function Minimap({
           drawBuilding(event);
         }
       });
+
+      if (showBuildings && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
+        const anchorKey = hoveredEntity.anchorKey;
+        const footprint = anchorToEvent.get(anchorKey) ? getBuildingFootprint(anchorToEvent.get(anchorKey)!.buildingTypeId) : null;
+        if (footprint) {
+          const [ax, ay] = anchorKey.split(",").map(Number);
+          const p1 = toCanvas(ax, ay);
+          const p2 = toCanvas(ax + footprint.w, ay);
+          const p3 = toCanvas(ax + footprint.w, ay + footprint.h);
+          const p4 = toCanvas(ax, ay + footprint.h);
+
+          context.save();
+          context.strokeStyle = getPlayerOutline(hoveredEntity.playerId);
+          context.lineWidth = MINIMAP_BUILDING_HOVER_WIDTH;
+          context.beginPath();
+          context.moveTo(p1.x, p1.y);
+          context.lineTo(p2.x, p2.y);
+          context.lineTo(p3.x, p3.y);
+          context.lineTo(p4.x, p4.y);
+          context.closePath();
+          context.stroke();
+          context.restore();
+        }
+      }
 
       if (showBuildingIcons) {
         // First pass: Draw non-landmark (emoji) icons
@@ -624,7 +685,7 @@ export function Minimap({
           const emoji = getBuildingEmoji(event.buildingTypeId);
           const isLandmark = name.includes("Town Center") || name.includes("Castle");
 
-          if (!isLandmark && emoji) {
+          if (!isLandmark && emoji && showBuildingOutlines) {
             const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
             const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
             const footprint = getBuildingFootprint(event.buildingTypeId);
@@ -633,8 +694,8 @@ export function Minimap({
             const centerTileX = baseX + footprint.w / 2;
             const centerTileY = baseY + footprint.h / 2;
             const center = toCanvas(centerTileX, centerTileY);
-            const footprintScale = Math.max(footprint.w, footprint.h) / 2;
-            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
+            const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.max(footprint.w, footprint.h)) / 2;
+            const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
             const color = getPlayerColor(event.playerId);
             const outline = getPlayerOutline(event.playerId);
             const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
@@ -678,44 +739,47 @@ export function Minimap({
             }
           }
         });
-
-        // Second pass: Draw landmark icons (Town Centers and Castles) on top
-        iconBuildings.forEach((event) => {
-          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-            return;
-          }
-          if (event.x === undefined || event.y === undefined) return;
-          const name = getBuildingName(event.buildingTypeId);
-          const isLandmark = name.includes("Town Center") || name.includes("Castle");
-
-          if (isLandmark) {
-            const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-            const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-            const footprint = getBuildingFootprint(event.buildingTypeId);
-            const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-            const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-            const centerTileX = baseX + footprint.w / 2;
-            const centerTileY = baseY + footprint.h / 2;
-            const center = toCanvas(centerTileX, centerTileY);
-            const iconSize = Math.max(MINIMAP_ICON_MIN_SIZE, isoScale * MINIMAP_ICON_SCALE_FACTOR);
-
-            const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
-            const color = getPlayerColor(event.playerId);
-            const outline = getPlayerOutline(event.playerId);
-            context.save();
-            context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
-            context.scale(iconSize / 100, iconSize / 100);
-            context.fillStyle = color;
-            context.lineWidth = MINIMAP_ICON_BORDER;
-            context.lineJoin = "round";
-            context.strokeStyle = outline;
-            context.stroke(iconPath);
-            context.fill(iconPath);
-            context.restore();
-          }
-        });
       }
+
+      // Second pass: Draw landmark icons (Town Centers and Castles) on top
+      // These show regardless of showBuildingIcons as long as buildings category is enabled
+      if (showBuildingIcons) {
+        iconBuildings.forEach((event) => {
+        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+          return;
+        }
+        if (event.x === undefined || event.y === undefined) return;
+        const name = getBuildingName(event.buildingTypeId);
+        const isLandmark = name.includes("Town Center") || name.includes("Castle");
+
+        if (isLandmark) {
+          const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+          const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+          const footprint = getBuildingFootprint(event.buildingTypeId);
+          const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+          const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+          const centerTileX = baseX + footprint.w / 2;
+          const centerTileY = baseY + footprint.h / 2;
+          const center = toCanvas(centerTileX, centerTileY);
+          const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+
+          const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
+          const color = getPlayerColor(event.playerId);
+          const outline = getPlayerOutline(event.playerId);
+          context.save();
+          context.translate(center.x - iconSize / 2, center.y - iconSize * 0.8);
+          context.scale(iconSize / 100, iconSize / 100);
+          context.fillStyle = color;
+          context.lineWidth = MINIMAP_LANDMARK_ICON_BORDER_WIDTH;
+          context.lineJoin = "round";
+          context.strokeStyle = outline;
+          context.stroke(iconPath);
+          context.fill(iconPath);
+          context.restore();
+        }
+      });
     }
+  }
 
     if (showUnits) {
       for (let i = moveEvents.length - 1; i >= 0; i--) {
@@ -731,37 +795,13 @@ export function Minimap({
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = getPlayerColor(event.playerId);
-        context.arc(pos.x, pos.y, isMobile ? MINIMAP_UNIT_CIRCLE_RADIUS_MOBILE : MINIMAP_UNIT_CIRCLE_RADIUS_DESKTOP, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, isMobile ? MINIMAP_UNIT_RADIUS_MOBILE : MINIMAP_UNIT_RADIUS_DESKTOP, 0, Math.PI * 2);
         context.fill();
-        context.lineWidth = isMobile ? MINIMAP_UNIT_BORDER_MOBILE : MINIMAP_UNIT_BORDER_DESKTOP;
+        context.lineWidth = isMobile ? MINIMAP_UNIT_BORDER_WIDTH_MOBILE : MINIMAP_UNIT_BORDER_WIDTH_DESKTOP;
         context.strokeStyle = getPlayerOutline(event.playerId);
         context.stroke();
       }
       context.globalAlpha = 1;
-    }
-
-    if (showBuildings && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
-      const anchorKey = hoveredEntity.anchorKey;
-      const footprint = anchorToFootprint.get(anchorKey);
-      if (footprint) {
-        const [ax, ay] = anchorKey.split(",").map(Number);
-        const p1 = toCanvas(ax, ay);
-        const p2 = toCanvas(ax + footprint.w, ay);
-        const p3 = toCanvas(ax + footprint.w, ay + footprint.h);
-        const p4 = toCanvas(ax, ay + footprint.h);
-
-        context.save();
-        context.strokeStyle = getPlayerOutline(hoveredEntity.playerId);
-        context.lineWidth = MINIMAP_HOVER_OUTLINE;
-        context.beginPath();
-        context.moveTo(p1.x, p1.y);
-        context.lineTo(p2.x, p2.y);
-        context.lineTo(p3.x, p3.y);
-        context.lineTo(p4.x, p4.y);
-        context.closePath();
-        context.stroke();
-        context.restore();
-      }
     }
 
     entityLookupRef.current = {
@@ -780,8 +820,9 @@ export function Minimap({
     mapPan,
     mapZoom,
     selectedTime,
-    showBuildings,
+    showBuildingOutlines,
     showBuildingIcons,
+    showBuildings,
     showUnits,
     moveEvents,
     hoveredEntity,

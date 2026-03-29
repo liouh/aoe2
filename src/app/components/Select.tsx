@@ -17,6 +17,8 @@ interface SelectProps<T> {
   align?: "left" | "right";
   className?: string;
   multi?: boolean;
+  multiLabel?: string;
+  placeholder?: string;
 }
 
 export function Select<T extends string | number | undefined>({
@@ -26,6 +28,8 @@ export function Select<T extends string | number | undefined>({
   align = "right",
   className = "",
   multi = false,
+  multiLabel = "items",
+  placeholder = "Select...",
 }: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -94,11 +98,12 @@ export function Select<T extends string | number | undefined>({
   };
 
   const getButtonLabel = () => {
-    if (!multi) return primaryOption?.label || "Select...";
-    if (selectedOptions.length === 0) return "All players";
+    if (!multi) return primaryOption?.label || placeholder;
+    if (selectedOptions.length === 0) return placeholder;
     if (selectedOptions.length === 1) return selectedOptions[0].label;
-    if (selectedOptions.length === options.length - 1 && options.some(o => o.id === undefined)) return "All players";
-    return `Show ${selectedOptions.length} players`;
+    if (selectedOptions.length === options.length) return "All " + multiLabel;
+    if (selectedOptions.length === options.length - 1 && options.some(o => o.id === undefined)) return "All " + multiLabel;
+    return `${selectedOptions.length} ${multiLabel}`;
   };
 
   return (

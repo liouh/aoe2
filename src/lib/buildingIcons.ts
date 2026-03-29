@@ -17,7 +17,7 @@ export const getBuildingIcon = (name: string): string | null => {
   else if (name.includes("Outpost")) icon = "🔭";
   else if (name.includes("Settlement")) icon = "🛖";
   else if (name.includes("Siege Workshop")) icon = "⚙️";
-  else if (name.includes("Stable")) icon = "🐎";
+  else if (name.includes("Stable")) icon = "🐴";
   else if (name.includes("Tower") || name.includes("Donjon") || name.includes("Krepost")) icon = "♜";
   else if (name.includes("University")) icon = "📖\uFE0E";
   else if (name.includes("Wall")) icon = "■";
