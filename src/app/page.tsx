@@ -20,28 +20,29 @@ import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { ensureUnzipped } from "@/lib/zipUtils";
 
 const PLAYER_COLORS = [
-  "#3252FF",
+  "#0000FF",
   "#FF0000",
   "#00FF00",
   "#FFFF00",
   "#00FFFF",
-  "#B030B0",
-  "#707070",
-  "#FF9100",
+  "#FF00FF",
+  "#434343",
+  "#FF8201",
 ];
+
 const PLAYER_OUTLINES = [
-  "#ffffff", // 1 blue
-  "#ffffff", // 2 red
+  "#FFFFFF", // 1 blue
+  "#FFFFFF", // 2 red
   "#000000", // 3 green
   "#000000", // 4 yellow
   "#000000", // 5 cyan
-  "#ffffff", // 6 purple
-  "#ffffff", // 7 grey
+  "#000000", // 6 purple
+  "#FFFFFF", // 7 gray
   "#000000", // 8 orange
 ];
 
-const KEYBOARD_STEP_SECONDS = 30;
-const KEYBOARD_STEP_SHIFT_SECONDS = 120;
+const KEYBOARD_STEP_SECONDS = 1;
+const KEYBOARD_STEP_SHIFT_SECONDS = 60;
 // Playback speed = 1000 / PLAYBACK_INTERVAL_MS * PLAYBACK_STEP_SECONDS
 // 1000 / 66 * 4 = 60x speed
 const PLAYBACK_STEP_SECONDS = 4;
@@ -323,6 +324,9 @@ export default function Home() {
       if (now - lastKeyTimeRef.current < 16) return;
       lastKeyTimeRef.current = now;
       const step = event.shiftKey ? KEYBOARD_STEP_SHIFT_SECONDS : KEYBOARD_STEP_SECONDS;
+      if (event.key === "ArrowLeft") {
+        setIsPlaying(false);
+      }
       requestAnimationFrame(() => {
         setSelectedTime((prev) => {
           const next =

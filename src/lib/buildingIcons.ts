@@ -25,6 +25,5 @@ export const getBuildingIcon = (name: string): string | null => {
   else if (name.includes("Wonder")) icon = "⭐";
   else icon = "❓";
 
-  // return icon ? `${icon}\uFE0E` : null;
   return icon;
 };
