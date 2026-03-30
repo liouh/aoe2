@@ -31,7 +31,7 @@ const PLAYER_COLORS_LEGACY = [
 ];
 
 const PLAYER_COLORS = [
-  "#3252ff", // 1
+  "#2a48df", // 1
   "#dc2626", // 2
   "#00ff00", // 3
   "#ffff00", // 4
