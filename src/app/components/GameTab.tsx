@@ -165,7 +165,7 @@ export function GameTab({
             )}
             {matchInfo.cheats !== undefined && (
               <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats used</span>
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
                 <span className="font-semibold text-[color:var(--foreground)]">
                   {matchInfo.cheats ? "Yes" : "No"}
                 </span>
