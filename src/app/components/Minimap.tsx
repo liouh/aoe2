@@ -401,6 +401,46 @@ export function Minimap({
     [events, selectedPlayerIds, mapInfo]
   );
 
+  const buildingData = useMemo(() => {
+    const sizeX = mapInfo?.size_x ?? 120;
+    const sizeY = mapInfo?.size_y ?? 120;
+    const tileToAnchor = new Map<string, string>();
+    const anchorToEvent = new Map<string, TimelineEvent>();
+
+    for (const event of buildEvents) {
+      if (event.time > selectedTime) break;
+      if (event.x === undefined || event.y === undefined) continue;
+
+      const anchorX = Math.max(0, Math.min(sizeX - 1, Math.floor(event.x)));
+      const anchorY = Math.max(0, Math.min(sizeY - 1, Math.floor(event.y)));
+      const footprint = getBuildingFootprint(event.buildingTypeId);
+      const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+      const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+      const anchorKey = `${baseX},${baseY}`;
+
+      anchorToEvent.set(anchorKey, event);
+      const displacedAnchors = new Set<string>();
+      for (let dx = 0; dx < footprint.w; dx += 1) {
+        for (let dy = 0; dy < footprint.h; dy += 1) {
+          const tileX = baseX + dx;
+          const tileY = baseY + dy;
+          if (tileX >= sizeX || tileY >= sizeY) continue;
+          const tileKey = `${tileX},${tileY}`;
+          const oldAnchor = tileToAnchor.get(tileKey);
+          if (oldAnchor && oldAnchor !== anchorKey) {
+            displacedAnchors.add(oldAnchor);
+          }
+          tileToAnchor.set(tileKey, anchorKey);
+        }
+      }
+      for (const oldAnchor of displacedAnchors) {
+        anchorToEvent.delete(oldAnchor);
+      }
+    }
+
+    return { tileToAnchor, anchorToEvent };
+  }, [buildEvents, selectedTime, mapInfo]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -445,7 +485,7 @@ export function Minimap({
       if (!terrainCanvasRef.current) {
         terrainCanvasRef.current = document.createElement("canvas");
       }
-      const terrainCanvas = terrainCanvasRef.current;
+      const terrainCanvas = terrainCanvasRef.current!;
       terrainCanvas.width = canvas.width;
       terrainCanvas.height = canvas.height;
       const terrainContext = terrainCanvas.getContext("2d");
@@ -514,25 +554,6 @@ export function Minimap({
       }
     }
 
-    const drawTile = (
-      tileX: number,
-      tileY: number,
-      color: string
-    ) => {
-      const p1 = toCanvas(tileX, tileY);
-      const p2 = toCanvas(tileX + 1, tileY);
-      const p3 = toCanvas(tileX + 1, tileY + 1);
-      const p4 = toCanvas(tileX, tileY + 1);
-      context.fillStyle = color;
-      context.beginPath();
-      context.moveTo(p1.x, p1.y);
-      context.lineTo(p2.x, p2.y);
-      context.lineTo(p3.x, p3.y);
-      context.lineTo(p4.x, p4.y);
-      context.closePath();
-      context.fill();
-    };
-
     const townCenterPath = new Path2D(
       "M35,80 V50 H10 V80 H25 V68 H35 V80 H65 V68 H75 V80 H90 V50 H65 V38 L50,23 L35,38 V50"
     );
@@ -554,45 +575,9 @@ export function Minimap({
       );
     };
 
+    const { tileToAnchor, anchorToEvent } = buildingData;
     const iconBuildings: TimelineEvent[] = [];
 
-    const destroyedTiles = new Set<string>();
-    const tileToAnchor = new Map<string, string>();
-    const anchorToFootprint = new Map<string, { w: number; h: number }>();
-    const anchorToEvent = new Map<string, TimelineEvent>();
-
-    for (const event of buildEvents) {
-      if (event.time > selectedTime) break;
-      if (event.x === undefined || event.y === undefined) continue;
-
-      const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-      const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-      const footprint = getBuildingFootprint(event.buildingTypeId);
-      const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-      const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-      const anchorKey = `${baseX},${baseY}`;
-
-      anchorToFootprint.set(anchorKey, footprint);
-      anchorToEvent.set(anchorKey, event);
-      const displacedAnchors = new Set<string>();
-      for (let dx = 0; dx < footprint.w; dx += 1) {
-        for (let dy = 0; dy < footprint.h; dy += 1) {
-          const tileX = baseX + dx;
-          const tileY = baseY + dy;
-          if (tileX >= (sizeX ?? 120) || tileY >= (sizeY ?? 120)) continue;
-          const tileKey = `${tileX},${tileY}`;
-          const oldAnchor = tileToAnchor.get(tileKey);
-          if (oldAnchor && oldAnchor !== anchorKey) {
-            displacedAnchors.add(oldAnchor);
-          }
-          tileToAnchor.set(tileKey, anchorKey);
-          destroyedTiles.delete(tileKey);
-        }
-      }
-      for (const oldAnchor of displacedAnchors) {
-        anchorToEvent.delete(oldAnchor);
-      }
-    }
     const drawBuilding = (event: TimelineEvent) => {
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
@@ -601,14 +586,7 @@ export function Minimap({
       const footprint = getBuildingFootprint(event.buildingTypeId);
       const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
       const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-      for (let dx = 0; dx < footprint.w; dx += 1) {
-        for (let dy = 0; dy < footprint.h; dy += 1) {
-          const tileX = baseX + dx;
-          const tileY = baseY + dy;
-          const tileKey = `${tileX},${tileY}`;
-          if (destroyedTiles.has(tileKey)) return;
-        }
-      }
+
       // Draw the building footprint as a single diamond shape
       const p1 = toCanvas(baseX, baseY);
       const p2 = toCanvas(baseX + footprint.w, baseY);
@@ -814,7 +792,7 @@ export function Minimap({
       sizeY: sizeY ?? 120,
     };
   }, [
-    buildEvents,
+    buildingData,
     mapInfo,
     replay,
     mapPan,
