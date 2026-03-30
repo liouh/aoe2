@@ -119,18 +119,58 @@ const parseActionData = (type: string, data: number[]) => {
         const x2 = view.getInt16(8, true);
         const y2 = view.getInt16(10, true);
         const buildingTypeId = view.getInt32(12, true);
-        // Bresenham line interpolation for wall
+        // Prefer straight or diagonal lines with a max of one bend
         const tiles: { x: number; y: number }[] = [];
+        const dx = x2 - x1, dy = y2 - y1;
+        const adx = Math.abs(dx), ady = Math.abs(dy);
+        const sx = dx >= 0 ? 1 : -1, sy = dy >= 0 ? 1 : -1;
+
+        const diagLen = Math.min(adx, ady);
+        const straightLen = Math.max(adx, ady) - diagLen;
+
         let x_curr = x1, y_curr = y1;
-        const dx = Math.abs(x2 - x1), dy = Math.abs(y2 - y1);
-        const sx = x1 < x2 ? 1 : -1, sy = y1 < y2 ? 1 : -1;
-        let err = dx - dy;
-        for (let step = 0; step <= dx + dy + 1; step++) {
-          tiles.push({ x: x_curr, y: y_curr });
-          if (x_curr === x2 && y_curr === y2) break;
-          const e2 = 2 * err;
-          if (e2 > -dy) { err -= dy; x_curr += sx; }
-          if (e2 < dx) { err += dx; y_curr += sy; }
+        if (straightLen > diagLen) {
+          // Straight segment is longest, so it comes first
+          if (adx > ady) {
+            // Horizontal first
+            for (let i = 0; i < straightLen; i++) {
+              tiles.push({ x: x_curr, y: y_curr });
+              x_curr += sx;
+            }
+          } else {
+            // Vertical first
+            for (let i = 0; i < straightLen; i++) {
+              tiles.push({ x: x_curr, y: y_curr });
+              y_curr += sy;
+            }
+          }
+          // Followed by diagonal
+          for (let i = 0; i <= diagLen; i++) {
+            tiles.push({ x: x_curr, y: y_curr });
+            x_curr += sx;
+            y_curr += sy;
+          }
+        } else {
+          // Diagonal segment is longest (or equal), so it comes first
+          for (let i = 0; i < diagLen; i++) {
+            tiles.push({ x: x_curr, y: y_curr });
+            x_curr += sx;
+            y_curr += sy;
+          }
+          // Followed by straight
+          if (adx > ady) {
+            // Horizontal last
+            for (let i = 0; i <= straightLen; i++) {
+              tiles.push({ x: x_curr, y: y_curr });
+              x_curr += sx;
+            }
+          } else {
+            // Vertical last
+            for (let i = 0; i <= straightLen; i++) {
+              tiles.push({ x: x_curr, y: y_curr });
+              y_curr += sy;
+            }
+          }
         }
         return { tiles, buildingTypeId };
       }
