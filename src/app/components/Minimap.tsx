@@ -35,8 +35,7 @@ const MINIMAP_UNIT_FADE_SECONDS = 50;
 
 const MINIMAP_TERRAIN_ELEVATION_STEP = 3;
 const MINIMAP_TERRAIN_ALPHA = 1;
-const MINIMAP_TERRAIN_BORDER_COLOR = "rgba(0, 0, 0, 0.05)";
-const MINIMAP_TERRAIN_BORDER_WIDTH = 0.5;
+const BASE_TERRAIN_SCALE = 40;
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -479,26 +478,40 @@ export function Minimap({
       return { x: isoX, y: isoY };
     };
 
-    const terrainCacheKey = `${sizeX},${sizeY},${isoScale},${isoOriginX},${isoOriginY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA}`;
+    // High-resolution terrain cache
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
         terrainCanvasRef.current = document.createElement("canvas");
       }
       const terrainCanvas = terrainCanvasRef.current!;
-      terrainCanvas.width = canvas.width;
-      terrainCanvas.height = canvas.height;
+      const terrainWidth = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.5;
+      const terrainHeight = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.25;
+      terrainCanvas.width = terrainWidth;
+      terrainCanvas.height = terrainHeight;
+
       const terrainContext = terrainCanvas.getContext("2d");
-      if (terrainContext) {
-        terrainContext.scale(dpr, dpr);
+      if (terrainContext && sizeX && sizeY) {
+        const offOriginX = sizeX * BASE_TERRAIN_SCALE * 0.5;
+        const offOriginY = 0;
+
+        const toOffscreen = (x: number, y: number) => {
+          const rx = y;
+          const ry = sizeX - x;
+          const isoX = (rx - ry) * BASE_TERRAIN_SCALE * 0.5 + offOriginX;
+          const isoY = (rx + ry) * BASE_TERRAIN_SCALE * 0.25 + offOriginY;
+          return { x: isoX, y: isoY };
+        };
+
         const panelColor =
           getComputedStyle(canvas).getPropertyValue("background-color")?.trim() ||
           "#1c1610";
         terrainContext.fillStyle = panelColor;
-        terrainContext.fillRect(0, 0, bounds.width, bounds.height);
+        terrainContext.fillRect(0, 0, terrainWidth, terrainHeight);
 
         const tiles = mapInfo?.tiles;
-        if (tiles && sizeX && sizeY && tiles.length >= sizeX * sizeY) {
+        if (tiles && tiles.length >= sizeX * sizeY) {
           terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
@@ -510,10 +523,10 @@ export function Minimap({
                 color = shadeColor(color, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
               }
 
-              const p1 = toCanvas(x, y);
-              const p2 = toCanvas(x + 1, y);
-              const p3 = toCanvas(x + 1, y + 1);
-              const p4 = toCanvas(x, y + 1);
+              const p1 = toOffscreen(x, y);
+              const p2 = toOffscreen(x + 1, y);
+              const p3 = toOffscreen(x + 1, y + 1);
+              const p4 = toOffscreen(x, y + 1);
               terrainContext.fillStyle = color;
               terrainContext.beginPath();
               terrainContext.moveTo(p1.x, p1.y);
@@ -522,9 +535,6 @@ export function Minimap({
               terrainContext.lineTo(p4.x, p4.y);
               terrainContext.closePath();
               terrainContext.fill();
-              terrainContext.strokeStyle = MINIMAP_TERRAIN_BORDER_COLOR;
-              terrainContext.lineWidth = MINIMAP_TERRAIN_BORDER_WIDTH;
-              terrainContext.stroke();
             }
           }
           terrainContext.globalAlpha = 1.0;
@@ -532,10 +542,10 @@ export function Minimap({
         terrainContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
         terrainContext.lineWidth = 1;
         terrainContext.beginPath();
-        const top = toCanvas(0, 0);
-        const right = toCanvas(sizeX ?? 120, 0);
-        const bottom = toCanvas(sizeX ?? 120, sizeY ?? 120);
-        const left = toCanvas(0, sizeY ?? 120);
+        const top = toOffscreen(0, 0);
+        const right = toOffscreen(sizeX, 0);
+        const bottom = toOffscreen(sizeX, sizeY);
+        const left = toOffscreen(0, sizeY);
         terrainContext.moveTo(top.x, top.y);
         terrainContext.lineTo(right.x, right.y);
         terrainContext.lineTo(bottom.x, bottom.y);
@@ -546,9 +556,16 @@ export function Minimap({
       terrainCacheKeyRef.current = terrainCacheKey;
     }
 
-    if (terrainCanvasRef.current && terrainCanvasRef.current.width > 0 && terrainCanvasRef.current.height > 0) {
+    if (terrainCanvasRef.current && sizeX && sizeY) {
       try {
-        context.drawImage(terrainCanvasRef.current, 0, 0, bounds.width, bounds.height);
+        const offOriginX = sizeX * BASE_TERRAIN_SCALE * 0.5;
+        const offOriginY = 0;
+        const dx = isoOriginX - (offOriginX * isoScale / BASE_TERRAIN_SCALE);
+        const dy = isoOriginY - (offOriginY * isoScale / BASE_TERRAIN_SCALE);
+        const dw = terrainCanvasRef.current.width * isoScale / BASE_TERRAIN_SCALE;
+        const dh = terrainCanvasRef.current.height * isoScale / BASE_TERRAIN_SCALE;
+
+        context.drawImage(terrainCanvasRef.current, dx, dy, dw, dh);
       } catch (e) {
         console.error("Minimap drawImage failed:", e);
       }
