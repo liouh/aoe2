@@ -149,6 +149,7 @@ export function Minimap({
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       setResizeKey(prev => prev + 1);
+      setHoveredEntity(null);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -246,23 +247,7 @@ export function Minimap({
     };
   }, [isFullscreen]);
 
-  // Focus play button when entering fullscreen
-  useEffect(() => {
-    if (isFullscreen) {
-      playButtonRef.current?.focus();
-    }
-  }, [isFullscreen]);
-
-  // Handle window resize to redraw canvas
-  useEffect(() => {
-    const handleResize = () => {
-      setHoveredEntity(null);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const clampPan = (pan: { x: number; y: number }, zoom?: number) => {
+  const clampPan = useMemo(() => (pan: { x: number; y: number }, zoom?: number) => {
     const container = mapContainerRef.current;
     if (!container) return pan;
     const rect = container.getBoundingClientRect();
@@ -307,9 +292,9 @@ export function Minimap({
       x: clamp(pan.x, minPanX, maxPanX),
       y: clamp(pan.y, minPanY, maxPanY),
     };
-  };
+  }, [mapZoom, mapInfo]);
 
-  const handleZoom = (targetX: number, targetY: number, zoomFactor: number) => {
+  const handleZoom = useMemo(() => (targetX: number, targetY: number, zoomFactor: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -355,7 +340,73 @@ export function Minimap({
 
       return next;
     });
-  };
+  }, [isMobile, mapInfo, matchInfo, mapPan, clampPan]);
+
+  // Focus trap for fullscreen mode to prevent focus on background content
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const container = mapContainerRef.current?.parentElement;
+      if (!container) return;
+
+      const focusableSelectors = 'button, select, input, [tabindex]:not([tabindex="-1"])';
+      const focusableElements = Array.from(
+        container.querySelectorAll(focusableSelectors)
+      ) as HTMLElement[];
+
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isFullscreen]);
+
+  // Focus play button when entering fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      playButtonRef.current?.focus();
+    }
+  }, [isFullscreen]);
+
+  // Handle mouse wheel zoom with native listener to avoid "passive event" issues
+  useEffect(() => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      if (!isFullscreen) return;
+      event.preventDefault();
+
+      const rect = container.getBoundingClientRect();
+      const targetX = event.clientX - rect.left;
+      const targetY = event.clientY - rect.top;
+
+      const zoomFactor = event.deltaY < 0 ? MINIMAP_MOUSE_ZOOM_FACTOR : 1 / MINIMAP_MOUSE_ZOOM_FACTOR;
+      handleZoom(targetX, targetY, zoomFactor);
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, [isFullscreen, handleZoom]);
+
 
   const jumpToTimeline = () => {
     setIsPlaying(false);
@@ -837,8 +888,21 @@ export function Minimap({
       style={isFullscreen ? { border: "none", outline: "none", boxShadow: "none" } : {}}
     >
       {!loading && !error && (
-        <div className="flex md:hidden items-center gap-2 px-1">
-          {filters}
+        <div className="flex md:hidden items-center justify-between gap-2 px-1">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {filters}
+          </div>
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFullscreen();
+            }}
+            title={isFullscreen ? "Exit full screen" : "Full screen"}
+          >
+            {isFullscreen ? "×" : "⛶"}
+          </button>
         </div>
       )}
       <div
@@ -932,17 +996,6 @@ export function Minimap({
           lastPointerRef.current = null;
           setHoveredEntity(null);
         }}
-        onWheel={(event) => {
-          if (!isFullscreen) return;
-          event.preventDefault();
-
-          const rect = event.currentTarget.getBoundingClientRect();
-          const targetX = event.clientX - rect.left;
-          const targetY = event.clientY - rect.top;
-
-          const zoomFactor = event.deltaY < 0 ? MINIMAP_MOUSE_ZOOM_FACTOR : 1 / MINIMAP_MOUSE_ZOOM_FACTOR;
-          handleZoom(targetX, targetY, zoomFactor);
-        }}
       >
         {!loading && !error && (
           <div
@@ -957,65 +1010,57 @@ export function Minimap({
             {filters}
           </div>
         )}
-        {isFullscreen && (
+        {!loading && !error && (
           <div
-            className="absolute hidden md:flex right-2 top-2 z-20 flex items-center gap-2"
+            className="absolute hidden md:flex right-2 top-2 z-20 items-center gap-2"
             onPointerDown={(e) => e.stopPropagation()}
             onPointerMove={(e) => {
               e.stopPropagation();
               setHoveredEntity(null);
             }}
           >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".aoe2record,.zip"
-              className="sr-only"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  onOpenFile(file);
-                }
-              }}
-            />
+            {isFullscreen && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".aoe2record,.zip"
+                  className="sr-only"
+                  tabIndex={-1}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      onOpenFile(file);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+                  onClick={() => {
+                    setIsPlaying(false);
+                    fileInputRef.current?.click();
+                  }}
+                  title="Open .aoe2record file"
+                >
+                  📁
+                </button>
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+                  onClick={() => {
+                    toggleFullscreen(false);
+                    onShowUrlInput();
+                  }}
+                  title="Load replay from URL"
+                >
+                  🔗
+                </button>
+              </>
+            )}
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
-              onClick={() => {
-                setIsPlaying(false);
-                fileInputRef.current?.click();
-              }}
-              title="Open .aoe2record file"
-            >
-              📁
-            </button>
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
-              onClick={() => {
-                toggleFullscreen(false);
-                onShowUrlInput();
-              }}
-              title="Load replay from URL"
-            >
-              🔗
-            </button>
-          </div>
-        )}
-        {!loading && !error && replay && (
-          <div
-            className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9"
-            onPointerDown={(e) => e.stopPropagation()}
-            onDoubleClick={(e) => e.stopPropagation()}
-            onPointerMove={(e) => {
-              e.stopPropagation();
-              setHoveredEntity(null);
-            }}
-          >
-            <button
-              type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
-              tabIndex={-1}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFullscreen();
@@ -1024,50 +1069,75 @@ export function Minimap({
             >
               {isFullscreen ? "×" : "⛶"}
             </button>
-            <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
+          </div>
+        )}
+        {!loading && !error && replay && (
+          <>
+            <div
+              className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9 md:w-auto"
+              onPointerDown={(e) => e.stopPropagation()}
+              onDoubleClick={(e) => e.stopPropagation()}
+              onPointerMove={(e) => {
+                e.stopPropagation();
+                setHoveredEntity(null);
+              }}
+            >
               <button
                 type="button"
-                className="flex h-9 items-center justify-center rounded-t-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                className="flex h-9 items-center justify-center pointer-events-auto w-full px-0 md:px-3 rounded-xl border border-white/10 bg-white/10 text-xl md:text-sm font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none whitespace-nowrap"
                 tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
-                  const canvas = canvasRef.current;
-                  if (!canvas) return;
-                  const rect = canvas.getBoundingClientRect();
-                  handleZoom(rect.width / 2, rect.height / 2, MINIMAP_ZOOM_FACTOR);
+                  toggleFullscreen(false);
+                  jumpToTimeline();
                 }}
+                title="Jump to timeline position"
               >
-                +
-              </button>
-              <button
-                type="button"
-                className="flex h-9 items-center justify-center rounded-b-xl transition bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
-                tabIndex={-1}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const canvas = canvasRef.current;
-                  if (!canvas) return;
-                  const rect = canvas.getBoundingClientRect();
-                  handleZoom(rect.width / 2, rect.height / 2, 1 / MINIMAP_ZOOM_FACTOR);
-                }}
-              >
-                -
+                <span className="md:hidden">▾</span>
+                <span className="hidden md:inline">Timeline</span>
               </button>
             </div>
-            <button
-              type="button"
-              className="flex h-9 items-center justify-center pointer-events-auto w-full rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none"
-              tabIndex={-1}
-              onClick={(e) => {
+            <div
+              className="absolute right-1 md:right-2 bottom-2 z-10 flex flex-col gap-2 w-9"
+              onPointerDown={(e) => e.stopPropagation()}
+              onDoubleClick={(e) => e.stopPropagation()}
+              onPointerMove={(e) => {
                 e.stopPropagation();
-                toggleFullscreen(false);
-                jumpToTimeline();
+                setHoveredEntity(null);
               }}
-              title="Jump to timeline position"
             >
-              ▾
-            </button>
-          </div>
+              <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
+                <button
+                  type="button"
+                  className="flex h-9 items-center justify-center rounded-t-xl transition bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                  tabIndex={-1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const canvas = canvasRef.current;
+                    if (!canvas) return;
+                    const rect = canvas.getBoundingClientRect();
+                    handleZoom(rect.width / 2, rect.height / 2, MINIMAP_ZOOM_FACTOR);
+                  }}
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  className="flex h-9 items-center justify-center rounded-b-xl transition bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                  tabIndex={-1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const canvas = canvasRef.current;
+                    if (!canvas) return;
+                    const rect = canvas.getBoundingClientRect();
+                    handleZoom(rect.width / 2, rect.height / 2, 1 / MINIMAP_ZOOM_FACTOR);
+                  }}
+                >
+                  -
+                </button>
+              </div>
+            </div>
+          </>
         )}
         <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
 
