@@ -33,7 +33,7 @@ const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 1;
 const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 2;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
 
-const MINIMAP_TERRAIN_ELEVATION_STEP = 3;
+const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
 const MINIMAP_TERRAIN_ALPHA = 1;
 const BASE_TERRAIN_SCALE = 40;
 
@@ -341,43 +341,6 @@ export function Minimap({
       return next;
     });
   }, [isMobile, mapInfo, matchInfo, mapPan, clampPan]);
-
-  // Focus trap for fullscreen mode to prevent focus on background content
-  useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-
-      const container = mapContainerRef.current?.parentElement;
-      if (!container) return;
-
-      const focusableSelectors = 'button, select, input, [tabindex]:not([tabindex="-1"])';
-      const focusableElements = Array.from(
-        container.querySelectorAll(focusableSelectors)
-      ) as HTMLElement[];
-
-      if (focusableElements.length === 0) return;
-
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstElement) {
-          lastElement.focus();
-          e.preventDefault();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          firstElement.focus();
-          e.preventDefault();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFullscreen]);
 
   // Focus play button when entering fullscreen
   useEffect(() => {
