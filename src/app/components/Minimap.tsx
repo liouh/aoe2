@@ -170,7 +170,7 @@ export function Minimap({
   }, [players, getPlayerColor]);
 
   const minimapViewOptions: SelectOption<string>[] = [
-    { id: "resources", label: "Map resources" },
+    { id: "resources", label: "Resources" },
     { id: "icons", label: "Building icons" },
     { id: "footprints", label: "Building outlines" },
     { id: "moves", label: "Unit movements" },
