@@ -13,8 +13,8 @@ export type TimelineEvent = {
   raw: Record<string, unknown>;
 };
 
-import { determineStartingLocations } from "./tcPlacement";
 import { getBuildingName } from "./entityNames";
+import { isBuildingId } from "./buildingFootprints";
 
 export type PlayerSummary = {
   id: number;
@@ -215,8 +215,42 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   const events: TimelineEvent[] = [];
-
   const players = summarizePlayers(summary, replay);
+
+  // Process initial object instances if available
+  const zheader = replayRecord.zheader as any;
+  const initialMap = zheader?.initial;
+  // Account for both Map and plain object access
+  const initialInstances = (typeof initialMap?.get === "function"
+    ? initialMap.get("initial_object_instances")
+    : (initialMap as any)?.initial_object_instances) as any[];
+
+  if (initialInstances) {
+    initialInstances.forEach((obj, idx) => {
+      // Skip Gaia (player 0) for now
+      if (obj.player_id === 0) return;
+
+      const isBuilding = isBuildingId(obj.object_type_id);
+      if (!isBuilding) return;
+
+      // Deduplicate: There are 4 pieces for the starting Town Center.
+      // If we already added an event for this specific Town Center, skip the duplicates.
+      const isTC = getBuildingName(obj.object_type_id).includes("Town Center");
+      if (isTC && obj.object_type_id !== 109) return;
+
+      events.push({
+        id: `initial-${obj.object_id ?? idx}`,
+        time: 0,
+        playerId: obj.player_id,
+        type: "Build",
+        category: "build",
+        x: obj.x,
+        y: obj.y,
+        buildingTypeId: obj.object_type_id,
+        raw: { ...obj, isInitial: true },
+      });
+    });
+  }
   if (operations) {
     // First pass: identify unique player IDs in events to handle mismatches
     const rawEventPlayerIds = new Set<number>();
@@ -345,9 +379,7 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     });
 
     const sortedEvents = events.sort((a, b) => a.time - b.time);
-    const startingEvents = determineStartingLocations(players, sortedEvents);
-
-    return [...startingEvents, ...sortedEvents].sort((a, b) => a.time - b.time);
+    return sortedEvents;
   }
 
   return events;

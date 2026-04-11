@@ -1255,6 +1255,10 @@ export function parse_rec_summary(buffer) {
     const ret = wasm.parse_rec_summary(buffer);
     return SavegameSummary.__wrap(ret);
 }
+export function __wbg_Error_8c4e43fe74559d73(arg0, arg1) {
+    const ret = Error(getStringFromWasm0(arg0, arg1));
+    return ret;
+}
 export function __wbg_Number_04624de7d0e8332d(arg0) {
     const ret = Number(arg0);
     return ret;
@@ -1265,6 +1269,10 @@ export function __wbg___wbindgen_debug_string_0bc8482c6e3508ae(arg0, arg1) {
     const len1 = WASM_VECTOR_LEN;
     getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
     getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+}
+export function __wbg___wbindgen_is_string_cd444516edc5b180(arg0) {
+    const ret = typeof(arg0) === 'string';
+    return ret;
 }
 export function __wbg___wbindgen_string_get_72fb696202c56729(arg0, arg1) {
     const obj = arg1;
@@ -1304,6 +1312,10 @@ export function __wbg_new_8a6f238a6ece86ea() {
     const ret = new Error();
     return ret;
 }
+export function __wbg_new_dca287b076112a51() {
+    const ret = new Map();
+    return ret;
+}
 export function __wbg_new_dd2b680c8bf6ae29(arg0) {
     const ret = new Uint8Array(arg0);
     return ret;
@@ -1318,6 +1330,10 @@ export function __wbg_player_unwrap(arg0) {
 }
 export function __wbg_prototypesetcall_bdcdcc5842e4d77d(arg0, arg1, arg2) {
     Uint8Array.prototype.set.call(getArrayU8FromWasm0(arg0, arg1), arg2);
+}
+export function __wbg_set_1eb0999cf5d27fc8(arg0, arg1, arg2) {
+    const ret = arg0.set(arg1, arg2);
+    return ret;
 }
 export function __wbg_set_3f1d0b984ed272ed(arg0, arg1, arg2) {
     arg0[arg1] = arg2;

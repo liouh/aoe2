@@ -243,3 +243,7 @@ export const getBuildingFootprint = (
   if (!FOOTPRINTS[buildingTypeId]) console.log(`Missing footprint for ${buildingTypeId}`);
   return FOOTPRINTS[buildingTypeId] ?? { w: 1, h: 1 };
 };
+
+export const isBuildingId = (id: number): boolean => {
+  return id in FOOTPRINTS;
+};
