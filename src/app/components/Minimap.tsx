@@ -676,7 +676,7 @@ export function Minimap({
         }
       });
 
-      if (showBuildings && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
+      if (showBuildingOutlines && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
         const anchorKey = hoveredEntity.anchorKey;
         const footprint = anchorToEvent.get(anchorKey) ? getBuildingFootprint(anchorToEvent.get(anchorKey)!.buildingTypeId) : null;
         if (footprint) {
@@ -954,7 +954,7 @@ export function Minimap({
 
             const anchorKey = tileToAnchor.get(tileKey);
             const building = anchorKey ? buildings.get(anchorKey) : null;
-            if (building) {
+            if (building && showBuildingOutlines) {
               setHoveredEntity({
                 name: getBuildingName(building.buildingTypeId),
                 playerId: building.playerId,
