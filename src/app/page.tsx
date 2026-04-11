@@ -13,6 +13,7 @@ import {
   extractPlayerStats,
   extractMatchInfo,
   summarizePlayers,
+  type MapResourceType,
   type MatchInfo,
   type TimelineEvent,
 } from "@/lib/replayProcessor";
@@ -75,6 +76,7 @@ export default function Home() {
   const [summary, setSummary] = useState<any>(null);
   const [matchInfo, setMatchInfo] = useState<MatchInfo | null>(null);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [mapResources, setMapResources] = useState<Record<string, MapResourceType>>({});
   const [duration, setDuration] = useState(0);
   const [selectedTime, setSelectedTime] = useState(0);
   const selectedTimeRef = useRef(selectedTime);
@@ -94,6 +96,7 @@ export default function Home() {
     setSummary(null);
     setMatchInfo(null);
     setEvents([]);
+    setMapResources({});
     setDuration(0);
     resetGameState();
   };
@@ -178,7 +181,7 @@ export default function Home() {
       await new Promise(resolve => setTimeout(resolve, 50));
 
       const timeline = buildTimeline(parsed, parsedSummary);
-      const gameDuration = determineDuration(parsedSummary, timeline);
+      const gameDuration = determineDuration(parsedSummary, timeline.events);
       const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
 
       setLoadingStep(2);
@@ -187,7 +190,8 @@ export default function Home() {
       setReplay(parsed);
       setSummary(parsedSummary);
       setMatchInfo(extractedInfo);
-      setEvents(timeline);
+      setEvents(timeline.events);
+      setMapResources(timeline.mapResources);
       setDuration(gameDuration);
 
       resetGameState();
@@ -369,6 +373,7 @@ export default function Home() {
             replay={replay}
             matchInfo={matchInfo}
             events={events}
+            mapResources={mapResources}
             duration={duration}
             selectedTime={selectedTime}
             setSelectedTime={setSelectedTime}

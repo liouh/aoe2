@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
+import { type MapResourceType, type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
 import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
+
+const LOADING_STEPS = [
+  "Loading replay...",
+  "Loading timeline...",
+  "Loading viewer..."
+];
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
@@ -37,16 +43,18 @@ const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
 const MINIMAP_TERRAIN_ALPHA = 1;
 const BASE_TERRAIN_SCALE = 40;
 
-const LOADING_STEPS = [
-  "Loading replay...",
-  "Loading timeline...",
-  "Loading viewer..."
-];
+const MINIMAP_RESOURCE_COLORS = {
+  gold: "#ffd700",
+  stone: "#91a1ad",
+  forage: "#c8d65a",
+  relic: "#ffffff",
+} as const;
 
 interface MinimapProps {
   replay: any;
   matchInfo: MatchInfo | null;
   events: TimelineEvent[];
+  mapResources: Record<string, MapResourceType>;
   duration: number;
   selectedTime: number;
   setSelectedTime: (time: number | ((prev: number) => number)) => void;
@@ -81,6 +89,7 @@ export function Minimap({
   replay,
   matchInfo,
   events,
+  mapResources,
   duration,
   selectedTime,
   setSelectedTime,
@@ -161,6 +170,7 @@ export function Minimap({
   }, [players, getPlayerColor]);
 
   const minimapViewOptions: SelectOption<string>[] = [
+    { id: "resources", label: "Map resources" },
     { id: "icons", label: "Building icons" },
     { id: "footprints", label: "Building outlines" },
     { id: "moves", label: "Unit movements" },
@@ -211,6 +221,7 @@ export function Minimap({
   const showBuildingOutlines = minimapViewFilters.includes("footprints");
   const showBuildingIcons = minimapViewFilters.includes("icons");
   const showUnits = minimapViewFilters.includes("moves");
+  const showResources = minimapViewFilters.includes("resources");
   const showBuildings = showBuildingOutlines || showBuildingIcons;
 
   // Reset internal state when a new replay is loaded
@@ -218,7 +229,7 @@ export function Minimap({
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["footprints", "icons", "moves"]);
+    setMinimapViewFilters(["footprints", "icons", "moves", "resources"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -493,7 +504,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -532,6 +543,12 @@ export function Minimap({
               const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
               const terrainType = tile?.terrain_type ?? 14;
               let color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+
+              const resourceKey = `${x},${y}`;
+              const resource = mapResources[resourceKey];
+              if (showResources && resource) {
+                color = MINIMAP_RESOURCE_COLORS[resource];
+              }
 
               if (tile?.elevation !== undefined) {
                 color = shadeColor(color, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
@@ -833,6 +850,7 @@ export function Minimap({
     showBuildingIcons,
     showBuildings,
     showUnits,
+    showResources,
     moveEvents,
     hoveredEntity,
     selectedPlayerIds,

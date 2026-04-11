@@ -1,9 +1,11 @@
+export type TimelineEventCategory = "build" | "move" | "research" | "train" | "autoscout" | "market" | "other";
+
 export type TimelineEvent = {
   id: string;
   time: number;
   playerId?: number;
   type: string;
-  category: "build" | "move" | "research" | "train" | "autoscout" | "market" | "other";
+  category: TimelineEventCategory;
   x?: number;
   y?: number;
   unitId?: string | number;
@@ -13,8 +15,12 @@ export type TimelineEvent = {
   raw: Record<string, unknown>;
 };
 
-import { getBuildingName } from "./entityNames";
+export type MapResourceType = "gold" | "stone" | "forage" | "relic";
+
+import { getEntityName, getBuildingName } from "./entityNames";
 import { isBuildingId } from "./buildingFootprints";
+
+const DEBUG_GAIA = false;
 
 export type PlayerSummary = {
   id: number;
@@ -53,7 +59,7 @@ const AGE_TECH_DURATIONS: Record<string, number> = {
   Imperial: 190,
 };
 
-const classifyEvent = (type: string, isAi?: boolean) => {
+const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
   switch (type) {
     case "Research":
       return "research";
@@ -208,8 +214,8 @@ const parseActionData = (type: string, data: number[]) => {
   return undefined;
 };
 
-export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] => {
-  if (!replay) return [];
+export const buildTimeline = (replay: unknown, summary?: any): { events: TimelineEvent[]; mapResources: Record<string, MapResourceType> } => {
+  if (!replay) return { events: [], mapResources: {} };
   const replayRecord = replay as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
     ? (replayRecord.operations as Record<string, unknown>[])
@@ -225,10 +231,37 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
     ? initialMap.get("initial_object_instances")
     : (initialMap as any)?.initial_object_instances) as any[];
 
+  const mapResources: Record<string, MapResourceType> = {};
+
   if (initialInstances) {
+    const gaiaCombinations: Record<string, number> = {};
+
     initialInstances.forEach((obj, idx) => {
-      // Skip Gaia (player 0) for now
-      if (obj.player_id === 0) return;
+      // Process Gaia (player 0) objects for analysis
+      if (obj.player_id === 0) {
+        const typeName = getEntityName(obj.object_type_id) ?? `Unknown (${obj.object_type_id})`;
+
+        if (DEBUG_GAIA) {
+          const comboKey = `${typeName} (Type ${obj.object_type_id}, Kind ${obj.object_kind})`;
+          gaiaCombinations[comboKey] = (gaiaCombinations[comboKey] || 0) + 1;
+        }
+
+        // Track resource locations
+        if (typeName.includes("Gold Mine")) {
+          mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "gold";
+        } else if (typeName.includes("Stone Mine")) {
+          mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "stone";
+        } else if (typeName === "Relic") {
+          mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "relic";
+        } else if (
+          typeName.includes("Forage Bush") ||
+          typeName.includes("Fruit Bush") ||
+          typeName.includes("Pineapple Bush")
+        ) {
+          mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
+        }
+        return;
+      }
 
       const isBuilding = isBuildingId(obj.object_type_id);
       if (!isBuilding) return;
@@ -250,7 +283,12 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
         raw: { ...obj, isInitial: true },
       });
     });
+
+    if (DEBUG_GAIA) {
+      console.log("Gaia Resource Combinations:", gaiaCombinations);
+    }
   }
+
   if (operations) {
     // First pass: identify unique player IDs in events to handle mismatches
     const rawEventPlayerIds = new Set<number>();
@@ -377,12 +415,12 @@ export const buildTimeline = (replay: unknown, summary?: any): TimelineEvent[] =
         raw: { ...(payload ?? {}), ...data },
       });
     });
-
-    const sortedEvents = events.sort((a, b) => a.time - b.time);
-    return sortedEvents;
   }
 
-  return events;
+  return {
+    events: events.sort((a, b) => a.time - b.time),
+    mapResources,
+  };
 };
 
 export const summarizePlayers = (
