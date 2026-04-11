@@ -28,8 +28,9 @@ const MINIMAP_EMOJI_ALPHA = 0.8;
 const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.8;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 
+const MINIMAP_BUILDING_ALPHA = 0.8;
 const MINIMAP_BUILDING_OUTLINE_WIDTH = 0.5;
-const MINIMAP_BUILDING_OUTLINE_ALPHA = 0.7;
+const MINIMAP_BUILDING_OUTLINE_ALPHA = 0.2;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
 
 const MINIMAP_UNIT_ALPHA = 1;
@@ -41,6 +42,7 @@ const MINIMAP_UNIT_FADE_SECONDS = 50;
 
 const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
 const MINIMAP_TERRAIN_ALPHA = 1;
+const MINIMAP_TERRAIN_OFF_ALPHA = 0.1;
 const BASE_TERRAIN_SCALE = 40;
 
 const MINIMAP_RESOURCE_COLORS = {
@@ -107,7 +109,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["footprints", "icons", "moves"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -170,9 +172,10 @@ export function Minimap({
   }, [players, getPlayerColor]);
 
   const minimapViewOptions: SelectOption<string>[] = [
+    { id: "terrain", label: "Terrain" },
     { id: "resources", label: "Resources" },
-    { id: "icons", label: "Building icons" },
     { id: "footprints", label: "Building outlines" },
+    { id: "icons", label: "Building icons" },
     { id: "moves", label: "Unit movements" },
   ];
 
@@ -222,6 +225,7 @@ export function Minimap({
   const showBuildingIcons = minimapViewFilters.includes("icons");
   const showUnits = minimapViewFilters.includes("moves");
   const showResources = minimapViewFilters.includes("resources");
+  const showTerrain = minimapViewFilters.includes("terrain");
   const showBuildings = showBuildingOutlines || showBuildingIcons;
 
   // Reset internal state when a new replay is loaded
@@ -229,7 +233,7 @@ export function Minimap({
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["footprints", "icons", "moves", "resources"]);
+    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "resources"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -504,7 +508,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showTerrain}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -537,22 +541,22 @@ export function Minimap({
 
         const tiles = mapInfo?.tiles;
         if (tiles && tiles.length >= sizeX * sizeY) {
-          terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
               const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
               const terrainType = tile?.terrain_type ?? 14;
-              let color = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+              let terrainColor = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+
+              if (tile?.elevation !== undefined) {
+                terrainColor = shadeColor(terrainColor, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
+              }
 
               const resourceKey = `${x},${y}`;
               const resource = mapResources[resourceKey];
-              if (showResources && resource) {
-                color = MINIMAP_RESOURCE_COLORS[resource];
-              }
+              const isResource = !!(showResources && resource);
 
-              if (tile?.elevation !== undefined) {
-                color = shadeColor(color, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
-              }
+              const color = isResource ? MINIMAP_RESOURCE_COLORS[resource] : terrainColor;
+              terrainContext.globalAlpha = isResource ? 1.0 : (showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA);
 
               const p1 = toOffscreen(x, y);
               const p2 = toOffscreen(x + 1, y);
@@ -651,8 +655,11 @@ export function Minimap({
 
       // 1. Fill the shape with player's color
       if (showBuildingOutlines) {
+        context.save();
+        context.globalAlpha = MINIMAP_BUILDING_ALPHA;
         context.fillStyle = getPlayerColor(event.playerId);
         context.fill();
+        context.restore();
       }
 
       // 2. Add the thin building outline (conditional on zoom)
@@ -851,6 +858,7 @@ export function Minimap({
     showBuildings,
     showUnits,
     showResources,
+    showTerrain,
     moveEvents,
     hoveredEntity,
     selectedPlayerIds,
