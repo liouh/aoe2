@@ -32,7 +32,7 @@ export function Header({
               <img
                 src="icon.png"
                 alt="Home"
-                className="w-5 h-5 lg:w-8 lg:h-8 opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-180 group-hover:grayscale"
+                className="w-5 h-5 lg:w-8 lg:h-8 opacity-80 group-hover:opacity-100 transition-all duration-150 group-hover:rotate-180 group-hover:grayscale"
               />
             </a>
             <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
