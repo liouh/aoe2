@@ -1018,7 +1018,7 @@ export function Minimap({
                 setHoveredEntity(null);
               } else {
                 setHoveredEntity({
-                  name: getBuildingName(building.buildingTypeId) + (DEBUG ? ` (${building.buildingTypeId})` : ""),
+                  name: getBuildingName(building.buildingTypeId) + (DEBUG ? ` | ${building.buildingTypeId}: (${building.x?.toFixed(1)}, ${building.y?.toFixed(1)})` : ""),
                   playerId: building.playerId,
                   type: "building",
                   anchorKey,

@@ -399,6 +399,35 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
         return;
       }
 
+      // Expand horizontal/vertical gate foundations into 4 discrete tiles
+      const horizontalGateFoundations = [800, 665, 666];
+      const verticalGateFoundations = [804, 673, 674];
+
+      if (actionType === "Build" && position && buildingTypeId && (horizontalGateFoundations.includes(buildingTypeId) || verticalGateFoundations.includes(buildingTypeId))) {
+        const isHorizontal = horizontalGateFoundations.includes(buildingTypeId);
+        const offsets = isHorizontal
+          ? [[-2, -1], [-1, 0], [0, 1], [1, 2]]
+          : [[-2, 1], [-1, 0], [0, -1], [1, -2]];
+
+        offsets.forEach(([dx, dy], tileIdx) => {
+          events.push({
+            id: `${actionType}-${playerId}-${index}-${tileIdx}`,
+            time,
+            playerId,
+            type: actionType,
+            category,
+            x: position!.x + dx,
+            y: position!.y + dy,
+            unitId,
+            unitTypeId,
+            buildingTypeId,
+            techId,
+            raw: { ...(payload ?? {}), ...data, gateTileIdx: tileIdx },
+          });
+        });
+        return;
+      }
+
       const id = `${actionType}-${playerId}-${index}`;
       events.push({
         id,
