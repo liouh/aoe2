@@ -878,7 +878,7 @@ export function Minimap({
     >
       {!loading && !error && (
         <div className="flex md:hidden items-center justify-between gap-2 px-1">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2">
             {filters}
           </div>
           <button
@@ -895,7 +895,7 @@ export function Minimap({
         </div>
       )}
       <div
-        className={`relative aspect-[2/1] w-full ${isFullscreen ? "max-h-screen mx-auto overflow-hidden" : ""
+        className={`relative aspect-[2/1] w-full ${isFullscreen ? "max-h-screen mx-auto" : ""
           }`}
         ref={mapContainerRef}
         style={{
@@ -986,6 +986,10 @@ export function Minimap({
           setHoveredEntity(null);
         }}
       >
+        <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "" : "rounded-2xl"}`}>
+          <canvas ref={canvasRef} className="h-full w-full" />
+        </div>
+
         {!loading && !error && (
           <div
             className="absolute hidden md:flex left-2 top-2 z-20 items-center gap-2"
@@ -1128,7 +1132,6 @@ export function Minimap({
             </div>
           </>
         )}
-        <canvas ref={canvasRef} className="h-full w-full rounded-2xl" />
 
         {loading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl">
