@@ -20,7 +20,7 @@ export type MapResourceType = "gold" | "stone" | "forage" | "relic";
 import { getEntityName, getBuildingName } from "./entityNames";
 import { isBuildingId } from "./buildingFootprints";
 
-const DEBUG_GAIA = false;
+import { DEBUG } from "./debug";
 
 export type PlayerSummary = {
   id: number;
@@ -241,7 +241,7 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       if (obj.player_id === 0) {
         const typeName = getEntityName(obj.object_type_id) ?? `Unknown (${obj.object_type_id})`;
 
-        if (DEBUG_GAIA) {
+        if (DEBUG) {
           const comboKey = `${typeName} (Type ${obj.object_type_id}, Kind ${obj.object_kind})`;
           gaiaCombinations[comboKey] = (gaiaCombinations[comboKey] || 0) + 1;
         }
@@ -284,7 +284,7 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       });
     });
 
-    if (DEBUG_GAIA) {
+    if (DEBUG) {
       console.log("Gaia Resource Combinations:", gaiaCombinations);
     }
   }
