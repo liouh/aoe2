@@ -7,6 +7,7 @@ import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint, isFarmId } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
+import { DEBUG } from "@/lib/debug";
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -1017,7 +1018,7 @@ export function Minimap({
                 setHoveredEntity(null);
               } else {
                 setHoveredEntity({
-                  name: getBuildingName(building.buildingTypeId),
+                  name: getBuildingName(building.buildingTypeId) + (DEBUG ? ` (${building.buildingTypeId})` : ""),
                   playerId: building.playerId,
                   type: "building",
                   anchorKey,
