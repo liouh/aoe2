@@ -403,28 +403,70 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       const horizontalGateFoundations = [800, 665, 666];
       const verticalGateFoundations = [804, 673, 674];
 
+      const gateFoundationsToOpen: Record<number, number> = {
+        800: 798, // Palisade Horizontal
+        804: 802, // Palisade Vertical
+        665: 661, // Stone Horizontal
+        673: 669, // Stone Vertical
+        666: 662, // Fortified Horizontal
+        674: 670, // Fortified Vertical
+      };
+
       if (actionType === "Build" && position && buildingTypeId && (horizontalGateFoundations.includes(buildingTypeId) || verticalGateFoundations.includes(buildingTypeId))) {
         const isHorizontal = horizontalGateFoundations.includes(buildingTypeId);
         const offsets = isHorizontal
           ? [[-2, -1], [-1, 0], [0, 1], [1, 2]]
           : [[-2, 1], [-1, 0], [0, -1], [1, -2]];
 
-        offsets.forEach(([dx, dy], tileIdx) => {
-          events.push({
-            id: `${actionType}-${playerId}-${index}-${tileIdx}`,
-            time,
-            playerId,
-            type: actionType,
-            category,
-            x: position!.x + dx,
-            y: position!.y + dy,
-            unitId,
-            unitTypeId,
-            buildingTypeId,
-            techId,
-            raw: { ...(payload ?? {}), ...data, gateTileIdx: tileIdx },
-          });
+        // 1. First Outer Foundation
+        events.push({
+          id: `${actionType}-${playerId}-${index}-0`,
+          time,
+          playerId,
+          type: actionType,
+          category,
+          x: position!.x + offsets[0][0],
+          y: position!.y + offsets[0][1],
+          unitId,
+          unitTypeId,
+          buildingTypeId,
+          techId,
+          raw: { ...(payload ?? {}), ...data },
         });
+
+        // 2. Middle Open Gate (one building for segments 1 and 2)
+        const openId = gateFoundationsToOpen[buildingTypeId];
+        events.push({
+          id: `${actionType}-${playerId}-${index}-middle`,
+          time,
+          playerId,
+          type: actionType,
+          category,
+          x: position!.x,
+          y: isHorizontal ? position!.y + 1 : position!.y,
+          unitId,
+          unitTypeId,
+          buildingTypeId: openId,
+          techId,
+          raw: { ...(payload ?? {}), ...data },
+        });
+
+        // 3. Second Outer Foundation
+        events.push({
+          id: `${actionType}-${playerId}-${index}-3`,
+          time,
+          playerId,
+          type: actionType,
+          category,
+          x: position!.x + offsets[3][0],
+          y: position!.y + offsets[3][1],
+          unitId,
+          unitTypeId,
+          buildingTypeId,
+          techId,
+          raw: { ...(payload ?? {}), ...data },
+        });
+
         return;
       }
 

@@ -111,18 +111,18 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   621: { w: 4, h: 4 }, // Town Center
   637: { w: 4, h: 4 }, // Temple of Heaven
   655: { w: 3, h: 3 }, // Mosque
-  659: { w: 1, h: 1 }, // Gate
-  660: { w: 1, h: 1 }, // Fortified Gate
-  661: { w: 1, h: 1 }, // Gate
-  662: { w: 1, h: 1 }, // Fortified Gate
+  659: { w: 2, h: 2 }, // Gate (Horizontal Closed)
+  660: { w: 2, h: 2 }, // Fortified Gate (Horizontal Closed)
+  661: { w: 2, h: 2 }, // Gate (Horizontal Open)
+  662: { w: 2, h: 2 }, // Fortified Gate (Horizontal Open)
   663: { w: 1, h: 1 }, // Gate
   664: { w: 1, h: 1 }, // Fortified Gate
   665: { w: 1, h: 1 }, // Gate
   666: { w: 1, h: 1 }, // Fortified Gate
-  667: { w: 1, h: 1 }, // Gate
-  668: { w: 1, h: 1 }, // Fortified Gate
-  669: { w: 1, h: 1 }, // Gate
-  670: { w: 1, h: 1 }, // Fortified Gate
+  667: { w: 2, h: 2 }, // Gate (Vertical Closed)
+  668: { w: 2, h: 2 }, // Fortified Gate (Vertical Closed)
+  669: { w: 2, h: 2 }, // Gate (Vertical Open)
+  670: { w: 2, h: 2 }, // Fortified Gate (Vertical Open)
   671: { w: 1, h: 1 }, // Gate
   672: { w: 1, h: 1 }, // Fortified Gate
   673: { w: 1, h: 1 }, // Gate
@@ -140,12 +140,12 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   794: { w: 1, h: 1 }, // Palisade Gate
   795: { w: 1, h: 1 }, // Palisade Gate
   796: { w: 1, h: 4 }, // Palisade Gate (Descending Foundation)
-  797: { w: 1, h: 1 }, // Palisade Gate
-  798: { w: 1, h: 1 }, // Palisade Gate
+  797: { w: 2, h: 2 }, // Palisade Gate (Horizontal Closed)
+  798: { w: 2, h: 2 }, // Palisade Gate (Horizontal Open)
   799: { w: 1, h: 1 }, // Palisade Gate
   800: { w: 1, h: 1 }, // Palisade Gate
-  801: { w: 1, h: 1 }, // Palisade Gate
-  802: { w: 1, h: 1 }, // Palisade Gate
+  801: { w: 2, h: 2 }, // Palisade Gate (Vertical Closed)
+  802: { w: 2, h: 2 }, // Palisade Gate (Vertical Open)
   803: { w: 1, h: 1 }, // Palisade Gate
   804: { w: 1, h: 1 }, // Palisade Gate
   805: { w: 3, h: 3 }, // Dock
