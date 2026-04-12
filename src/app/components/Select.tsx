@@ -159,8 +159,7 @@ export function Select<T extends string | number | undefined>({
                 <button
                   key={`${option.id}-${idx}`}
                   type="button"
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${selected ? "bg-white/20" : ""
-                    } ${highlighted ? "bg-white/10" : ""}`}
+                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
                   onClick={() => {
                     onSelect(option.id);
                     if (!multi) setIsOpen(false);

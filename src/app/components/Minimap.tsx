@@ -897,7 +897,7 @@ export function Minimap({
         </div>
       )}
       <div
-        className={`relative aspect-[2/1] w-full ${isFullscreen ? "max-h-screen mx-auto" : ""
+        className={`relative w-full ${isFullscreen ? "flex-1 min-h-0 mx-auto" : "aspect-[2/1]"
           }`}
         ref={mapContainerRef}
         style={{
