@@ -876,14 +876,16 @@ export function Minimap({
         }`}
       style={isFullscreen ? { border: "none", outline: "none", boxShadow: "none" } : {}}
     >
-      {!loading && !error && (
+      {(isFullscreen || (!loading && !error)) && (
         <div className="flex md:hidden items-center justify-between gap-2 px-1">
-          <div className="flex items-center gap-2">
-            {filters}
-          </div>
+          {!error && (
+            <div className="flex items-center gap-2">
+              {filters}
+            </div>
+          )}
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+            className="ml-auto flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
             onClick={(e) => {
               e.stopPropagation();
               toggleFullscreen();
@@ -1003,7 +1005,7 @@ export function Minimap({
             {filters}
           </div>
         )}
-        {!loading && !error && (
+        {!loading && (
           <div
             className="absolute hidden md:flex right-2 top-2 z-20 items-center gap-2"
             onPointerDown={(e) => e.stopPropagation()}
@@ -1051,17 +1053,19 @@ export function Minimap({
                 </button>
               </>
             )}
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFullscreen();
-              }}
-              title={isFullscreen ? "Exit full screen" : "Full screen"}
-            >
-              {isFullscreen ? "×" : "⛶"}
-            </button>
+            {!error && (
+              <button
+                type="button"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFullscreen();
+                }}
+                title={isFullscreen ? "Exit full screen" : "Full screen"}
+              >
+                {isFullscreen ? "×" : "⛶"}
+              </button>
+            )}
           </div>
         )}
         {!loading && !error && replay && (
@@ -1155,7 +1159,7 @@ export function Minimap({
         )}
 
         {error && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl">
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl">
             <div className="w-full max-w-lg px-10 flex flex-col items-center gap-4 text-center">
               <div className="space-y-1">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[color:var(--accent)]">
