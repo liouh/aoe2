@@ -24,6 +24,17 @@ export function Header({
       <div className="flex flex-wrap items-stretch justify-between gap-4">
         <div className="space-y-1">
           <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
+            <a
+              href="https://liouh.com/home/"
+              className="inline-flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-all group mr-3 align-middle -mt-1"
+              tabIndex={-1}
+            >
+              <img
+                src="icon.png"
+                alt="Home"
+                className="w-5 h-5 lg:w-8 lg:h-8 opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-180 group-hover:grayscale"
+              />
+            </a>
             <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
           </h1>
           <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg mb-3">
@@ -34,7 +45,7 @@ export function Header({
           {!showUrlInput ? (
             <>
               <label
-                className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all"
+                className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all"
                 onClick={() => setIsPlaying(false)}
               >
                 <span className="text-xl lg:text-2xl">📁</span>
@@ -54,7 +65,7 @@ export function Header({
               </label>
               <button
                 type="button"
-                className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-2xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all"
+                className="flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all"
                 onClick={() => {
                   setIsPlaying(false);
                   setShowUrlInput(true);

@@ -179,8 +179,8 @@ export function Minimap({
     { id: "relics", label: "Relics" },
     { id: "footprints", label: "Buildings" },
     { id: "farms", label: "▸ Farms & pastures" },
-    { id: "icons", label: "▸ Building icons" },
     { id: "landmark_icons", label: "▸ TC & castle markers" },
+    { id: "icons", label: "▸ Building icons" },
     { id: "moves", label: "Unit movements" },
   ];
 
