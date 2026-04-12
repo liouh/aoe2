@@ -111,7 +111,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "farms", "landmark_icons", "resources", "natural", "relics"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "farms", "landmark_icons", "resources", "relics"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -176,8 +176,7 @@ export function Minimap({
   const minimapViewOptions: SelectOption<string>[] = [
     { id: "terrain", label: "Terrain" },
     { id: "resources", label: "Resources" },
-    { id: "natural", label: "▸ Natural" },
-    { id: "relics", label: "▸ Relics" },
+    { id: "relics", label: "Relics" },
     { id: "footprints", label: "Buildings" },
     { id: "farms", label: "▸ Farms & pastures" },
     { id: "icons", label: "▸ Building icons" },
@@ -225,17 +224,8 @@ export function Minimap({
               } else {
                 next = next.filter(f => f !== "farms" && f !== "icons" && f !== "landmark_icons");
               }
-            } else if (id === "resources") {
-              if (isAdding) {
-                if (!next.includes("natural")) next.push("natural");
-                if (!next.includes("relics")) next.push("relics");
-              } else {
-                next = next.filter(f => f !== "natural" && f !== "relics");
-              }
             } else if ((id === "farms" || id === "icons" || id === "landmark_icons") && isAdding) {
               if (!next.includes("footprints")) next.push("footprints");
-            } else if ((id === "natural" || id === "relics") && isAdding) {
-              if (!next.includes("resources")) next.push("resources");
             }
 
             return next;
@@ -254,9 +244,8 @@ export function Minimap({
   const showLandmarkIcons = minimapViewFilters.includes("landmark_icons");
   const showFarms = minimapViewFilters.includes("farms");
   const showUnits = minimapViewFilters.includes("moves");
-  const showNaturalResources = minimapViewFilters.includes("natural");
+  const showResources = minimapViewFilters.includes("resources");
   const showRelics = minimapViewFilters.includes("relics");
-  const showResources = minimapViewFilters.includes("resources") || showNaturalResources || showRelics;
   const showTerrain = minimapViewFilters.includes("terrain");
   const showBuildings = showBuildingOutlines || showBuildingIcons || showFarms || showLandmarkIcons;
 
@@ -265,7 +254,7 @@ export function Minimap({
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "resources", "farms", "landmark_icons", "natural", "relics"]);
+    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "resources", "farms", "landmark_icons", "relics"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -540,7 +529,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showNaturalResources},${showRelics},${showTerrain}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showRelics},${showTerrain}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -587,7 +576,7 @@ export function Minimap({
               const resource = mapResources[resourceKey];
               const isResource = resource && (
                 (resource === "relic" && showRelics) ||
-                (resource !== "relic" && showNaturalResources)
+                (resource !== "relic" && showResources)
               );
 
               const color = isResource ? MINIMAP_RESOURCE_COLORS[resource] : terrainColor;
@@ -903,9 +892,8 @@ export function Minimap({
     showBuildings,
     showFarms,
     showUnits,
-    showNaturalResources,
-    showRelics,
     showResources,
+    showRelics,
     showTerrain,
     moveEvents,
     hoveredEntity,

@@ -24,7 +24,7 @@ export function Header({
       <div className="flex flex-wrap items-stretch justify-between gap-4">
         <div className="space-y-1">
           <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
-            <span className="text-[color:var(--muted)] font-black">AoE2</span> Replay Viewer
+            <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
           </h1>
           <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg mb-3">
             In-browser minimap playback + key stats + build timelines
