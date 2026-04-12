@@ -81,10 +81,10 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   482: { w: 4, h: 4 }, // Town Center
   483: { w: 4, h: 4 }, // Town Center
   484: { w: 4, h: 4 }, // Town Center
-  487: { w: 1, h: 1 }, // Gate
-  488: { w: 1, h: 1 }, // Fortified Gate
-  490: { w: 1, h: 1 }, // Gate
-  491: { w: 1, h: 1 }, // Fortified Gate
+  487: { w: 4, h: 1 }, // Gate (Ascending Foundation)
+  488: { w: 4, h: 1 }, // Fortified Gate (Ascending Foundation)
+  490: { w: 1, h: 4 }, // Gate (Descending Foundation)
+  491: { w: 1, h: 4 }, // Fortified Gate (Descending Foundation)
   498: { w: 3, h: 3 }, // Barracks
   562: { w: 2, h: 2 }, // Lumber Camp
   563: { w: 2, h: 2 }, // Lumber Camp
@@ -135,11 +135,11 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   789: { w: 2, h: 1 }, // Palisade Gate
   790: { w: 1, h: 1 }, // Palisade Gate
   791: { w: 1, h: 1 }, // Palisade Gate
-  792: { w: 1, h: 1 }, // Palisade Gate
+  792: { w: 4, h: 1 }, // Palisade Gate (Ascending Foundation)
   793: { w: 1, h: 2 }, // Palisade Gate
   794: { w: 1, h: 1 }, // Palisade Gate
   795: { w: 1, h: 1 }, // Palisade Gate
-  796: { w: 1, h: 1 }, // Palisade Gate
+  796: { w: 1, h: 4 }, // Palisade Gate (Descending Foundation)
   797: { w: 1, h: 1 }, // Palisade Gate
   798: { w: 1, h: 1 }, // Palisade Gate
   799: { w: 1, h: 1 }, // Palisade Gate
