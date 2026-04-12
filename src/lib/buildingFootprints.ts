@@ -22,12 +22,12 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   56: { w: 3, h: 3 }, // Fisherman, Male
   63: { w: 2, h: 1 }, // Fortified Gate, Ascending Closed
   64: { w: 2, h: 1 }, // Gate, Ascending Closed
-  67: { w: 1, h: 1 }, // Fortified Gate, Ascending Open
+  67: { w: 2, h: 1 }, // Fortified Gate, Ascending Open
   68: { w: 2, h: 2 }, // Mill, Dark Age
   70: { w: 2, h: 2 }, // House, Dark Age
   71: { w: 4, h: 4 }, // Town Center, Feudal Age
   72: { w: 1, h: 1 }, // Palisade Wall
-  78: { w: 1, h: 1 }, // Gate, Ascending Open
+  78: { w: 2, h: 1 }, // Gate, Ascending Open
   79: { w: 1, h: 1 }, // Watch Tower
   80: { w: 1, h: 1 }, // Fortified Gate, Ascending Endpieces
   81: { w: 1, h: 1 }, // Gate, Ascending Endpieces
@@ -37,8 +37,8 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   86: { w: 3, h: 3 }, // Stable, Castle Age
   87: { w: 3, h: 3 }, // Archery Range, Feudal Age
   88: { w: 1, h: 2 }, // Gate, Descending Closed
-  90: { w: 1, h: 1 }, // Fortified Gate, Descending Open
-  91: { w: 1, h: 1 }, // Gate, Descending Open
+  90: { w: 1, h: 2 }, // Fortified Gate, Descending Open
+  91: { w: 1, h: 2 }, // Gate, Descending Open
   92: { w: 1, h: 1 }, // Fortified Gate, Descending Endpieces
   95: { w: 1, h: 1 }, // Gate, Descending Endpieces
   101: { w: 3, h: 3 }, // Stable, Feudal Age
@@ -133,11 +133,11 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   785: { w: 1, h: 1 }, // Sea Tower
   788: { w: 1, h: 1 }, // Sea Wall
   789: { w: 2, h: 1 }, // Palisade Gate, Ascending Closed
-  790: { w: 1, h: 1 }, // Palisade Gate, Ascending Open
+  790: { w: 2, h: 1 }, // Palisade Gate, Ascending Open
   791: { w: 1, h: 1 }, // Palisade Gate, Ascending Endpieces
   792: { w: 4, h: 1 }, // Palisade Gate, Ascending Foundation
   793: { w: 1, h: 2 }, // Palisade Gate, Descending Closed
-  794: { w: 1, h: 1 }, // Palisade Gate, Descending Open
+  794: { w: 1, h: 2 }, // Palisade Gate, Descending Open
   795: { w: 1, h: 1 }, // Palisade Gate, Descending Endpieces
   796: { w: 1, h: 4 }, // Palisade Gate, Descending Foundation
   797: { w: 2, h: 2 }, // Palisade Gate, Horizontal Closed
