@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { type MapResourceType, type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
 import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
-import { getBuildingFootprint } from "@/lib/buildingFootprints";
+import { getBuildingFootprint, isFarmId } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
 
@@ -29,6 +29,7 @@ const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.8;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 
 const MINIMAP_BUILDING_ALPHA = 0.8;
+const MINIMAP_FARMS_OFF_ALPHA = 0.1;
 const MINIMAP_BUILDING_OUTLINE_WIDTH = 0.5;
 const MINIMAP_BUILDING_OUTLINE_ALPHA = 0.2;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
@@ -48,7 +49,7 @@ const BASE_TERRAIN_SCALE = 40;
 const MINIMAP_RESOURCE_COLORS = {
   gold: "#ffd700",
   stone: "#91a1ad",
-  forage: "#c8d65a",
+  forage: "#34d399",
   relic: "#ffffff",
 } as const;
 
@@ -109,7 +110,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "farms", "landmark_icons", "resources", "natural", "relics"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -174,8 +175,12 @@ export function Minimap({
   const minimapViewOptions: SelectOption<string>[] = [
     { id: "terrain", label: "Terrain" },
     { id: "resources", label: "Resources" },
-    { id: "footprints", label: "Building outlines" },
-    { id: "icons", label: "Building icons" },
+    { id: "natural", label: "▸ Natural" },
+    { id: "relics", label: "▸ Relics" },
+    { id: "footprints", label: "Buildings" },
+    { id: "farms", label: "▸ Farms & pastures" },
+    { id: "icons", label: "▸ Building icons" },
+    { id: "landmark_icons", label: "▸ TC & castle markers" },
     { id: "moves", label: "Unit movements" },
   ];
 
@@ -207,11 +212,33 @@ export function Minimap({
         options={minimapViewOptions}
         selectedId={minimapViewFilters}
         onSelect={(id) => {
-          setMinimapViewFilters(prev =>
-            prev.includes(id as string)
-              ? prev.filter(f => f !== id)
-              : [...prev, id as string]
-          );
+          setMinimapViewFilters(prev => {
+            const isAdding = !prev.includes(id as string);
+            let next = isAdding ? [...prev, id as string] : prev.filter(f => f !== id);
+
+            if (id === "footprints") {
+              if (isAdding) {
+                if (!next.includes("farms")) next.push("farms");
+                if (!next.includes("icons")) next.push("icons");
+                if (!next.includes("landmark_icons")) next.push("landmark_icons");
+              } else {
+                next = next.filter(f => f !== "farms" && f !== "icons" && f !== "landmark_icons");
+              }
+            } else if (id === "resources") {
+              if (isAdding) {
+                if (!next.includes("natural")) next.push("natural");
+                if (!next.includes("relics")) next.push("relics");
+              } else {
+                next = next.filter(f => f !== "natural" && f !== "relics");
+              }
+            } else if ((id === "farms" || id === "icons" || id === "landmark_icons") && isAdding) {
+              if (!next.includes("footprints")) next.push("footprints");
+            } else if ((id === "natural" || id === "relics") && isAdding) {
+              if (!next.includes("resources")) next.push("resources");
+            }
+
+            return next;
+          });
         }}
         multi
         multiLabel="layers"
@@ -223,17 +250,21 @@ export function Minimap({
 
   const showBuildingOutlines = minimapViewFilters.includes("footprints");
   const showBuildingIcons = minimapViewFilters.includes("icons");
+  const showLandmarkIcons = minimapViewFilters.includes("landmark_icons");
+  const showFarms = minimapViewFilters.includes("farms");
   const showUnits = minimapViewFilters.includes("moves");
-  const showResources = minimapViewFilters.includes("resources");
+  const showNaturalResources = minimapViewFilters.includes("natural");
+  const showRelics = minimapViewFilters.includes("relics");
+  const showResources = minimapViewFilters.includes("resources") || showNaturalResources || showRelics;
   const showTerrain = minimapViewFilters.includes("terrain");
-  const showBuildings = showBuildingOutlines || showBuildingIcons;
+  const showBuildings = showBuildingOutlines || showBuildingIcons || showFarms || showLandmarkIcons;
 
   // Reset internal state when a new replay is loaded
   useEffect(() => {
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "resources"]);
+    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "resources", "farms", "landmark_icons", "natural", "relics"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -508,7 +539,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showTerrain}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showNaturalResources},${showRelics},${showTerrain}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -553,7 +584,10 @@ export function Minimap({
 
               const resourceKey = `${x},${y}`;
               const resource = mapResources[resourceKey];
-              const isResource = !!(showResources && resource);
+              const isResource = resource && (
+                (resource === "relic" && showRelics) ||
+                (resource !== "relic" && showNaturalResources)
+              );
 
               const color = isResource ? MINIMAP_RESOURCE_COLORS[resource] : terrainColor;
               terrainContext.globalAlpha = isResource ? 1.0 : (showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA);
@@ -620,17 +654,23 @@ export function Minimap({
 
     const isIconBuilding = (id?: number) => {
       const name = getBuildingName(id);
-      return (
-        name.includes("Town Center") ||
-        name.includes("Castle") ||
-        !!getBuildingEmoji(id)
-      );
+      const isLandmark = name.includes("Town Center") || name.includes("Castle");
+      const hasEmoji = !!getBuildingEmoji(id);
+
+      if (isLandmark) {
+        return showLandmarkIcons || showBuildingIcons;
+      }
+
+      return showBuildingIcons && hasEmoji;
     };
 
     const { tileToAnchor, anchorToEvent } = buildingData;
     const iconBuildings: TimelineEvent[] = [];
 
     const drawBuilding = (event: TimelineEvent) => {
+      if (!showBuildingOutlines) return;
+      const isFarm = isFarmId(event.buildingTypeId);
+
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
       const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
@@ -656,7 +696,7 @@ export function Minimap({
       // 1. Fill the shape with player's color
       if (showBuildingOutlines) {
         context.save();
-        context.globalAlpha = MINIMAP_BUILDING_ALPHA;
+        context.globalAlpha = isFarm && !showFarms ? MINIMAP_FARMS_OFF_ALPHA : MINIMAP_BUILDING_ALPHA;
         context.fillStyle = getPlayerColor(event.playerId);
         context.fill();
         context.restore();
@@ -664,14 +704,14 @@ export function Minimap({
 
       // 2. Add the thin building outline (conditional on zoom)
       if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
-        context.globalAlpha = MINIMAP_BUILDING_OUTLINE_ALPHA;
+        context.globalAlpha = isFarm && !showFarms ? 0 : MINIMAP_BUILDING_OUTLINE_ALPHA;
         context.strokeStyle = getPlayerOutline(event.playerId);
         context.lineWidth = MINIMAP_BUILDING_OUTLINE_WIDTH;
         context.stroke();
       }
       context.restore();
 
-      if (showBuildingIcons && isIconBuilding(event.buildingTypeId)) {
+      if (isIconBuilding(event.buildingTypeId)) {
         iconBuildings.push(event);
       }
     };
@@ -707,85 +747,88 @@ export function Minimap({
         }
       }
 
-      if (showBuildingIcons) {
-        // First pass: Draw non-landmark (emoji) icons
-        (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) && iconBuildings.forEach((event) => {
-          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-            return;
-          }
-          if (event.x === undefined || event.y === undefined) return;
-          const name = getBuildingName(event.buildingTypeId);
-          const emoji = getBuildingEmoji(event.buildingTypeId);
-          const isLandmark = name.includes("Town Center") || name.includes("Castle");
+      // First pass: Draw non-landmark (emoji) icons
+      (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) && iconBuildings.forEach((event) => {
+        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+          return;
+        }
+        if (event.x === undefined || event.y === undefined) return;
+        const name = getBuildingName(event.buildingTypeId);
+        const emoji = getBuildingEmoji(event.buildingTypeId);
 
-          if (!isLandmark && emoji && showBuildingOutlines) {
-            const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
-            const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
-            const footprint = getBuildingFootprint(event.buildingTypeId);
-            const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
-            const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
-            const centerTileX = baseX + footprint.w / 2;
-            const centerTileY = baseY + footprint.h / 2;
-            const center = toCanvas(centerTileX, centerTileY);
-            const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.max(footprint.w, footprint.h)) / 2;
-            const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
-            const color = getPlayerColor(event.playerId);
-            const outline = getPlayerOutline(event.playerId);
-            const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
-            const cacheKey = `${emoji}-${color}-${outline}-${Math.round(emojiSize)}`;
+        if (emoji && showBuildingOutlines) {
+          const isTC = name.includes("Town Center");
+          const isCastle = name.includes("Castle");
+          const isBigIconShown = (isTC || isCastle) && showLandmarkIcons;
 
-            let cachedCanvas = iconCacheRef.current.get(cacheKey);
+          if (isBigIconShown) return;
 
-            if (!cachedCanvas) {
-              cachedCanvas = document.createElement("canvas");
-              const offCtx = cachedCanvas.getContext("2d");
-              if (offCtx) {
-                const canvasDim = emojiSize * 2;
-                cachedCanvas.width = canvasDim;
-                cachedCanvas.height = canvasDim;
+          const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
+          const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
+          const footprint = getBuildingFootprint(event.buildingTypeId);
+          const baseX = Math.max(0, anchorX - Math.floor(footprint.w / 2));
+          const baseY = Math.max(0, anchorY - Math.floor(footprint.h / 2));
+          const centerTileX = baseX + footprint.w / 2;
+          const centerTileY = baseY + footprint.h / 2;
+          const center = toCanvas(centerTileX, centerTileY);
+          const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.max(footprint.w, footprint.h)) / 2;
+          const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
+          const color = getPlayerColor(event.playerId);
+          const outline = getPlayerOutline(event.playerId);
+          const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
+          const cacheKey = `${emoji}-${color}-${outline}-${Math.round(emojiSize)}`;
 
-                offCtx.font = `bold ${emojiSize}px sans-serif`;
-                offCtx.textAlign = "center";
-                offCtx.textBaseline = "middle";
+          let cachedCanvas = iconCacheRef.current.get(cacheKey);
 
-                // 1. Draw mask
-                offCtx.globalCompositeOperation = "source-over";
-                offCtx.fillText(emoji, emojiSize, emojiSize);
+          if (!cachedCanvas) {
+            cachedCanvas = document.createElement("canvas");
+            const offCtx = cachedCanvas.getContext("2d");
+            if (offCtx) {
+              const canvasDim = emojiSize * 2;
+              cachedCanvas.width = canvasDim;
+              cachedCanvas.height = canvasDim;
 
-                // 2. Tint with player outline color
-                offCtx.globalCompositeOperation = "source-in";
-                offCtx.fillStyle = outline;
-                offCtx.fillRect(0, 0, canvasDim, canvasDim);
+              offCtx.font = `bold ${emojiSize}px sans-serif`;
+              offCtx.textAlign = "center";
+              offCtx.textBaseline = "middle";
 
-                iconCacheRef.current.set(cacheKey, cachedCanvas);
-              }
-            }
+              // 1. Draw mask
+              offCtx.globalCompositeOperation = "source-over";
+              offCtx.fillText(emoji, emojiSize, emojiSize);
 
-            if (cachedCanvas) {
-              context.globalAlpha = MINIMAP_EMOJI_ALPHA;
-              context.drawImage(
-                cachedCanvas,
-                center.x - emojiSize,
-                center.y - emojiSize
-              );
-              context.globalAlpha = 1.0;
+              // 2. Tint with player outline color
+              offCtx.globalCompositeOperation = "source-in";
+              offCtx.fillStyle = outline;
+              offCtx.fillRect(0, 0, canvasDim, canvasDim);
+
+              iconCacheRef.current.set(cacheKey, cachedCanvas);
             }
           }
-        });
-      }
+
+          if (cachedCanvas) {
+            context.globalAlpha = MINIMAP_EMOJI_ALPHA;
+            context.drawImage(
+              cachedCanvas,
+              center.x - emojiSize,
+              center.y - emojiSize
+            );
+            context.globalAlpha = 1.0;
+          }
+        }
+      });
 
       // Second pass: Draw landmark icons (Town Centers and Castles) on top
-      // These show regardless of showBuildingIcons as long as buildings category is enabled
-      if (showBuildingIcons) {
-        iconBuildings.forEach((event) => {
-          if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-            return;
-          }
-          if (event.x === undefined || event.y === undefined) return;
-          const name = getBuildingName(event.buildingTypeId);
-          const isLandmark = name.includes("Town Center") || name.includes("Castle");
+      // These show regardless of other building icons as long as their specific filters are enabled
+      iconBuildings.forEach((event) => {
+        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+          return;
+        }
+        if (event.x === undefined || event.y === undefined) return;
+        const name = getBuildingName(event.buildingTypeId);
+        const isLandmark = name.includes("Town Center") || name.includes("Castle");
 
-          if (isLandmark) {
+        if (isLandmark) {
+          if (showLandmarkIcons) {
             const anchorX = Math.max(0, Math.min((sizeX ?? 120) - 1, Math.floor(event.x)));
             const anchorY = Math.max(0, Math.min((sizeY ?? 120) - 1, Math.floor(event.y)));
             const footprint = getBuildingFootprint(event.buildingTypeId);
@@ -810,8 +853,8 @@ export function Minimap({
             context.fill(iconPath);
             context.restore();
           }
-        });
-      }
+        }
+      });
     }
 
     if (showUnits) {
@@ -855,8 +898,12 @@ export function Minimap({
     selectedTime,
     showBuildingOutlines,
     showBuildingIcons,
+    showLandmarkIcons,
     showBuildings,
+    showFarms,
     showUnits,
+    showNaturalResources,
+    showRelics,
     showResources,
     showTerrain,
     moveEvents,
@@ -965,13 +1012,18 @@ export function Minimap({
             const anchorKey = tileToAnchor.get(tileKey);
             const building = anchorKey ? buildings.get(anchorKey) : null;
             if (building && showBuildingOutlines) {
-              setHoveredEntity({
-                name: getBuildingName(building.buildingTypeId),
-                playerId: building.playerId,
-                type: "building",
-                anchorKey,
-              });
-              setTooltipPos({ x: event.clientX, y: event.clientY });
+              const buildingIsFarm = isFarmId(building.buildingTypeId);
+              if (buildingIsFarm && !showFarms) {
+                setHoveredEntity(null);
+              } else {
+                setHoveredEntity({
+                  name: getBuildingName(building.buildingTypeId),
+                  playerId: building.playerId,
+                  type: "building",
+                  anchorKey,
+                });
+                setTooltipPos({ x: event.clientX, y: event.clientY });
+              }
             } else {
               setHoveredEntity(null);
             }

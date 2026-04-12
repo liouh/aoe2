@@ -20,8 +20,8 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   50: { w: 3, h: 3 }, // Farm
   51: { w: 3, h: 3 }, // Dock
   56: { w: 3, h: 3 }, // Dock
-  63: { w: 1, h: 1 }, // Fortified Gate
-  64: { w: 1, h: 1 }, // Gate
+  63: { w: 2, h: 1 }, // Fortified Gate
+  64: { w: 2, h: 1 }, // Gate
   67: { w: 1, h: 1 }, // Fortified Gate
   68: { w: 2, h: 2 }, // Mill
   70: { w: 2, h: 2 }, // House
@@ -33,10 +33,10 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   81: { w: 1, h: 1 }, // Gate
   82: { w: 4, h: 4 }, // Castle
   84: { w: 4, h: 4 }, // Market
-  85: { w: 1, h: 1 }, // Fortified Gate
+  85: { w: 1, h: 2 }, // Fortified Gate
   86: { w: 3, h: 3 }, // Stable
   87: { w: 3, h: 3 }, // Archery Range
-  88: { w: 1, h: 1 }, // Gate
+  88: { w: 1, h: 2 }, // Gate
   90: { w: 1, h: 1 }, // Fortified Gate
   91: { w: 1, h: 1 }, // Gate
   92: { w: 1, h: 1 }, // Fortified Gate
@@ -132,11 +132,11 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   696: { w: 4, h: 4 }, // Great Pyramid
   785: { w: 1, h: 1 }, // Sea Tower
   788: { w: 1, h: 1 }, // Sea Wall
-  789: { w: 1, h: 1 }, // Palisade Gate
+  789: { w: 2, h: 1 }, // Palisade Gate
   790: { w: 1, h: 1 }, // Palisade Gate
   791: { w: 1, h: 1 }, // Palisade Gate
   792: { w: 1, h: 1 }, // Palisade Gate
-  793: { w: 1, h: 1 }, // Palisade Gate
+  793: { w: 1, h: 2 }, // Palisade Gate
   794: { w: 1, h: 1 }, // Palisade Gate
   795: { w: 1, h: 1 }, // Palisade Gate
   796: { w: 1, h: 1 }, // Palisade Gate
@@ -246,4 +246,11 @@ export const getBuildingFootprint = (
 
 export const isBuildingId = (id: number): boolean => {
   return id in FOOTPRINTS;
+};
+
+export const isFarmId = (id?: number): boolean => {
+  if (id === undefined) return false;
+  // 50: Farm, 1187: Rice Farm
+  // 1889, 1893, 1897: Pasture
+  return [50, 1187, 1889, 1893, 1897].includes(id);
 };
