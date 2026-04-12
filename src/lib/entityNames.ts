@@ -1,42 +1,42 @@
-// Auto-generated from de.csv — unified entity (unit/building) name lookup
-// This single map replaces the old separate UNIT_NAMES and BUILDING_NAMES maps.
+// Sourced from https://docs.google.com/spreadsheets/d/1llyn7FWKEtmss_WE-6hinMItpsV-h-6qsY8xBlkxUzw/edit?gid=193837369#gid=193837369
+// Cross-referenced with https://airef.github.io/tables/objects.html
 
 const ENTITY_NAMES: Record<number, string> = {
   0: "Moveable Map Revealer",
   1: "Imperial Legionary",
-  2: "Imperial Legionary (Dead)",
-  3: "Archer (Dead)",
+  2: "Imperial Legionary",	// Dead
+  3: "Archer",	// Dead
   4: "Archer",
   5: "Hand Cannoneer",
   6: "Elite Skirmisher",
   7: "Skirmisher",
   8: "Longbowman",
   9: "Arrow",
-  10: "Archery Range",
+  10: "Archery Range",	// Castle Age
   11: "Mangudai",
-  12: "Barracks",
+  12: "Barracks",	// Dark Age
   13: "Fishing Ship",
-  14: "Archery Range",
+  14: "Archery Range",	// Imperial Age
   15: "Junk",
-  16: "Bombard Cannon (Dead)",
+  16: "Bombard Cannon",	// Dead
   17: "Trade Cog",
-  18: "Blacksmith",
-  19: "Blacksmith",
-  20: "Barracks",
+  18: "Blacksmith",	// Castle Age
+  19: "Blacksmith",	// Imperial Age
+  20: "Barracks",	// Imperial Age
   21: "War Galley",
-  22: "Beta Berserk (Dead)",
-  23: "Battering Ram (Dead)",
+  22: "Beta Berserk",	// Dead
+  23: "Battering Ram",	// Dead
   24: "Crossbowman",
   25: "Teutonic Knight",
-  26: "Crossbowman (Dead)",
-  27: "Cataphract (Dead)",
-  28: "Chu Ko Nu (Dead)",
-  29: "Trading Cog (Dead)",
-  30: "Monastery",
-  31: "Monastery",
-  32: "Monastery",
+  26: "Crossbowman",	// Dead
+  27: "Cataphract",	// Dead
+  28: "Chu Ko Nu",	// Dead
+  29: "Trading Cog",	// Dead
+  30: "Monastery",	// Feudal Age
+  31: "Monastery",	// Castle Age, Upgraded
+  32: "Monastery",	// Imperial Age
   33: "Fortress",
-  34: "Cavalry Archer (Dead)",
+  34: "Cavalry Archer",	// Dead
   35: "Battering Ram",
   36: "Bombard Cannon",
   37: "Camel Rider",
@@ -44,122 +44,122 @@ const ENTITY_NAMES: Record<number, string> = {
   39: "Cavalry Archer",
   40: "Cataphract",
   41: "Huskarl",
-  42: "Trebuchet",
-  43: "Deer (Dead)",
-  44: "Mameluke (Dead)",
-  45: "Dock",
+  42: "Trebuchet",	// Unpacked
+  43: "Deer",	// Dead
+  44: "Mameluke",	// Dead
+  45: "Dock",	// Dark Age
   46: "Janissary",
-  47: "Dock",
+  47: "Dock",	// Castle Age
   48: "Wild Boar",
   49: "Siege Workshop",
   50: "Farm",
-  51: "Dock",
+  51: "Dock",	// Imperial Age
   52: "Royal Janissary",
-  53: "Fish (Perch)",
+  53: "Fish",	// Perch
   54: "Projectile VOL",
-  55: "Fishing Ship (Dead)",
-  56: "Villager Male Fisherman",
-  57: "Villager Female Fisherman",
-  58: "Villager Male Fisherman (Dead)",
+  55: "Fishing Ship",	// Dead
+  56: "Fisherman",	// Male
+  57: "Fisherman",	// Female
+  58: "Villager Male Fisherman",	// Dead
   59: "Forage Bush",
-  60: "Villager Female Fisherman (Dead)",
+  60: "Villager Female Fisherman",	// Dead
   61: "Dolphin",
-  62: "Huskarl (Dead)",
-  63: "Fortified Gate (Ascending Closed)",
-  64: "Gate (Ascending Closed)",
+  62: "Huskarl",	// Dead
+  63: "Fortified Gate",	// Ascending Closed
+  64: "Gate",	// Ascending Closed
   65: "Deer",
   66: "Gold Mine",
-  67: "Fortified Gate (Ascending Open)",
-  68: "Mill",
-  69: "Shore Fish",
-  70: "House",
-  71: "Town Center",
+  67: "Fortified Gate",	// Ascending Open
+  68: "Mill",	// Dark Age
+  69: "Fish",	// Shore
+  70: "House",	// Dark Age
+  71: "Town Center",	// Feudal Age
   72: "Palisade Wall",
   73: "Chu Ko Nu",
   74: "Militia",
   75: "Man-at-Arms",
   76: "Heavy Swordsman",
   77: "Long Swordsman",
-  78: "Gate (Ascending Open)",
+  78: "Gate",	// Ascending Open
   79: "Watch Tower",
-  80: "Fortified Gate (Ascending Endpieces)",
-  81: "Gate (Ascending Endpieces)",
+  80: "Fortified Gate",	// Ascending Endpieces
+  81: "Gate",	// Ascending Endpieces
   82: "Castle",
-  83: "Villager", // (Male)
-  84: "Market",
-  85: "Fortified Gate (Descending Closed)",
-  86: "Stable",
-  87: "Archery Range",
-  88: "Gate (Descending Closed)",
+  83: "Villager",	// Male
+  84: "Market",	// Feudal Age
+  85: "Fortified Gate",	// Descending Closed
+  86: "Stable",	// Castle Age
+  87: "Archery Range",	// Feudal Age
+  88: "Gate",	// Descending Closed
   89: "Dire Wolf",
-  90: "Fortified Gate (Descending Open)",
-  91: "Gate (Descending Open)",
-  92: "Fortified Gate (Descending Endpieces)",
+  90: "Fortified Gate",	// Descending Open
+  91: "Gate",	// Descending Open
+  92: "Fortified Gate",	// Descending Endpieces
   93: "Spearman",
   94: "Beta Berserk",
-  95: "Gate (Descending Endpieces)",
+  95: "Gate",	// Descending Endpieces
   96: "Hawk",
   97: "Arrow",
-  98: "Hand Cannoneer (Dead)",
-  99: "Heavy Swordsman (Dead)",
-  100: "Elite Skirmisher (Dead)",
-  101: "Stable",
+  98: "Hand Cannoneer",	// Dead
+  99: "Heavy Swordsman",	// Dead
+  100: "Elite Skirmisher",	// Dead
+  101: "Stable",	// Feudal Age
   102: "Stone Mine",
-  103: "Blacksmith",
-  104: "Monastery",
+  103: "Blacksmith",	// Feudal Age
+  104: "Monastery",	// Castle Age, Base
   105: "Blacksmith",
   106: "Leif Erikson",
-  107: "Janissary (Dead)",
-  108: "Junk (Dead)",
-  109: "Town Center",
+  107: "Janissary",	// Dead
+  108: "Junk",	// Dead
+  109: "Town Center",	// Dark Age
   110: "Trade Workshop",
-  111: "Knight (Dead)",
-  112: "Flare",
-  113: "Camel Rider (Dead)",
+  111: "Knight",	// Dead
+  112: "Revealer",
+  113: "Camel Rider",	// Dead
   114: "Stoertebeker",
-  115: "Longbowman (Dead)",
-  116: "Market",
+  115: "Longbowman",	// Dead
+  116: "Market",	// Castle Age
   117: "Stone Wall",
-  118: "Villager Male Builder",
+  118: "Builder",	// Male
   119: "Fortified Palisade Wall",
-  120: "Villager Male Forager",
-  121: "Mangonel (Dead)",
-  122: "Villager Male Hunter",
-  123: "Villager Male Lumberjack",
-  124: "Villager Male Stone Miner",
+  120: "Forager",	// Male
+  121: "Mangonel",	// Dead
+  122: "Hunter",	// Male
+  123: "Lumberjack",	// Male
+  124: "Stone Miner",	// Male
   125: "Monk",
   126: "Grey Wolf",
   127: "OLD_EXPLORER",
-  128: "Trade Cart (Empty)",
-  129: "Mill",
-  130: "Mill",
-  131: "Mill",
-  132: "Barracks",
-  133: "Dock",
-  134: "Monk (Dead)",
-  135: "Mangudai (Dead)",
-  136: "War Elephant (Dead)",
-  137: "Market",
+  128: "Trade Cart",	// Empty
+  129: "Mill",	// Feudal Age
+  130: "Mill",	// Castle Age
+  131: "Mill",	// Imperial Age
+  132: "Barracks",	// Castle Age
+  133: "Dock",	// Feudal Age
+  134: "Monk",	// Dead
+  135: "Mangudai",	// Dead
+  136: "War Elephant",	// Dead
+  137: "Market",	// Imperial Age
   138: "Spy",
-  139: "Cavalier (Dead)",
-  140: "Spearman (Dead)",
-  141: "Town Center",
-  142: "Town Center",
+  139: "Cavalier",	// Dead
+  140: "Spearman",	// Dead
+  141: "Town Center",	// Castle Age
+  142: "Town Center",	// Imperial Age
   143: "Rubble 1 x 1",
   144: "Rubble 2 x 2",
   145: "Rubble 3 x 3",
   146: "Rubble 4 x 4",
   147: "Rubble 6 x 6",
   148: "Rubble 8 x 8",
-  149: "Scorpion (Dead)",
+  149: "Scorpion",	// Dead
   150: "Siege Workshop",
-  151: "Samurai (Dead)",
-  152: "Militia (Dead)",
-  153: "Stable",
-  154: "Man-At-Arms (Dead)",
+  151: "Samurai",	// Dead
+  152: "Militia",	// Dead
+  153: "Stable",	// Imperial Age
+  154: "Man-At-Arms",	// Dead
   155: "Fortified Wall",
-  156: "Villager Repairer Male",
-  157: "Throwing Axeman (Dead)",
+  156: "Repairer",	// Male
+  157: "Throwing Axeman",	// Dead
   158: "Outlaw",
   159: "Relic Cart",
   160: "Richard the Lionheart",
@@ -180,23 +180,23 @@ const ENTITY_NAMES: Record<number, string> = {
   175: "Gawain",
   176: "Mordred",
   177: "Archbishop",
-  178: "Trade Cart Empty (Dead)",
+  178: "Trade Cart Empty",	// Dead
   179: "Trade Workshop",
-  180: "Long Swordsman (Dead)",
-  181: "Teutonic Knight (Dead)",
+  180: "Long Swordsman",	// Dead
+  181: "Teutonic Knight",	// Dead
   182: "WNDR",
   183: "TMISB",
-  184: "Condottiero",
+  184: "Condottiero",	// Placeholder
   185: "Slinger",
-  186: "Slinger (Dead)",
+  186: "Slinger",	// Dead
   187: "Projectile Slinger",
   188: "Flamethrower",
-  189: "Flamethrower (Dead)",
+  189: "Flamethrower",	// Dead
   190: "Fire Tower",
   191: "House",
   192: "House",
   193: "Vlad Dracula",
-  194: "Trebuchet (Dead)",
+  194: "Trebuchet",	// Dead
   195: "Kitabatake",
   196: "Minamoto",
   197: "Alexander Nevski",
@@ -206,49 +206,49 @@ const ENTITY_NAMES: Record<number, string> = {
   201: "Tree",
   202: "Rabid Wolf",
   203: "Vasco da Gama",
-  204: "Trade Cart (Full)",
-  205: "Trade Cart (Full) (Dead)",
+  204: "Trade Cart",	// Full
+  205: "Trade Cart",	// Full, Dead
   206: "VMDL",
   207: "Imperial Camel Rider",
   208: "TWAL",
-  209: "University",
-  210: "University",
-  211: "Villager Female (Dead)",
-  212: "Villager Female Builder",
-  213: "Villager Female Builder (Dead)",
-  214: "Villager Female Farmer",
-  215: "Villager Female Farmer (Dead)",
-  216: "Villager Female Hunter",
-  217: "Villager Female Hunter (Dead)",
-  218: "Villager Female Lumberjack",
-  219: "Villager Female Lumberjack (Dead)",
-  220: "Villager Female Stone Miner",
-  221: "Villager Female Stone Miner (Dead)",
-  222: "Villager Female Repairer",
+  209: "University",	// Castle Age
+  210: "University",	// Imperial Age
+  211: "Villager Female",	// Dead
+  212: "Builder",	// Female
+  213: "Villager Female Builder",	// Dead
+  214: "Farmer",	// Female
+  215: "Villager Female Farmer",	// Dead
+  216: "Hunter",	// Female
+  217: "Villager Female Hunter",	// Dead
+  218: "Lumberjack",	// Female
+  219: "Villager Female Lumberjack",	// Dead
+  220: "Stone Miner",	// Female
+  221: "Villager Female Stone Miner",	// Dead
+  222: "Repairer",	// Female
   223: "Alaric the Goth",
-  224: "Villager Male (Dead)",
-  225: "Villager Male Builder (Dead)",
-  226: "Villager Male Farmer (Dead)",
-  227: "Villager Male Hunter (Dead)",
-  228: "Villager Male Lumberjack (Dead)",
-  229: "Villager Male Stone Miner (Dead)",
+  224: "Villager Male",	// Dead
+  225: "Villager Male Builder",	// Dead
+  226: "Villager Male Farmer",	// Dead
+  227: "Villager Male Hunter",	// Dead
+  228: "Villager Male Lumberjack",	// Dead
+  229: "Villager Male Stone Miner",	// Dead
   230: "King Bela IV",
   231: "Aqueduct",
   232: "Woad Raider",
-  233: "Woad Raider (Dead)",
+  233: "Woad Raider",	// Dead
   234: "Guard Tower",
   235: "Keep",
   236: "Bombard Tower",
-  237: "Wolf (Dead)",
-  238: "Skirmisher (Dead)",
+  237: "Wolf",	// Dead
+  238: "Skirmisher",	// Dead
   239: "War Elephant",
   240: "TERRC",
   241: "Cracks",
   242: "Projectile Stone Catapult",
   243: "Doppelganger",
-  244: "Projectile Stone Catapult (Fire)",
+  244: "Projectile Stone Catapult",	// Fire
   245: "Projectile Bolt",
-  246: "Projectile Bolt (Fire)",
+  246: "Projectile Bolt",	// Fire
   247: "Trail Smoke",
   248: "Pile of Stone",
   249: "POREX",
@@ -261,7 +261,7 @@ const ENTITY_NAMES: Record<number, string> = {
   256: "PILE3",
   257: "PILE4",
   258: "PILE6",
-  259: "Villager Male Farmer",
+  259: "Farmer",	// Male
   260: "Disabled",
   261: "PILE8",
   262: "Pile of Food",
@@ -278,8 +278,8 @@ const ENTITY_NAMES: Record<number, string> = {
   274: "Flare",
   275: "Imperial Centurion",
   276: "Wonder",
-  277: "Imperial Centurion (Dead)",
-  278: "Fish Trap (Dead)",
+  277: "Imperial Centurion",	// Dead
+  278: "Fish Trap",	// Dead
   279: "Scorpion",
   280: "Mangonel",
   281: "Throwing Axeman",
@@ -294,14 +294,14 @@ const ENTITY_NAMES: Record<number, string> = {
   290: "Frankish Relic",
   291: "Samurai",
   292: "Gothic Relic",
-  293: "Villager (Female)",
+  293: "Villager",	// Female
   294: "Japanese Relic",
   295: "Persian Relic",
   296: "Saracen Relic",
   297: "Teutonic Relic",
   298: "Turkish Relic",
   299: "Bandit",
-  300: "Imperial Camel Rider (Dead)",
+  300: "Imperial Camel Rider",	// Dead
   301: "Grass Patch, Green",
   302: "Bush A",
   303: "Seagulls",
@@ -329,10 +329,10 @@ const ENTITY_NAMES: Record<number, string> = {
   325: "Projectile Stone, Catapult 3",
   326: "Projectile Stone, Catapult 4",
   327: "Projectile Stone, Catapult 5",
-  328: "Projectile VOL (Fire)",
+  328: "Projectile VOL",	// Fire
   329: "Camel Rider",
   330: "Heavy Camel Rider",
-  331: "Trebuchet (Packed)",
+  331: "Trebuchet",	// Packed
   332: "Flare",
   333: "Deer",
   334: "Flowers 1",
@@ -349,40 +349,40 @@ const ENTITY_NAMES: Record<number, string> = {
   345: "Ruins",
   346: "TERRY",
   347: "TERRZ",
-  348: "Tree (Bamboo Forest)",
-  349: "Tree (Oak)",
-  350: "Tree (Pine Forest)",
-  351: "Tree (Palm Forest)",
+  348: "Bamboo Forest Tree",
+  349: "Oak Forest Tree",
+  350: "Pine Forest Tree",
+  351: "Palm Forest Tree",
   352: "OREMN",
-  353: "Villager Male Forager (Dead)",
-  354: "Villager Female Forager",
-  355: "Villager Female Forager (Dead)",
-  356: "Boar (Dead)",
-  357: "Farm (Dead)",
+  353: "Villager Male Forager",	// Dead
+  354: "Forager",	// Female
+  355: "Villager Female Forager",	// Dead
+  356: "Boar",	// Dead
+  357: "Farm",	// Dead
   358: "Pikeman",
   359: "Halberdier",
-  360: "Projectile Arrow (Fire)",
+  360: "Projectile Arrow",	// Fire
   361: "Norse Warrior",
-  362: "Norse Warrior (Dead)",
+  362: "Norse Warrior",	// Dead
   363: "Projectile Archer",
   364: "Projectile Crossbowman",
   365: "Projectile Skirmisher",
   366: "Projectile Elite Skirmisher",
   367: "Projectile Scorpion",
   368: "Projectile Bombard Cannon",
-  369: "Projectile Mangonel (Secondary)",
+  369: "Projectile Mangonel",	// Secondary
   370: "City Wall",
   371: "Projectile Trebuchet",
   372: "Projectile Galleon",
   373: "Projectile War Galley",
   374: "Projectile Cannon Galleon",
-  375: "Projectile Crossbowman (Fire)",
-  376: "Projectile Skirmisher (Fire)",
-  377: "Projectile Elite Skirmisher (Fire)",
-  378: "Projectile Scorpion (Fire)",
-  380: "Projectile Gunpowder (Primary)",
-  381: "Projectile Bolt (Fire)",
-  385: "Projectile Bolt (Fire)",
+  375: "Projectile Crossbowman",	// Fire
+  376: "Projectile Skirmisher",	// Fire
+  377: "Projectile Elite Skirmisher",	// Fire
+  378: "Projectile Scorpion",	// Fire
+  380: "Projectile Gunpowder",	// Primary
+  381: "Projectile Bolt",	// Fire
+  385: "Projectile Bolt",	// Fire
   389: "Sea Rocks 1",
   390: "TERRB",
   391: "TERRD",
@@ -405,19 +405,19 @@ const ENTITY_NAMES: Record<number, string> = {
   408: "Tree J",
   409: "Tree K",
   410: "Tree L",
-  411: "Tree (Oak Forest)",
-  412: "Monk (Dead)",
-  413: "Tree (Snow Pine)",
-  414: "Tree (Jungle)",
+  411: "Forest Tree",
+  412: "Monk",	// Dead
+  413: "Snow Pine Tree",
+  414: "Jungle Tree",
   415: "Stump",
   416: "Debris",
   417: "Dust C",
   418: "Henry the Lion",
   419: "Debris B",
   420: "Cannon Galleon",
-  421: "Cannon Galleon (Dead)",
+  421: "Cannon Galleon",	// Dead
   422: "Capped Ram",
-  423: "Capped Ram (Dead)",
+  423: "Capped Ram",	// Dead
   424: "Charles Martel",
   425: "Francisco de Orellana",
   426: "Harald Hardraade",
@@ -425,11 +425,11 @@ const ENTITY_NAMES: Record<number, string> = {
   428: "Hrolf the Ganger",
   429: "Frederick Barbarossa",
   430: "Joan the Maid",
-  431: "Joan the Maid (Dead)",
+  431: "Joan the Maid",	// Dead
   432: "William Wallace",
-  433: "William Wallace (Dead)",
+  433: "William Wallace",	// Dead
   434: "King",
-  435: "King (Dead)",
+  435: "King",	// Dead
   436: "OMTBO",
   437: "Prithviraj",
   438: "STRBO",
@@ -437,65 +437,65 @@ const ENTITY_NAMES: Record<number, string> = {
   440: "Petard",
   441: "Hussar",
   442: "Galleon",
-  443: "Galleon (Dead)",
-  444: "Town Center (Packed)",
+  443: "Galleon",	// Dead
+  444: "Town Center",	// Packed
   445: "Poenari Castle",
   446: "Port",
   447: "SHALW",
   448: "Scout Cavalry",
-  449: "Scout Cavalry (Dead)",
-  450: "Great Fish (Marlin1)",
-  451: "Great Fish (Marlin2)",
+  449: "Scout Cavalry",	// Dead
+  450: "Great Fish",	// Marlin
+  451: "Great Fish",	// Marlin
   452: "Dolphin",
   453: "Ataulf",
   454: "DOLP5",
-  455: "Fish (Dorado)",
-  456: "Fish (Salmon)",
-  457: "Fish (Tuna)",
-  458: "Fish (Snapper)",
+  455: "Fish",	// Dorado
+  456: "Fish",	// Salmon
+  457: "Fish",	// Tuna
+  458: "Fish",	// Snapper
   459: "FISH5",
   460: "WHAL1",
   461: "WHAL2",
-  462: "Projectile Mangonel (Fire)",
-  463: "House",
-  464: "House",
-  465: "House",
-  466: "Projectile Archer (Fire)",
-  468: "Projectile Mangonel (Secondary Fire)",
-  469: "Projectile Trebuchet (Fire)",
-  470: "Projectile Galley (Fire)",
-  471: "Projectile War Galley (Fire)",
+  462: "Projectile Mangonel",	// Fire
+  463: "House",	// Feudal Age
+  464: "House",	// Castle Age
+  465: "House",	// Imperial Age
+  466: "Projectile Archer",	// Fire
+  468: "Projectile Mangonel",	// Secondary Fire
+  469: "Projectile Trebuchet",	// Fire
+  470: "Projectile Galley",	// Fire
+  471: "Projectile War Galley",	// Fire
   472: "Loot",
   473: "Two-Handed Swordsman",
   474: "Heavy Cavalry Archer",
-  475: "Projectile HAR (Fire)",
-  476: "Projectile Harold Haraade (Fire)",
+  475: "Projectile HAR",	// Fire
+  476: "Projectile Harold Haraade",	// Fire
   477: "Projectile HAR",
   478: "Projectile Harold Haraade",
   479: "Packed Mangonel",
-  480: "Hussar (Dead)",
-  481: "Town Center",
-  482: "Town Center",
-  483: "Town Center",
+  480: "Hussar",	// Dead
+  481: "Town Center",	// Annex 1, Castle Age
+  482: "Town Center",	// Annex 2, Castle Age
+  483: "Town Center",	// Annex 3, Castle Age
   484: "Town Center",
   485: "Projectile Town Center",
   486: "Brown Bear",
-  487: "Gate (Ascending Foundation)",
-  488: "Fortified Gate (Ascending Foundation)",
-  489: "Bear (Dead)",
-  490: "Gate (Descending Foundation)",
-  491: "Fortified Gate (Descending Foundation)",
+  487: "Gate",	// Ascending Foundation
+  488: "Fortified Gate",	// Ascending Foundation
+  489: "Bear",	// Dead
+  490: "Gate",	// Descending Foundation
+  491: "Fortified Gate",	// Descending Foundation
   492: "Arbalest",
   493: "Advanced Heavy Crossbowman",
-  494: "Camel Rider (Dead)",
-  495: "Heavy Camel Rider (Dead)",
-  496: "Arbalest (Dead)",
-  497: "King (Dead)",
-  498: "Barracks",
+  494: "Camel Rider",	// Dead
+  495: "Heavy Camel Rider",	// Dead
+  496: "Arbalest",	// Dead
+  497: "King",	// Dead
+  498: "Barracks",	// Feudal Age
   499: "Torch A",
-  500: "Two Handed Swordsman (Dead)",
-  501: "Pikeman (Dead)",
-  502: "Halberdier (Dead)",
+  500: "Two Handed Swordsman",	// Dead
+  501: "Pikeman",	// Dead
+  502: "Halberdier",	// Dead
   503: "Projectile Watch Tower",
   504: "Projectile Guard Tower",
   505: "Projectile Keep",
@@ -509,20 +509,20 @@ const ENTITY_NAMES: Record<number, string> = {
   513: "Projectile MSU",
   514: "Projectile MPC",
   515: "Projectile Axeman",
-  516: "Projectile Watch Tower (Fire)",
-  517: "Projectile Gaurd Tower (Fire)",
-  518: "Projectile Keep (Fire)",
-  519: "Projectile Arbalest (Fire)",
-  520: "Projectile Heavy Crossbowman (Fire)",
-  521: "Projectile Villager (Fire)",
-  522: "Projectile Cho Ko Nu (Fire)",
-  523: "Projectile Longbowman (Fire)",
-  524: "Projectile Longboat (Fire)",
-  525: "Projectile MPC (Fire)",
-  526: "Projectile MSU (Fire)",
-  527: "Demolition Ship",
+  516: "Projectile Watch Tower",	// Fire
+  517: "Projectile Gaurd Tower",	// Fire
+  518: "Projectile Keep",	// Fire
+  519: "Projectile Arbalest",	// Fire
+  520: "Projectile Heavy Crossbowman",	// Fire
+  521: "Projectile Villager",	// Fire
+  522: "Projectile Cho Ko Nu",	// Fire
+  523: "Projectile Longbowman",	// Fire
+  524: "Projectile Longboat",	// Fire
+  525: "Projectile MPC",	// Fire
+  526: "Projectile MSU",	// Fire
+  527: "Demolition Ship",	// non-WK
   528: "Heavy Demolition Ship",
-  529: "Fire Ship",
+  529: "Fire Ship",	// non-WK
   530: "Elite Longbowman",
   531: "Elite Throwing Axeman",
   532: "Fast Fire Ship",
@@ -534,18 +534,18 @@ const ENTITY_NAMES: Record<number, string> = {
   538: "Projectile HFG",
   539: "Galley",
   540: "Projectile Galley",
-  541: "Projectile Galley (Fire)",
+  541: "Projectile Galley",	// Fire
   542: "Heavy Scorpion",
-  543: "Heavy Scorpion (Dead)",
+  543: "Heavy Scorpion",	// Dead
   544: "FLDOG",
   545: "Transport Ship",
   546: "Light Cavalry",
-  547: "Light Cavalry (Dead)",
+  547: "Light Cavalry",	// Dead
   548: "Siege Ram",
-  549: "Siege Ram (Dead)",
-  550: "Onager",
+  549: "Siege Ram",	// Dead
+  550: "Onager",	// non-WK
   551: "Projectile Onager",
-  552: "Projectile Onager (Fire)",
+  552: "Projectile Onager",	// Fire
   553: "Elite Cataphract",
   554: "Elite Teutonic Knight",
   555: "Elite Huskarl",
@@ -555,40 +555,40 @@ const ENTITY_NAMES: Record<number, string> = {
   559: "Elite Chu Ko Nu",
   560: "Elite Samurai",
   561: "Elite Mangudai",
-  562: "Lumber Camp",
-  563: "Lumber Camp",
-  564: "Lumber Camp",
-  565: "Lumber Camp",
+  562: "Lumber Camp",	// Dark Age
+  563: "Lumber Camp",	// Feudal Age
+  564: "Lumber Camp",	// Castle Age
+  565: "Lumber Camp",	// Imperial Age
   566: "Watch Tower",
   567: "Champion",
-  568: "Champion (Dead)",
+  568: "Champion",	// Dead
   569: "Paladin",
-  570: "Paladin (Dead)",
+  570: "Paladin",	// Dead
   571: "Raider Archer",
-  572: "Raider Archer (Dead)",
+  572: "Raider Archer",	// Dead
   573: "Raider Swordsman",
-  574: "Raider Swordsman (Dead)",
+  574: "Raider Swordsman",	// Dead
   575: "Raider Cavalry",
-  576: "Raider Cavalry (Dead)",
+  576: "Raider Cavalry",	// Dead
   577: "Raider Cavalry Archer",
   578: "Raider Cavalry Archer Dead",
-  579: "Villager Male Gold Miner",
-  580: "Villager Male Gold Miner (Dead)",
-  581: "Villager Female Gold Miner",
-  582: "Villager Female Gold Miner (Dead)",
+  579: "Gold Miner",	// Male
+  580: "Villager Male Gold Miner",	// Dead
+  581: "Gold Miner",	// Female
+  582: "Villager Female Gold Miner",	// Dead
   583: "Genitour",
-  584: "Mining Camp",
-  585: "Mining Camp",
-  586: "Mining Camp",
-  587: "Mining Camp",
+  584: "Mining Camp",	// Dark Age
+  585: "Mining Camp",	// Feudal Age
+  586: "Mining Camp",	// Castle Age
+  587: "Mining Camp",	// Imperial Age
   588: "Siege Onager",
-  589: "Siege Onager (Dead)",
-  590: "Villager Female Shepherd",
-  591: "Villager Female Shepherd (Dead)",
-  592: "Villager Male Shepherd",
-  593: "Villager Male Shepherd (Dead)",
+  589: "Siege Onager",	// Dead
+  590: "Shepherd",	// Female
+  591: "Villager Female Shepherd",	// Dead
+  592: "Shepherd",	// Male
+  593: "Villager Male Shepherd",	// Dead
   594: "Sheep",
-  595: "Sheep (Dead)",
+  595: "Sheep",	// Dead
   596: "Elite Genitour",
   597: "Town Center",
   598: "Outpost",
@@ -604,104 +604,104 @@ const ENTITY_NAMES: Record<number, string> = {
   608: "Bridge B--Top",
   609: "Bridge B--Middle",
   610: "Bridge B--Bottom",
-  611: "Town Center",
-  612: "Town Center",
-  613: "Town Center",
-  614: "Town Center",
-  615: "Town Center",
-  616: "Town Center",
+  611: "Town Center",	// Annex 1, Imperial Age
+  612: "Town Center",	// Annex 2, Castle Age
+  613: "Town Center",	// Annex 3, Imperial Age
+  614: "Town Center",	// Annex 1, Feudal Age
+  615: "Town Center",	// Annex 2, Feudal Age
+  616: "Town Center",	// Annex 3, Feudal Age
   617: "Town Center",
-  618: "Town Center",
-  619: "Town Center",
-  620: "Town Center",
-  621: "Town Center",
-  622: "Elite Genitour (Dead)",
+  618: "Town Center",	// Annex 1, Dark Age
+  619: "Town Center",	// Annex 2, Dark Age
+  620: "Town Center",	// Annex 3, Dark Age
+  621: "Town Center",	// Foundation
+  622: "Elite Genitour",	// Dead
   623: "Rock 1",
   624: "Pavilion A",
   625: "Pavilion C",
   626: "Pavilion B",
   627: "Projectile Heavy Scorpion",
-  628: "Projectile Heavy Scorpion (Fire)",
+  628: "Projectile Heavy Scorpion",	// Fire
   629: "Joan of Arc",
-  630: "Joan of Arc (Dead)",
-  631: "Subotai (Dead)",
+  630: "Joan of Arc",	// Dead
+  631: "Subotai",	// Dead
   632: "Frankish Paladin",
-  633: "Frankish Paladin (Dead)",
+  633: "Frankish Paladin",	// Dead
   634: "Sieur de Metz",
   635: "Burned Building",
   636: "Sieur Bertrand",
   637: "Temple of Heaven",
-  638: "Duke D'Alencon",
+  638: "Duke D'Alençon",
   639: "Penguin",
   640: "La Hire",
-  641: "Penguin (Dead)",
+  641: "Penguin",	// Dead
   642: "Lord de Graville",
-  643: "Lord de Graville (Dead)",
+  643: "Lord de Graville",	// Dead
   644: "Jean de Lorrain",
-  645: "Jean de Lorrain (Dead)",
+  645: "Jean de Lorrain",	// Dead
   646: "Constable Richemont",
-  647: "Constable Richemont (Dead)",
+  647: "Constable Richemont",	// Dead
   648: "Guy Josselyne",
-  649: "Guy Josselyne (Dead)",
+  649: "Guy Josselyne",	// Dead
   650: "Jean Bureau",
-  651: "Jean Bureau (Dead)",
+  651: "Jean Bureau",	// Dead
   652: "Sir John Fastolf",
-  653: "Sir John Fastolf (Dead)",
-  654: "Trail Smoke (Fire)",
+  653: "Sir John Fastolf",	// Dead
+  654: "Trail Smoke",	// Fire
   655: "Mosque",
-  656: "Projectile Mangonel (Primary)",
+  656: "Projectile Mangonel",	// Primary
   657: "Projectile GP1",
-  658: "Projectile Mangonel (Primary Fire)",
-  659: "Gate (Horizontal Closed)",
-  660: "Fortified Gate (Horizontal Closed)",
-  661: "Gate (Horizontal Open)",
-  662: "Fortified Gate (Horizontal Open)",
-  663: "Gate (Horizontal Endpieces)",
-  664: "Fortified Gate (Horizontal Endpieces)",
-  665: "Gate (Horizontal Foundation)",
-  666: "Fortified Gate (Horizontal Foundation)",
-  667: "Gate (Vertical Closed)",
-  668: "Fortified Gate (Vertical Closed)",
-  669: "Gate (Vertical Open)",
-  670: "Fortified Gate (Vertical Open)",
-  671: "Gate (Vertical Endpieces)",
-  672: "Fortified Gate (Vertical Endpieces)",
-  673: "Gate (Vertical Foundation)",
-  674: "Fortified Gate (Vertical Foundation)",
-  675: "Onager (Dead)",
+  658: "Projectile Mangonel",	// Primary Fire
+  659: "Gate",	// Horizontal Closed
+  660: "Fortified Gate",	// Horizontal Closed
+  661: "Gate",	// Horizontal Open
+  662: "Fortified Gate",	// Horizontal Open
+  663: "Gate",	// Horizontal Endpieces
+  664: "Fortified Gate",	// Horizontal Endpieces
+  665: "Gate",	// Horizontal Foundation
+  666: "Fortified Gate",	// Horizontal Foundation
+  667: "Gate",	// Vertical Closed
+  668: "Fortified Gate",	// Vertical Closed
+  669: "Gate",	// Vertical Open
+  670: "Fortified Gate",	// Vertical Open
+  671: "Gate",	// Vertical Endpieces
+  672: "Fortified Gate",	// Vertical Endpieces
+  673: "Gate",	// Vertical Foundation
+  674: "Fortified Gate",	// Vertical Foundation
+  675: "Onager",	// Dead
   676: "Projectile Fire Ship",
   677: "Projectile Fire Ship Small",
   678: "Reynald de Chatillon",
-  679: "Reynald de Chatillon (Dead)",
+  679: "Reynald de Chatillon",	// Dead
   680: "Master of the Templar",
-  681: "Master of the Templar (Dead)",
+  681: "Master of the Templar",	// Dead
   682: "Bad Neighbor",
   683: "God's Own Sling",
   684: "The Accursed Tower",
   685: "The Tower of Flies",
   686: "Archer of the Eyes",
-  687: "Archer of the Eyes (Dead)",
+  687: "Archer of the Eyes",	// Dead
   688: "Piece of the True Cross",
   689: "Pyramid",
   690: "Dome of the Rock",
   691: "Elite Cannon Galleon",
   692: "Berserk",
-  693: "Berserk (Dead)",
+  693: "Berserk",	// Dead
   694: "Elite Berserk",
-  695: "Elite Berserk (Dead)",
+  695: "Elite Berserk",	// Dead
   696: "Great Pyramid",
   697: "FLARE4",
   698: "Subotai",
-  699: "Subotai (Dead)",
+  699: "Subotai",	// Dead
   700: "Hunting Wolf",
-  701: "Hunting Wolf (Dead)",
+  701: "Hunting Wolf",	// Dead
   702: "Kushluk",
   703: "Topa Yupanqui",
   704: "Shah",
-  705: "Cow A",
+  705: "Cow",	// Black and White
   706: "Saboteur",
   707: "Ornlu the Wolf",
-  708: "Ornlu the Wolf (Dead)",
+  708: "Ornlu the Wolf",	// Dead
   709: "Cactus",
   710: "Skeleton",
   711: "Rugs",
@@ -717,17 +717,17 @@ const ENTITY_NAMES: Record<number, string> = {
   721: "Shipwreck A",
   722: "Shipwreck B",
   723: "Crater",
-  724: "Genitour (Dead)",
+  724: "Genitour",	// Dead
   725: "Jaguar Warrior",
   726: "Elite Jaguar Warrior",
   728: "Ice, Navigable",
-  729: "God's Own Sling (Packed)",
-  730: "Bad Neighbor (Packed)",
+  729: "God's Own Sling",	// Packed
+  730: "Bad Neighbor",	// Packed
   731: "Genghis Khan",
-  732: "King South-East Asia (Dead)",
+  732: "Genitour",	// Placeholder
   733: "Emperor in a Barrel",
-  734: "Emperor in a Barrel (Dead)",
-  735: "Packed Trebuchet (Dead)",
+  734: "Emperor in a Barrel",	// Dead
+  735: "Packed Trebuchet",	// Dead
   736: "Projectile Mameluke",
   737: "Bamboo Stump",
   738: "Bridge A--Cracked",
@@ -739,73 +739,73 @@ const ENTITY_NAMES: Record<number, string> = {
   744: "Mountain 3",
   745: "Mountain 4",
   746: "Projectile Castle",
-  747: "Projectile Castle (Fire)",
+  747: "Projectile Castle",	// Fire
   748: "Cobra Car",
   749: "Cusi Yupanqui",
-  750: "Jaguar Warrior (Dead)",
-  751: "Eagle Scout",
+  750: "Jaguar Warrior",	// Dead
+  751: "Eagle Scout",	// non-TC, Eagle Warrior TC
   752: "Elite Eagle Warrior",
   753: "Eagle Warrior",
-  754: "Eagle Warrior (Dead)",
+  754: "Eagle Warrior",	// Dead
   755: "Tarkan",
-  756: "Tarkan (Dead)",
+  756: "Tarkan",	// Dead
   757: "Elite Tarkan",
   758: "Burned building",
-  759: "Huskarl",
-  760: "Huskarl (Dead)",
-  761: "Elite Huskarl",
-  762: "Elite Huskarl (Dead)",
+  759: "Huskarl",	// Barracks
+  760: "Huskarl",	// Dead
+  761: "Elite Huskarl",	// Barracks
+  762: "Elite Huskarl",	// Dead
   763: "Plumed Archer",
-  764: "Plumed Archer (Dead)",
+  764: "Plumed Archer",	// Dead
   765: "Elite Plumed Archer",
-  766: "Elite Plumed Archer (Dead)",
+  766: "Elite Plumed Archer",	// Dead
   767: "Projectile Elite Cannon Galleon",
   768: "Blue Tree",
   771: "Conquistador",
-  772: "Conquistador (Dead)",
+  772: "Conquistador",	// Dead
   773: "Elite Conquistador",
-  774: "Elite Conquistador (Dead)",
+  774: "Elite Conquistador",	// Dead
   775: "Missionary",
-  776: "Missionary (Dead)",
+  776: "Missionary",	// Dead
   777: "Attila the Hun",
   778: "Canoe",
   779: "Bleda the Hun",
-  780: "Llama (Dead)",
+  780: "Llama",	// Dead
   781: "Pope Leo I",
-  782: "Pope Leo I (Dead)",
+  782: "Pope Leo I",	// Dead
   783: "Scythian Wild Woman",
-  784: "Scythian Wild Woman (Dead)",
+  784: "Scythian Wild Woman",	// Dead
   785: "Sea Tower",
   786: "Projectile Sea Tower",
-  787: "Projectile Sea Tower (Fire)",
+  787: "Projectile Sea Tower",	// Fire
   788: "Sea Wall",
-  789: "Palisade Gate (Ascending Closed)",
-  790: "Palisade Gate (Ascending Open)",
-  791: "Palisade Gate (Ascending Endpieces)",
-  792: "Palisade Gate (Ascending Foundation)",
-  793: "Palisade Gate (Descending Closed)",
-  794: "Palisade Gate (Descending Open)",
-  795: "Palisade Gate (Descending Endpieces)",
-  796: "Palisade Gate (Descending Foundation)",
-  797: "Palisade Gate (Horizontal Closed)",
-  798: "Palisade Gate (Horizontal Open)",
-  799: "Palisade Gate (Horizontal Endpieces)",
-  800: "Palisade Gate (Horizontal Foundation)",
-  801: "Palisade Gate (Vertical Closed)",
-  802: "Palisade Gate (Vertical Open)",
-  803: "Palisade Gate (Vertical Endpieces)",
-  804: "Palisade Gate (Vertical Foundation)",
+  789: "Palisade Gate",	// Ascending Closed
+  790: "Palisade Gate",	// Ascending Open
+  791: "Palisade Gate",	// Ascending Endpieces
+  792: "Palisade Gate",	// Ascending Foundation
+  793: "Palisade Gate",	// Descending Closed
+  794: "Palisade Gate",	// Descending Open
+  795: "Palisade Gate",	// Descending Endpieces
+  796: "Palisade Gate",	// Descending Foundation
+  797: "Palisade Gate",	// Horizontal Closed
+  798: "Palisade Gate",	// Horizontal Open
+  799: "Palisade Gate",	// Horizontal Endpieces
+  800: "Palisade Gate",	// Horizontal Foundation
+  801: "Palisade Gate",	// Vertical Closed
+  802: "Palisade Gate",	// Vertical Open
+  803: "Palisade Gate",	// Vertical Endpieces
+  804: "Palisade Gate",	// Vertical Foundation
   805: "Dock",
   806: "Dock",
   807: "Dock",
   808: "Dock",
   809: "Stump",
   810: "Iron Boar",
-  811: "Iron Boar (Dead)",
+  811: "Iron Boar",	// Dead
   812: "Jaguar",
-  813: "Jaguar (Dead)",
+  813: "Jaguar",	// Dead
   814: "Horse A",
-  815: "Horse (Dead)",
+  815: "Horse",	// Dead
   816: "Macaw",
   817: "Statue A",
   818: "Plant",
@@ -813,82 +813,82 @@ const ENTITY_NAMES: Record<number, string> = {
   820: "Grave",
   821: "Head",
   822: "Javelina",
-  823: "Javelina (Dead)",
+  823: "Javelina",	// Dead
   824: "El Cid Campeador",
   825: "Amazon Warrior",
   826: "Monument",
   827: "War Wagon",
-  828: "War Wagon (Dead)",
+  828: "War Wagon",	// Dead
   829: "Elite War Wagon",
-  830: "Elite War Wagon (Dead)",
+  830: "Elite War Wagon",	// Dead
   831: "Turtle Ship",
   832: "Elite Turtle Ship",
   833: "Turkey",
-  834: "Turkey (Dead)",
-  835: "Wild Horse",
-  836: "Wild Horse (Dead)",
+  834: "Turkey",	// Dead
+  835: "Wild Horse A",
+  836: "Wild Horse",	// Dead
   837: "Map Revealer",
   838: "King Sancho",
-  839: "Rock (Stone)",
+  839: "Rock",	// Stone
   840: "King Alfonso",
-  841: "Rock (Gold)",
+  841: "Rock",	// Gold
   842: "Imam",
-  843: "Cow (Dead)",
+  843: "Cow",	// Dead
   844: "Admiral Yi Sun-shin",
   845: "Nobunaga",
   846: "Donkey",
   847: "Henry V",
-  848: "Donkey (Dead)",
+  848: "Donkey",	// Dead
   849: "William the Conqueror",
   850: "Amazon Archer",
   851: "ES Flag",
   852: "Scythian Scout",
-  853: "Scythian Scout (Dead)",
-  854: "Torch A (Convertable)",
+  853: "Scythian Scout",	// Dead
+  854: "Torch A",	// Convertable
   855: "Old Stone Head",
   856: "Roman Ruins",
   857: "Hay Stack",
   858: "Broken Cart",
   859: "Flower Bed",
   860: "Furious the Monkey Boy",
-  861: "Furious the Monkey Boy (Dead)",
+  861: "Furious the Monkey Boy",	// Dead
   862: "Stormy Dog",
   863: "Rubble 1 x 1",
   864: "Rubble 2 x 2",
   865: "Rubble 3 x 3",
   866: "Genoese Crossbowman",
-  867: "Genoese Crossbowman (Dead)",
+  867: "Genoese Crossbowman",	// Dead
   868: "Elite Genoese Crossbowman",
   869: "Magyar Huszar",
-  870: "Magyar Huszar (Dead)",
+  870: "Magyar Huszar",	// Dead
   871: "Elite Magyar Huszar",
   872: "Quimper Cathedral",
   873: "Elephant Archer",
-  874: "Elephant Archer (Dead)",
+  874: "Elephant Archer",	// Dead
   875: "Elite Elephant Archer",
   876: "Boyar",
-  877: "Boyar (Dead)",
+  877: "Boyar",	// Dead
   878: "Elite Boyar",
   879: "Kamayuk",
-  880: "Kamayuk (Dead)",
+  880: "Kamayuk",	// Dead
   881: "Elite Kamayuk",
   882: "Condottiero",
-  883: "Condottiero (Dead)",
+  883: "Condottiero",	// Dead
   884: "Wild Camel",
   885: "Siege Tower",
-  886: "Tarkan",
-  887: "Elite Tarkan",
+  886: "Tarkan",	// Stable
+  887: "Elite Tarkan",	// Stable
   888: "Llama building",
   889: "Disable llama building",
   890: "Empty llama annex",
-  891: "Siege Tower (Dead)",
+  891: "Siege Tower",	// Dead
   892: "Heavy Pikeman",
-  893: "Heavy Pikeman (Dead)",
+  893: "Heavy Pikeman",	// Dead
   894: "Eastern Swordsman",
-  895: "Eastern Swordsman (Dead)",
+  895: "Eastern Swordsman",	// Dead
   896: "Waterfall",
   897: "Camel",
-  898: "Camel (Dead)",
+  898: "Camel",	// Dead
   899: "Arch of Constantine",
   900: "Rain",
   901: "Flag F",
@@ -908,25 +908,25 @@ const ENTITY_NAMES: Record<number, string> = {
   916: "Goods",
   917: "Vulture",
   918: "Rock 2",
-  919: "Amazon Warrior (Dead)",
-  920: "Amazon Archer (Dead)",
-  921: "Imam (Dead)",
+  919: "Amazon Warrior",	// Dead
+  920: "Amazon Archer",	// Dead
+  921: "Imam",	// Dead
   922: "Monk with Relic",
   923: "Queen",
-  924: "Queen (Dead)",
+  924: "Queen",	// Dead
   925: "Sanyogita",
   926: "Prithvi",
   927: "Chand Bhai",
-  928: "Chand Bhai (Dead)",
+  928: "Chand Bhai",	// Dead
   929: "Saladin",
   930: "Khosrau",
   931: "Jarl",
   932: "Savar",
   933: "Barrels",
   934: "Alfred the Alpaca",
-  935: "Alfred the Alpaca (Dead)",
+  935: "Alfred the Alpaca",	// Dead
   936: "Elephant",
-  937: "Elephant (Dead)",
+  937: "Elephant",	// Dead
   938: "Dragon Ship",
   939: "Flame 1",
   940: "Flame 2",
@@ -934,39 +934,39 @@ const ENTITY_NAMES: Record<number, string> = {
   942: "Flame 4",
   943: "Osman",
   944: "Relic Cart",
-  945: "Shaw (Dead)",
+  945: "Shaw",	// Dead
   1001: "Organ Gun",
-  1002: "Organ Gun (Dead)",
+  1002: "Organ Gun",	// Dead
   1003: "Elite Organ Gun",
   1004: "Caravel",
-  1005: "Organ Gun (Dead)",
+  1005: "Organ Gun",	// Dead
   1006: "Elite Caravel",
   1007: "Camel Archer",
-  1008: "Camel Archer (Dead)",
+  1008: "Camel Archer",	// Dead
   1009: "Elite Camel Archer",
   1010: "Genitour",
-  1011: "Genitour (Dead)",
+  1011: "Genitour",	// Dead
   1012: "Elite Genitour",
   1013: "Gbeto",
-  1014: "Gbeto (Dead)",
+  1014: "Gbeto",	// Dead
   1015: "Elite Gbeto",
   1016: "Shotel Warrior",
-  1017: "Shotel Warrior (Dead)",
+  1017: "Shotel Warrior",	// Dead
   1018: "Elite Shotel Warrior",
   1019: "Zebra",
-  1020: "Zebra (Dead)",
+  1020: "Zebra",	// Dead
   1021: "Feitoria",
   1022: "Monkboat",
   1023: "Priest",
-  1024: "Priest (Dead)",
+  1024: "Priest",	// Dead
   1025: "Priest with relic",
   1026: "Ostrich",
-  1027: "Ostrich (Dead)",
+  1027: "Ostrich",	// Dead
   1028: "Stork",
   1029: "Lion",
-  1030: "Lion (Dead)",
+  1030: "Lion",	// Dead
   1031: "Crocodile",
-  1032: "Crocodile (Dead)",
+  1032: "Crocodile",	// Dead
   1033: "Grass Patch, Dry",
   1034: "Musa ibn Nusayr",
   1035: "Sundjata",
@@ -985,21 +985,21 @@ const ENTITY_NAMES: Record<number, string> = {
   1048: "Rock Formation 1",
   1049: "Rock Formation 2",
   1050: "Rock Formation 3",
-  1051: "Tree (Dragon)",
-  1052: "Tree (Baobab)",
+  1051: "Dragon Tree",
+  1052: "Baobab Tree",
   1053: "Bush B",
   1054: "Bush C",
   1055: "Projectile Knife",
   1056: "Falcon",
   1057: "Projectile CVB",
-  1058: "Projectile CVB (Fire)",
+  1058: "Projectile CVB",	// Fire
   1059: "Fruit Bush",
   1060: "Goat",
-  1061: "Goat (Dead)",
+  1061: "Goat",	// Dead
   1062: "Fence",
-  1063: "Tree (Acacia)",
+  1063: "Acacia Tree",
   1064: "Yekuno Amlak",
-  1065: "Fence (Rubble)",
+  1065: "Fence",	// Rubble
   1066: "Yodit",
   1067: "Itzcoatl",
   1068: "Mustafa Pasha",
@@ -1009,7 +1009,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1072: "Guglielmo Embriaco",
   1073: "Su Dingfang",
   1074: "Pachacuti",
-  1075: "Huayna Capac",
+  1075: "Huanya Capac",
   1076: "Miklos Toldi",
   1077: "Little John",
   1078: "Zawisza the Black",
@@ -1041,70 +1041,70 @@ const ENTITY_NAMES: Record<number, string> = {
   1104: "Demolition Raft",
   1105: "Siege Tower",
   1106: "Dagnajan",
-  1107: "Siege Tower (Dead)",
-  1108: "Dagnajan (Dead)",
+  1107: "Siege Tower",	// Dead
+  1108: "Dagnajan",	// Dead
   1109: "Gidajan",
-  1110: "Gidajan (Dead)",
+  1110: "Gidajan",	// Dead
   1111: "Projectile Light Ballista",
-  1112: "Projectile Light Ballista (Fire)",
+  1112: "Projectile Light Ballista",	// Fire
   1113: "Projectile Heavy Scorpion",
-  1114: "Projectile Heavy Scorpion (Fire)",
+  1114: "Projectile Heavy Scorpion",	// Fire
   1115: "FACAHOLE",
-  1116: "Eagle Warrior (Dead)",
-  1117: "Elite Eagle Warrior (Dead)",
+  1116: "Eagle Warrior",	// Dead
+  1117: "Elite Eagle Warrior",	// Dead
   1118: "Inca llama annex",
-  1119: "Projectile Gunpowder (Secondary)",
+  1119: "Projectile Gunpowder",	// Secondary
   1120: "Ballista Elephant",
-  1121: "Ballista Elephant (Dead)",
+  1121: "Ballista Elephant",	// Dead
   1122: "Elite Ballista Elephant",
   1123: "Karambit Warrior",
-  1124: "Karambit Warrior (Dead)",
+  1124: "Karambit Warrior",	// Dead
   1125: "Elite Karambit Warrior",
   1126: "Arambai",
-  1127: "Arambai (Dead)",
+  1127: "Arambai",	// Dead
   1128: "Elite Arambai",
   1129: "Rattan Archer",
-  1130: "Rattan Archer (Dead)",
+  1130: "Rattan Archer",	// Dead
   1131: "Elite Rattan Archer",
   1132: "Battle Elephant",
-  1133: "Battle Elephant (Dead)",
+  1133: "Battle Elephant",	// Dead
   1134: "Elite Battle Elephant",
   1135: "Komodo Dragon",
-  1136: "Komodo Dragon (Dead)",
+  1136: "Komodo Dragon",	// Dead
   1137: "Tiger",
-  1138: "Tiger (Dead)",
+  1138: "Tiger",	// Dead
   1139: "Rhinoceros",
-  1140: "Rhinoceros (Dead)",
+  1140: "Rhinoceros",	// Dead
   1141: "Box Turtles",
   1142: "Water Buffalo",
-  1143: "Water Buffalo (Dead)",
-  1144: "Tree (Mangrove)",
+  1143: "Water Buffalo",	// Dead
+  1144: "Mangrove Tree",
   1145: "Ninja",
-  1146: "Tree (Rainforest)",
-  1147: "Ninja (Dead)",
-  1148: "Rock (Beach)",
-  1149: "Rock (Jungle)",
+  1146: "Rainforest Tree",
+  1147: "Ninja",	// Dead
+  1148: "Rock",	// Beach
+  1149: "Rock",	// Jungle
   1150: "Flag G",
   1151: "Flag H",
   1152: "Flag I",
   1153: "Flag J",
-  1154: "Elite Battle Elephant (Dead)",
+  1154: "Elite Battle Elephant",	// Dead
   1155: "Imperial Skirmisher",
-  1156: "Imperial Skirmisher (Dead)",
+  1156: "Imperial Skirmisher",	// Dead
   1157: "Gajah Mada",
   1158: "Jayanegara",
   1159: "Raden Wijaya",
   1160: "Sunda Royal Fighter",
-  1161: "Sunda Royal Fighter (Dead)",
+  1161: "Sunda Royal Fighter",	// Dead
   1162: "Suryavarman I",
   1163: "Udayadityavarman I",
   1164: "Jayaviravarman",
   1165: "Bayinnaung",
   1166: "Tabinshwehti",
   1167: "Projectile Ballista Elephant",
-  1168: "Projectile Ballista Elephant (Fire)",
+  1168: "Projectile Ballista Elephant",	// Fire
   1169: "Projectile Arambai",
-  1170: "Projectile Arambai (Fire)",
+  1170: "Projectile Arambai",	// Fire
   1171: "Buddha Statue A",
   1172: "Buddha Statue B",
   1173: "Buddha Statue C",
@@ -1122,9 +1122,9 @@ const ENTITY_NAMES: Record<number, string> = {
   1185: "Wang Tong",
   1186: "Envoy",
   1187: "Rice Farm",
-  1188: "Rice Farm (Dead)",
+  1188: "Rice Farm",	// Dead
   1189: "Harbor",
-  1190: "Gajah Mada (Dead)",
+  1190: "Gajah Mada",	// Dead
   1191: "Stupa",
   1192: "Gate",
   1193: "FARMDROP",
@@ -1155,46 +1155,46 @@ const ENTITY_NAMES: Record<number, string> = {
   1218: "Barricade B",
   1219: "Barricade C",
   1220: "Barricade D",
-  1221: "Itzcoatl (Dead)",
+  1221: "Itzcoatl",	// Dead
   1222: "Sharkatzor",
   1223: "Projectile Cow",
-  1224: "Dinh Le (Dead)",
+  1224: "Dinh Le",	// Dead
   1225: "Konnik",
-  1226: "Konnik (Dead)",
+  1226: "Konnik",	// Dead
   1227: "Elite Konnik",
   1228: "Keshik",
-  1229: "Keshik (Dead)",
+  1229: "Keshik",	// Dead
   1230: "Elite Keshik",
   1231: "Kipchak",
-  1232: "Kipchak (Dead)",
+  1232: "Kipchak",	// Dead
   1233: "Elite Kipchak",
   1234: "Leitis",
-  1235: "Leitis (Dead)",
+  1235: "Leitis",	// Dead
   1236: "Elite Leitis",
   1237: "Bactrian Camel",
-  1238: "Bactrian Camel (Dead)",
+  1238: "Bactrian Camel",	// Dead
   1239: "Ibex",
-  1240: "Ibex (Dead)",
+  1240: "Ibex",	// Dead
   1241: "Snow Leopard",
-  1242: "Snow Leopard (Dead)",
+  1242: "Snow Leopard",	// Dead
   1243: "Goose",
-  1244: "Goose (Dead)",
+  1244: "Goose",	// Dead
   1245: "Pig",
-  1246: "Pig (Dead)",
+  1246: "Pig",	// Dead
   1247: "Wild Bactrian Camel",
-  1248: "Tree (Oak Autumn)",
-  1249: "Tree (Oak Autumn Snow)",
-  1250: "Tree (Dead)",
+  1248: "Oak Tree",	// Autumn
+  1249: "Oak Tree",	// Autumn Snow
+  1250: "Tree",	// Dead
   1251: "Krepost",
-  1252: "Konnik (Dismounted)",
-  1253: "Elite Konnik (Dismounted)",
-  1254: "Konnik",
-  1255: "Elite Konnik",
-  1256: "Elite Konnik (Dead)",
-  1257: "Konnik Infantry (Dead)",
-  1258: "Battering Ram",
-  1259: "CUMANPLACEHOLDER",
-  1260: "Elite Kipchak",
+  1252: "Konnik",	// Dismounted
+  1253: "Elite Konnik",	// Dismounted
+  1254: "Konnik",	// Krepost
+  1255: "Elite Konnik",	// Krepost
+  1256: "Elite Konnik",	// Dead
+  1257: "Konnik Infantry",	// Dead
+  1258: "Battering Ram",	// Feudal
+  1259: "Elite Kipchak",	// Mercenary Placeholder
+  1260: "Elite Kipchak",	// Mercenary
   1261: "CUMANDISABLED",
   1262: "Tokhtamysh Khan",
   1263: "Flaming Camel",
@@ -1206,24 +1206,24 @@ const ENTITY_NAMES: Record<number, string> = {
   1269: "Girgen Khan",
   1270: "Dismantled Cart",
   1271: "Ox Cart",
-  1272: "Ox Cart (Dead)",
+  1272: "Ox Cart",	// Dead
   1273: "Ox Wagon",
-  1274: "Ox Wagon (Dead)",
+  1274: "Ox Wagon",	// Dead
   1275: "Khan",
   1276: "Urus Khan",
-  1277: "Khan (Dead)",
-  1278: "Vytautas the Great (Dead)",
-  1279: "Statue (Civilization)",
+  1277: "Khan",	// Dead
+  1278: "Vytautas the Great",	// Dead
+  1279: "Statue",	// Civilization
   1280: "Statue B",
   1281: "Vytautas the Great",
   1282: "Flag K",
   1283: "Flag L",
   1284: "Flag M",
   1285: "FE Flag",
-  1286: "Tsar Konstantin (Dead)",
-  1287: "Kotyan Khan (Dead)",
-  1288: "Cuman Chief (Dead)",
-  1289: "Girgen Khan (Dead)",
+  1286: "Tsar Konstantin",	// Dead
+  1287: "Kotyan Khan",	// Dead
+  1288: "Cuman Chief",	// Dead
+  1289: "Girgen Khan",	// Dead
   1290: "Ivaylo",
   1291: "Invisible Object",
   1292: "Queen",
@@ -1256,62 +1256,62 @@ const ENTITY_NAMES: Record<number, string> = {
   1319: "Quarry",
   1320: "Lumber",
   1321: "Goods",
-  1322: "Statue (Column)",
+  1322: "Statue",	// Column
   1323: "Rock 2",
-  1324: "Amazon Warrior (Dead)",
-  1325: "Amazon Archer (Dead)",
-  1326: "Imam (Dead)",
+  1324: "Amazon Warrior",	// Dead
+  1325: "Amazon Archer",	// Dead
+  1326: "Imam",	// Dead
   1327: "Monk with Relic",
-  1328: "Queen (Dead)",
-  1329: "Monk (Dead)",
+  1328: "Queen",	// Dead
+  1329: "Monk",	// Dead
   1330: "Barrels",
-  1331: "Alfred the Alpaca (Dead)",
-  1332: "Elephant (Dead)",
+  1331: "Alfred the Alpaca",	// Dead
+  1332: "Elephant",	// Dead
   1333: "Flame 1",
   1334: "Flame 2",
   1335: "Flame 3",
   1336: "Flame 4",
-  1337: "Shaw (Dead)",
+  1337: "Shaw",	// Dead
   1338: "Cart",
   1339: "CLF01",
   1340: "CLF02",
   1341: "CLF03",
   1342: "CLF04",
-  1343: "Statue (Left)",
+  1343: "Statue",	// Left
   1344: "CLF06",
-  1345: "Statue (Right)",
+  1345: "Statue",	// Right
   1346: "CLF08",
-  1347: "Tree (Cypress)",
-  1348: "Tree (Italian Pine)",
-  1349: "Tree (Olive)",
-  1350: "Tree (Reeds)",
-  1351: "Plant (Jungle)",
-  1352: "Plant (Underbrush Tropical)",
-  1353: "Plant (Underbrush)",
-  1354: "Plant (Rainforest)",
-  1355: "Plant (Underbrush Rainforest)",
+  1347: "Cypress Tree",
+  1348: "Italian Pine Tree",
+  1349: "Olive Tree",
+  1350: "Reeds",
+  1351: "Plant",	// Jungle
+  1352: "Plant",	// Underbrush Tropical
+  1353: "Plant",	// Underbrush
+  1354: "Plant",	// Rainforest
+  1355: "Plant",	// Underbrush Rainforest
   1356: "Horse B",
-  1357: "Horse Heavy (Dead)",
+  1357: "Horse Heavy",	// Dead
   1358: "Grass, Green",
   1359: "Grass, Dry",
-  1360: "Plant (Bush, Green)",
-  1361: "Plant (Bush, Dry)",
-  1362: "Plant (Shrub, Green)",
-  1363: "Plant (Shrub, Dry)",
-  1364: "Plant (Weeds)",
-  1365: "Plant (Dead)",
-  1366: "Plant (Flowers)",
+  1360: "Plant",	// Bush, Green
+  1361: "Plant",	// Bush, Dry
+  1362: "Plant",	// Shrub, Green
+  1363: "Plant",	// Shrub, Dry
+  1364: "Plant",	// Weeds
+  1365: "Plant",	// Dead
+  1366: "Plant",	// Flowers
   1367: "Sankore Madrasah",
   1368: "Tower of London",
   1369: "Dormition Cathedral",
   1370: "Steppe Lancer",
-  1371: "Steppe Lancer (Dead)",
+  1371: "Steppe Lancer",	// Dead
   1372: "Elite Steppe Lancer",
-  1373: "Elite Steppe Lancer (Dead)",
+  1373: "Elite Steppe Lancer",	// Dead
   1374: "Iroquois Warrior",
-  1375: "Iroquois Warrior (Dead)",
+  1375: "Iroquois Warrior",	// Dead
   1376: "Torch B",
-  1377: "Torch B (Convertable)",
+  1377: "Torch B",	// Convertable
   1378: "Rock Church",
   1379: "Sea Gate",
   1380: "Sea Gate",
@@ -1329,160 +1329,160 @@ const ENTITY_NAMES: Record<number, string> = {
   1392: "Sea Gate",
   1393: "Sea Gate",
   1394: "Sea Gate",
-  1395: "Sundjata (Dead)",
+  1395: "Sundjata",	// Dead
   1396: "Chain",
   1397: "Chain",
   1398: "Chain",
   1399: "Chain",
   1400: "Priest with Relic",
-  1401: "Savar (Dead)",
-  1402: "Barracks DARK (Rubble)",
-  1403: "House DARK (Rubble)",
-  1404: "Mill DARK (Rubble)",
-  1405: "Outpost DARK (Rubble)",
-  1406: "Gate Foundation (Rubble)",
-  1407: "PalisadeWall DARK (Rubble)",
-  1408: "TownCenter DARK (Rubble)",
-  1409: "LumberCamp (Rubble)",
-  1410: "MiningCamp (Rubble)",
-  1411: "Mill Age2 (Rubble)",
-  1412: "Mill Age3 (Rubble)",
-  1413: "Barracks Age2 (Rubble)",
-  1414: "Barracks Age3 (Rubble)",
-  1415: "ArcheryRange Age2 (Rubble)",
-  1416: "ArcheryRange Age3 (Rubble)",
-  1417: "Stable Age2 (Rubble)",
-  1418: "Stable Age3 (Rubble)",
-  1419: "Blacksmith Age2 (Rubble)",
-  1420: "Blacksmith Age3 (Rubble)",
-  1421: "Monastery Age3 (Rubble)",
-  1422: "Market Age2 (Rubble)",
-  1423: "Market Age3 (Rubble)",
-  1424: "Market Age4 (Rubble)",
-  1425: "SiegeWorkshop Age2 (Rubble)",
-  1426: "SiegeWorkshop Age3 (Rubble)",
-  1427: "University Age3 (Rubble)",
-  1428: "University Age4 (Rubble)",
-  1429: "TradeWorkshop Age3 (Rubble)",
-  1430: "Castle Age3 (Rubble)",
-  1431: "TownCenter Age2 (Rubble)",
-  1432: "TownCenter Age3 (Rubble)",
-  1433: "TownCenter Age4 (Rubble)",
-  1434: "House Age2 (Rubble)",
-  1435: "House Age3 (Rubble)",
-  1436: "Tower Age2 (Rubble)",
-  1437: "Tower Age3 (Rubble)",
-  1438: "Tower Age4 (Rubble)",
-  1439: "Tower Bombard (Rubble)",
-  1440: "PalisadeGate DARK NE (Rubble)",
-  1441: "PalisadeGate DARK SE (Rubble)",
-  1442: "PalisadeGate DARK E (Rubble)",
-  1443: "PalisadeGate DARK N (Rubble)",
-  1444: "FortifiedTower (Rubble)",
-  1445: "Wonder (Rubble)",
-  1446: "Feitoria (Rubble)",
-  1447: "Yurt A (Rubble)",
-  1448: "Yurt B (Rubble)",
-  1449: "Yurt C (Rubble)",
-  1450: "Yurt D (Rubble)",
-  1451: "Yurt E (Rubble)",
-  1452: "Yurt F (Rubble)",
-  1453: "Yurt G (Rubble)",
-  1454: "Yurt H (Rubble)",
-  1455: "Hut A (Rubble)",
-  1456: "Hut B (Rubble)",
-  1457: "Hut C (Rubble)",
-  1458: "Hut D (Rubble)",
-  1459: "Hut E (Rubble)",
-  1460: "Hut F (Rubble)",
-  1461: "Hut G (Rubble)",
-  1462: "Tent A (Rubble)",
-  1463: "Tent B (Rubble)",
-  1464: "Tent C (Rubble)",
-  1465: "Tent D (Rubble)",
-  1466: "Tent E (Rubble)",
-  1467: "ArmyTent A (Rubble)",
-  1468: "ArmyTent B (Rubble)",
-  1469: "ArmyTent C (Rubble)",
-  1470: "ArmyTent D (Rubble)",
-  1471: "ArmyTent E (Rubble)",
-  1472: "Barricade A (Rubble)",
-  1473: "Barricade B (Rubble)",
-  1474: "Barricade C (Rubble)",
-  1475: "Barricade D (Rubble)",
-  1476: "Pavilion A (Rubble)",
-  1477: "Pavilion B (Rubble)",
-  1478: "Pavilion C (Rubble)",
-  1479: "Krepost (Rubble)",
-  1480: "Cathedral (Rubble)",
-  1481: "Temple of Heaven (Rubble)",
-  1482: "DomeOfRock (Rubble)",
-  1483: "Shrine (Rubble)",
-  1484: "Storage (Rubble)",
-  1485: "ArchOfConstantine (Rubble)",
-  1486: "Fortress (Rubble)",
-  1487: "GolGumbaz (Rubble)",
-  1488: "PoenariCastle (Rubble)",
-  1489: "QuimperCathedral (Rubble)",
-  1490: "SanchiStupa (Rubble)",
-  1491: "SankoreMadrasah (Rubble)",
-  1492: "TowerOfLondon (Rubble)",
-  1493: "DormitionCathedral (Rubble)",
-  1494: "TheAccursedTower (Rubble)",
-  1495: "TheTowerOfFlies (Rubble)",
-  1496: "Mosque (Rubble)",
+  1401: "Savar",	// Dead
+  1402: "Barracks DARK",	// Rubble
+  1403: "House DARK",	// Rubble
+  1404: "Mill DARK",	// Rubble
+  1405: "Outpost DARK",	// Rubble
+  1406: "Gate Foundation",	// Rubble
+  1407: "PalisadeWall DARK",	// Rubble
+  1408: "TownCenter DARK",	// Rubble
+  1409: "LumberCamp",	// Rubble
+  1410: "MiningCamp",	// Rubble
+  1411: "Mill Age2",	// Rubble
+  1412: "Mill Age3",	// Rubble
+  1413: "Barracks Age2",	// Rubble
+  1414: "Barracks Age3",	// Rubble
+  1415: "ArcheryRange Age2",	// Rubble
+  1416: "ArcheryRange Age3",	// Rubble
+  1417: "Stable Age2",	// Rubble
+  1418: "Stable Age3",	// Rubble
+  1419: "Blacksmith Age2",	// Rubble
+  1420: "Blacksmith Age3",	// Rubble
+  1421: "Monastery Age3",	// Rubble
+  1422: "Market Age2",	// Rubble
+  1423: "Market Age3",	// Rubble
+  1424: "Market Age4",	// Rubble
+  1425: "SiegeWorkshop Age2",	// Rubble
+  1426: "SiegeWorkshop Age3",	// Rubble
+  1427: "University Age3",	// Rubble
+  1428: "University Age4",	// Rubble
+  1429: "TradeWorkshop Age3",	// Rubble
+  1430: "Castle Age3",	// Rubble
+  1431: "TownCenter Age2",	// Rubble
+  1432: "TownCenter Age3",	// Rubble
+  1433: "TownCenter Age4",	// Rubble
+  1434: "House Age2",	// Rubble
+  1435: "House Age3",	// Rubble
+  1436: "Tower Age2",	// Rubble
+  1437: "Tower Age3",	// Rubble
+  1438: "Tower Age4",	// Rubble
+  1439: "Tower Bombard",	// Rubble
+  1440: "PalisadeGate DARK NE",	// Rubble
+  1441: "PalisadeGate DARK SE",	// Rubble
+  1442: "PalisadeGate DARK E",	// Rubble
+  1443: "PalisadeGate DARK N",	// Rubble
+  1444: "FortifiedTower",	// Rubble
+  1445: "Wonder",	// Rubble
+  1446: "Feitoria",	// Rubble
+  1447: "Yurt A",	// Rubble
+  1448: "Yurt B",	// Rubble
+  1449: "Yurt C",	// Rubble
+  1450: "Yurt D",	// Rubble
+  1451: "Yurt E",	// Rubble
+  1452: "Yurt F",	// Rubble
+  1453: "Yurt G",	// Rubble
+  1454: "Yurt H",	// Rubble
+  1455: "Hut A",	// Rubble
+  1456: "Hut B",	// Rubble
+  1457: "Hut C",	// Rubble
+  1458: "Hut D",	// Rubble
+  1459: "Hut E",	// Rubble
+  1460: "Hut F",	// Rubble
+  1461: "Hut G",	// Rubble
+  1462: "Tent A",	// Rubble
+  1463: "Tent B",	// Rubble
+  1464: "Tent C",	// Rubble
+  1465: "Tent D",	// Rubble
+  1466: "Tent E",	// Rubble
+  1467: "ArmyTent A",	// Rubble
+  1468: "ArmyTent B",	// Rubble
+  1469: "ArmyTent C",	// Rubble
+  1470: "ArmyTent D",	// Rubble
+  1471: "ArmyTent E",	// Rubble
+  1472: "Barricade A",	// Rubble
+  1473: "Barricade B",	// Rubble
+  1474: "Barricade C",	// Rubble
+  1475: "Barricade D",	// Rubble
+  1476: "Pavilion A",	// Rubble
+  1477: "Pavilion B",	// Rubble
+  1478: "Pavilion C",	// Rubble
+  1479: "Krepost",	// Rubble
+  1480: "Cathedral",	// Rubble
+  1481: "Temple of Heaven",	// Rubble
+  1482: "DomeOfRock",	// Rubble
+  1483: "Shrine",	// Rubble
+  1484: "Storage",	// Rubble
+  1485: "ArchOfConstantine",	// Rubble
+  1486: "Fortress",	// Rubble
+  1487: "GolGumbaz",	// Rubble
+  1488: "PoenariCastle",	// Rubble
+  1489: "QuimperCathedral",	// Rubble
+  1490: "SanchiStupa",	// Rubble
+  1491: "SankoreMadrasah",	// Rubble
+  1492: "TowerOfLondon",	// Rubble
+  1493: "DormitionCathedral",	// Rubble
+  1494: "TheAccursedTower",	// Rubble
+  1495: "TheTowerOfFlies",	// Rubble
+  1496: "Mosque",	// Rubble
   1497: "Rubble 4 x 4",
   1498: "Rubble 8 x 8",
-  1499: "Granary (Rubble)",
-  1500: "StoneGate NE (Rubble)",
-  1501: "StoneGate SE (Rubble)",
-  1502: "StoneGate E (Rubble)",
-  1503: "StoneGate N (Rubble)",
-  1504: "FortifiedGate NE (Rubble)",
-  1505: "FortifiedGate SE (Rubble)",
-  1506: "FortifiedGate E (Rubble)",
-  1507: "FortifiedGate N (Rubble)",
-  1508: "StoneWall (Rubble)",
-  1509: "FortifiedWall (Rubble)",
-  1510: "CityGate NE (Rubble)",
-  1511: "CityGate SE (Rubble)",
-  1512: "CityGate E (Rubble)",
-  1513: "CityGate N (Rubble)",
-  1514: "Amphitheatre (Rubble)",
-  1515: "Pyramid (Rubble)",
-  1516: "GreatPyramid (Rubble)",
-  1517: "AachenCathedral (Rubble)",
-  1518: "StoneGate Corner (Rubble)",
-  1519: "FortifiedGate Corner (Rubble)",
-  1520: "Colosseum (Rubble)",
-  1521: "PalisadeGate Corner (Rubble)",
-  1522: "Aqueduct (Rubble)",
-  1523: "CityGate Corner (Rubble)",
-  1524: "Donjon Age2 (Rubble)",
-  1525: "Folwark Age2 (Rubble)",
-  1526: "PaganShrine (Rubble)",
-  1527: "Folwark Age3 (Rubble)",
-  1528: "Folwark Age1 (Rubble)",
-  1529: "Caravanserai (Rubble)",
-  1530: "MinaretOfJam(Rubble)",
-  1531: "FortifiedChurch Age3 (Rubble)",
-  1532: "Yurt I (Rubble)",
-  1533: "Yurt J (Rubble)",
-  1534: "Yurt K (Rubble)",
-  1535: "Yurt L (Rubble)",
+  1499: "Granary",	// Rubble
+  1500: "StoneGate NE",	// Rubble
+  1501: "StoneGate SE",	// Rubble
+  1502: "StoneGate E",	// Rubble
+  1503: "StoneGate N",	// Rubble
+  1504: "FortifiedGate NE",	// Rubble
+  1505: "FortifiedGate SE",	// Rubble
+  1506: "FortifiedGate E",	// Rubble
+  1507: "FortifiedGate N",	// Rubble
+  1508: "StoneWall",	// Rubble
+  1509: "FortifiedWall",	// Rubble
+  1510: "CityGate NE",	// Rubble
+  1511: "CityGate SE",	// Rubble
+  1512: "CityGate E",	// Rubble
+  1513: "CityGate N",	// Rubble
+  1514: "Amphitheatre",	// Rubble
+  1515: "Pyramid",	// Rubble
+  1516: "GreatPyramid",	// Rubble
+  1517: "AachenCathedral",	// Rubble
+  1518: "StoneGate Corner",	// Rubble
+  1519: "FortifiedGate Corner",	// Rubble
+  1520: "Colosseum",	// Rubble
+  1521: "PalisadeGate Corner",	// Rubble
+  1522: "Aqueduct",	// Rubble
+  1523: "CityGate Corner",	// Rubble
+  1524: "Donjon Age2",	// Rubble
+  1525: "Folwark Age2",	// Rubble
+  1526: "PaganShrine",	// Rubble
+  1527: "Folwark Age3",	// Rubble
+  1528: "Folwark Age1",	// Rubble
+  1529: "Caravanserai",	// Rubble
+  1530: "MinaretOfJam",	// Rubble
+  1531: "FortifiedChurch Age3",	// Rubble
+  1532: "Yurt I",	// Rubble
+  1533: "Yurt J",	// Rubble
+  1534: "Yurt K",	// Rubble
+  1535: "Yurt L",	// Rubble
   1536: "Bamboo Stump",
   1537: "Baobab Stump",
   1538: "Lush Bamboo Stump",
   1539: "Felled Tree",
-  1540: "Felled Tree (Bamboo)",
-  1541: "Felled Tree (Baobab)",
-  1542: "Felled Tree (Lush Bamboo)",
+  1540: "Felled Tree",	// Bamboo
+  1541: "Felled Tree",	// Baobab
+  1542: "Felled Tree",	// Lush Bamboo
   1543: "PLACEHOLDER",
-  1544: "PLACEHOLDER (LAND)",
-  1545: "PLACEHOLDER (AMPHIBIOUS)",
-  1546: "PLACEHOLDER (NAVAL)",
-  1547: "PLACEHOLDER (WATER)",
-  1549: "Forage Bush",
+  1544: "PLACEHOLDER",	// LAND
+  1545: "PLACEHOLDER",	// AMPHIBIOUS
+  1546: "PLACEHOLDER",	// NAVAL
+  1547: "PLACEHOLDER",	// WATER
+  1549: "Forage Bush",	// Gurjaras
   1550: "Bridge E--Top",
   1551: "Bridge E--Middle",
   1552: "Bridge E--Bottom",
@@ -1502,16 +1502,16 @@ const ENTITY_NAMES: Record<number, string> = {
   1566: "Temple Ruin",
   1567: "Well",
   1568: "Mounted Samurai",
-  1569: "Mounted Samurai (Dead)",
+  1569: "Mounted Samurai",	// Dead
   1570: "Xolotl Warrior",
-  1571: "XolotlWarrior (Dead)",
+  1571: "XolotlWarrior",	// Dead
   1572: "Merchant",
-  1573: "Merchant (Dead)",
+  1573: "Merchant",	// Dead
   1574: "Sosso Guard",
-  1575: "Sosso Gaurd (Dead)",
-  1576: "Royal Janissary (Dead)",
-  1577: "Photonman",
-  1578: "Photonman (Dead)",
+  1575: "Sosso Gaurd",	// Dead
+  1576: "Royal Janissary",	// Dead
+  1577: "Photon Man",
+  1578: "Photonman",	// Dead
   1579: "City Gate",
   1580: "City Gate",
   1581: "City Gate",
@@ -1529,18 +1529,18 @@ const ENTITY_NAMES: Record<number, string> = {
   1593: "City Gate",
   1594: "City Gate",
   1595: "Projectile Laser",
-  1596: "Cow B",
-  1597: "Cow B (Dead)",
-  1598: "Cow C",
-  1599: "Cow C (Dead)",
-  1600: "Cow D",
-  1601: "Cow D (Dead)",
+  1596: "Cow",	// Black
+  1597: "Cow B",	// Dead
+  1598: "Cow",	// Brown & White
+  1599: "Cow C",	// Dead
+  1600: "Cow",	// Brown
+  1601: "Cow D",	// Dead
   1602: "Horse C",
-  1603: "Horse C (Dead)",
+  1603: "Horse C",	// Dead
   1604: "Horse D",
-  1605: "Horse D (Dead)",
+  1605: "Horse D",	// Dead
   1606: "Horse E",
-  1607: "Horse E (Dead)",
+  1607: "Horse E",	// Dead
   1608: "Butterflies1",
   1609: "Butterflies2",
   1610: "Butterflies3",
@@ -1548,40 +1548,40 @@ const ENTITY_NAMES: Record<number, string> = {
   1612: "Animal Blood Large",
   1613: "Terrain blocker",
   1614: "Bolt explosion",
-  1615: "Sforza (Dead)",
-  1616: "Tariq Ibn Ziyad (Dead)",
-  1617: "Vlad Dracula (Dead)",
-  1618: "Subotai (Dead)",
-  1619: "Attila (Dead)",
-  1620: "Alaric (Dead)",
-  1621: "Sumanguru (Dead)",
+  1615: "Sforza",	// Dead
+  1616: "Tariq Ibn Ziyad",	// Dead
+  1617: "Vlad Dracula",	// Dead
+  1618: "Subotai",	// Dead
+  1619: "Attila",	// Dead
+  1620: "Alaric",	// Dead
+  1621: "Sumanguru",	// Dead
   1622: "Aachen Cathedral",
-  1623: "Le Loi (Dead)",
-  1624: "Ataulf (Dead)",
-  1625: "Yodit (Dead)",
-  1626: "Cusi Yupanqui (Dead)",
-  1627: "Prithviraj (Dead)",
-  1628: "Jarl (Dead)",
-  1629: "Ivaylo (Dead)",
-  1630: "Ivaylo Infantry (Dead)",
+  1623: "Le Loi",	// Dead
+  1624: "Ataulf",	// Dead
+  1625: "Yodit",	// Dead
+  1626: "Cusi Yupanqui",	// Dead
+  1627: "Prithviraj",	// Dead
+  1628: "Jarl",	// Dead
+  1629: "Ivaylo",	// Dead
+  1630: "Ivaylo Infantry",	// Dead
   1631: "The Middlebrook",
-  1632: "Osman (Dead)",
-  1633: "Pachacuti (Dead)",
+  1632: "Osman",	// Dead
+  1633: "Pachacuti",	// Dead
   1634: "Baobab Stump",
-  1635: "Waterfall (Background)",
-  1636: "Envoy (Dead)",
-  1637: "Bayinnaung (Dead)",
-  1638: "Kushluk (Dead)",
+  1635: "Waterfall",	// Background
+  1636: "Envoy",	// Dead
+  1637: "Bayinnaung",	// Dead
+  1638: "Kushluk",	// Dead
   1639: "Monument resources enabler",
-  1640: "Villager building (Male)",
-  1641: "Villager building (Female)",
-  1642: "Villager annex (Chinese)",
-  1643: "Villager building2 (Male)",
-  1644: "Villager annex (Mayan)",
-  1645: "Villager building2 (Female)",
+  1640: "Villager building",	// Male
+  1641: "Villager building",	// Female
+  1642: "Villager annex",	// Chinese
+  1643: "Villager building2",	// Male
+  1644: "Villager annex",	// Mayan
+  1645: "Villager building2",	// Female
   1646: "Market",
   1647: "Trade Workshop",
-  1648: "Trail Smoke (Gunpowder)",
+  1648: "Trail Smoke",	// Gunpowder
   1649: "Trophy None",
   1650: "Trophy Bronze",
   1651: "Trophy Silver",
@@ -1589,121 +1589,121 @@ const ENTITY_NAMES: Record<number, string> = {
   1653: "Trophy Platinum",
   1654: "resources",
   1655: "Coustillier",
-  1656: "Coustillier (Dead)",
+  1656: "Coustillier",	// Dead
   1657: "Elite Coustillier",
   1658: "Serjeant",
   1659: "Elite Serjeant",
-  1660: "Serjeant",
-  1661: "Elite Serjeant",
-  1662: "Serjeant (Dead)",
-  1663: "Flemish Militia Male",
-  1664: "Flemish Militia Male (Dead)",
+  1660: "Serjeant",	// Donjon
+  1661: "Elite Serjeant",	// Donjon
+  1662: "Serjeant",	// Dead
+  1663: "Flemish Militia",	// Male
+  1664: "Flemish Militia Male",	// Dead
   1665: "Donjon",
   1666: "HPIKL_D",
-  1667: "Elite Elephant Archer (Dead)",
-  1668: "Camel Scout (Dead)",
+  1667: "Elite Elephant Archer",	// Dead
+  1668: "Camel Scout",	// Dead
   1669: "Edward Longshanks",
-  1670: "Edward Longshanks (Dead)",
+  1670: "Edward Longshanks",	// Dead
   1671: "Gilbert de Clare",
-  1672: "Gilbert de Clare (Dead)",
+  1672: "Gilbert de Clare",	// Dead
   1673: "John the Fearless",
-  1674: "John the Fearless (Dead)",
+  1674: "John the Fearless",	// Dead
   1675: "Philip the Good",
-  1676: "Philip the Good (Dead)",
+  1676: "Philip the Good",	// Dead
   1677: "Robert Guiscard",
-  1678: "Robert Guiscard (Dead)",
+  1678: "Robert Guiscard",	// Dead
   1679: "Roger Bosso",
-  1680: "Roger Bosso (Dead)",
+  1680: "Roger Bosso",	// Dead
   1681: "Bohemond",
-  1682: "Bohemond (Dead)",
+  1682: "Bohemond",	// Dead
   1683: "Llywelyn ap Gruffydd",
-  1684: "Llywelyn ap Gruffydd (Dead)",
+  1684: "Llywelyn ap Gruffydd",	// Dead
   1685: "Dafydd ap Gruffydd",
-  1686: "Dafydd ap Gruffydd (Dead)",
+  1686: "Dafydd ap Gruffydd",	// Dead
   1687: "Bernard d'Armagnac",
-  1688: "Bernard d'Armagnac (Dead)",
-  1689: "Flare (Permanent)",
+  1688: "Bernard d'Armagnac",	// Dead
+  1689: "Flare",	// Permanent
   1690: "Warwolf Trebuchet",
-  1691: "Warwolf Trebuchet (Packed)",
+  1691: "Warwolf Trebuchet",	// Packed
   1692: "Jacqueline of Hainaut",
   1693: "Sheep building1",
   1694: "Sheep annex1",
   1695: "Sheep building2",
   1696: "Sheep annex2",
-  1697: "Flemish Militia Female",
-  1698: "Flemish Militia Female (Dead)",
-  1699: "Flemish Militia",
+  1697: "Flemish Militia",	// Female
+  1698: "Flemish Militia Female",	// Dead
+  1699: "Flemish Militia",	// Train
   1700: "Sheep building3",
   1701: "Obuch",
-  1702: "Obuch (Dead)",
+  1702: "Obuch",	// Dead
   1703: "Elite Obuch",
   1704: "Hussite Wagon",
-  1705: "Hussite Wagon (Dead)",
+  1705: "Hussite Wagon",	// Dead
   1706: "Elite Hussite Wagon",
   1707: "Winged Hussar",
-  1708: "Winged Hussar (Dead)",
+  1708: "Winged Hussar",	// Dead
   1709: "Houfnice",
-  1710: "Houfnice (Dead)",
-  1711: "Folwark",
+  1710: "Houfnice",	// Dead
+  1711: "Folwark",	// Feudal Age
   1712: "Pagan Shrine",
   1713: "Jan Zizka",
-  1714: "Jan Zizka (Dead)",
+  1714: "Jan Zizka",	// Dead
   1715: "Jadwiga",
-  1716: "Jadwiga (Dead)",
-  1717: "Tree (Birch)",
+  1716: "Jadwiga",	// Dead
+  1717: "Birch Tree",
   1718: "Jogaila",
-  1719: "Jogaila (Dead)",
-  1720: "Folwark",
+  1719: "Jogaila",	// Dead
+  1720: "Folwark",	// Castle Age
   1721: "Kestutis",
-  1722: "Kestutis (Dead)",
+  1722: "Kestutis",	// Dead
   1723: "Crusader Knight",
-  1724: "Crusader Knight (Dead)",
+  1724: "Crusader Knight",	// Dead
   1725: "Algirdas",
-  1726: "Algirdas (Dead)",
+  1726: "Algirdas",	// Dead
   1727: "Ulrich von Jungingen",
-  1728: "Ulrich von Jungingen (Dead)",
+  1728: "Ulrich von Jungingen",	// Dead
   1729: "Emperor Sigismund",
-  1730: "Dmitry of Moscow",
+  1730: "Dmitri of Moscow",
   1731: "Mikhail of Tver",
-  1732: "Young Jadwiga",
+  1732: "Young Jagwiga",
   1733: "Projectile Hussite Wagon",
-  1734: "Folwark",
+  1734: "Folwark",	// Dark Age
   1735: "Urumi Swordsman",
-  1736: "Urumi Swordsman (Dead)",
+  1736: "Urumi Swordsman",	// Dead
   1737: "Elite Urumi Swordsman",
-  1738: "Ratha (Melee)",
-  1739: "Ratha (Melee) (Dead)",
-  1740: "Elite Ratha (Melee)",
+  1738: "Ratha",	// Melee
+  1739: "Ratha",	// Melee, Dead
+  1740: "Elite Ratha",	// Melee
   1741: "Chakram Thrower",
-  1742: "Chakram Thrower (Dead)",
+  1742: "Chakram Thrower",	// Dead
   1743: "Elite Chakram Thrower",
   1744: "Armored Elephant",
-  1745: "Armored Elephant (Dead)",
+  1745: "Armored Elephant",	// Dead
   1746: "Siege Elephant",
   1747: "Ghulam",
-  1748: "Ghulam (Dead)",
+  1748: "Ghulam",	// Dead
   1749: "Elite Ghulam",
   1750: "Thirisadai",
   1751: "Shrivamsha Rider",
-  1752: "Shrivamsha Rider (Dead)",
+  1752: "Shrivamsha Rider",	// Dead
   1753: "Elite Shrivamsha Rider",
   1754: "Caravanserai",
   1755: "Camel Scout",
   1756: "Projectile Chakram",
-  1757: "Siege Elephant (Dead)",
+  1757: "Siege Elephant",	// Dead
   1758: "Gaia transition building",
-  1759: "Ratha (Ranged)",
-  1760: "Ratha (Ranged) (Dead)",
-  1761: "Elite Ratha (Ranged)",
+  1759: "Ratha",	// Ranged
+  1760: "Ratha",	// Ranged, Dead
+  1761: "Elite Ratha",	// Ranged
   1762: "Mihira Bhoja",
   1763: "Amoghavarsha",
   1764: "Rajendra Chola",
-  1765: "Rajendra Chola (Dead)",
+  1765: "Rajendra Chola",	// Dead
   1766: "General Araiyan",
-  1767: "General Araiyan (Dead)",
+  1767: "General Araiyan",	// Dead
   1768: "Young Babur",
   1769: "Qutlugh",
-  1770: "Qutlugh (Dead)",
+  1770: "Qutlugh",	// Dead
   1771: "Ibrahim Lodi",
   1772: "Shaybani Khan",
   1773: "Minaret of Jam",
@@ -1713,50 +1713,50 @@ const ENTITY_NAMES: Record<number, string> = {
   1777: "Indian Statues",
   1778: "Rekha-Deul Temple",
   1779: "Projectile Thirisadai",
-  1780: "Projectile Thirisadai (Fire)",
+  1780: "Projectile Thirisadai",	// Fire
   1781: "Projectile Elephant Archer",
-  1782: "Projectile Elephant Archer (Fire)",
+  1782: "Projectile Elephant Archer",	// Fire
   1783: "Projectile Elite Chakram",
   1784: "Indian Ruins",
-  1785: "Flare B (Permanent)",
-  1786: "Spearman",
-  1787: "Pikeman",
-  1788: "Halberdier",
-  1789: "Projectile Organ Gun (Secondary)",
+  1785: "Flare B",	// Permanent
+  1786: "Spearman",	// Donjon
+  1787: "Pikeman",	// Donjon
+  1788: "Halberdier",	// Donjon
+  1789: "Projectile Organ Gun",	// Secondary
   1790: "Centurion",
-  1791: "Centurion (Dead)",
+  1791: "Centurion",	// Dead
   1792: "Elite Centurion",
   1793: "Legionary",
-  1794: "Legionary (Dead)",
+  1794: "Legionary",	// Dead
   1795: "Dromon",
   1796: "Gazelle",
-  1797: "Gazelle (Dead)",
-  1798: "Projectile Dromon (Greek Fire)",
-  1799: "Trail Smoke (Fire)",
+  1797: "Gazelle",	// Dead
+  1798: "Projectile Dromon",	// Greek Fire
+  1799: "Trail Smoke",	// Fire
   1800: "Composite Bowman",
-  1801: "Composite Bowman (Dead)",
+  1801: "Composite Bowman",	// Dead
   1802: "Elite Composite Bowman",
   1803: "Monaspa",
-  1804: "Monaspa (Dead)",
+  1804: "Monaspa",	// Dead
   1805: "Elite Monaspa",
   1806: "Fortified Church",
   1807: "Svan Tower",
   1808: "Mule Cart",
-  1809: "Mule Cart (Dead)",
+  1809: "Mule Cart",	// Dead
   1810: "Villager",
   1811: "Warrior Priest",
-  1812: "Warrior Priest (Dead)",
+  1812: "Warrior Priest",	// Dead
   1813: "Savar",
-  1814: "Savar (Dead)",
+  1814: "Savar",
   1815: "Shah Ismail",
-  1816: "Shah Ismail (Dead)",
+  1816: "Shah Ismail",	// Dead
   1817: "Qizilbash Warrior",
-  1818: "Qizilbash Warrior (Dead)",
+  1818: "Qizilbash Warrior",	// Dead
   1819: "Ismail",
   1820: "Selim the Grim",
   1821: "Thoros",
   1822: "Tamar",
-  1823: "Tamar (Dead)",
+  1823: "Tamar",	// Dead
   1824: "Yury",
   1825: "Ivane",
   1826: "Zakare",
@@ -1781,38 +1781,38 @@ const ENTITY_NAMES: Record<number, string> = {
   1845: "Bridge Piece--Broken C",
   1846: "Bridge Piece--Cracked",
   1847: "Bridge Piece--Rails",
-  1848: "Thoros (Dead)",
-  1849: "Cliff (Desert) 01",
-  1850: "Cliff (Desert) 02",
-  1851: "Cliff (Desert) 03",
-  1852: "Cliff (Desert) 04",
-  1853: "Cliff (Desert) 05",
-  1854: "Cliff (Desert) 06",
-  1855: "Cliff (Desert) 07",
-  1856: "Cliff (Desert) 08",
-  1857: "Cliff (Desert) 09",
-  1858: "Cliff (Snow) 01",
-  1859: "Cliff (Snow) 02",
-  1860: "Cliff (Snow) 03",
-  1861: "Cliff (Snow) 04",
-  1862: "Cliff (Snow) 05",
-  1863: "Cliff (Snow) 06",
-  1864: "Cliff (Snow) 07",
-  1865: "Cliff (Snow) 08",
-  1866: "Cliff (Snow) 09",
+  1848: "Thoros",	// Dead
+  1849: "Cliff 01",	// Desert
+  1850: "Cliff 02",	// Desert
+  1851: "Cliff 03",	// Desert
+  1852: "Cliff 04",	// Desert
+  1853: "Cliff 05",	// Desert
+  1854: "Cliff 06",	// Desert
+  1855: "Cliff 07",	// Desert
+  1856: "Cliff 08",	// Desert
+  1857: "Cliff 09",	// Desert
+  1858: "Cliff 01",	// Snow
+  1859: "Cliff 02",	// Snow
+  1860: "Cliff 03",	// Snow
+  1861: "Cliff 04",	// Snow
+  1862: "Cliff 05",	// Snow
+  1863: "Cliff 06",	// Snow
+  1864: "Cliff 07",	// Snow
+  1865: "Cliff 08",	// Snow
+  1866: "Cliff 09",	// Snow
   1867: "Projectile SVT",
-  1868: "Projectile SVT (Fire)",
+  1868: "Projectile SVT",	// Fire
   1869: "Hunnic Horse",
   1870: "Chief's Yurt",
-  1871: "ChiefsYurt (Rubble)",
-  1872: "REVEAL1 (TEMP)",
-  1873: "REVEAL2 (TEMP)",
-  1874: "REVEAL3 (TEMP)",
-  1875: "PLACEHOLDER (VILL)",
-  1876: "PLACEHOLDER (VILLF)",
+  1871: "ChiefsYurt",	// Rubble
+  1872: "REVEAL1",	// TEMP
+  1873: "REVEAL2",	// TEMP
+  1874: "REVEAL3",	// TEMP
+  1875: "PLACEHOLDER",	// VILL
+  1876: "PLACEHOLDER",	// VILLF
   1877: "GREN_DELAY_1",
   1878: "GREN_DELAY_2",
-  1879: "Projectile LCHUAN (Rocket)",
+  1879: "Projectile LCHUAN",	// Rocket
   1880: "PROJMTREB_D",
   1881: "LCHUAN_D0",
   1882: "LCHUAN_EXP",
@@ -1824,28 +1824,28 @@ const ENTITY_NAMES: Record<number, string> = {
   1888: "Pasture Post",
   1889: "Pasture",
   1890: "Pasture Annex",
-  1891: "Villager Female Herder",
-  1892: "Villager Male Herder",
-  1893: "Pasture",
+  1891: "Herder",	// Female
+  1892: "Herder",	// Male
+  1893: "Pasture",	// Mangrove
   1894: "Dead Pasture",
   1895: "HRCKTCRT_D0",
   1896: "Argali",
-  1897: "Pasture",
+  1897: "Pasture",	// Land
   1898: "Dead Pasture",
-  1899: "Argali (Pasture)",
-  1900: "Ibex (Pasture)",
+  1899: "Argali",	// Pasture
+  1900: "Ibex",	// Pasture
   1901: "Fire Lancer",
   1902: "PLACEHOLDER2",
   1903: "Elite Fire Lancer",
   1904: "Rocket Cart",
-  1905: "PLACEHOLDER2 (LAND)",
+  1905: "PLACEHOLDER2",	// LAND
   1906: "Projectile Rocket Cart",
   1907: "Heavy Rocket Cart",
   1908: "Iron Pagoda",
-  1909: "PLACEHOLDER2 (AMPHIBIOUS)",
+  1909: "PLACEHOLDER2",	// AMPHIBIOUS
   1910: "Elite Iron Pagoda",
   1911: "Grenadier",
-  1912: "PLACEHOLDER2 (NAVAL)",
+  1912: "PLACEHOLDER2",	// NAVAL
   1913: "Projectile Grenadier",
   1914: "GREN_DELAYANNEX_D",
   1915: "GREN_DELAY_EXP",
@@ -1854,72 +1854,72 @@ const ENTITY_NAMES: Record<number, string> = {
   1918: "RCKTCRT_D0",
   1919: "RCKTCRT_EXP",
   1920: "Liao Dao",
-  1921: "PLACEHOLDER2 (WATER)",
+  1921: "PLACEHOLDER2",	// WATER
   1922: "Elite Liao Dao",
   1923: "Mounted Trebuchet",
   1925: "Projectile Fire Lancer",
   1926: "Projectile Mounted Trebuchet",
-  1927: "Projectile Mounted Trebuchet (Fire)",
+  1927: "Projectile Mounted Trebuchet",	// Fire
   1928: "ROCKET_DELAY_D",
   1929: "ROCKET_DELAY_EXP",
-  1930: "Projectile Crossbowman (Secondary)",
+  1930: "Projectile Crossbowman",	// Secondary
   1931: "Projectile ZhouYu",
   1932: "Projectile Traction",
-  1933: "Projectile Traction (Fire)",
-  1934: "Projectile Traction (Secondary)",
-  1935: "Projectile Traction (Secondary Fire)",
-  1936: "Projectile LCHUAN (Charge)",
-  1937: "Projectile LCHUAN Fire (Charge)",
+  1933: "Projectile Traction",	// Fire
+  1934: "Projectile Traction",	// Secondary
+  1935: "Projectile Traction",	// Secondary Fire
+  1936: "Projectile LCHUAN",	// Charge
+  1937: "Projectile LCHUAN Fire",	// Charge
   1938: "Projectile LCHUAN",
-  1939: "Projectile LCHUAN (Fire)",
+  1939: "Projectile LCHUAN",	// Fire
   1940: "Pagan Priest",
   1941: "Pagan Priest with Relic",
   1942: "Traction Trebuchet",
   1944: "Hei Guang Cavalry",
-  1945: "Hei Guang Cavalry (Dead)",
+  1945: "Hei Guang Cavalry",	// Dead
   1946: "Heavy Hei Guang Cavalry",
-  1947: "Heavy Hei Guang Cavalry (Dead)",
+  1947: "Heavy Hei Guang Cavalry",	// Dead
   1948: "Lou Chuan",
   1949: "Tiger Cavalry",
-  1950: "Tiger Cavalry (Dead)",
+  1950: "Tiger Cavalry",	// Dead
   1951: "Elite Tiger Cavalry",
   1952: "Xianbei Raider",
-  1953: "Xianbei Raider (Dead)",
+  1953: "Xianbei Raider",	// Dead
   1954: "Cao Cao",
   1955: "Red Fox",
   1956: "Dummy Target",
-  1957: "Projectile War Chariot (Barrage)",
+  1957: "Projectile War Chariot",	// Barrage
   1958: "Arctic Fox",
   1959: "White Feather Guard",
-  1960: "White Feather Guard (Dead)",
+  1960: "White Feather Guard",	// Dead
   1961: "Elite White Feather Guard",
-  1962: "War Chariot (Focus Fire)",
+  1962: "War Chariot",	// Focus Fire
   1963: "Llama B",
-  1964: "Projectile War Chariot (Focus Fire)",
+  1964: "Projectile War Chariot",	// Focus Fire
   1965: "Arctic Wolf",
   1966: "Liu Bei",
   1968: "Fire Archer",
-  1969: "Fire Archer (Dead)",
+  1969: "Fire Archer",	// Dead
   1970: "Elite Fire Archer",
   1971: "Projectile Fire Archer",
-  1972: "Projectile Fire Archer (Red Cliffs)",
+  1972: "Projectile Fire Archer",	// Red Cliffs
   1973: "Nessie",
-  1974: "Jian Swordsman",
-  1975: "Jian Swordsman (Dead)",
-  1976: "Jian Swordsman",
-  1977: "Jian Swordsman (Dead)",
+  1974: "Jian Swordsman",	// Healthy
+  1975: "Jian Swordsman",	// Dead
+  1976: "Jian Swordsman",	// Injured
+  1977: "Jian Swordsman",	// Dead
   1978: "Sun Jian",
   1979: "Stonehenge",
-  1980: "War Chariot (Barrage)",
+  1980: "War Chariot",	// Barrage
   1982: "Projectile Xianbei",
-  1983: "Projectile Xianbei (Secondary)",
-  1984: "Tree (Lush Bamboo Forest)",
+  1983: "Projectile Xianbei",	// Secondary
+  1984: "Lush Bamboo Tree",
   1985: "Lush Bamboo Stump",
   1986: "Paper Lantern",
   1987: "Chinese Ruins",
   1988: "Emperor in a Litter",
-  1989: "Paifang Gate (Small)",
-  1990: "Paifang Gate (Large)",
+  1989: "Paifang Gate",	// Small
+  1990: "Paifang Gate",	// Large
   1991: "Fountain",
   1992: "Bridge Piece CD--End A",
   1993: "Bridge Piece CD--End B",
@@ -1937,16 +1937,16 @@ const ENTITY_NAMES: Record<number, string> = {
   2005: "Pagoda D",
   2006: "Pagoda E",
   2007: "Garden Pavilion",
-  2008: "Rock (Pillar)",
-  2009: "Rock (Limestone)",
+  2008: "Rock",	// Pillar
+  2009: "Rock",	// Limestone
   2010: "Flag N",
   2011: "Flag O",
   2012: "Flag P",
   2013: "Flag Ritual A",
   2014: "Flag Ritual B",
   2015: "Flag Ritual C",
-  2016: "Tree (Asian Pine)",
-  2017: "Tree (Peach Blossom)",
+  2016: "Asian Pine Tree",
+  2017: "Peach Blossom Tree",
   2018: "Asian Carts",
   2019: "Weapon Stacks",
   2020: "Garden Bridge",
@@ -1954,13 +1954,13 @@ const ENTITY_NAMES: Record<number, string> = {
   2022: "Asian Lanterns",
   2023: "Burned Building B",
   2024: "Asian Market Stalls",
-  2025: "Tree (Willow)",
+  2025: "Willow Tree",
   2026: "Red Crown Crane",
-  2027: "Tree (Asian Maple, Green)",
-  2028: "Tree (Asian Maple, Autumn)",
-  2029: "Fallen Leaves (Peach Blossom)",
-  2030: "Fallen Leaves (Maple)",
-  2031: "Fallen Leaves (Maple, Autumn)",
+  2027: "Asian Maple Tree",	// Green
+  2028: "Asian Maple Tree",	// Autumn
+  2029: "Fallen Leaves",	// Peach Blossom
+  2030: "Fallen Leaves",	// Maple
+  2031: "Fallen Leaves",	// Maple, Autumn
   2032: "LÃ¼ Bu",
   2033: "Yurt M",
   2034: "Guan Yu",
@@ -1976,9 +1976,9 @@ const ENTITY_NAMES: Record<number, string> = {
   2049: "Liu Biao",
   2050: "Zhang Jue",
   2051: "Zhao Yun",
-  2052: "Cao Cao (Campaign)",
-  2053: "Liu Bei (Campaign)",
-  2054: "Sun Jian (Campaign)",
+  2052: "Cao Cao",	// Campaign
+  2053: "Liu Bei",	// Campaign
+  2054: "Sun Jian",	// Campaign
   2055: "FIREARCH_EXP",
   2056: "Projectile LUBU",
   2057: "Projectile GSTRIKE",
@@ -1993,15 +1993,15 @@ const ENTITY_NAMES: Record<number, string> = {
   2066: "Liu Bei",
   2067: "Kongming Lantern",
   2068: "Kongming Lantern",
-  2069: "Cliff (Limestone) 01",
-  2070: "Cliff (Limestone) 02",
-  2071: "Cliff (Limestone) 03",
-  2072: "Cliff (Limestone) 04",
-  2073: "Cliff (Limestone) 05",
-  2074: "Cliff (Limestone) 06",
-  2075: "Cliff (Limestone) 07",
-  2076: "Cliff (Limestone) 08",
-  2077: "Cliff (Limestone) 09",
+  2069: "Cliff 01",	// Limestone
+  2070: "Cliff 02",	// Limestone
+  2071: "Cliff 03",	// Limestone
+  2072: "Cliff 04",	// Limestone
+  2073: "Cliff 05",	// Limestone
+  2074: "Cliff 06",	// Limestone
+  2075: "Cliff 07",	// Limestone
+  2076: "Cliff 08",	// Limestone
+  2077: "Cliff 09",	// Limestone
   2078: "Pasture Annex Fences",
   2079: "Pasture Annex AB",
   2080: "Pasture Annex CD",
@@ -2026,16 +2026,16 @@ const ENTITY_NAMES: Record<number, string> = {
   2100: "Arctic Hare",
   2101: "Immortal",
   2102: "Elite Immortal",
-  2103: "Immortal (Dead)",
+  2103: "Immortal",	// Dead
   2104: "Strategos",
   2105: "Elite Strategos",
-  2106: "Strategos (Dead)",
+  2106: "Strategos",	// Dead
   2107: "Hippeus",
   2108: "Elite Hippeus",
-  2109: "Hippeus (Dead)",
+  2109: "Hippeus",	// Dead
   2110: "Hoplite",
   2111: "Elite Hoplite",
-  2112: "Hoplite (Dead)",
+  2112: "Hoplite",	// Dead
   2117: "Shipyard3",
   2118: "Shipyard4",
   2119: "Shipyard2",
@@ -2070,7 +2070,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2150: "War Chariot",
   2151: "Elite War Chariot",
   2162: "Polemarch 1",
-  2163: "Basileus (Dead)",
+  2163: "Basileus",	// Dead
   2164: "Polemarch 2",
   2165: "Polemarch 3",
   2166: "Polemarch 4",
@@ -2084,7 +2084,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2174: "Immortal Ranged",
   2175: "Elite Immortal Ranged",
   2176: "Greek Army Tent A",
-  2177: "Greek Army Tent A (Rubble)",
+  2177: "Greek Army Tent A",	// Rubble
   2178: "Marble Cliff 1",
   2179: "Marble Cliff 2",
   2180: "Marble Cliff 3",
@@ -2157,7 +2157,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2260: "Spartan Flag 2",
   2261: "Spartan Flag 3",
   2262: "Greek Commander Tent A",
-  2263: "Greek Commander Tent A (Rubble)",
+  2263: "Greek Commander Tent A",	// Rubble
   2264: "Statue Athena Marble",
   2265: "Statue Athena Painted",
   2270: "Polemarch 4 with Ephorate",
@@ -2185,10 +2185,10 @@ const ENTITY_NAMES: Record<number, string> = {
   2292: "Antiquity Broken Cart",
   2293: "Weapon Rack",
   2294: "Sacred Tree",
-  2301: "Elite Hoplite (Dead)",
-  2302: "War Chariot (Dead)",
-  2303: "Elite War Chariot (Dead)",
-  2304: "Ranged Immortal (Dead)",
+  2301: "Elite Hoplite",	// Dead
+  2302: "War Chariot",	// Dead
+  2303: "Elite War Chariot",	// Dead
+  2304: "Ranged Immortal",	// Dead
   2306: "Hero Shrine",
   2307: "Projectile Gastraphetes",
   2308: "Artaphernes",
@@ -2216,11 +2216,11 @@ const ENTITY_NAMES: Record<number, string> = {
   2330: "Takabara",
   2331: "Sickle Warrior",
   2332: "Thracian Peltast",
-  2333: "Villager Male Oyster Gatherer",
-  2334: "Villager Female Oyster Gatherer",
+  2333: "Oyster Gatherer",	// Male
+  2334: "Oyster Gatherer",	// Female
   2339: "Themistocles Warship",
   2340: "Mouflon",
-  2341: "Mouflon (Dead)",
+  2341: "Mouflon",	// Dead
   2342: "Projectile Polycritus",
   2343: "Military Satrapy Flag",
   2344: "Defensive Satrapy Flag",
@@ -2236,30 +2236,30 @@ const ENTITY_NAMES: Record<number, string> = {
   2354: "Galley Shipwreck",
   2355: "Catapult Shipwreck",
   2356: "Antiquity Mode Fishing Ship",
-  2357: "Ekdromos (Dead)",
-  2358: "Sakan Axeman (Dead)",
-  2359: "Brasidas (Dead)",
-  2360: "Themistocles (Dead)",
-  2361: "Mercenary Hoplite (Dead)",
-  2362: "Sickle Warrior (Dead)",
-  2363: "Artaphernes (Dead)",
-  2364: "Datis (Dead)",
-  2365: "Cretan Archer (Dead)",
-  2366: "Bactrian Archer (Dead)",
-  2367: "Rhodian Slinger (Dead)",
-  2368: "Camel Raider (Dead)",
-  2369: "Greek Noble Cavalry (Dead)",
-  2370: "Aristagoras (Dead)",
-  2371: "Lysander (Dead)",
-  2372: "Sparabara (Dead)",
-  2373: "Aura Quest Indicator (Lavender)",
-  2374: "Scythian Axe Cavalry (Dead)",
-  2375: "Tarantine Cavalry (Dead)",
-  2376: "Aristides (Dead)",
-  2377: "Thracian Peltast (Dead)",
-  2378: "Aura Quest Indicator (Shells)",
-  2379: "Aura Quest Indicator (Coins)",
-  2380: "Aura Quest Indicator (Gold and Shells)",
+  2357: "Ekdromos",	// Dead
+  2358: "Sakan Axeman",	// Dead
+  2359: "Brasidas",	// Dead
+  2360: "Themistocles",	// Dead
+  2361: "Mercenary Hoplite",	// Dead
+  2362: "Sickle Warrior",	// Dead
+  2363: "Artaphernes",	// Dead
+  2364: "Datis",	// Dead
+  2365: "Cretan Archer",	// Dead
+  2366: "Bactrian Archer",	// Dead
+  2367: "Rhodian Slinger",	// Dead
+  2368: "Camel Raider",	// Dead
+  2369: "Greek Noble Cavalry",	// Dead
+  2370: "Aristagoras",	// Dead
+  2371: "Lysander",	// Dead
+  2372: "Sparabara",	// Dead
+  2373: "Aura Quest Indicator",	// Lavender
+  2374: "Scythian Axe Cavalry",	// Dead
+  2375: "Tarantine Cavalry",	// Dead
+  2376: "Aristides",	// Dead
+  2377: "Thracian Peltast",	// Dead
+  2378: "Aura Quest Indicator",	// Shells
+  2379: "Aura Quest Indicator",	// Coins
+  2380: "Aura Quest Indicator",	// Gold and Shells
   2381: "GOAT",
   2382: "Companion Cavalry",
   2383: "Elite Companion Cavalry",
@@ -2271,11 +2271,11 @@ const ENTITY_NAMES: Record<number, string> = {
   2389: "Elite Pattiyodha Longbowman",
   2390: "Sannahya",
   2391: "Elite Sannahya",
-  2392: "Companion Cavalry (Dead)",
-  2393: "Phalangite (Dead)",
-  2394: "Rhomphaia Warrior (Dead)",
-  2395: "Pattiyodha Longbowman (Dead)",
-  2396: "Sannahya (Dead)",
+  2392: "Companion Cavalry",	// Dead
+  2393: "Phalangite",	// Dead
+  2394: "Rhomphaia Warrior",	// Dead
+  2395: "Pattiyodha Longbowman",	// Dead
+  2396: "Sannahya",	// Dead
   2397: "Alexander Dismounted",
   2398: "Alexander",
   2399: "Philip",
@@ -2285,7 +2285,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2403: "Perdiccas",
   2404: "Nearchos",
   2405: "Greek Commander Tent Dropsite",
-  2406: "Camp Stable Age2 (Rubble)",
+  2406: "Camp Stable Age2",	// Rubble
   2407: "Rock 1 Hover",
   2408: "Rock 2 Hover",
   2409: "Rock Formation 1 Hover",
@@ -2329,12 +2329,12 @@ const ENTITY_NAMES: Record<number, string> = {
   2447: "Macedonian Commander Dead",
   2448: "Flagship of Nearchos moveable docked",
   2449: "Indian Tribesman",
-  2450: "Indian Tribesman (Dead)",
+  2450: "Indian Tribesman",	// Dead
   2451: "Thracian Chieftain",
-  2452: "Thracian Chieftain (Dead)",
+  2452: "Thracian Chieftain",	// Dead
   2453: "Hill Tribesman",
-  2454: "Hill Tribesman (Dead)",
-  2455: "Perdiccas (Dead)",
+  2454: "Hill Tribesman",	// Dead
+  2455: "Perdiccas",	// Dead
   2456: "Antiquity Impaled Corpse",
   2457: "Beached Whale",
   2458: "Statue Hermes",
@@ -2355,7 +2355,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2473: "Alexander's Longbowman",
   2474: "Alexander's Eastern Archer",
   2475: "Alexander's Sickle Warrior",
-  2476: "Macedonian Command Post (Rubble)",
+  2476: "Macedonian Command Post",	// Rubble
   2477: "Ekdromos/Strategos",
   2478: "Slinger/Mercenary Archer",
   2479: "Axe Cavalry/Axeman",
@@ -2368,21 +2368,21 @@ const ENTITY_NAMES: Record<number, string> = {
   2486: "Elite Scythian Horse Archer",
   2487: "Sacred Band",
   2488: "Statue Artemis",
-  2489: "Fortified Outpost (Rubble)",
+  2489: "Fortified Outpost",	// Rubble
   2490: "Owl",
   2491: "Water Pots",
-  2492: "Camp Archery Range Age2 (Rubble)",
-  2493: "Porus (Dead)",
-  2494: "Dismounted Alexander (Dead)",
-  2495: "Cleitus (Dead)",
-  2496: "Camp Barracks Age2 (Rubble)",
-  2497: "Scythian Horse Archer (Dead)",
+  2492: "Camp Archery Range Age2",	// Rubble
+  2493: "Porus",	// Dead
+  2494: "Dismounted Alexander",	// Dead
+  2495: "Cleitus",	// Dead
+  2496: "Camp Barracks Age2",	// Rubble
+  2497: "Scythian Horse Archer",	// Dead
   2498: "Macedonian Flag",
   2499: "Thracian Flag",
   2500: "Puru Flag",
   2501: "Grain Storage",
-  2502: "Mounted Alexander (Dead)",
-  2503: "Sacred Band (Dead)",
+  2502: "Mounted Alexander",	// Dead
+  2503: "Sacred Band",	// Dead
   2504: "Burned Building Achaemenid",
   2505: "Burned Building Greek",
   2506: "Burned Building Greek",
@@ -2391,7 +2391,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2509: "Burned Building Puru",
   2510: "Furnace",
   2511: "Water Trough",
-  2512: "Elite Scythian Horse Archer (Dead)",
+  2512: "Elite Scythian Horse Archer",	// Dead
   2513: "Boeotian Flag",
   2514: "Puru Ruins",
   2515: "Rock 3",
@@ -2402,13 +2402,13 @@ const ENTITY_NAMES: Record<number, string> = {
   2520: "Construction Crane",
   2521: "Mole Top",
   2522: "Mole Bottom",
-  2523: "Benches (Wooden)",
-  2524: "Benches (Stone)",
+  2523: "Benches",	// Wooden
+  2524: "Benches",	// Stone
   2525: "Bucephalus",
-  2526: "Bucephalus (dead)",
+  2526: "Bucephalus",	// dead
   2527: "Scaffolding",
   2528: "Fountain Antiquity",
-  2529: "Cypress Tree (Decorative)",
+  2529: "Cypress Tree",	// Decorative
   2530: "Theatre",
   2531: "Statue Alexander",
   2532: "Statue Hephaistion",
@@ -2417,36 +2417,36 @@ const ENTITY_NAMES: Record<number, string> = {
   2535: "Mesopotamian Stall",
   2536: "Water Lily",
   2537: "Peacock",
-  2538: "Peacock (Dead)",
+  2538: "Peacock",	// Dead
   2550: "Champi Scout",
   2551: "Invisible object B",
   2552: "Champi Warrior",
   2553: "Invisible Object C",
   2554: "Elite Champi Warrior",
   2555: "Invisible Object D",
-  2556: "Settlement",
+  2556: "Settlement",	// Dark Age
   2557: "Missionary with Relic",
-  2558: "Settlement",
-  2560: "Settlement",
+  2558: "Settlement",	// Feudal Age
+  2560: "Settlement",	// Castle Age
   2562: "Guecha Warrior",
   2563: "Invisible Object E",
   2564: "Elite Guecha Warrior",
-  2565: "Guecha Warrior (Dead)",
+  2565: "Guecha Warrior",	// Dead
   2566: "Kona",
-  2567: "Tree (Oak Green)",
+  2567: "Tree",	// Oak Green
   2568: "Elite Kona",
   2569: "Bolas Rider",
-  2570: "Tree (Monkey Puzzle)",
+  2570: "Tree",	// Monkey Puzzle
   2571: "Elite Bolas Rider",
   2572: "Projectile Bolas",
   2573: "Projectile EliteBolas",
-  2574: "Projectile Bolas (Charge)",
-  2575: "Projectile EliteBolas (Charge)",
+  2574: "Projectile Bolas",	// Charge
+  2575: "Projectile EliteBolas",	// Charge
   2579: "Blackwood Archer",
-  2580: "Tree (Brazilwood)",
+  2580: "Tree",	// Brazilwood
   2581: "Elite Blackwood Archer",
   2582: "Ibirapema Warrior",
-  2583: "Tree (Wax Palm)",
+  2583: "Tree",	// Wax Palm
   2584: "Elite Ibirapema Warrior",
   2585: "Howler Monkey",
   2586: "Temple Guard",
@@ -2485,10 +2485,10 @@ const ENTITY_NAMES: Record<number, string> = {
   2626: "Hulk",
   2627: "War Hulk",
   2628: "Carrack",
-  2629: "Projectile Fire Ship (Charge)",
+  2629: "Projectile Fire Ship",	// Charge
   2630: "Whaling Ship",
   2631: "Projectile DOCK",
-  2632: "Projectile DOCK (Fire)",
+  2632: "Projectile DOCK",	// Fire
   2633: "Catapult Galleon",
   2635: "Treasure Chest",
   2636: "Projectile Hook",
@@ -2499,17 +2499,17 @@ const ENTITY_NAMES: Record<number, string> = {
   2641: "Arariboia",
   2642: "Arariboia",
   2643: "Cunhambebe",
-  2644: "Scaffolding (Walkable)",
+  2644: "Scaffolding",	// Walkable
   2650: "Pineapple Bush",
-  2651: "Cliff (Terrace) 01",
-  2652: "Cliff (Terrace) 02",
-  2653: "Cliff (Terrace) 03",
-  2654: "Cliff (Terrace) 04",
-  2655: "Cliff (Terrace) 05",
-  2656: "Cliff (Terrace) 06",
-  2657: "Cliff (Terrace) 07",
-  2658: "Cliff (Terrace) 08",
-  2659: "Cliff (Terrace) 09",
+  2651: "Cliff 01",	// Terrace
+  2652: "Cliff 02",	// Terrace
+  2653: "Cliff 03",	// Terrace
+  2654: "Cliff 04",	// Terrace
+  2655: "Cliff 05",	// Terrace
+  2656: "Cliff 06",	// Terrace
+  2657: "Cliff 07",	// Terrace
+  2658: "Cliff 08",	// Terrace
+  2659: "Cliff 09",	// Terrace
   2678: "Fort Wall",
   2679: "Fort Gate",
   2680: "Fort Gate",
