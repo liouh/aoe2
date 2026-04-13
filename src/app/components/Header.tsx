@@ -26,7 +26,7 @@ export function Header({
           <h1 className="headline text-2xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
             <a
               href="https://liouh.com/home/"
-              className="inline-flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-all group mr-3 align-middle -mt-1"
+              className="inline-flex items-center justify-center transition-all group mr-3 align-middle -mt-1"
               tabIndex={-1}
             >
               <img
