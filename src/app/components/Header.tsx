@@ -37,7 +37,7 @@ export function Header({
             </a>
             <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
           </h1>
-          <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg mb-3">
+          <p className="max-w-2xl text-sm text-[color:var(--muted)] lg:text-lg">
             In-browser minimap playback + key stats + build timelines
           </p>
         </div>
