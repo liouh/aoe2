@@ -256,7 +256,8 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
         } else if (
           typeName.includes("Forage Bush") ||
           typeName.includes("Fruit Bush") ||
-          typeName.includes("Pineapple Bush")
+          typeName.includes("Pineapple Bush") ||
+          typeName.includes("Papaya Tree")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
         }
