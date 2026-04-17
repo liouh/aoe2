@@ -205,7 +205,7 @@ export function Minimap({
         }}
         multi
         multiLabel="players"
-        placeholder="All players"
+        placeholder="Select players"
         align="left"
       />
       <Select
@@ -233,7 +233,7 @@ export function Minimap({
         }}
         multi
         multiLabel="layers"
-        placeholder="No layers"
+        placeholder="Select layers"
         align="left"
       />
     </>
@@ -444,7 +444,7 @@ export function Minimap({
           event.y >= 0 &&
           event.x <= sizeX &&
           event.y <= sizeY &&
-          (selectedPlayerIds.length === 0 || (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId)))
+          (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))
       );
     },
     [events, selectedPlayerIds, mapInfo]
@@ -708,7 +708,7 @@ export function Minimap({
 
     if (showBuildings) {
       anchorToEvent.forEach((event) => {
-        if (selectedPlayerIds.length === 0 || (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))) {
+        if (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId)) {
           drawBuilding(event);
         }
       });
@@ -739,7 +739,7 @@ export function Minimap({
 
       // First pass: Draw non-landmark (emoji) icons
       (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) && iconBuildings.forEach((event) => {
-        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
+        if (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId)) {
           return;
         }
         if (event.x === undefined || event.y === undefined) return;
