@@ -34,7 +34,7 @@ export function StatsTab({
   getPlayerColor,
   selectedTime,
 }: StatsTabProps) {
-  const [showAiApm, setShowAiApm] = useState(true);
+  const [showAiApm, setShowAiApm] = useState(false);
   const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
   const unitStats = useMemo(() => {
