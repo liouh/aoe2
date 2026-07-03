@@ -444,6 +444,7 @@ export default function Home() {
                   timelineStats={timelineStats}
                   events={events}
                   getPlayerColor={getPlayerColor}
+                  getPlayerOutline={getPlayerOutline}
                   selectedTime={selectedTime}
                 />
               </div>

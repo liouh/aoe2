@@ -7,11 +7,18 @@ const formatClock = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
-export function APMChart({ data, players, getPlayerColor, selectedTime }: {
+const AGE_LABELS: Record<string, string> = {
+  Feudal: "II",
+  Castle: "III",
+  Imperial: "IV",
+};
+
+export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimings }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[],
   players: any[],
   getPlayerColor: (id?: number) => string,
-  selectedTime?: number
+  selectedTime?: number,
+  ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[]
 }) {
   const allPoints = data.flatMap(d => d.history);
   if (allPoints.length === 0) return null;
@@ -25,6 +32,40 @@ export function APMChart({ data, players, getPlayerColor, selectedTime }: {
 
   const getX = (m: number) => padding.left + (m / maxMinute) * (width - padding.left - padding.right);
   const getY = (a: number) => height - padding.bottom - (a / maxApm) * (height - padding.top - padding.bottom);
+
+
+  // Build a lookup: playerId -> sorted history for APM interpolation
+  const apmHistoryByPlayer = new Map(data.map(d => [d.playerId, d.history]));
+
+  // The SVG line uses cubic Bézier segments with cp1y=prev.apm and cp2y=curr.apm,
+  // so y(t) = sy*(1-t)²*(1+2t) + ey*t²*(3-2t)  (cubic Hermite basis).
+  // cp1x=cp2x=midX, so x(t) normalises to the monotone cubic: f(t) = t³ - 1.5t² + 1.5t.
+  // We binary-search t so that f(t) = u (the linear fraction within the segment),
+  // then evaluate the true y on the curve — keeping the dot exactly on the line.
+  const getLineYAtMinute = (playerId: number, targetMinute: number): number => {
+    const history = apmHistoryByPlayer.get(playerId);
+    if (!history || history.length === 0) return getY(0);
+
+    for (let i = 0; i < history.length - 1; i++) {
+      const prev = history[i], curr = history[i + 1];
+      if (targetMinute >= prev.minute && targetMinute <= curr.minute) {
+        // u is the linear fraction within this segment
+        const u = (targetMinute - prev.minute) / (curr.minute - prev.minute);
+        // Binary-search t ∈ [0,1] where t³ - 1.5t² + 1.5t = u
+        let lo = 0, hi = 1;
+        for (let iter = 0; iter < 32; iter++) {
+          const t = (lo + hi) / 2;
+          if (t * t * t - 1.5 * t * t + 1.5 * t < u) lo = t; else hi = t;
+        }
+        const t = (lo + hi) / 2;
+        const sy = getY(prev.apm), ey = getY(curr.apm);
+        return sy * (1 - t) * (1 - t) * (1 + 2 * t) + ey * t * t * (3 - 2 * t);
+      }
+    }
+    if (targetMinute <= history[0].minute) return getY(history[0].apm);
+    return getY(history[history.length - 1].apm);
+  };
+
 
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
@@ -119,6 +160,54 @@ export function APMChart({ data, players, getPlayerColor, selectedTime }: {
               className="drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]"
             />
           );
+        })}
+
+        {/* Age-up Indicators */}
+        {ageTimings && ageTimings.flatMap((playerAge) => {
+          const color = getPlayerColor(playerAge.playerId);
+          const textColor = playerAge.textColor ?? "white";
+          return Object.entries(playerAge.timings).map(([age, timeSeconds]) => {
+            const minute = timeSeconds / 60;
+            const x = getX(minute);
+            const label = AGE_LABELS[age] ?? age;
+
+            // Clamp x within chart bounds
+            if (x < padding.left || x > width - padding.right) return null;
+
+            const lineY = getLineYAtMinute(playerAge.playerId, minute);
+
+            const badgeW = 18;
+            const badgeH = 14;
+
+            return (
+              <g key={`${playerAge.playerId}-${age}`}>
+                {/* Badge centered on the line */}
+                <rect
+                  x={x - badgeW / 2}
+                  y={lineY - badgeH / 2}
+                  width={badgeW}
+                  height={badgeH}
+                  rx={4}
+                  ry={4}
+                  fill={color}
+                  fillOpacity={0.75}
+                />
+                {/* Badge text */}
+                <text
+                  x={x}
+                  y={lineY}
+                  fill={textColor}
+                  fontSize="8"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  style={{ fontFamily: "inherit" }}
+                >
+                  {label}
+                </text>
+              </g>
+            );
+          });
         })}
       </svg>
     </div>

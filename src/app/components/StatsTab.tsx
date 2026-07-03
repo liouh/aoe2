@@ -24,6 +24,7 @@ interface StatsTabProps {
   timelineStats: any[];
   events: TimelineEvent[];
   getPlayerColor: (playerId?: number) => string;
+  getPlayerOutline: (playerId?: number) => string;
   selectedTime: number;
 }
 
@@ -32,6 +33,7 @@ export function StatsTab({
   timelineStats,
   events,
   getPlayerColor,
+  getPlayerOutline,
   selectedTime,
 }: StatsTabProps) {
   const [showAiApm, setShowAiApm] = useState(false);
@@ -109,6 +111,15 @@ export function StatsTab({
           players={players.filter(p => showAiApm || !p.ai)}
           getPlayerColor={getPlayerColor}
           selectedTime={selectedTime}
+          ageTimings={players
+            .filter(p => showAiApm || !p.ai)
+            .map(p => ({
+              playerId: p.id,
+              timings: timelineStats.find(s => s.playerId === p.id)?.ageTimings ?? {},
+              textColor: getPlayerOutline(p.id),
+            }))
+            .filter(a => Object.keys(a.timings).length > 0)
+          }
         />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
