@@ -109,15 +109,15 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
         {selectedTime !== undefined && selectedTime > 0 && (
           <g>
             <line
-              x1={getX(selectedTime / 60)}
+              x1={Math.min(getX(selectedTime / 60), width - padding.right)}
               y1={padding.top}
-              x2={getX(selectedTime / 60)}
+              x2={Math.min(getX(selectedTime / 60), width - padding.right)}
               y2={height - padding.bottom}
               stroke="var(--foreground)"
               strokeWidth="2"
             />
             <foreignObject
-              x={getX(selectedTime / 60) - 25}
+              x={Math.min(getX(selectedTime / 60), width - padding.right) - 25}
               y={padding.top - 14}
               width="50"
               height="30"
