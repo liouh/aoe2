@@ -75,8 +75,12 @@ const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
     case "Patrol":
     case "DeAttackMove":
     case "AttackGround":
+    case "AiInteract":
+    case "Interact":
+    case "Gatherpoint":
       return "move";
-    case "Autoscout": return "autoscout";
+    case "Autoscout":
+      return "autoscout";
     case "Buy":
     case "Sell":
       return "market";
