@@ -608,7 +608,7 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
         x: position?.x,
         y: position?.y,
         unitId,
-        unitIds: category === "move" ? unitIds : undefined,
+        unitIds: category === "move" || category === "gatherpoint" ? unitIds : undefined,
         unitTypeId,
         buildingTypeId,
         techId,

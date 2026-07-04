@@ -41,6 +41,7 @@ const MINIMAP_UNIT_RADIUS_DESKTOP = 5;
 const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 1;
 const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 2;
 const MINIMAP_UNIT_FADE_SECONDS = 50;
+const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 500;
 
 const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
 const MINIMAP_TERRAIN_ALPHA = 1;
@@ -471,6 +472,22 @@ export function Minimap({
     [events, selectedPlayerIds, mapInfo]
   );
 
+  const activeGatherpoints = useMemo(() => {
+    const active = new Set<string>();
+    const buildingToGatherpoint = new Map<number, string>();
+    for (const event of gatherpointEvents) {
+      if (event.time > selectedTime) break;
+      if (!event.unitIds) continue;
+      for (const unitId of event.unitIds) {
+        buildingToGatherpoint.set(unitId, event.id);
+      }
+    }
+    for (const eventId of buildingToGatherpoint.values()) {
+      active.add(eventId);
+    }
+    return active;
+  }, [gatherpointEvents, selectedTime]);
+
   const buildingData = useMemo(() => {
     const sizeX = mapInfo?.size_x ?? 120;
     const sizeY = mapInfo?.size_y ?? 120;
@@ -880,7 +897,8 @@ export function Minimap({
 
         if (event.x === undefined || event.y === undefined) continue;
 
-        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - age / MINIMAP_UNIT_FADE_SECONDS));
+        const progress = Math.min(1, age / MINIMAP_UNIT_FADE_SECONDS);
+        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - Math.pow(progress, 5)));
         const pos = toCanvas(event.x, event.y);
 
         const numUnits = event.unitIds?.length || 1;
@@ -903,16 +921,20 @@ export function Minimap({
       for (let i = gatherpointEvents.length - 1; i >= 0; i--) {
         const event = gatherpointEvents[i];
         if (event.time > selectedTime) continue;
+        const isActive = activeGatherpoints.has(event.id);
+        if (!isActive) continue;
         const age = selectedTime - event.time;
-        if (age > MINIMAP_UNIT_FADE_SECONDS) break;
+        const fadeSeconds = MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS;
+        if (age > fadeSeconds) continue;
 
         if (event.x === undefined || event.y === undefined) continue;
 
-        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - age / MINIMAP_UNIT_FADE_SECONDS));
+        const progress = Math.min(1, age / fadeSeconds);
+        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - Math.pow(progress, 5)));
         const pos = toCanvas(event.x, event.y);
 
         context.globalAlpha = alpha;
-        
+
         const poleHeight = radius * 3.5;
         const flagWidth = radius * 2.5;
         const flagHeight = radius * 1.5;
@@ -931,7 +953,7 @@ export function Minimap({
         context.lineTo(pos.x + flagWidth, pos.y - poleHeight + flagHeight / 2);
         context.lineTo(pos.x, pos.y - poleHeight + flagHeight);
         context.closePath();
-        
+
         context.fillStyle = getPlayerColor(event.playerId);
         context.fill();
         context.stroke();
@@ -968,6 +990,7 @@ export function Minimap({
     showGatherpoints,
     moveEvents,
     gatherpointEvents,
+    activeGatherpoints,
     hoveredEntity,
     selectedPlayerIds,
     getPlayerColor,
