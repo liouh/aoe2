@@ -1,4 +1,4 @@
-export type TimelineEventCategory = "build" | "move" | "research" | "train" | "autoscout" | "market" | "other";
+export type TimelineEventCategory = "build" | "move" | "research" | "train" | "autoscout" | "market" | "gatherpoint" | "other";
 
 export type TimelineEvent = {
   id: string;
@@ -70,7 +70,10 @@ const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
     case "Build":
     case "Wall":
       return "build";
-    // case "Gatherpoint":
+    case "Gatherpoint":
+    case "MultiGatherpoint":
+    case "Unknown45":
+      return "gatherpoint";
     case "AiMove":
     case "Move":
     case "AiInteract":
@@ -179,9 +182,11 @@ const parseActionData = (type: string, data: number[]) => {
       }
       case "MultiGatherpoint":
       case "Unknown45": {
-        if (bytes.length < 19) return undefined;
-        const selected = view.getUint16(1, true);
-        return { unitIds: extractUnitIds(selected, 19) };
+        if (bytes.length < 20) return undefined;
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const selected = view.getUint16(12, true);
+        return { x, y, unitIds: extractUnitIds(selected, 20) };
       }
       case "AiMove": {
         if (bytes.length < 40) return undefined;
