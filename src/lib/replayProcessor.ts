@@ -681,6 +681,7 @@ export const extractPlayerStats = (
   players?: PlayerSummary[]
 ): PlayerStats[] => {
   const durationMinutes = Math.max(durationSeconds ?? 0, 1) / 60;
+  const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
   const eventsByPlayer = new Map<number, TimelineEvent[]>();
   players?.forEach((player) => {
     eventsByPlayer.set(player.id, []);
@@ -761,6 +762,12 @@ export const extractPlayerStats = (
         });
       }
     });
+
+    for (let m = 0; m <= maxGameMinute; m++) {
+      if (!minuteBuckets.has(m)) {
+        minuteBuckets.set(m, 0);
+      }
+    }
 
     const peakApm = minuteBuckets.size > 0 ? Math.max(...Array.from(minuteBuckets.values())) : 0;
     const apmHistory = Array.from(minuteBuckets.entries())
