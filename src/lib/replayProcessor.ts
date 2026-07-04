@@ -93,33 +93,118 @@ const parseActionData = (type: string, data: number[]) => {
   if (bytes.length === 0) return undefined;
   const view = new DataView(bytes.buffer);
 
+  const extractUnitIds = (selected: number, minOffset: number) => {
+    if (selected <= 0) return undefined;
+    const offset = bytes.length - selected * 4;
+    if (offset < minOffset) return undefined;
+    const unitIds: number[] = [];
+    for (let i = 0; i < selected; i++) {
+      unitIds.push(view.getUint32(offset + i * 4, true));
+    }
+    return unitIds;
+  };
+
   try {
     switch (type) {
+      case "Interact":
       case "Move": {
-        return {};  // handled by parser
+        if (bytes.length < 20) return undefined;
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const selected = view.getInt16(12, true);
+        return { x, y, unitIds: extractUnitIds(selected, 20) };
+      }
+      case "Stop": {
+        if (bytes.length < 4) return undefined;
+        const selected = view.getUint32(0, true);
+        return { unitIds: extractUnitIds(selected, 4) };
+      }
+      case "Stance":
+      case "Guard":
+      case "Follow":
+      case "Formation": {
+        if (bytes.length < 8) return undefined;
+        const selected = view.getUint32(0, true);
+        return { unitIds: extractUnitIds(selected, 8) };
+      }
+      case "Repair": {
+        if (bytes.length < 12) return undefined;
+        const selected = view.getUint32(0, true);
+        return { unitIds: extractUnitIds(selected, 12) };
+      }
+      case "Ungarrison":
+      case "Release": {
+        if (bytes.length < 16) return undefined;
+        const selected = view.getUint32(0, true);
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        return { x, y, unitIds: extractUnitIds(selected, 16) };
+      }
+      case "Order": {
+        if (bytes.length < 29) return undefined;
+        const selected = view.getUint32(0, true);
+        const x = view.getFloat32(8, true);
+        const y = view.getFloat32(12, true);
+        return { x, y, unitIds: extractUnitIds(selected, 29) };
+      }
+      case "Gatherpoint": {
+        if (bytes.length < 21) return undefined;
+        const selected = view.getUint32(0, true);
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        return { x, y, unitIds: extractUnitIds(selected, 21) };
+      }
+      case "Multiqueue": {
+        if (bytes.length < 4) return undefined;
+        const selected = view.getUint8(2);
+        return { unitIds: extractUnitIds(selected, 4) };
+      }
+      case "AiInteract": {
+        if (bytes.length < 20) return undefined;
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        const selected = view.getInt32(12, true);
+        return { x, y, unitIds: extractUnitIds(selected, 20) };
+      }
+      case "Unknown44": {
+        if (bytes.length < 21) return undefined;
+        const selected = view.getUint32(0, true);
+        const x = view.getFloat32(8, true);
+        const y = view.getFloat32(12, true);
+        return { x, y, unitIds: extractUnitIds(selected, 21) };
+      }
+      case "MultiGatherpoint":
+      case "Unknown45": {
+        if (bytes.length < 19) return undefined;
+        const selected = view.getUint16(1, true);
+        return { unitIds: extractUnitIds(selected, 19) };
       }
       case "AiMove": {
         if (bytes.length < 40) return undefined;
+        const selected = view.getInt32(0, true);
         const x = view.getFloat32(20, true);
         const y = view.getFloat32(24, true);
-        return { x, y };
+        return { x, y, unitIds: selected > 1 ? extractUnitIds(selected, 40) : undefined };
       }
       case "Patrol":
       case "DeAttackMove": {
         if (bytes.length < 88) return undefined;
+        const selected = view.getUint32(0, true);
         const x = view.getFloat32(8, true);
         const y = view.getFloat32(48, true);
-        return { x, y };
+        return { x, y, unitIds: extractUnitIds(selected, 88) };
       }
       case "Build": {
         if (bytes.length < 28) return undefined;
+        const selected = view.getInt32(0, true);
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
         const buildingTypeId = view.getUint32(12, true);
-        return { x, y, buildingTypeId };
+        return { x, y, buildingTypeId, unitIds: extractUnitIds(selected, 28) };
       }
       case "Wall": {
         if (bytes.length < 24) return undefined;
+        const selected = view.getInt32(0, true);
         const x1 = view.getInt16(4, true);
         const y1 = view.getInt16(6, true);
         const x2 = view.getInt16(8, true);
@@ -178,13 +263,15 @@ const parseActionData = (type: string, data: number[]) => {
             }
           }
         }
-        return { tiles, buildingTypeId };
+        return { tiles, buildingTypeId, unitIds: extractUnitIds(selected, 24) };
       }
       case "Research": {
         return {};  // handled by parser
       }
       case "DeQueue": {
-        return {};  // handled by parser
+        if (bytes.length < 12) return undefined;
+        const selected = view.getUint16(0, true);
+        return { unitIds: extractUnitIds(selected, 12) };
       }
       case "AiQueue": {
         if (bytes.length < 12) return undefined;
@@ -203,9 +290,10 @@ const parseActionData = (type: string, data: number[]) => {
       }
       case "AttackGround": {
         if (bytes.length < 16) return undefined;
+        const selected = view.getInt32(0, true);
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
-        return { x, y };
+        return { x, y, unitIds: extractUnitIds(selected, 16) };
       }
     }
   } catch (e) {
@@ -286,11 +374,13 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
     });
 
     if (DEBUG) {
-      console.log("Gaia Resource Combinations:", gaiaCombinations);
+      console.log("Gaia resources:", gaiaCombinations);
     }
   }
 
   if (operations) {
+    const actionTypeCounts: Record<string, number> = {};
+
     // First pass: identify unique player IDs in events to handle mismatches
     const rawEventPlayerIds = new Set<number>();
     operations.forEach((op) => {
@@ -331,6 +421,10 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
 
       const actionType = Object.keys(actionData)[0];
       if (!actionType) return;
+
+      if (DEBUG) {
+        actionTypeCounts[actionType] = (actionTypeCounts[actionType] || 0) + 1;
+      }
 
       const payload = actionData[actionType] as Record<string, unknown>;
       const rawPlayerId = pickNumber(payload?.player_id);
@@ -487,6 +581,10 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
         raw: { ...(payload ?? {}), ...data },
       });
     });
+
+    if (DEBUG) {
+      console.log("Action types:", actionTypeCounts);
+    }
   }
 
   return {
