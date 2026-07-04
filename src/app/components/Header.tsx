@@ -60,6 +60,7 @@ export function Header({
                     const file = event.target.files?.[0];
                     if (!file) return;
                     handleFile(file);
+                    event.target.value = "";
                   }}
                 />
               </label>

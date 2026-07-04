@@ -9,6 +9,7 @@ export type TimelineEvent = {
   x?: number;
   y?: number;
   unitId?: string | number;
+  unitIds?: number[];
   unitTypeId?: number;
   buildingTypeId?: number;
   techId?: number;
@@ -64,20 +65,19 @@ const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
     case "Research":
       return "research";
     case "AiQueue":
-      return "train";
     case "DeQueue":
-      return isAi ? "other" : "train";  // DeQueue is only for human players
+      return "train";
     case "Build":
     case "Wall":
       return "build";
+    // case "Gatherpoint":
     case "AiMove":
     case "Move":
-    case "Patrol":
-    case "DeAttackMove":
-    case "AttackGround":
     case "AiInteract":
     case "Interact":
-    case "Gatherpoint":
+    case "AttackGround":
+    case "DeAttackMove":
+    case "Patrol":
       return "move";
     case "Autoscout":
       return "autoscout";
@@ -188,7 +188,15 @@ const parseActionData = (type: string, data: number[]) => {
         const selected = view.getInt32(0, true);
         const x = view.getFloat32(20, true);
         const y = view.getFloat32(24, true);
-        return { x, y, unitIds: selected > 1 ? extractUnitIds(selected, 40) : undefined };
+
+        let unitIds: number[] | undefined = undefined;
+        if (selected === 1) {
+          const entityId = view.getUint32(4, true);
+          if (entityId > 0) unitIds = [entityId];
+        } else if (selected > 1) {
+          unitIds = extractUnitIds(selected, 40);
+        }
+        return { x, y, unitIds };
       }
       case "Patrol":
       case "DeAttackMove": {
@@ -415,6 +423,8 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       sortedEventIds.forEach(eid => playerMapping.set(eid, eid));
     }
 
+    const lastUnitIds = new Map<number, number[]>();
+
     operations.forEach((op, index) => {
       const action = op.Action as Record<string, unknown> | undefined;
       if (!action) return;
@@ -451,12 +461,26 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       }
 
       let unitId: string | number | undefined;
+      let unitIds: number[] | undefined;
       if (data && "unitIds" in data && Array.isArray(data.unitIds) && data.unitIds.length > 0) {
-        unitId = data.unitIds[0];
+        unitIds = data.unitIds as number[];
+        unitId = unitIds[0];
       } else if (data && "unitId" in data) {
         unitId = data.unitId as string | number;
       } else if (Array.isArray(payload?.unit_ids) && payload.unit_ids.length > 0) {
-        unitId = payload.unit_ids[0] as string | number;
+        unitIds = payload.unit_ids as number[];
+        unitId = unitIds[0];
+      }
+
+      if (!unitIds && payload.selected === -1) {
+        unitIds = lastUnitIds.get(playerId);
+        if (unitIds && unitIds.length > 0) {
+          unitId = unitIds[0];
+        }
+      }
+
+      if (unitIds && unitIds.length > 0) {
+        lastUnitIds.set(playerId, unitIds);
       }
 
       const unitTypeId = (data && "unitTypeId" in data)
@@ -579,6 +603,7 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
         x: position?.x,
         y: position?.y,
         unitId,
+        unitIds: category === "move" ? unitIds : undefined,
         unitTypeId,
         buildingTypeId,
         techId,

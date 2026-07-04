@@ -848,6 +848,9 @@ export function Minimap({
     }
 
     if (showUnits) {
+      const radius = isMobile ? MINIMAP_UNIT_RADIUS_MOBILE : MINIMAP_UNIT_RADIUS_DESKTOP;
+      const borderWidth = isMobile ? MINIMAP_UNIT_BORDER_WIDTH_MOBILE : MINIMAP_UNIT_BORDER_WIDTH_DESKTOP;
+
       for (let i = moveEvents.length - 1; i >= 0; i--) {
         const event = moveEvents[i];
         if (event.time > selectedTime) continue;
@@ -858,15 +861,20 @@ export function Minimap({
 
         const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - age / MINIMAP_UNIT_FADE_SECONDS));
         const pos = toCanvas(event.x, event.y);
+
+        const numUnits = event.unitIds?.length || 1;
+        const scaledRadius = radius * (1 + Math.log10(numUnits));
+
         context.globalAlpha = alpha;
         context.beginPath();
         context.fillStyle = getPlayerColor(event.playerId);
-        context.arc(pos.x, pos.y, isMobile ? MINIMAP_UNIT_RADIUS_MOBILE : MINIMAP_UNIT_RADIUS_DESKTOP, 0, Math.PI * 2);
+        context.arc(pos.x, pos.y, scaledRadius, 0, Math.PI * 2);
         context.fill();
-        context.lineWidth = isMobile ? MINIMAP_UNIT_BORDER_WIDTH_MOBILE : MINIMAP_UNIT_BORDER_WIDTH_DESKTOP;
+        context.lineWidth = borderWidth;
         context.strokeStyle = getPlayerOutline(event.playerId);
         context.stroke();
       }
+
       context.globalAlpha = 1;
     }
 
@@ -1068,6 +1076,7 @@ export function Minimap({
                     if (file) {
                       onOpenFile(file);
                     }
+                    e.target.value = "";
                   }}
                 />
                 <button
