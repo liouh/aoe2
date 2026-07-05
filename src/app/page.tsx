@@ -19,6 +19,7 @@ import {
 } from "@/lib/replayProcessor";
 import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { ensureUnzipped } from "@/lib/zipUtils";
+import { sendGAEvent } from "@next/third-parties/google";
 
 const PLAYER_COLORS_LEGACY = [
   "#0000FF",
@@ -163,10 +164,19 @@ export default function Home() {
     }
   }, [selectedTime, duration, isPlaying]);
 
-  const loadReplayData = async (buffer: ArrayBuffer, filename: string, sourceUrl?: string) => {
+  const loadReplayData = async (buffer: ArrayBuffer, filename: string, sourceUrl?: string, isDefault: boolean = false) => {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
+    
+    if (!isDefault) {
+      sendGAEvent({ 
+        event: "upload_replay", 
+        replay_name: filename,
+        ...(sourceUrl ? { source_url: sourceUrl } : {})
+      });
+    }
+
     try {
       setLoadingStep(1);
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -293,7 +303,7 @@ export default function Home() {
       buffer = unzipped.buffer;
       filename = unzipped.filename;
 
-      await loadReplayData(buffer, filename);
+      await loadReplayData(buffer, filename, undefined, true);
     };
     loadDefault();
   }, []);
