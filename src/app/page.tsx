@@ -170,8 +170,7 @@ export default function Home() {
     setLoadingStep(0);
 
     if (!isDefault) {
-      sendGAEvent({
-        event: "upload_replay",
+      sendGAEvent("event", "upload_replay", {
         replay_name: filename,
         ...(sourceUrl ? { source_url: sourceUrl } : {})
       });
