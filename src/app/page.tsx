@@ -168,10 +168,10 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
-    
+
     if (!isDefault) {
-      sendGAEvent({ 
-        event: "upload_replay", 
+      sendGAEvent({
+        event: "upload_replay",
         replay_name: filename,
         ...(sourceUrl ? { source_url: sourceUrl } : {})
       });
