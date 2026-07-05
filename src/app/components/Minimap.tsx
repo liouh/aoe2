@@ -7,7 +7,6 @@ import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
 import { getBuildingFootprint, isFarmId } from "@/lib/buildingFootprints";
 import { getBuildingName } from "@/lib/entityNames";
 import { getBuildingIcon } from "@/lib/buildingIcons";
-import { DEBUG } from "@/lib/debug";
 
 const LOADING_STEPS = [
   "Loading replay...",
@@ -40,8 +39,8 @@ const MINIMAP_UNIT_RADIUS_MOBILE = 3;
 const MINIMAP_UNIT_RADIUS_DESKTOP = 5;
 const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 1;
 const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 2;
-const MINIMAP_UNIT_FADE_SECONDS = 50;
-const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 500;
+const MINIMAP_UNIT_FADE_SECONDS = 30;
+const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 300;
 
 const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
 const MINIMAP_TERRAIN_ALPHA = 1;
@@ -930,7 +929,7 @@ export function Minimap({
         if (event.x === undefined || event.y === undefined) continue;
 
         const progress = Math.min(1, age / fadeSeconds);
-        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - Math.pow(progress, 5)));
+        const alpha = Math.max(0, MINIMAP_UNIT_ALPHA * (1 - Math.pow(progress, 10)));
         const pos = toCanvas(event.x, event.y);
 
         context.globalAlpha = alpha;
@@ -1101,7 +1100,7 @@ export function Minimap({
                 setHoveredEntity(null);
               } else {
                 setHoveredEntity({
-                  name: getBuildingName(building.buildingTypeId) + (DEBUG ? ` | ${building.buildingTypeId}: (${building.x?.toFixed(1)}, ${building.y?.toFixed(1)})` : ""),
+                  name: getBuildingName(building.buildingTypeId),
                   playerId: building.playerId,
                   type: "building",
                   anchorKey,
