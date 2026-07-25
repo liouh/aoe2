@@ -411,7 +411,7 @@ export default function Home() {
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "game"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "text-white/40 hover:text-white/70"
+                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
                   onClick={() => setActiveTab("game")}
                 >
@@ -420,7 +420,7 @@ export default function Home() {
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "stats"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "text-white/40 hover:text-white/70"
+                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
                   onClick={() => setActiveTab("stats")}
                 >
@@ -429,7 +429,7 @@ export default function Home() {
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "timeline"
                     ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "text-white/40 hover:text-white/70"
+                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
                   onClick={() => setActiveTab("timeline")}
                 >

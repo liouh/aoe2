@@ -46,8 +46,14 @@ export function Header({
             {!showUrlInput ? (
               <>
                 <label
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
                   onClick={() => setIsPlaying(false)}
+                  onMouseEnter={(e) => {
+                    const active = document.activeElement;
+                    if (active instanceof HTMLElement && e.currentTarget.parentElement?.contains(active)) {
+                      active.blur();
+                    }
+                  }}
                 >
                   <span className="text-xl lg:text-2xl">📁</span>
                   <span className="lg:inline">Open .aoe2record file</span>
@@ -85,11 +91,17 @@ export function Header({
                 </label>
                 <button
                   type="button"
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
                   onClick={() => {
                     setIsPlaying(false);
                     setShowUrlInput(true);
                     setReplayUrl("");
+                  }}
+                  onMouseEnter={(e) => {
+                    const active = document.activeElement;
+                    if (active instanceof HTMLElement && e.currentTarget.parentElement?.contains(active)) {
+                      active.blur();
+                    }
                   }}
                 >
                   <span className="text-xl lg:text-2xl">🔗</span>
