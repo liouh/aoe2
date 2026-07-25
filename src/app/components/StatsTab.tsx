@@ -79,6 +79,33 @@ export function StatsTab({
     return result;
   }, [events]);
 
+  const actionStats = useMemo(() => {
+    const statsMap = new Map<number, Map<string, number>>();
+    events.forEach(event => {
+      if (event.playerId === undefined) return;
+      if (event.type.toLowerCase().includes("unknown")) return;
+
+      let playerMap = statsMap.get(event.playerId);
+      if (!playerMap) {
+        playerMap = new Map();
+        statsMap.set(event.playerId, playerMap);
+      }
+
+      const count = playerMap.get(event.type) || 0;
+      playerMap.set(event.type, count + 1);
+    });
+
+    const result = new Map<number, { name: string, count: number }[]>();
+    statsMap.forEach((playerMap, playerId) => {
+      const actions = Array.from(playerMap.entries())
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
+      result.set(playerId, actions);
+    });
+
+    return result;
+  }, [events]);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="panel rounded-3xl p-6 flex flex-col gap-6">
@@ -206,7 +233,7 @@ export function StatsTab({
                         stats.military.map((u, idx) => (
                           <div key={idx} className="flex items-center justify-between text-sm">
                             <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                            <span className="tabular-nums shrink-0 font-medium">{u.count}</span>
+                            <span className="tabular-nums shrink-0">{u.count}</span>
                           </div>
                         ))
                       ) : (
@@ -226,7 +253,7 @@ export function StatsTab({
                         stats.economic.map((u, idx) => (
                           <div key={idx} className="flex items-center justify-between text-sm">
                             <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                            <span className="tabular-nums shrink-0 font-medium">{u.count}</span>
+                            <span className="tabular-nums shrink-0">{u.count}</span>
                           </div>
                         ))
                       ) : (
@@ -289,6 +316,54 @@ export function StatsTab({
                       </div>
                     );
                   })}
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="panel rounded-3xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Action breakdown</h2>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {players.map((player, index) => {
+            const actions = actionStats.get(player.id) || [];
+
+            return (
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
+                      {player.name}
+                      {player.ai && (
+                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
+                          AI
+                        </span>
+                      )}
+                    </h3>
+                  </div>
+                  <span
+                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
+                    style={{ background: getPlayerColor(player.id) }}
+                  ></span>
+                </div>
+
+                <div className="flex flex-col gap-1.5 min-h-[20px]">
+                  {actions.length > 0 ? (
+                    actions.map((action, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-sm">
+                        <span className="text-[color:var(--muted)] truncate pr-2">{action.name}</span>
+                        <span className="tabular-nums shrink-0">{formatNum(action.count)}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-[10px] text-white/20 italic">No actions recorded</p>
+                  )}
                 </div>
               </TiltCard>
             );
