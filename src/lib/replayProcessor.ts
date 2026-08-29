@@ -19,7 +19,7 @@ export type TimelineEvent = {
 export type MapResourceType = "gold" | "stone" | "forage" | "relic";
 
 import { getEntityName, getBuildingName } from "./entityNames";
-import { isBuildingId } from "./buildingFootprints";
+import { getBuildingFootprint, isBuildingId } from "./buildingFootprints";
 
 import { DEBUG } from "./debug";
 
@@ -341,6 +341,25 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
   if (initialInstances) {
     const gaiaCombinations: Record<string, number> = {};
 
+    // Identify starting town centers to detect overlaps
+    const startingTownCenters: { x: number; y: number; buildingTypeId: number }[] = [];
+    initialInstances.forEach((obj) => {
+      if (obj.player_id === 0) return;
+      const isTC = getBuildingName(obj.object_type_id).includes("Town Center");
+      if (isTC && obj.x !== undefined && obj.y !== undefined) {
+        const alreadyAdded = startingTownCenters.some(
+          (tc) => Math.abs(tc.x - obj.x) < 1 && Math.abs(tc.y - obj.y) < 1
+        );
+        if (!alreadyAdded) {
+          startingTownCenters.push({
+            x: obj.x,
+            y: obj.y,
+            buildingTypeId: obj.object_type_id,
+          });
+        }
+      }
+    });
+
     initialInstances.forEach((obj, idx) => {
       // Process Gaia (player 0) objects for analysis
       if (obj.player_id === 0) {
@@ -376,6 +395,43 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
       // If we already added an event for this specific Town Center, skip the duplicates.
       const isTC = getBuildingName(obj.object_type_id).includes("Town Center");
       if (isTC && obj.object_type_id !== 109) return;
+
+      // At game start, if there is a mule cart overlapping a town center, do not put the mule cart on the map
+      const isMuleCart = obj.object_type_id === 1808 || getBuildingName(obj.object_type_id).includes("Mule Cart");
+      if (isMuleCart && obj.x !== undefined && obj.y !== undefined) {
+        const mcFootprint = getBuildingFootprint(obj.object_type_id);
+        const mcAnchorX = Math.floor(obj.x);
+        const mcAnchorY = Math.floor(obj.y);
+        const mcBaseX = mcAnchorX - Math.floor(mcFootprint.w / 2);
+        const mcBaseY = mcAnchorY - Math.floor(mcFootprint.h / 2);
+        const mcMinX = mcBaseX;
+        const mcMaxX = mcBaseX + mcFootprint.w;
+        const mcMinY = mcBaseY;
+        const mcMaxY = mcBaseY + mcFootprint.h;
+
+        const overlapsTC = startingTownCenters.some((tc) => {
+          const tcFootprint = getBuildingFootprint(tc.buildingTypeId);
+          const tcAnchorX = Math.floor(tc.x);
+          const tcAnchorY = Math.floor(tc.y);
+          const tcBaseX = tcAnchorX - Math.floor(tcFootprint.w / 2);
+          const tcBaseY = tcAnchorY - Math.floor(tcFootprint.h / 2);
+          const tcMinX = tcBaseX;
+          const tcMaxX = tcBaseX + tcFootprint.w;
+          const tcMinY = tcBaseY;
+          const tcMaxY = tcBaseY + tcFootprint.h;
+
+          return (
+            mcMinX < tcMaxX &&
+            mcMaxX > tcMinX &&
+            mcMinY < tcMaxY &&
+            mcMaxY > tcMinY
+          );
+        });
+
+        if (overlapsTC) {
+          return;
+        }
+      }
 
       events.push({
         id: `initial-${obj.object_id ?? idx}`,
