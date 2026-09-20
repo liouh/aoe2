@@ -104,6 +104,11 @@ export function GameTab({
           <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
             {matchFormat || players.length}
           </span>
+          {matchInfo && (matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some((p) => p.ai) && (
+            <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+              {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`} AI
+            </span>
+          )}
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
@@ -348,14 +353,6 @@ export function GameTab({
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
                 <span className="font-semibold text-[color:var(--foreground)]">
                   {matchInfo.cheats ? "Yes" : "No"}
-                </span>
-              </div>
-            )}
-            {(matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some(p => p.ai) && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`}
                 </span>
               </div>
             )}
