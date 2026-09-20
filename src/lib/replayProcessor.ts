@@ -1016,24 +1016,6 @@ export const extractPlayerStats = (
       });
     }
 
-    // Fallback if chat events are not available
-    if (Object.keys(ageTimings).length === 0) {
-      const fallbackDurations: Record<number, { age: string; duration: number }> = {
-        101: { age: "Feudal", duration: 130 },
-        102: { age: "Castle", duration: 160 },
-        103: { age: "Imperial", duration: 190 },
-      };
-      activePlayerEvents.forEach((event) => {
-        if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
-          const info = fallbackDurations[event.techId];
-          const adjusted = event.time + info.duration;
-          if (durationSeconds === undefined || adjusted <= durationSeconds) {
-            ageTimings[info.age] = adjusted;
-          }
-        }
-      });
-    }
-
     const playerMaxMinute = resignTime !== undefined
       ? Math.floor(playerDurationSeconds / 60)
       : maxGameMinute;
