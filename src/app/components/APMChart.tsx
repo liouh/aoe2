@@ -273,7 +273,7 @@ export function APMChart({
               strokeLinejoin="round"
               strokeLinecap="round"
               style={{
-                opacity: isLineDimmed ? 0.1 : 1,
+                opacity: isLineDimmed ? 0.15 : 1,
                 transition: "opacity 0.1s ease-out, stroke-width 0.1s ease-out",
               }}
             />
