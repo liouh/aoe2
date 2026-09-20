@@ -492,8 +492,8 @@ export const extractChatEvents = (
     const isAgeAdvance = rawMessage.toLowerCase().includes("advanced to the");
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
-    // Filter out lobby chat (time === 0) from in-game chat events
-    if (currentTime === 0) {
+    // In DE replays, empty messageAGP indicates internal engine triggers or pre-game lobby packets
+    if (payload.messageAGP === "") {
       return;
     }
 
@@ -530,13 +530,22 @@ export const extractChatEvents = (
         } else {
           const otherRecipients = recipientPlayers.filter((p) => p.id !== resolvedPlayerId);
           if (otherRecipients.length === 1) {
-            const isEnemy = resolvedPlayer && otherRecipients[0].teamId !== undefined && resolvedPlayer.teamId !== undefined && otherRecipients[0].teamId !== resolvedPlayer.teamId;
-            const senderTeammates = players.filter((p) => p.id !== resolvedPlayerId && p.teamId === resolvedPlayer?.teamId);
-            const isExplicitSingle = rawDestMap < 1000;
-            if (isEnemy || senderTeammates.length > 1 || isExplicitSingle) {
+            const recipient = otherRecipients[0];
+            const isTeammate =
+              resolvedPlayer?.teamId !== undefined &&
+              resolvedPlayer.teamId > 0 &&
+              recipient.teamId !== undefined &&
+              recipient.teamId > 0 &&
+              recipient.teamId === resolvedPlayer.teamId;
+            const senderTeammates = players.filter(
+              (p) => p.id !== resolvedPlayerId && p.teamId !== undefined && p.teamId > 0 && p.teamId === resolvedPlayer?.teamId
+            );
+
+            // Direct message if sent to an opponent/non-teammate, or singled out from multiple teammates
+            if (!isTeammate || senderTeammates.length > 1) {
               scope = "direct";
-              recipientPlayerId = otherRecipients[0].id;
-              recipientName = otherRecipients[0].name;
+              recipientPlayerId = recipient.id;
+              recipientName = recipient.name;
             } else {
               scope = "team";
             }
