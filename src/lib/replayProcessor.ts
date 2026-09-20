@@ -418,6 +418,15 @@ export const extractChatEvents = (
 
   const players = providedPlayers ?? summarizePlayers(summary, replay);
   const playerMapping = buildPlayerMapping(operations, players);
+  const isTeamGame = players.length > 2 || (() => {
+    const teamCounts = new Map<number, number>();
+    players.forEach((p) => {
+      if (p.teamId !== undefined && p.teamId > 0) {
+        teamCounts.set(p.teamId, (teamCounts.get(p.teamId) || 0) + 1);
+      }
+    });
+    return Array.from(teamCounts.values()).some((count) => count > 1);
+  })();
 
   const chatEvents: ChatEvent[] = [];
   let currentTime = 0;
@@ -470,22 +479,14 @@ export const extractChatEvents = (
     const isAi = !!resolvedPlayer?.ai;
 
     const rawDestMap = pickNumber(payload.destinationMap);
-    const messageAGP = typeof payload.messageAGP === "string" ? payload.messageAGP : "";
-    const hasAllInAGP = messageAGP.includes("<All>");
 
     let scope: "all" | "team" | undefined = undefined;
     if (!isSystem) {
-      if (hasAllInAGP || channel === 1) {
+      if (!isTeamGame || channel === 1) {
         scope = "all";
       } else if (rawDestMap !== undefined) {
         const recipientCount = players.filter((p) => (rawDestMap & (1 << (p.id + 1))) !== 0).length;
-        if (recipientCount >= players.length || (rawDestMap & 1020) === 1020) {
-          scope = "all";
-        } else {
-          scope = "team";
-        }
-      } else if (channel === 0) {
-        scope = "team";
+        scope = (recipientCount >= players.length || (rawDestMap & 1020) === 1020) ? "all" : "team";
       } else {
         scope = "team";
       }

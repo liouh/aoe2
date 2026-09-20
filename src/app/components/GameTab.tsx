@@ -47,10 +47,10 @@ export function GameTab({
     return chatEvents.filter((item) => {
       if (item.time === 0) return false;
       if (item.isSystem) return chatShowSystem;
-      if (item.isAi && item.scope !== "all") return chatShowAiTeamChat;
+      if (isTeamGame && item.isAi && item.scope !== "all") return chatShowAiTeamChat;
       return chatShowChat;
     });
-  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat]);
+  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat, isTeamGame]);
 
   const fastestAges = useMemo(() => {
     const ageMap: Record<string, number> = {};
@@ -270,7 +270,7 @@ export function GameTab({
               </span>
             </label>
 
-            {hasAi && (
+            {hasAi && isTeamGame && (
               <label className="flex items-center gap-2 cursor-pointer select-none group">
                 <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
                   <input
