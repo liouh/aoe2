@@ -320,6 +320,7 @@ export function StatsTab({
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const actions = actionStats.get(player.id) || [];
+            const totalActions = actions.reduce((acc, a) => acc + a.count, 0);
 
             return (
               <TiltCard
@@ -343,17 +344,24 @@ export function StatsTab({
                   ></span>
                 </div>
 
-                <div className="flex flex-col gap-1.5 min-h-[20px]">
-                  {actions.length > 0 ? (
-                    actions.map((action, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-sm">
-                        <span className="text-[color:var(--muted)] truncate pr-2">{action.name}</span>
-                        <span className="tabular-nums shrink-0">{formatNum(action.count)}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-[10px] text-white/20 italic">No actions recorded</p>
-                  )}
+                <div>
+                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <span className="text-xs uppercase tracking-wider text-white/30">Total actions</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(totalActions)}</span>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    {actions.length > 0 ? (
+                      actions.map((action, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <span className="text-[color:var(--muted)] truncate pr-2">{action.name}</span>
+                          <span className="tabular-nums shrink-0">{formatNum(action.count)}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-white/20 italic">No actions recorded</p>
+                    )}
+                  </div>
                 </div>
               </TiltCard>
             );
