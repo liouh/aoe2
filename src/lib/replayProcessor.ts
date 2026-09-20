@@ -28,7 +28,9 @@ export type ChatEvent = {
   rawMessage: string;
   tauntNumber?: number;
   channel?: number;
-  scope?: "all" | "team";
+  scope?: "all" | "team" | "direct";
+  recipientPlayerId?: number;
+  recipientName?: string;
   isSystem: boolean;
   raw: Record<string, unknown>;
 };
@@ -480,13 +482,34 @@ export const extractChatEvents = (
 
     const rawDestMap = pickNumber(payload.destinationMap);
 
-    let scope: "all" | "team" | undefined = undefined;
+    let scope: "all" | "team" | "direct" | undefined = undefined;
+    let recipientPlayerId: number | undefined = undefined;
+    let recipientName: string | undefined = undefined;
+
     if (!isSystem) {
       if (!isTeamGame || channel === 1) {
         scope = "all";
       } else if (rawDestMap !== undefined) {
-        const recipientCount = players.filter((p) => (rawDestMap & (1 << (p.id + 1))) !== 0).length;
-        scope = (recipientCount >= players.length || (rawDestMap & 1020) === 1020) ? "all" : "team";
+        const recipientPlayers = players.filter((p) => (rawDestMap & (1 << (p.id + 1))) !== 0);
+        if (recipientPlayers.length >= players.length || (rawDestMap & 1020) === 1020) {
+          scope = "all";
+        } else {
+          const otherRecipients = recipientPlayers.filter((p) => p.id !== resolvedPlayerId);
+          if (otherRecipients.length === 1) {
+            const isEnemy = resolvedPlayer && otherRecipients[0].teamId !== undefined && resolvedPlayer.teamId !== undefined && otherRecipients[0].teamId !== resolvedPlayer.teamId;
+            const senderTeammates = players.filter((p) => p.id !== resolvedPlayerId && p.teamId === resolvedPlayer?.teamId);
+            const isExplicitSingle = rawDestMap < 1000;
+            if (isEnemy || senderTeammates.length > 1 || isExplicitSingle) {
+              scope = "direct";
+              recipientPlayerId = otherRecipients[0].id;
+              recipientName = otherRecipients[0].name;
+            } else {
+              scope = "team";
+            }
+          } else {
+            scope = "team";
+          }
+        }
       } else {
         scope = "team";
       }
@@ -503,6 +526,8 @@ export const extractChatEvents = (
       tauntNumber: tauntNumber !== undefined && tauntNumber > 0 ? tauntNumber : undefined,
       channel,
       scope,
+      recipientPlayerId,
+      recipientName,
       isSystem,
       raw: { ...payload, padding: chatOp.padding },
     });

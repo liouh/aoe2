@@ -344,8 +344,22 @@ export function GameTab({
                       ) : null}
 
                       {isTeamGame && item.scope === "all" && !item.isSystem && (
-                        <span className="inline-flex items-center rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
-                          All
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+                          <span className="text-emerald-300/70 font-normal">to</span>
+                          <span>All</span>
+                        </span>
+                      )}
+
+                      {item.scope === "direct" && item.recipientName && !item.isSystem && (
+                        <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
+                          <span className="text-purple-300/70 font-normal">to</span>
+                          {item.recipientPlayerId !== undefined && (
+                            <span
+                              className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
+                              style={{ background: getPlayerColor(item.recipientPlayerId) }}
+                            />
+                          )}
+                          <span>{item.recipientName}</span>
                         </span>
                       )}
 
