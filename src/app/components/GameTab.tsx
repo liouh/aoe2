@@ -1,27 +1,55 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { TiltCard } from "./TiltCard";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
-import { type MatchInfo } from "@/lib/replayProcessor";
+import { type MatchInfo, type ChatEvent } from "@/lib/replayProcessor";
 
 interface GameTabProps {
   players: any[];
   timelineStats: any[];
   matchInfo: MatchInfo | null;
+  chatEvents?: ChatEvent[];
   getPlayerColor: (playerId?: number) => string;
   formatClock: (seconds: number) => string;
+  onSeek?: (seconds: number) => void;
 }
 
 export function GameTab({
   players,
   timelineStats,
   matchInfo,
+  chatEvents = [],
   getPlayerColor,
   formatClock,
+  onSeek,
 }: GameTabProps) {
   const allPlayersWon = useMemo(() => players.length > 0 && players.every((p) => p.won), [players]);
+
+  const [chatShowPlayerChat, setChatShowPlayerChat] = useState(true);
+  const [chatShowAiChat, setChatShowAiChat] = useState(false);
+  const [chatShowNotifications, setChatShowNotifications] = useState(true);
+
+  const hasAi = useMemo(() => players.some((p) => p.ai), [players]);
+  const isTeamGame = useMemo(() => {
+    if (players.length > 2) return true;
+    const teamCounts = new Map<number, number>();
+    players.forEach((p) => {
+      if (p.teamId !== undefined && p.teamId > 0) {
+        teamCounts.set(p.teamId, (teamCounts.get(p.teamId) || 0) + 1);
+      }
+    });
+    return Array.from(teamCounts.values()).some((count) => count > 1);
+  }, [players]);
+
+  const filteredChat = useMemo(() => {
+    return chatEvents.filter((item) => {
+      if (item.isSystem) return chatShowNotifications;
+      if (item.isAi) return chatShowAiChat;
+      return chatShowPlayerChat;
+    });
+  }, [chatEvents, chatShowNotifications, chatShowAiChat, chatShowPlayerChat]);
 
   const fastestAges = useMemo(() => {
     const ageMap: Record<string, number> = {};
@@ -198,6 +226,146 @@ export function GameTab({
           </div>
         </section>
       )}
+
+      <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="headline text-2xl font-semibold">In-game chat</h2>
+            <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+              {filteredChat.length}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer select-none group">
+              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={chatShowNotifications}
+                  onChange={(e) => setChatShowNotifications(e.target.checked)}
+                />
+                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowNotifications ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowNotifications ? 'translate-x-3' : 'translate-x-0'}`} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
+                Notifications
+              </span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer select-none group">
+              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={chatShowPlayerChat}
+                  onChange={(e) => setChatShowPlayerChat(e.target.checked)}
+                />
+                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowPlayerChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowPlayerChat ? 'translate-x-3' : 'translate-x-0'}`} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
+                Player chat
+              </span>
+            </label>
+
+            {hasAi && (
+              <label className="flex items-center gap-2 cursor-pointer select-none group">
+                <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={chatShowAiChat}
+                    onChange={(e) => setChatShowAiChat(e.target.checked)}
+                  />
+                  <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowAiChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                  <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowAiChat ? 'translate-x-3' : 'translate-x-0'}`} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
+                  AI chat
+                </span>
+              </label>
+            )}
+          </div>
+        </div>
+
+        {chatEvents.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+            No in-game chat messages recorded in this replay.
+          </div>
+        ) : filteredChat.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+            No messages match the selected filter.
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filteredChat.map((item) => {
+              const isLobby = item.time === 0;
+              const timeLabel = isLobby ? "Lobby" : formatClock(item.time);
+              const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
+
+              return (
+                <div
+                  key={item.id}
+                  className={`flex items-start gap-3 p-2.5 ${
+                    item.isSystem
+                      ? "bg-white/[0.02] text-white/60"
+                      : "bg-white/[0.05]"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => onSeek?.(item.time)}
+                    title={isLobby ? "Lobby chat (0:00)" : `Jump to ${timeLabel}`}
+                    className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                  >
+                    {timeLabel}
+                  </button>
+
+                  <div className="flex flex-1 flex-col min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {item.playerName ? (
+                        <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
+                          <span
+                            className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
+                            style={{ background: pColor || "#FFFFFF" }}
+                          />
+                          <span className="truncate">{item.playerName}</span>
+                          {item.isAi && (
+                            <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
+                              AI
+                            </span>
+                          )}
+                        </span>
+                      ) : item.isSystem ? (
+                        <span className="inline-flex items-center rounded-md bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-400 ring-1 ring-inset ring-amber-400/20">
+                          Notification
+                        </span>
+                      ) : null}
+
+                      {isTeamGame && !isLobby && item.scope === "all" && !item.isSystem && (
+                        <span className="inline-flex items-center rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+                          All
+                        </span>
+                      )}
+
+                      {item.tauntNumber && (
+                        <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
+                          Taunt {item.tauntNumber}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className={`mt-0.5 text-sm break-words ${item.isSystem ? "italic text-white/60" : "text-white/90"}`}>
+                      {item.message}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

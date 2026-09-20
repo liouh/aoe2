@@ -13,6 +13,7 @@ import {
   extractPlayerStats,
   extractMatchInfo,
   summarizePlayers,
+  type ChatEvent,
   type MapResourceType,
   type MatchInfo,
   type TimelineEvent,
@@ -77,6 +78,7 @@ export default function Home() {
   const [summary, setSummary] = useState<any>(null);
   const [matchInfo, setMatchInfo] = useState<MatchInfo | null>(null);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [chatEvents, setChatEvents] = useState<ChatEvent[]>([]);
   const [mapResources, setMapResources] = useState<Record<string, MapResourceType>>({});
   const [duration, setDuration] = useState(0);
   const [selectedTime, setSelectedTime] = useState(0);
@@ -97,6 +99,7 @@ export default function Home() {
     setSummary(null);
     setMatchInfo(null);
     setEvents([]);
+    setChatEvents([]);
     setMapResources({});
     setDuration(0);
     resetGameState();
@@ -144,8 +147,8 @@ export default function Home() {
 
   // Sync player selection when player data changes or is loaded
   const timelineStats = useMemo(
-    () => extractPlayerStats(events, duration, players),
-    [events, duration, players]
+    () => extractPlayerStats(events, duration, players, chatEvents),
+    [events, duration, players, chatEvents]
   );
 
   // Manage the playback timer: increments selectedTime when playing
@@ -200,6 +203,7 @@ export default function Home() {
       setSummary(parsedSummary);
       setMatchInfo(extractedInfo);
       setEvents(timeline.events);
+      setChatEvents(timeline.chatEvents);
       setMapResources(timeline.mapResources);
       setDuration(gameDuration);
 
@@ -442,8 +446,12 @@ export default function Home() {
                   players={players}
                   timelineStats={timelineStats}
                   matchInfo={matchInfo}
+                  chatEvents={chatEvents}
                   getPlayerColor={getPlayerColor}
                   formatClock={formatClock}
+                  onSeek={(seconds) => {
+                    setSelectedTime(clamp(seconds, 0, duration));
+                  }}
                 />
               </div>
 

@@ -18,6 +18,21 @@ export type TimelineEvent = {
 
 export type MapResourceType = "gold" | "stone" | "forage" | "relic";
 
+export type ChatEvent = {
+  id: string;
+  time: number;
+  playerId?: number;
+  playerName?: string;
+  isAi: boolean;
+  message: string;
+  rawMessage: string;
+  tauntNumber?: number;
+  channel?: number;
+  scope?: "all" | "team";
+  isSystem: boolean;
+  raw: Record<string, unknown>;
+};
+
 import { getEntityName, getBuildingName } from "./entityNames";
 import { getBuildingFootprint, isBuildingId } from "./buildingFootprints";
 
@@ -47,17 +62,6 @@ export type PlayerStats = {
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
-};
-
-const AGE_TECH_IDS = {
-  Feudal: 101,
-  Castle: 102,
-  Imperial: 103,
-};
-const AGE_TECH_DURATIONS: Record<string, number> = {
-  Feudal: 130,
-  Castle: 160,
-  Imperial: 190,
 };
 
 const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
@@ -319,14 +323,207 @@ const parseActionData = (type: string, data: number[]) => {
   return undefined;
 };
 
-export const buildTimeline = (replay: unknown, summary?: any): { events: TimelineEvent[]; mapResources: Record<string, MapResourceType> } => {
-  if (!replay) return { events: [], mapResources: {} };
+export const summarizePlayers = (
+  summary: any,
+  replay?: any
+): PlayerSummary[] => {
+  const players: PlayerSummary[] = [];
+
+  const summaryTeams = summary?.teams ?? [];
+  summaryTeams.forEach((team: any, teamIndex: number) => {
+    (team?.players ?? []).forEach((p: any) => {
+      players.push({
+        id: p.player_number,
+        ai: p.player_type === 4,
+        name: p.name,
+        colorId: p.color_id,
+        civId: p.civ_id,
+        teamId: teamIndex + 1,
+        won: team.winner,
+      });
+    });
+  });
+
+  const source = replay || summary;
+  const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
+
+  if (gameSettings?.players) {
+    gameSettings.players.forEach((p: any) => {
+      let player = players.find(sp => sp.id === p.player_number);
+      if (!player) {
+        player = {
+          id: p.player_number,
+          teamId: p.resolved_team_id ?? p.selected_team_id,
+          ai: p.player_type === 4,
+          name: p.name,
+        };
+        players.push(player);
+      }
+
+      const aiName = p.ai_name;
+      const displayName = aiName && aiName.length > 0 ? aiName : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`);
+
+      player.name = displayName;
+      player.handicap = p.handicap;
+    });
+  }
+
+  return players;
+};
+
+export const buildPlayerMapping = (
+  operations: Record<string, unknown>[],
+  players: PlayerSummary[]
+): Map<number, number> => {
+  const rawEventPlayerIds = new Set<number>();
+  operations.forEach((op) => {
+    const action = op.Action as Record<string, unknown> | undefined;
+    const actionData = action?.action_data as Record<string, unknown> | undefined;
+    if (actionData) {
+      const actionType = Object.keys(actionData)[0];
+      const payload = actionData[actionType] as Record<string, unknown>;
+      const pid = pickNumber(payload?.player_id);
+      if (pid !== undefined && pid !== 0) {
+        rawEventPlayerIds.add(pid);
+      }
+    }
+  });
+
+  const sortedEventIds = Array.from(rawEventPlayerIds).sort((a, b) => a - b);
+  const sortedSummaryIds = players.map(p => p.id).sort((a, b) => a - b);
+
+  const playerMapping = new Map<number, number>();
+  if (sortedEventIds.length === sortedSummaryIds.length) {
+    sortedEventIds.forEach((eid, idx) => {
+      playerMapping.set(eid, sortedSummaryIds[idx]);
+    });
+  } else {
+    sortedEventIds.forEach(eid => playerMapping.set(eid, eid));
+  }
+
+  return playerMapping;
+};
+
+export const extractChatEvents = (
+  replay: unknown,
+  summary?: any,
+  providedPlayers?: PlayerSummary[]
+): ChatEvent[] => {
+  if (!replay) return [];
+  const replayRecord = replay as Record<string, unknown>;
+  const operations = Array.isArray(replayRecord.operations)
+    ? (replayRecord.operations as Record<string, unknown>[])
+    : null;
+  if (!operations) return [];
+
+  const players = providedPlayers ?? summarizePlayers(summary, replay);
+  const playerMapping = buildPlayerMapping(operations, players);
+
+  const chatEvents: ChatEvent[] = [];
+  let currentTime = 0;
+
+  operations.forEach((op, index) => {
+    const action = op.Action as Record<string, unknown> | undefined;
+    if (action?.world_time !== undefined) {
+      currentTime = (pickNumber(action.world_time) ?? 0) / 1000;
+    }
+
+    const chatOp = op.Chat as { padding?: number[]; text?: string } | undefined;
+    if (!chatOp || typeof chatOp.text !== "string") return;
+
+    let payload: Record<string, any> = {};
+    try {
+      payload = JSON.parse(chatOp.text);
+    } catch {
+      payload = { message: chatOp.text };
+    }
+
+    const rawPlayerId = pickNumber(payload.player);
+    const playerId = rawPlayerId !== undefined ? (playerMapping.get(rawPlayerId) ?? rawPlayerId) : undefined;
+    const player = playerId !== undefined ? players.find((p) => p.id === playerId) : undefined;
+    const rawMessage = typeof payload.message === "string" ? payload.message : (chatOp.text ?? "");
+    const tauntNumber = pickNumber(payload.tauntNumber);
+    const channel = pickNumber(payload.channel);
+    const tagMatch = rawMessage.match(/<player_id,\s*(\d+)[^>]*>/i);
+    const tagPlayerId = tagMatch ? pickNumber(parseInt(tagMatch[1], 10)) : undefined;
+    const resolvedPlayerId = (playerId !== undefined && playerId !== 0)
+      ? playerId
+      : (tagPlayerId !== undefined ? (playerMapping.get(tagPlayerId) ?? tagPlayerId) : undefined);
+    const resolvedPlayer = resolvedPlayerId !== undefined ? players.find((p) => p.id === resolvedPlayerId) : player;
+
+    const hasPlayerIdTag = tagMatch !== null;
+    const isAgeAdvance = rawMessage.toLowerCase().includes("advanced to the");
+    const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
+
+    // Filter out stale system/announcement ghosts from previous games lingering in the lobby buffer
+    if (isSystem && currentTime === 0) {
+      return;
+    }
+
+    const formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
+      const targetRawPid = parseInt(pidStr, 10);
+      const targetPid = playerMapping.get(targetRawPid) ?? targetRawPid;
+      const targetPlayer = players.find((p) => p.id === targetPid);
+      return targetPlayer?.name || `Player ${targetPid}`;
+    });
+
+    const isAi = !!resolvedPlayer?.ai;
+
+    const rawDestMap = pickNumber(payload.destinationMap);
+    const messageAGP = typeof payload.messageAGP === "string" ? payload.messageAGP : "";
+    const hasAllInAGP = messageAGP.includes("<All>");
+
+    let scope: "all" | "team" | undefined = undefined;
+    if (!isSystem) {
+      if (hasAllInAGP || channel === 1) {
+        scope = "all";
+      } else if (rawDestMap !== undefined) {
+        const recipientCount = players.filter((p) => (rawDestMap & (1 << (p.id + 1))) !== 0).length;
+        if (recipientCount >= players.length || (rawDestMap & 1020) === 1020) {
+          scope = "all";
+        } else {
+          scope = "team";
+        }
+      } else if (channel === 0) {
+        scope = "team";
+      }
+    }
+
+    chatEvents.push({
+      id: `chat-${index}`,
+      time: Math.round(currentTime * 10) / 10,
+      playerId: resolvedPlayerId,
+      playerName: resolvedPlayer?.name,
+      isAi,
+      message: formattedMessage,
+      rawMessage,
+      tauntNumber: tauntNumber !== undefined && tauntNumber > 0 ? tauntNumber : undefined,
+      channel,
+      scope,
+      isSystem,
+      raw: { ...payload, padding: chatOp.padding },
+    });
+  });
+
+  return chatEvents;
+};
+
+export const buildTimeline = (
+  replay: unknown,
+  summary?: any
+): {
+  events: TimelineEvent[];
+  mapResources: Record<string, MapResourceType>;
+  chatEvents: ChatEvent[];
+} => {
+  if (!replay) return { events: [], mapResources: {}, chatEvents: [] };
   const replayRecord = replay as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   const events: TimelineEvent[] = [];
   const players = summarizePlayers(summary, replay);
+  const chatEvents = extractChatEvents(replay, summary, players);
 
   // Process initial object instances if available
   const zheader = replayRecord.zheader as any;
@@ -453,36 +650,7 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
 
   if (operations) {
     const actionTypeCounts: Record<string, number> = {};
-
-    // First pass: identify unique player IDs in events to handle mismatches
-    const rawEventPlayerIds = new Set<number>();
-    operations.forEach((op) => {
-      const action = op.Action as Record<string, unknown> | undefined;
-      const actionData = action?.action_data as Record<string, unknown> | undefined;
-      if (actionData) {
-        const actionType = Object.keys(actionData)[0];
-        const payload = actionData[actionType] as Record<string, unknown>;
-        const pid = pickNumber(payload?.player_id);
-        if (pid !== undefined && pid !== 0) {
-          rawEventPlayerIds.add(pid);
-        }
-      }
-    });
-
-    const sortedEventIds = Array.from(rawEventPlayerIds).sort((a, b) => a - b);
-    const sortedSummaryIds = players.map(p => p.id).sort((a, b) => a - b);
-
-    // Create a mapping from event ID to summary ID
-    const playerMapping = new Map<number, number>();
-    if (sortedEventIds.length === sortedSummaryIds.length) {
-      // Perfect match in count - map by relative order
-      sortedEventIds.forEach((eid, idx) => {
-        playerMapping.set(eid, sortedSummaryIds[idx]);
-      });
-    } else {
-      // Fallback: identify mapping or identity
-      sortedEventIds.forEach(eid => playerMapping.set(eid, eid));
-    }
+    const playerMapping = buildPlayerMapping(operations, players);
 
     const lastUnitIds = new Map<number, number[]>();
 
@@ -680,61 +848,15 @@ export const buildTimeline = (replay: unknown, summary?: any): { events: Timelin
   return {
     events: events.sort((a, b) => a.time - b.time),
     mapResources,
+    chatEvents,
   };
-};
-
-export const summarizePlayers = (
-  summary: any,
-  replay?: any
-): PlayerSummary[] => {
-  const players: PlayerSummary[] = [];
-
-  const summaryTeams = summary?.teams ?? [];
-  summaryTeams.forEach((team: any, teamIndex: number) => {
-    (team?.players ?? []).forEach((p: any) => {
-      players.push({
-        id: p.player_number,
-        ai: p.player_type === 4,
-        name: p.name,
-        colorId: p.color_id,
-        civId: p.civ_id,
-        teamId: teamIndex + 1,
-        won: team.winner,
-      });
-    });
-  });
-
-  const source = replay || summary;
-  const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
-
-  if (gameSettings?.players) {
-    gameSettings.players.forEach((p: any) => {
-      let player = players.find(sp => sp.id === p.player_number);
-      if (!player) {
-        player = {
-          id: p.player_number,
-          teamId: p.resolved_team_id ?? p.selected_team_id,
-          ai: p.player_type === 4,
-          name: p.name,
-        };
-        players.push(player);
-      }
-
-      const aiName = p.ai_name;
-      const displayName = aiName && aiName.length > 0 ? aiName : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`);
-
-      player.name = displayName;
-      player.handicap = p.handicap;
-    });
-  }
-
-  return players;
 };
 
 export const extractPlayerStats = (
   events: TimelineEvent[],
   durationSeconds: number | undefined,
-  players?: PlayerSummary[]
+  players?: PlayerSummary[],
+  chatEvents?: ChatEvent[]
 ): PlayerStats[] => {
   const durationMinutes = Math.max(durationSeconds ?? 0, 1) / 60;
   const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
@@ -788,35 +910,36 @@ export const extractPlayerStats = (
         }
       }
 
-      // Check for Research-based age ups (prioritize LAST occurrence, e.g. after cancel/restart)
-      if (event.type === "Research" && event.techId) {
-        Object.entries(AGE_TECH_IDS).forEach(([age, id]) => {
-          if (event.techId === id) {
-            let duration = AGE_TECH_DURATIONS[age] ?? 0;
-
-            // Apply Civ Bonuses
-            if (civId === 29) { // Malay
-              duration /= 1.66;
-            } else if (civId === 8) { // Persians
-              if (age === "Feudal") duration /= 1.05;
-              if (age === "Castle") duration /= 1.10;
-              if (age === "Imperial") duration /= 1.15;
-            }
-
-            const adjustedTime = event.time + duration;
-
-            // Only count as complete if it finished before the game did
-            if (durationSeconds !== undefined && adjustedTime > durationSeconds) {
-              return;
-            }
-
-            // Use ">" to get the LATEST occurrence
-            if (ageTimings[age] === undefined || adjustedTime > ageTimings[age]) {
-              ageTimings[age] = adjustedTime;
-            }
+    // Extract age-up timings directly from ground-truth chat notifications
+    if (chatEvents && chatEvents.length > 0) {
+      chatEvents.forEach((chat) => {
+        if (chat.playerId === playerId && chat.time > 0) {
+          const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
+          if (match) {
+            const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+            ageTimings[age] = chat.time;
           }
-        });
-      }
+        }
+      });
+    }
+
+    // Fallback if chat events are not available
+    if (Object.keys(ageTimings).length === 0) {
+      const fallbackDurations: Record<number, { age: string; duration: number }> = {
+        101: { age: "Feudal", duration: 130 },
+        102: { age: "Castle", duration: 160 },
+        103: { age: "Imperial", duration: 190 },
+      };
+      playerEvents.forEach((event) => {
+        if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
+          const info = fallbackDurations[event.techId];
+          const adjusted = event.time + info.duration;
+          if (durationSeconds === undefined || adjusted <= durationSeconds) {
+            ageTimings[info.age] = adjusted;
+          }
+        }
+      });
+    }
     });
 
     for (let m = 0; m <= maxGameMinute; m++) {
