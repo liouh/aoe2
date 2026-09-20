@@ -450,6 +450,7 @@ export default function Home() {
                   getPlayerColor={getPlayerColor}
                   formatClock={formatClock}
                   onSeek={(seconds) => {
+                    setIsPlaying(false);
                     setSelectedTime(clamp(seconds, 0, duration));
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}

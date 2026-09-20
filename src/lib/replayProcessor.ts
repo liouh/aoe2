@@ -456,8 +456,8 @@ export const extractChatEvents = (
           playerId: pid,
           playerName,
           isAi: !!resignedPlayer?.ai,
-          message: `${playerName} has resigned.`,
-          rawMessage: `${playerName} has resigned.`,
+          message: `${playerName} resigned.`,
+          rawMessage: `${playerName} resigned.`,
           isSystem: true,
           raw: { ...resignData, type: "Resign" },
         });
@@ -981,36 +981,36 @@ export const extractPlayerStats = (
         }
       }
 
-    // Extract age-up timings directly from ground-truth chat notifications
-    if (chatEvents && chatEvents.length > 0) {
-      chatEvents.forEach((chat) => {
-        if (chat.playerId === playerId && chat.time > 0) {
-          const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
-          if (match) {
-            const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
-            ageTimings[age] = chat.time;
+      // Extract age-up timings directly from ground-truth chat notifications
+      if (chatEvents && chatEvents.length > 0) {
+        chatEvents.forEach((chat) => {
+          if (chat.playerId === playerId && chat.time > 0) {
+            const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
+            if (match) {
+              const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+              ageTimings[age] = chat.time;
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
-    // Fallback if chat events are not available
-    if (Object.keys(ageTimings).length === 0) {
-      const fallbackDurations: Record<number, { age: string; duration: number }> = {
-        101: { age: "Feudal", duration: 130 },
-        102: { age: "Castle", duration: 160 },
-        103: { age: "Imperial", duration: 190 },
-      };
-      playerEvents.forEach((event) => {
-        if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
-          const info = fallbackDurations[event.techId];
-          const adjusted = event.time + info.duration;
-          if (durationSeconds === undefined || adjusted <= durationSeconds) {
-            ageTimings[info.age] = adjusted;
+      // Fallback if chat events are not available
+      if (Object.keys(ageTimings).length === 0) {
+        const fallbackDurations: Record<number, { age: string; duration: number }> = {
+          101: { age: "Feudal", duration: 130 },
+          102: { age: "Castle", duration: 160 },
+          103: { age: "Imperial", duration: 190 },
+        };
+        playerEvents.forEach((event) => {
+          if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
+            const info = fallbackDurations[event.techId];
+            const adjusted = event.time + info.duration;
+            if (durationSeconds === undefined || adjusted <= durationSeconds) {
+              ageTimings[info.age] = adjusted;
+            }
           }
-        }
-      });
-    }
+        });
+      }
     });
 
     for (let m = 0; m <= maxGameMinute; m++) {
