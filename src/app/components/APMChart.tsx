@@ -20,6 +20,7 @@ export function APMChart({
   selectedTime,
   ageTimings,
   hoveredPlayerId,
+  onHoverPlayer,
 }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[];
   players: { id: number; name?: string; [key: string]: unknown }[];
@@ -172,21 +173,38 @@ export function APMChart({
         <h3 className="text-sm uppercase tracking-widest text-white/30 whitespace-nowrap">APM over time</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2">
           {players.map((p, idx) => {
+            const isHovered = isHoveredPlayerPlotted && hoveredPlayerId === p.id;
             const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
             return (
               <div
                 key={`${p.id}-${idx}`}
-                className={`flex items-center gap-1.5 whitespace-nowrap transition-all duration-100 ${
-                  isDimmed ? "opacity-15" : "opacity-100"
+                onMouseEnter={() => onHoverPlayer?.(p.id)}
+                onMouseLeave={() => onHoverPlayer?.(null)}
+                className={`flex items-center gap-1.5 whitespace-nowrap ${
+                  onHoverPlayer ? "cursor-pointer" : ""
                 }`}
+                style={{
+                  opacity: isDimmed ? 0.15 : 1,
+                  transition: "opacity 0.1s ease-out",
+                }}
               >
                 <span
-                  className="w-2 h-2 rounded-full"
+                  className="w-2 h-2 rounded-full shrink-0"
                   style={{
                     background: getPlayerColor(p.id),
                   }}
                 />
-                <span className="text-[10px] text-white/50">{p.name}</span>
+                <span
+                  className={`text-[10px] transition-colors duration-100 ${
+                    isHovered
+                      ? "text-white font-medium"
+                      : isDimmed
+                        ? "text-white/40"
+                        : "text-white/80"
+                  }`}
+                >
+                  {p.name}
+                </span>
               </div>
             );
           })}
