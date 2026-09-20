@@ -262,83 +262,85 @@ export function GameTab({
             No messages match the selected filters.
           </div>
         ) : (
-          <div className="space-y-2">
-            {filteredChat.map((item) => {
-              const timeLabel = formatClock(item.time);
-              const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
+          <div className="bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
+            <div className="space-y-1">
+              {filteredChat.map((item) => {
+                const timeLabel = formatClock(item.time);
+                const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
 
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-start gap-3 py-1.5"
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onSeek?.(item.time);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    title={`Jump to ${timeLabel}`}
-                    className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-3 py-1.5"
                   >
-                    {timeLabel}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSeek?.(item.time);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      title={`Jump to ${timeLabel}`}
+                      className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                    >
+                      {timeLabel}
+                    </button>
 
-                  <div className="flex flex-1 flex-col min-w-0">
-                    {!item.isSystem && (
-                      <div className="flex flex-wrap items-center gap-2">
-                        {item.playerName && (
-                          <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
-                            <span
-                              className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
-                              style={{ background: pColor || "#FFFFFF" }}
-                            />
-                            <span className="truncate">{item.playerName}</span>
-                            {item.isAi && <AiBadge />}
-                          </span>
-                        )}
-
-                        {isTeamGame && item.scope === "all" && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
-                            <span className="text-emerald-300/70 font-normal">to</span>
-                            <span>All</span>
-                          </span>
-                        )}
-
-                        {item.scope === "direct" && item.recipientName && (
-                          <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
-                            <span className="text-purple-300/70 font-normal">to</span>
-                            {item.recipientPlayerId !== undefined && (
+                    <div className="flex flex-1 flex-col min-w-0">
+                      {!item.isSystem && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          {item.playerName && (
+                            <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
                               <span
-                                className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
-                                style={{ background: getPlayerColor(item.recipientPlayerId) }}
+                                className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
+                                style={{ background: pColor || "#FFFFFF" }}
                               />
-                            )}
-                            <span>{item.recipientName}</span>
-                          </span>
-                        )}
+                              <span className="truncate">{item.playerName}</span>
+                              {item.isAi && <AiBadge />}
+                            </span>
+                          )}
 
-                        {item.tauntNumber && (
-                          <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
-                            Taunt {item.tauntNumber}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                          {isTeamGame && item.scope === "all" && (
+                            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+                              <span className="text-emerald-300/70 font-normal">to</span>
+                              <span>All</span>
+                            </span>
+                          )}
 
-                    <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 py-0.5" : "mt-0.5 text-white/90"}`}>
-                      {item.isSystem && pColor && (
-                        <span
-                          className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
-                          style={{ background: pColor }}
-                        />
+                          {item.scope === "direct" && item.recipientName && (
+                            <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
+                              <span className="text-purple-300/70 font-normal">to</span>
+                              {item.recipientPlayerId !== undefined && (
+                                <span
+                                  className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
+                                  style={{ background: getPlayerColor(item.recipientPlayerId) }}
+                                />
+                              )}
+                              <span>{item.recipientName}</span>
+                            </span>
+                          )}
+
+                          {item.tauntNumber && (
+                            <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
+                              Taunt {item.tauntNumber}
+                            </span>
+                          )}
+                        </div>
                       )}
-                      {item.message}
-                    </p>
+
+                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 py-0.5" : "mt-0.5 text-white/90"}`}>
+                        {item.isSystem && pColor && (
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
+                            style={{ background: pColor }}
+                          />
+                        )}
+                        {item.message}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </section>
