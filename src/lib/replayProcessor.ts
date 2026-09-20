@@ -23,6 +23,7 @@ export type ChatEvent = {
   time: number;
   playerId?: number;
   playerName?: string;
+  teamId?: number;
   isAi: boolean;
   message: string;
   rawMessage: string;
@@ -455,6 +456,7 @@ export const extractChatEvents = (
           time: Math.round(currentTime * 10) / 10,
           playerId: pid,
           playerName,
+          teamId: resignedPlayer?.teamId,
           isAi: !!resignedPlayer?.ai,
           message: `${playerName} resigned.`,
           rawMessage: `${playerName} resigned.`,
@@ -516,6 +518,11 @@ export const extractChatEvents = (
 
     const rawDestMap = pickNumber(payload.destinationMap);
 
+    // Drop all spectator broadcast / spectator chats (destinationMap: 1)
+    if (rawDestMap === 1) {
+      return;
+    }
+
     let scope: "all" | "team" | "direct" | undefined = undefined;
     let recipientPlayerId: number | undefined = undefined;
     let recipientName: string | undefined = undefined;
@@ -563,6 +570,7 @@ export const extractChatEvents = (
       time: Math.round(currentTime * 10) / 10,
       playerId: resolvedPlayerId,
       playerName: resolvedPlayer?.name,
+      teamId: resolvedPlayer?.teamId,
       isAi,
       message: formattedMessage,
       rawMessage,

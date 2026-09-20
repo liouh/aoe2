@@ -95,7 +95,7 @@ export function GameTab({
                     </div>
                   </div>
                   <span
-                    className="h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
+                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
@@ -267,6 +267,7 @@ export function GameTab({
               {filteredChat.map((item) => {
                 const timeLabel = formatClock(item.time);
                 const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
+                const senderTeamId = item.teamId ?? (item.playerId ? players.find((p) => p.id === item.playerId)?.teamId : undefined);
 
                 return (
                   <div
@@ -289,20 +290,19 @@ export function GameTab({
                       {!item.isSystem && (
                         <div className="flex flex-wrap items-center gap-2">
                           {item.playerName && (
-                            <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
+                            <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white/30">
                               <span
                                 className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
                                 style={{ background: pColor || "#FFFFFF" }}
                               />
                               <span className="truncate">{item.playerName}</span>
-                              {item.isAi && <AiBadge />}
                             </span>
                           )}
 
-                          {isTeamGame && item.scope === "all" && (
+                          {item.scope === "team" && (
                             <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
                               <span className="text-emerald-300/70 font-normal">to</span>
-                              <span>All</span>
+                              <span>Team {senderTeamId !== undefined ? senderTeamId : ""}</span>
                             </span>
                           )}
 
