@@ -143,86 +143,6 @@ export function GameTab({
         </div>
       </section>
 
-      {matchInfo && (
-        <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-          <h2 className="headline text-2xl font-semibold">Game info</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {matchInfo.gameTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.mapTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.mapSizeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map size</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
-                </span>
-              </div>
-            )}
-            {matchInfo.populationLimit !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.populationLimit}
-                </span>
-              </div>
-            )}
-            {matchInfo.victoryTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.cheats !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.cheats ? "Yes" : "No"}
-                </span>
-              </div>
-            )}
-            {(matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some(p => p.ai) && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.filename && (
-              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
-                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
-                  {matchInfo.filename}
-                </span>
-              </div>
-            )}
-            {matchInfo.sourceUrl && (
-              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
-                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.sourceUrl}>
-                  {matchInfo.sourceUrl}
-                </span>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       <section className="panel flex flex-col gap-4 rounded-3xl p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -344,6 +264,86 @@ export function GameTab({
           </div>
         )}
       </section>
+
+      {matchInfo && (
+        <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+          <h2 className="headline text-2xl font-semibold">Game info</h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {matchInfo.gameTypeId !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
+                </span>
+              </div>
+            )}
+            {matchInfo.mapTypeId !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
+                </span>
+              </div>
+            )}
+            {matchInfo.mapSizeId !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map size</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
+                </span>
+              </div>
+            )}
+            {matchInfo.populationLimit !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {matchInfo.populationLimit}
+                </span>
+              </div>
+            )}
+            {matchInfo.victoryTypeId !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
+                </span>
+              </div>
+            )}
+            {matchInfo.cheats !== undefined && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {matchInfo.cheats ? "Yes" : "No"}
+                </span>
+              </div>
+            )}
+            {(matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some(p => p.ai) && (
+              <div className="flex flex-col gap-1">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">AI difficulty</span>
+                <span className="font-semibold text-[color:var(--foreground)]">
+                  {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`}
+                </span>
+              </div>
+            )}
+            {matchInfo.filename && (
+              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
+                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
+                  {matchInfo.filename}
+                </span>
+              </div>
+            )}
+            {matchInfo.sourceUrl && (
+              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
+                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.sourceUrl}>
+                  {matchInfo.sourceUrl}
+                </span>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
