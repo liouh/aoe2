@@ -410,16 +410,11 @@ export const buildPlayerMapping = (
     }
   });
 
-  const sortedEventIds = Array.from(rawEventPlayerIds).sort((a, b) => a - b);
-  const sortedSummaryIds = players.map(p => p.id).sort((a, b) => a - b);
-
   const playerMapping = new Map<number, number>();
-  if (sortedEventIds.length === sortedSummaryIds.length) {
-    sortedEventIds.forEach((eid, idx) => {
-      playerMapping.set(eid, sortedSummaryIds[idx]);
-    });
-  } else {
-    sortedEventIds.forEach(eid => playerMapping.set(eid, eid));
+  for (const eid of rawEventPlayerIds) {
+    const player = players.find(p => (p.slotId ?? p.id) === eid)
+      ?? players.find(p => p.id === eid);
+    playerMapping.set(eid, player ? player.id : eid);
   }
 
   return playerMapping;
