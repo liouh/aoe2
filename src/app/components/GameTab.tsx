@@ -261,7 +261,7 @@ export function GameTab({
                                 className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
                                 style={{ background: pColor || "#FFFFFF" }}
                               />
-                              <span className="truncate">{item.playerName}</span>
+                              <span>{item.playerName}</span>
                             </span>
                           )}
 
@@ -366,7 +366,7 @@ export function GameTab({
             {matchInfo.filename && (
               <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
-                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.filename}>
+                <span className="font-semibold text-[color:var(--foreground)]">
                   {matchInfo.filename}
                 </span>
               </div>
@@ -374,7 +374,7 @@ export function GameTab({
             {matchInfo.sourceUrl && (
               <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
-                <span className="font-semibold text-[color:var(--foreground)] truncate" title={matchInfo.sourceUrl}>
+                <span className="font-semibold text-[color:var(--foreground)]">
                   {matchInfo.sourceUrl}
                 </span>
               </div>
