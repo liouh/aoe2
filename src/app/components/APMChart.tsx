@@ -272,13 +272,6 @@ export function APMChart({
               strokeWidth={isLineHovered ? 3 : isLineDimmed ? 1 : 2}
               strokeLinejoin="round"
               strokeLinecap="round"
-              className={
-                isLineHovered
-                  ? "drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
-                  : isLineDimmed
-                    ? ""
-                    : "drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]"
-              }
               style={{
                 opacity: isLineDimmed ? 0.1 : 1,
                 transition: "opacity 0.1s ease-out, stroke-width 0.1s ease-out",
