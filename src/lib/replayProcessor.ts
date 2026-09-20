@@ -937,7 +937,6 @@ export const extractPlayerStats = (
   players?: PlayerSummary[],
   chatEvents?: ChatEvent[]
 ): PlayerStats[] => {
-  const durationMinutes = Math.max(durationSeconds ?? 0, 1) / 60;
   const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
   const eventsByPlayer = new Map<number, TimelineEvent[]>();
   players?.forEach((player) => {
@@ -952,7 +951,21 @@ export const extractPlayerStats = (
 
   const stats: PlayerStats[] = [];
   eventsByPlayer.forEach((playerEvents, playerId) => {
-    const apm = Math.round(playerEvents.length / durationMinutes);
+    const resignChat = chatEvents?.find(
+      (c) => c.playerId === playerId && (c.raw as any)?.type === "Resign"
+    );
+    const resignTime = resignChat ? resignChat.time : undefined;
+
+    const playerDurationSeconds = resignTime !== undefined
+      ? Math.min(resignTime, durationSeconds ?? resignTime)
+      : (durationSeconds ?? (playerEvents.length > 0 ? playerEvents[playerEvents.length - 1].time : 0));
+    const playerDurationMinutes = Math.max(playerDurationSeconds, 1) / 60;
+
+    const activePlayerEvents = resignTime !== undefined
+      ? playerEvents.filter((e) => e.time <= resignTime)
+      : playerEvents;
+
+    const apm = Math.round(activePlayerEvents.length / playerDurationMinutes);
     const player = players?.find((p) => p.id === playerId);
     const civId = player?.civId;
     const ageTimings: Record<string, number> = {};
@@ -964,7 +977,7 @@ export const extractPlayerStats = (
     };
 
     const minuteBuckets = new Map<number, number>();
-    playerEvents.forEach((event) => {
+    activePlayerEvents.forEach((event) => {
       const minute = Math.floor(event.time / 60);
       minuteBuckets.set(minute, (minuteBuckets.get(minute) ?? 0) + 1);
 
@@ -988,40 +1001,44 @@ export const extractPlayerStats = (
           }
         }
       }
-
-      // Extract age-up timings directly from ground-truth chat notifications
-      if (chatEvents && chatEvents.length > 0) {
-        chatEvents.forEach((chat) => {
-          if (chat.playerId === playerId && chat.time > 0) {
-            const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
-            if (match) {
-              const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
-              ageTimings[age] = chat.time;
-            }
-          }
-        });
-      }
-
-      // Fallback if chat events are not available
-      if (Object.keys(ageTimings).length === 0) {
-        const fallbackDurations: Record<number, { age: string; duration: number }> = {
-          101: { age: "Feudal", duration: 130 },
-          102: { age: "Castle", duration: 160 },
-          103: { age: "Imperial", duration: 190 },
-        };
-        playerEvents.forEach((event) => {
-          if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
-            const info = fallbackDurations[event.techId];
-            const adjusted = event.time + info.duration;
-            if (durationSeconds === undefined || adjusted <= durationSeconds) {
-              ageTimings[info.age] = adjusted;
-            }
-          }
-        });
-      }
     });
 
-    for (let m = 0; m <= maxGameMinute; m++) {
+    // Extract age-up timings directly from ground-truth chat notifications
+    if (chatEvents && chatEvents.length > 0) {
+      chatEvents.forEach((chat) => {
+        if (chat.playerId === playerId && chat.time > 0) {
+          const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
+          if (match) {
+            const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+            ageTimings[age] = chat.time;
+          }
+        }
+      });
+    }
+
+    // Fallback if chat events are not available
+    if (Object.keys(ageTimings).length === 0) {
+      const fallbackDurations: Record<number, { age: string; duration: number }> = {
+        101: { age: "Feudal", duration: 130 },
+        102: { age: "Castle", duration: 160 },
+        103: { age: "Imperial", duration: 190 },
+      };
+      activePlayerEvents.forEach((event) => {
+        if (event.type === "Research" && event.techId && fallbackDurations[event.techId]) {
+          const info = fallbackDurations[event.techId];
+          const adjusted = event.time + info.duration;
+          if (durationSeconds === undefined || adjusted <= durationSeconds) {
+            ageTimings[info.age] = adjusted;
+          }
+        }
+      });
+    }
+
+    const playerMaxMinute = resignTime !== undefined
+      ? Math.floor(playerDurationSeconds / 60)
+      : maxGameMinute;
+
+    for (let m = 0; m <= playerMaxMinute; m++) {
       if (!minuteBuckets.has(m)) {
         minuteBuckets.set(m, 0);
       }
