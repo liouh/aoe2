@@ -296,7 +296,7 @@ export function GameTab({
           </div>
         ) : filteredChat.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
-            No messages match the selected filter.
+            No messages match the selected filters.
           </div>
         ) : (
           <div className="space-y-2">
@@ -323,50 +323,58 @@ export function GameTab({
                   </button>
 
                   <div className="flex flex-1 flex-col min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {item.playerName ? (
-                        <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
-                          <span
-                            className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
-                            style={{ background: pColor || "#FFFFFF" }}
-                          />
-                          <span className="truncate">{item.playerName}</span>
-                          {item.isAi && (
-                            <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                              AI
-                            </span>
-                          )}
-                        </span>
-                      ) : null}
-
-                      {isTeamGame && item.scope === "all" && !item.isSystem && (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
-                          <span className="text-emerald-300/70 font-normal">to</span>
-                          <span>All</span>
-                        </span>
-                      )}
-
-                      {item.scope === "direct" && item.recipientName && !item.isSystem && (
-                        <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
-                          <span className="text-purple-300/70 font-normal">to</span>
-                          {item.recipientPlayerId !== undefined && (
+                    {!item.isSystem && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        {item.playerName && (
+                          <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white">
                             <span
-                              className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
-                              style={{ background: getPlayerColor(item.recipientPlayerId) }}
+                              className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
+                              style={{ background: pColor || "#FFFFFF" }}
                             />
-                          )}
-                          <span>{item.recipientName}</span>
-                        </span>
-                      )}
+                            <span className="truncate">{item.playerName}</span>
+                            {item.isAi && (
+                              <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
+                                AI
+                              </span>
+                            )}
+                          </span>
+                        )}
 
-                      {item.tauntNumber && (
-                        <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
-                          Taunt {item.tauntNumber}
-                        </span>
-                      )}
-                    </div>
+                        {isTeamGame && item.scope === "all" && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+                            <span className="text-emerald-300/70 font-normal">to</span>
+                            <span>All</span>
+                          </span>
+                        )}
 
-                    <p className={`mt-0.5 text-sm break-words ${item.isSystem ? "italic text-white/60" : "text-white/90"}`}>
+                        {item.scope === "direct" && item.recipientName && (
+                          <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
+                            <span className="text-purple-300/70 font-normal">to</span>
+                            {item.recipientPlayerId !== undefined && (
+                              <span
+                                className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
+                                style={{ background: getPlayerColor(item.recipientPlayerId) }}
+                              />
+                            )}
+                            <span>{item.recipientName}</span>
+                          </span>
+                        )}
+
+                        {item.tauntNumber && (
+                          <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
+                            Taunt {item.tauntNumber}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <p className={`text-sm break-words ${item.isSystem ? "italic text-white/60 py-0.5" : "mt-0.5 text-white/90"}`}>
+                      {item.isSystem && pColor && (
+                        <span
+                          className="inline-block h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
+                          style={{ background: pColor }}
+                        />
+                      )}
                       {item.message}
                     </p>
                   </div>
