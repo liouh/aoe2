@@ -45,7 +45,6 @@ export function GameTab({
 
   const filteredChat = useMemo(() => {
     return chatEvents.filter((item) => {
-      if (item.time === 0) return false;
       if (item.isSystem) return chatShowSystem;
       if (isTeamGame && item.isAi && item.scope !== "all") return chatShowAiTeamChat;
       return chatShowChat;
