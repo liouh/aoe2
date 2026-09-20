@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 const formatClock = (seconds: number) => {
   const total = Math.max(seconds, 0);
@@ -13,13 +13,26 @@ const AGE_LABELS: Record<string, string> = {
   Imperial: "IV",
 };
 
-export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimings }: {
-  data: { playerId: number; history: { minute: number; apm: number }[] }[],
-  players: any[],
-  getPlayerColor: (id?: number) => string,
-  selectedTime?: number,
-  ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[]
+export function APMChart({
+  data,
+  players,
+  getPlayerColor,
+  selectedTime,
+  ageTimings,
+  hoveredPlayerId,
+}: {
+  data: { playerId: number; history: { minute: number; apm: number }[] }[];
+  players: { id: number; name?: string; [key: string]: unknown }[];
+  getPlayerColor: (id?: number) => string;
+  selectedTime?: number;
+  ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
+  hoveredPlayerId?: number | null;
+  onHoverPlayer?: (playerId: number | null) => void;
 }) {
+  const isHoveredPlayerPlotted =
+    hoveredPlayerId !== null &&
+    hoveredPlayerId !== undefined &&
+    data.some((d) => d.playerId === hoveredPlayerId);
   const allPoints = data.flatMap(d => d.history);
   if (allPoints.length === 0) return null;
 
@@ -67,14 +80,16 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
   };
 
 
-  const renderedAgeIndicators = useMemo(() => {
+  const renderedAgeIndicators = (() => {
     if (!ageTimings) return [];
     const seenKeys = new Set<string>();
-    const items: React.ReactNode[] = [];
+    const items: { playerId: number; node: React.ReactNode }[] = [];
 
     ageTimings.forEach((playerAge) => {
       const color = getPlayerColor(playerAge.playerId);
       const textColor = playerAge.textColor ?? "white";
+      const isDimmed = isHoveredPlayerPlotted && playerAge.playerId !== hoveredPlayerId;
+
       Object.entries(playerAge.timings).forEach(([age, timeSeconds]) => {
         const key = `${playerAge.playerId}-${age}`;
         if (seenKeys.has(key)) return;
@@ -90,52 +105,94 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
         const badgeW = 18;
         const badgeH = 14;
 
-        items.push(
-          <g key={key}>
-            <rect
-              x={x - badgeW / 2}
-              y={lineY - badgeH / 2}
-              width={badgeW}
-              height={badgeH}
-              rx={4}
-              ry={4}
-              fill={color}
-              fillOpacity={0.75}
-            />
-            <text
-              x={x}
-              y={lineY}
-              fill={textColor}
-              fontSize="8"
-              fontWeight="bold"
-              textAnchor="middle"
-              dominantBaseline="central"
-              style={{ fontFamily: "inherit" }}
+        items.push({
+          playerId: playerAge.playerId,
+          node: (
+            <g
+              key={key}
+              className="select-none pointer-events-none"
+              style={{
+                opacity: isDimmed ? 0 : 1,
+                pointerEvents: "none",
+                userSelect: "none",
+                transition: "opacity 0.1s ease-out",
+              }}
             >
-              {label}
-            </text>
-          </g>
-        );
+              <rect
+                x={x - badgeW / 2}
+                y={lineY - badgeH / 2}
+                width={badgeW}
+                height={badgeH}
+                rx={4}
+                ry={4}
+                fill={color}
+                fillOpacity={0.75}
+              />
+              <text
+                x={x}
+                y={lineY}
+                fill={textColor}
+                fontSize="8"
+                fontWeight="bold"
+                textAnchor="middle"
+                dominantBaseline="central"
+                className="select-none pointer-events-none"
+                style={{ fontFamily: "inherit", userSelect: "none" }}
+              >
+                {label}
+              </text>
+            </g>
+          ),
+        });
       });
     });
 
-    return items;
-  }, [ageTimings, getPlayerColor, padding.left, padding.right, width, data]);
+    if (isHoveredPlayerPlotted) {
+      items.sort((a, b) => {
+        if (a.playerId === hoveredPlayerId) return 1;
+        if (b.playerId === hoveredPlayerId) return -1;
+        return 0;
+      });
+    }
+
+    return items.map((item) => item.node);
+  })();
+
+  const sortedData = isHoveredPlayerPlotted
+    ? [...data].sort((a, b) => {
+      if (a.playerId === hoveredPlayerId) return 1;
+      if (b.playerId === hoveredPlayerId) return -1;
+      return 0;
+    })
+    : data;
 
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <h3 className="text-sm uppercase tracking-widest text-white/30 whitespace-nowrap">APM over time</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2">
-          {players.map((p, idx) => (
-            <div key={`${p.id}-${idx}`} className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-2 h-2 rounded-full" style={{ background: getPlayerColor(p.id) }}></span>
-              <span className="text-[10px] text-white/50">{p.name}</span>
-            </div>
-          ))}
+          {players.map((p, idx) => {
+            const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
+            return (
+              <div
+                key={`${p.id}-${idx}`}
+                className={`flex items-center gap-1.5 whitespace-nowrap transition-all duration-100 ${
+                  isDimmed ? "opacity-15" : "opacity-100"
+                }`}
+              >
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{
+                    background: getPlayerColor(p.id),
+                  }}
+                />
+                <span className="text-[10px] text-white/50">{p.name}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible select-none">
         {/* Y Axis Grid & Labels */}
         {[0, 0.25, 0.5, 0.75, 1].map((p) => {
           const val = Math.round(p * maxApm);
@@ -187,9 +244,12 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
         )}
 
         {/* Lines */}
-        {data.map((playerData, idx) => {
+        {sortedData.map((playerData) => {
           const color = getPlayerColor(playerData.playerId);
           if (playerData.history.length < 2) return null;
+
+          const isLineHovered = isHoveredPlayerPlotted && playerData.playerId === hoveredPlayerId;
+          const isLineDimmed = isHoveredPlayerPlotted && !isLineHovered;
 
           // Use a smooth path
           let d = `M ${getX(playerData.history[0].minute)} ${getY(playerData.history[0].apm)}`;
@@ -205,14 +265,24 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
 
           return (
             <path
-              key={`${playerData.playerId}-${idx}`}
+              key={playerData.playerId}
               d={d}
               fill="none"
               stroke={color}
-              strokeWidth="2.5"
+              strokeWidth={isLineHovered ? 3 : isLineDimmed ? 1 : 2}
               strokeLinejoin="round"
               strokeLinecap="round"
-              className="drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+              className={
+                isLineHovered
+                  ? "drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
+                  : isLineDimmed
+                    ? ""
+                    : "drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+              }
+              style={{
+                opacity: isLineDimmed ? 0.1 : 1,
+                transition: "opacity 0.1s ease-out, stroke-width 0.1s ease-out",
+              }}
             />
           );
         })}

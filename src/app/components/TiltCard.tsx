@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState } from "react";
 
-interface TiltCardProps {
+interface TiltCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   maxRotation?: number; // Maximum rotation in degrees
@@ -16,42 +16,45 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   maxRotation = 5,
   perspective = 1000,
   scale = 1.01,
+  onMouseEnter,
+  onMouseLeave,
+  style,
+  ...rest
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState("");
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!cardRef.current) return;
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
 
-      const card = cardRef.current;
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left; // x position within the element
-      const y = e.clientY - rect.top; // y position within the element
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left; // x position within the element
+    const y = e.clientY - rect.top; // y position within the element
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      // Calculate rotation based on cursor position relative to center
-      // x-axis movement creates rotation around y-axis, and vice-versa
-      const rotateY = ((x - centerX) / centerX) * maxRotation;
-      const rotateX = ((centerY - y) / centerY) * maxRotation; // Negative so it tilts towards mouse
+    // Calculate rotation based on cursor position relative to center
+    // x-axis movement creates rotation around y-axis, and vice-versa
+    const rotateY = ((x - centerX) / centerX) * maxRotation;
+    const rotateX = ((centerY - y) / centerY) * maxRotation; // Negative so it tilts towards mouse
 
-      setTransform(
-        `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale}) translateZ(0)`
-      );
-    },
-    [maxRotation, perspective, scale]
-  );
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
+    setTransform(
+      `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale}) translateZ(0)`
+    );
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHovering(true);
+    onMouseEnter?.(e);
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsHovering(false);
     setTransform(""); // Reset transform
+    onMouseLeave?.(e);
   };
 
   return (
@@ -68,7 +71,9 @@ export const TiltCard: React.FC<TiltCardProps> = ({
         WebkitFontSmoothing: "antialiased",
         zIndex: isHovering ? 20 : 1,
         position: "relative",
+        ...style,
       }}
+      {...rest}
     >
       {children}
     </div>

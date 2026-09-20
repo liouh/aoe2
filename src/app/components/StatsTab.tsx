@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { APMChart } from "./APMChart";
 import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
@@ -39,6 +39,32 @@ export function StatsTab({
   selectedTime,
 }: StatsTabProps) {
   const [showAiApm, setShowAiApm] = useState(false);
+  const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleHoverPlayer = useCallback((id: number | null) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
+    if (id !== null) {
+      setHoveredApmPlayerId(id);
+    } else {
+      hoverTimeoutRef.current = setTimeout(() => {
+        setHoveredApmPlayerId(null);
+      }, 120);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
   const unitStats = useMemo(() => {
@@ -148,13 +174,23 @@ export function StatsTab({
             }))
             .filter(a => Object.keys(a.timings).length > 0)
           }
+          hoveredPlayerId={hoveredApmPlayerId}
+          onHoverPlayer={handleHoverPlayer}
         />
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+          onMouseLeave={() => handleHoverPlayer(null)}
+        >
           {players.map((player, index) => {
             const stats = timelineStats.find((s) => s.playerId === player.id);
             return (
-              <TiltCard key={`${player.id}-${index}`} className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base">
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
+                onMouseEnter={() => handleHoverPlayer(player.id)}
+                onMouseLeave={() => handleHoverPlayer(null)}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
