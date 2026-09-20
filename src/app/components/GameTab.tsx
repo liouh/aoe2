@@ -67,10 +67,44 @@ export function GameTab({
     return ageMap;
   }, [timelineStats]);
 
+  const matchFormat = useMemo(() => {
+    if (!players || players.length === 0) return "";
+    if (players.length === 1) return "1";
+
+    const teamCounts = new Map<number, number>();
+    let unteamedCount = 0;
+
+    players.forEach((p) => {
+      if (p.teamId !== undefined && p.teamId > 0) {
+        teamCounts.set(p.teamId, (teamCounts.get(p.teamId) || 0) + 1);
+      } else {
+        unteamedCount++;
+      }
+    });
+
+    const sortedTeams = Array.from(teamCounts.entries()).sort((a, b) => a[0] - b[0]);
+    const sizes = sortedTeams.map(([_, count]) => count);
+
+    for (let i = 0; i < unteamedCount; i++) {
+      sizes.push(1);
+    }
+
+    if (sizes.length <= 1) {
+      return `${players.length}`;
+    }
+
+    return sizes.join(" vs ");
+  }, [players]);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="panel rounded-3xl p-6">
-        <h2 className="headline text-2xl font-semibold">Players</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="headline text-2xl font-semibold">Players</h2>
+          <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+            {matchFormat || players.length}
+          </span>
+        </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const stats = timelineStats.find(
