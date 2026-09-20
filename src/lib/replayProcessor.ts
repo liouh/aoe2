@@ -431,12 +431,38 @@ export const extractChatEvents = (
   })();
 
   const chatEvents: ChatEvent[] = [];
+  const resignedPlayerIds = new Set<number>();
   let currentTime = 0;
 
   operations.forEach((op, index) => {
     const action = op.Action as Record<string, unknown> | undefined;
     if (action?.world_time !== undefined) {
       currentTime = (pickNumber(action.world_time) ?? 0) / 1000;
+    }
+
+    const actionData = action?.action_data as Record<string, unknown> | undefined;
+    if (actionData?.Resign) {
+      const resignData = actionData.Resign as Record<string, unknown>;
+      const rawPid = pickNumber(resignData?.player_id);
+      const pid = rawPid !== undefined ? (playerMapping.get(rawPid) ?? rawPid) : undefined;
+      if (pid !== undefined && !resignedPlayerIds.has(pid)) {
+        resignedPlayerIds.add(pid);
+        const resignedPlayer = players.find((p) => p.id === pid);
+        const playerName = resignedPlayer?.name || `Player ${pid}`;
+
+        chatEvents.push({
+          id: `chat-resign-${index}`,
+          time: Math.round(currentTime * 10) / 10,
+          playerId: pid,
+          playerName,
+          isAi: !!resignedPlayer?.ai,
+          message: `${playerName} has resigned.`,
+          rawMessage: `${playerName} has resigned.`,
+          isSystem: true,
+          raw: { ...resignData, type: "Resign" },
+        });
+      }
+      return;
     }
 
     const chatOp = op.Chat as { padding?: number[]; text?: string } | undefined;
@@ -471,7 +497,7 @@ export const extractChatEvents = (
       return;
     }
 
-    const formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
+    let formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
       const targetRawPid = parseInt(pidStr, 10);
       const targetPid = playerMapping.get(targetRawPid) ?? targetRawPid;
       const targetPlayer = players.find((p) => p.id === targetPid);
@@ -479,6 +505,14 @@ export const extractChatEvents = (
     });
 
     const isAi = !!resolvedPlayer?.ai;
+
+    if (isAi || /No resources to build:\s*\d+/i.test(formattedMessage)) {
+      formattedMessage = formattedMessage.replace(/No resources to build:\s*(\d+)/gi, (match, idStr) => {
+        const buildingId = parseInt(idStr, 10);
+        const name = getBuildingName(buildingId);
+        return name && name !== "Unknown Building" ? `${match} (${name})` : match;
+      });
+    }
 
     const rawDestMap = pickNumber(payload.destinationMap);
 

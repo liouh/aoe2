@@ -337,10 +337,6 @@ export function GameTab({
                             </span>
                           )}
                         </span>
-                      ) : item.isSystem ? (
-                        <span className="inline-flex items-center rounded-md bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-400 ring-1 ring-inset ring-amber-400/20">
-                          System
-                        </span>
                       ) : null}
 
                       {isTeamGame && item.scope === "all" && !item.isSystem && (
