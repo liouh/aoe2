@@ -175,7 +175,6 @@ export function StatsTab({
             .filter(a => Object.keys(a.timings).length > 0)
           }
           hoveredPlayerId={hoveredApmPlayerId}
-          onHoverPlayer={handleHoverPlayer}
           isLogScale={showAiApm && players.some((p) => p.ai)}
         />
 

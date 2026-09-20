@@ -20,7 +20,6 @@ export function APMChart({
   selectedTime,
   ageTimings,
   hoveredPlayerId,
-  onHoverPlayer,
   isLogScale = false,
 }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[];
@@ -29,7 +28,6 @@ export function APMChart({
   selectedTime?: number;
   ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
   hoveredPlayerId?: number | null;
-  onHoverPlayer?: (playerId: number | null) => void;
   isLogScale?: boolean;
 }) {
   const isHoveredPlayerPlotted =
@@ -263,13 +261,10 @@ export function APMChart({
         <h3 className="text-sm uppercase tracking-widest text-white/30 whitespace-nowrap">APM over time</h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2">
           {players.map((p, idx) => {
-            const isHovered = isHoveredPlayerPlotted && hoveredPlayerId === p.id;
             const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
             return (
               <div
                 key={`${p.id}-${idx}`}
-                onMouseEnter={() => onHoverPlayer?.(p.id)}
-                onMouseLeave={() => onHoverPlayer?.(null)}
                 className="flex items-center gap-1.5 whitespace-nowrap"
                 style={{
                   opacity: isDimmed ? 0.15 : 1,
@@ -282,17 +277,7 @@ export function APMChart({
                     background: getPlayerColor(p.id),
                   }}
                 />
-                <span
-                  className={`text-[10px] transition-colors duration-100 ${
-                    isHovered
-                      ? "text-white font-medium"
-                      : isDimmed
-                        ? "text-white/40"
-                        : "text-white/80"
-                  }`}
-                >
-                  {p.name}
-                </span>
+                <span className="text-[10px] text-white/50">{p.name}</span>
               </div>
             );
           })}
