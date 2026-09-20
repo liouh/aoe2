@@ -38,7 +38,7 @@ export function StatsTab({
   getPlayerOutline,
   selectedTime,
 }: StatsTabProps) {
-  const [showAiApm, setShowAiApm] = useState(false);
+  const [showAiApm, setShowAiApm] = useState(true);
   const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -176,6 +176,7 @@ export function StatsTab({
           }
           hoveredPlayerId={hoveredApmPlayerId}
           onHoverPlayer={handleHoverPlayer}
+          isLogScale={showAiApm && players.some((p) => p.ai)}
         />
 
         <div

@@ -21,6 +21,7 @@ export function APMChart({
   ageTimings,
   hoveredPlayerId,
   onHoverPlayer,
+  isLogScale = false,
 }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[];
   players: { id: number; name?: string; [key: string]: unknown }[];
@@ -29,6 +30,7 @@ export function APMChart({
   ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
   hoveredPlayerId?: number | null;
   onHoverPlayer?: (playerId: number | null) => void;
+  isLogScale?: boolean;
 }) {
   const isHoveredPlayerPlotted =
     hoveredPlayerId !== null &&
@@ -38,14 +40,94 @@ export function APMChart({
   if (allPoints.length === 0) return null;
 
   const maxMinute = Math.max(...allPoints.map(p => p.minute), 1);
-  const maxApm = Math.max(...allPoints.map(p => p.apm), 50);
+  const rawMaxApm = Math.max(...allPoints.map(p => p.apm), 50);
 
   const width = 800;
   const height = 240;
   const padding = { top: 20, right: 15, bottom: 40, left: 40 };
 
+  const { yAxisMax, yTicks } = React.useMemo(() => {
+    if (!isLogScale) {
+      const steps = [5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000];
+      let chosenStep = steps[steps.length - 1];
+      for (const s of steps) {
+        const intervals = Math.ceil(rawMaxApm / s);
+        if (intervals <= 5 && intervals >= 3) {
+          chosenStep = s;
+          break;
+        }
+      }
+
+      const ceiling = Math.max(Math.ceil(rawMaxApm / chosenStep) * chosenStep, chosenStep * 3);
+      const ticks: number[] = [];
+      for (let v = 0; v <= ceiling; v += chosenStep) {
+        ticks.push(v);
+      }
+      return { yAxisMax: ceiling, yTicks: ticks };
+    }
+
+    // Log scale nice ceiling (10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000...)
+    let ceiling = 10;
+    const exp = Math.floor(Math.log10(rawMaxApm));
+    const base = Math.pow(10, exp);
+    const frac = rawMaxApm / base;
+    if (frac <= 1) {
+      ceiling = base;
+    } else if (frac <= 2) {
+      ceiling = 2 * base;
+    } else if (frac <= 5) {
+      ceiling = 5 * base;
+    } else {
+      ceiling = 10 * base;
+    }
+    ceiling = Math.max(ceiling, 50);
+
+    const logMax = Math.log10(ceiling + 1);
+    const plotHeight = height - padding.top - padding.bottom;
+    const getYForVal = (v: number) => {
+      const ratio = logMax > 0 ? Math.log10(v + 1) / logMax : 0;
+      return height - padding.bottom - ratio * plotHeight;
+    };
+
+    const p10s = [0];
+    for (let e = 1; Math.pow(10, e) < ceiling; e++) {
+      p10s.push(Math.pow(10, e));
+    }
+    p10s.push(ceiling);
+
+    const result: number[] = [];
+    for (let i = 0; i < p10s.length; i++) {
+      const curr = p10s[i];
+      if (result.length > 0) {
+        const prev = result[result.length - 1];
+        const gap = getYForVal(prev) - getYForVal(curr);
+        if (gap > 55) {
+          const mid = (prev === 0 ? 5 : 5 * prev);
+          if (mid < curr && getYForVal(prev) - getYForVal(mid) >= 22 && getYForVal(mid) - getYForVal(curr) >= 20) {
+            result.push(mid);
+          }
+        }
+      }
+      if (curr === ceiling || getYForVal(curr) - getYForVal(ceiling) >= 20) {
+        result.push(curr);
+      }
+    }
+    if (!result.includes(ceiling)) result.push(ceiling);
+    return { yAxisMax: ceiling, yTicks: result };
+  }, [isLogScale, rawMaxApm]);
+
   const getX = (m: number) => padding.left + (m / maxMinute) * (width - padding.left - padding.right);
-  const getY = (a: number) => height - padding.bottom - (a / maxApm) * (height - padding.top - padding.bottom);
+  const getY = (a: number) => {
+    const clampedA = Math.max(a, 0);
+    const plotHeight = height - padding.top - padding.bottom;
+    if (isLogScale) {
+      const logMax = Math.log10(yAxisMax + 1);
+      const logVal = Math.log10(clampedA + 1);
+      const ratio = logMax > 0 ? logVal / logMax : 0;
+      return height - padding.bottom - ratio * plotHeight;
+    }
+    return height - padding.bottom - (clampedA / yAxisMax) * plotHeight;
+  };
 
 
   // Build a lookup: playerId -> sorted history for APM interpolation
@@ -167,6 +249,14 @@ export function APMChart({
     })
     : data;
 
+  const formatApmTick = (val: number) => {
+    if (val >= 1000) {
+      const k = val / 1000;
+      return `${Number(k.toFixed(1))}k`;
+    }
+    return `${val}`;
+  };
+
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -180,9 +270,7 @@ export function APMChart({
                 key={`${p.id}-${idx}`}
                 onMouseEnter={() => onHoverPlayer?.(p.id)}
                 onMouseLeave={() => onHoverPlayer?.(null)}
-                className={`flex items-center gap-1.5 whitespace-nowrap ${
-                  onHoverPlayer ? "cursor-pointer" : ""
-                }`}
+                className="flex items-center gap-1.5 whitespace-nowrap"
                 style={{
                   opacity: isDimmed ? 0.15 : 1,
                   transition: "opacity 0.1s ease-out",
@@ -212,13 +300,12 @@ export function APMChart({
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible select-none">
         {/* Y Axis Grid & Labels */}
-        {[0, 0.25, 0.5, 0.75, 1].map((p) => {
-          const val = Math.round(p * maxApm);
+        {yTicks.map((val) => {
           const y = getY(val);
           return (
-            <g key={p} className="text-white/20">
+            <g key={val} className="text-white/20">
               <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="currentColor" strokeDasharray="4 4" />
-              <text x={padding.left - 12} y={y} fill="currentColor" fontSize="10" textAnchor="end" alignmentBaseline="middle">{val}</text>
+              <text x={padding.left - 12} y={y} fill="currentColor" fontSize="10" textAnchor="end" alignmentBaseline="middle">{formatApmTick(val)}</text>
             </g>
           );
         })}
