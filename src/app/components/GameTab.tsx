@@ -27,9 +27,9 @@ export function GameTab({
 }: GameTabProps) {
   const allPlayersWon = useMemo(() => players.length > 0 && players.every((p) => p.won), [players]);
 
-  const [chatShowPlayerChat, setChatShowPlayerChat] = useState(true);
-  const [chatShowAiChat, setChatShowAiChat] = useState(false);
-  const [chatShowNotifications, setChatShowNotifications] = useState(true);
+  const [chatShowSystem, setChatShowSystem] = useState(true);
+  const [chatShowChat, setChatShowChat] = useState(true);
+  const [chatShowAiTeamChat, setChatShowAiTeamChat] = useState(false);
 
   const hasAi = useMemo(() => players.some((p) => p.ai), [players]);
   const isTeamGame = useMemo(() => {
@@ -45,11 +45,12 @@ export function GameTab({
 
   const filteredChat = useMemo(() => {
     return chatEvents.filter((item) => {
-      if (item.isSystem) return chatShowNotifications;
-      if (item.isAi) return chatShowAiChat;
-      return chatShowPlayerChat;
+      if (item.time === 0) return false;
+      if (item.isSystem) return chatShowSystem;
+      if (item.isAi && item.scope !== "all") return chatShowAiTeamChat;
+      return chatShowChat;
     });
-  }, [chatEvents, chatShowNotifications, chatShowAiChat, chatShowPlayerChat]);
+  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat]);
 
   const fastestAges = useMemo(() => {
     const ageMap: Record<string, number> = {};
@@ -242,14 +243,14 @@ export function GameTab({
                 <input
                   type="checkbox"
                   className="sr-only"
-                  checked={chatShowNotifications}
-                  onChange={(e) => setChatShowNotifications(e.target.checked)}
+                  checked={chatShowSystem}
+                  onChange={(e) => setChatShowSystem(e.target.checked)}
                 />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowNotifications ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowNotifications ? 'translate-x-3' : 'translate-x-0'}`} />
+                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowSystem ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowSystem ? 'translate-x-3' : 'translate-x-0'}`} />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                Notifications
+                System
               </span>
             </label>
 
@@ -258,14 +259,14 @@ export function GameTab({
                 <input
                   type="checkbox"
                   className="sr-only"
-                  checked={chatShowPlayerChat}
-                  onChange={(e) => setChatShowPlayerChat(e.target.checked)}
+                  checked={chatShowChat}
+                  onChange={(e) => setChatShowChat(e.target.checked)}
                 />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowPlayerChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowPlayerChat ? 'translate-x-3' : 'translate-x-0'}`} />
+                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowChat ? 'translate-x-3' : 'translate-x-0'}`} />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                Player chat
+                Chat
               </span>
             </label>
 
@@ -275,14 +276,14 @@ export function GameTab({
                   <input
                     type="checkbox"
                     className="sr-only"
-                    checked={chatShowAiChat}
-                    onChange={(e) => setChatShowAiChat(e.target.checked)}
+                    checked={chatShowAiTeamChat}
+                    onChange={(e) => setChatShowAiTeamChat(e.target.checked)}
                   />
-                  <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowAiChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                  <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowAiChat ? 'translate-x-3' : 'translate-x-0'}`} />
+                  <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowAiTeamChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
+                  <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowAiTeamChat ? 'translate-x-3' : 'translate-x-0'}`} />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                  AI chat
+                  AI team chat
                 </span>
               </label>
             )}
@@ -300,8 +301,7 @@ export function GameTab({
         ) : (
           <div className="space-y-2">
             {filteredChat.map((item) => {
-              const isLobby = item.time === 0;
-              const timeLabel = isLobby ? "Lobby" : formatClock(item.time);
+              const timeLabel = formatClock(item.time);
               const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
 
               return (
@@ -316,7 +316,7 @@ export function GameTab({
                   <button
                     type="button"
                     onClick={() => onSeek?.(item.time)}
-                    title={isLobby ? "Lobby chat (0:00)" : `Jump to ${timeLabel}`}
+                    title={`Jump to ${timeLabel}`}
                     className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
                   >
                     {timeLabel}
@@ -339,11 +339,11 @@ export function GameTab({
                         </span>
                       ) : item.isSystem ? (
                         <span className="inline-flex items-center rounded-md bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-400 ring-1 ring-inset ring-amber-400/20">
-                          Notification
+                          System
                         </span>
                       ) : null}
 
-                      {isTeamGame && !isLobby && item.scope === "all" && !item.isSystem && (
+                      {isTeamGame && item.scope === "all" && !item.isSystem && (
                         <span className="inline-flex items-center rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
                           All
                         </span>

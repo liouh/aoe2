@@ -455,8 +455,8 @@ export const extractChatEvents = (
     const isAgeAdvance = rawMessage.toLowerCase().includes("advanced to the");
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
-    // Filter out stale system/announcement ghosts from previous games lingering in the lobby buffer
-    if (isSystem && currentTime === 0) {
+    // Filter out lobby chat (time === 0) from in-game chat events
+    if (currentTime === 0) {
       return;
     }
 
@@ -485,6 +485,8 @@ export const extractChatEvents = (
           scope = "team";
         }
       } else if (channel === 0) {
+        scope = "team";
+      } else {
         scope = "team";
       }
     }
