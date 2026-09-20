@@ -103,6 +103,18 @@ export function GameTab({
     return sizes.join(" vs ");
   }, [players]);
 
+  const hasRmRatingInfo = useMemo(() => {
+    return players.some(
+      (p) => !p.ai && (p.elo !== undefined || p.rank !== undefined)
+    );
+  }, [players]);
+
+  const hasTeamRatingInfo = useMemo(() => {
+    return players.some(
+      (p) => !p.ai && (p.teamElo !== undefined || p.teamRank !== undefined)
+    );
+  }, [players]);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="panel rounded-3xl p-6">
@@ -122,6 +134,7 @@ export function GameTab({
             const stats = timelineStats.find(
               (item) => item.playerId === player.id
             );
+            const showRatingInfo = (hasRmRatingInfo || hasTeamRatingInfo) && !player.ai;
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
@@ -145,8 +158,43 @@ export function GameTab({
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
-                <div className="flex flex-col gap-4 text-sm">
-                  <div>
+                <div className="space-y-4 text-sm flex-1 flex flex-col">
+                  {showRatingInfo && (
+                    <div>
+                      <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                        <span className="text-xs uppercase tracking-wider text-white/30">Player rating</span>
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        {hasRmRatingInfo && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-[color:var(--muted)]" title="Random Map 1v1">RM 1v1</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
+                                {player.elo !== undefined ? `${player.elo} ELO` : "—"}
+                              </span>
+                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
+                                # {player.rank !== undefined && player.rank > 0 ? player.rank : "—"}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        {hasTeamRatingInfo && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-[color:var(--muted)]" title="Team Random Map">Team</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
+                                {player.teamElo !== undefined ? `${player.teamElo} ELO` : "—"}
+                              </span>
+                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
+                                # {player.teamRank !== undefined && player.teamRank > 0 ? player.teamRank : "—"}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  <div className={showRatingInfo ? "pt-2" : ""}>
                     <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-white/30">Age up time</span>
                     </div>
@@ -169,7 +217,7 @@ export function GameTab({
                     )}
                   </div>
                   {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage) && (
-                    <div className="mt-auto pt-2 flex flex-wrap gap-2">
+                    <div className="mt-auto flex flex-wrap gap-2">
                       {player.handicap && player.handicap !== 100 && (
                         <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
                           {player.handicap}% handicap

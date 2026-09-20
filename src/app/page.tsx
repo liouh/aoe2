@@ -185,9 +185,12 @@ export default function Home() {
 
       const parsed = parse_rec(buffer);
       const parsedSummary = parse_rec_summary(buffer);
+      const postGame = parsed?.operations?.find((op: any) => op.PostGame)?.PostGame;
+
       if (typeof window !== "undefined") {
         (window as any).__aoe2rec = parsed;
         (window as any).__aoe2summary = parsedSummary;
+        (window as any).__aoe2postgame = postGame;
       }
 
       await new Promise(resolve => setTimeout(resolve, 50));

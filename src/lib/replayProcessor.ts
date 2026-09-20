@@ -51,6 +51,10 @@ export type PlayerSummary = {
   teamId?: number;
   won?: boolean;
   handicap?: number;
+  elo?: number;
+  rank?: number;
+  teamElo?: number;
+  teamRank?: number;
 };
 
 export type MarketUsage = {
@@ -333,10 +337,38 @@ export const summarizePlayers = (
 ): PlayerSummary[] => {
   const players: PlayerSummary[] = [];
 
+  const postGameOp = replay?.operations?.find((op: any) => op.PostGame)?.PostGame;
+  const leaderboardsBlock = postGameOp?.blocks?.find((b: any) => b.Leaderboards)?.Leaderboards;
+  const leaderboards = leaderboardsBlock?.leaderboards || [];
+  const rm1v1Lb = leaderboards.find((l: any) => l.id === 3);
+  const teamRmLb = leaderboards.find((l: any) => l.id === 4);
+  const eloMap = new Map<number, { elo?: number; rank?: number; teamElo?: number; teamRank?: number }>();
+  if (rm1v1Lb?.players) {
+    rm1v1Lb.players.forEach((p: any) => {
+      const existing = eloMap.get(p.player_number) || {};
+      eloMap.set(p.player_number, {
+        ...existing,
+        elo: typeof p.elo === "number" && p.elo > 0 ? p.elo : undefined,
+        rank: typeof p.rank === "number" && p.rank > 0 ? p.rank : undefined,
+      });
+    });
+  }
+  if (teamRmLb?.players) {
+    teamRmLb.players.forEach((p: any) => {
+      const existing = eloMap.get(p.player_number) || {};
+      eloMap.set(p.player_number, {
+        ...existing,
+        teamElo: typeof p.elo === "number" && p.elo > 0 ? p.elo : undefined,
+        teamRank: typeof p.rank === "number" && p.rank > 0 ? p.rank : undefined,
+      });
+    });
+  }
+
   const summaryTeams = summary?.teams ?? [];
   let playerCounter = 1;
   summaryTeams.forEach((team: any, teamIndex: number) => {
     (team?.players ?? []).forEach((p: any) => {
+      const eloInfo = eloMap.get(p.player_number - 1);
       players.push({
         id: playerCounter++,
         slotId: p.player_number,
@@ -346,6 +378,10 @@ export const summarizePlayers = (
         civId: p.civ_id,
         teamId: teamIndex + 1,
         won: team.winner,
+        elo: eloInfo?.elo,
+        rank: eloInfo?.rank,
+        teamElo: eloInfo?.teamElo,
+        teamRank: eloInfo?.teamRank,
       });
     });
   });
@@ -359,6 +395,7 @@ export const summarizePlayers = (
       let player = players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number && (sp.name === p.name || !sp.name))
         ?? players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number);
 
+      const eloInfo = eloMap.get(p.player_number - 1);
       if (!player) {
         const basePlayer = players.find(sp => (sp.slotId ?? sp.id) === p.player_number);
         player = {
@@ -369,6 +406,10 @@ export const summarizePlayers = (
           teamId: p.resolved_team_id ?? p.selected_team_id ?? basePlayer?.teamId,
           ai: p.player_type === 4,
           name: p.name,
+          elo: eloInfo?.elo,
+          rank: eloInfo?.rank,
+          teamElo: eloInfo?.teamElo,
+          teamRank: eloInfo?.teamRank,
         };
         players.push(player);
       }
@@ -379,6 +420,18 @@ export const summarizePlayers = (
       }
       if (p.civ_id !== undefined && player.civId === undefined) {
         player.civId = p.civ_id;
+      }
+      if (eloInfo?.elo && player.elo === undefined) {
+        player.elo = eloInfo.elo;
+      }
+      if (eloInfo?.rank && player.rank === undefined) {
+        player.rank = eloInfo.rank;
+      }
+      if (eloInfo?.teamElo && player.teamElo === undefined) {
+        player.teamElo = eloInfo.teamElo;
+      }
+      if (eloInfo?.teamRank && player.teamRank === undefined) {
+        player.teamRank = eloInfo.teamRank;
       }
 
       const aiName = p.ai_name;
