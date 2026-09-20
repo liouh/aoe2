@@ -181,8 +181,8 @@ export function Minimap({
     { id: "farms", label: "▸ Farms & pastures" },
     { id: "landmark_icons", label: "▸ TC & castle markers" },
     { id: "icons", label: "▸ Building icons" },
+    { id: "gatherpoints", label: "▸ Gather points" },
     { id: "moves", label: "Unit movements" },
-    { id: "gatherpoints", label: "Gather points" },
   ];
 
   const toggleFullscreen = (value?: boolean) => {
@@ -222,10 +222,11 @@ export function Minimap({
                 if (!next.includes("farms")) next.push("farms");
                 if (!next.includes("icons")) next.push("icons");
                 if (!next.includes("landmark_icons")) next.push("landmark_icons");
+                if (!next.includes("gatherpoints")) next.push("gatherpoints");
               } else {
-                next = next.filter(f => f !== "farms" && f !== "icons" && f !== "landmark_icons");
+                next = next.filter(f => f !== "farms" && f !== "icons" && f !== "landmark_icons" && f !== "gatherpoints");
               }
-            } else if ((id === "farms" || id === "icons" || id === "landmark_icons") && isAdding) {
+            } else if ((id === "farms" || id === "icons" || id === "landmark_icons" || id === "gatherpoints") && isAdding) {
               if (!next.includes("footprints")) next.push("footprints");
             }
 
