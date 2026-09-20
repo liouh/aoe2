@@ -306,15 +306,14 @@ export function GameTab({
               return (
                 <div
                   key={item.id}
-                  className={`flex items-start gap-3 p-2.5 ${
-                    item.isSystem
-                      ? "bg-white/[0.02] text-white/60"
-                      : "bg-white/[0.05]"
-                  }`}
+                  className="flex items-start gap-3 py-1.5"
                 >
                   <button
                     type="button"
-                    onClick={() => onSeek?.(item.time)}
+                    onClick={() => {
+                      onSeek?.(item.time);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                     title={`Jump to ${timeLabel}`}
                     className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
                   >
@@ -367,7 +366,7 @@ export function GameTab({
                       </div>
                     )}
 
-                    <p className={`text-sm break-words ${item.isSystem ? "italic text-white/60 py-0.5" : "mt-0.5 text-white/90"}`}>
+                    <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 py-0.5" : "mt-0.5 text-white/90"}`}>
                       {item.isSystem && pColor && (
                         <span
                           className="inline-block h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white mr-2 align-middle -translate-y-[1px]"

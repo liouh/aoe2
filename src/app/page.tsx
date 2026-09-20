@@ -451,6 +451,7 @@ export default function Home() {
                   formatClock={formatClock}
                   onSeek={(seconds) => {
                     setSelectedTime(clamp(seconds, 0, duration));
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 />
               </div>

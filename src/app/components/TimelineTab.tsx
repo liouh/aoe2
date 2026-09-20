@@ -245,10 +245,10 @@ export function TimelineTab({
             return (
               <div
                 key={`age-${player.id}-${ageName}`}
-                className="absolute left-0 w-full flex items-center pointer-events-none z-10"
+                className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
                 style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
               >
-                <div className="absolute left-0 w-full border-t border-dotted border-[color:var(--accent)]" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
                 <div
                   className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
                   title={`${ageName} Age reached @ ${formatClock(time)}`}
