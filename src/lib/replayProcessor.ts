@@ -351,8 +351,11 @@ export const summarizePlayers = (
   const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
 
   if (gameSettings?.players) {
+    const matchedPlayers = new Set<PlayerSummary>();
     gameSettings.players.forEach((p: any) => {
-      let player = players.find(sp => sp.id === p.player_number);
+      let player = players.find(sp => !matchedPlayers.has(sp) && sp.id === p.player_number && (sp.name === p.name || !sp.name))
+        ?? players.find(sp => !matchedPlayers.has(sp) && sp.id === p.player_number);
+
       if (!player) {
         player = {
           id: p.player_number,
@@ -362,9 +365,10 @@ export const summarizePlayers = (
         };
         players.push(player);
       }
+      matchedPlayers.add(player);
 
       const aiName = p.ai_name;
-      const displayName = aiName && aiName.length > 0 ? aiName : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`);
+      const displayName = aiName && aiName.length > 0 ? aiName : (p.name && p.name.length > 0 ? p.name : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`));
 
       player.name = displayName;
       player.handicap = p.handicap;
@@ -534,7 +538,7 @@ export const extractChatEvents = (
     const tagPlayerId = tagMatch ? pickNumber(parseInt(tagMatch[1], 10)) : undefined;
     const resolvedPlayerId = (playerId !== undefined && playerId !== 0)
       ? playerId
-      : (tagPlayerId !== undefined ? (playerMapping.get(tagPlayerId) ?? tagPlayerId) : undefined);
+      : tagPlayerId;
     const resolvedPlayer = resolvedPlayerId !== undefined ? players.find((p) => p.id === resolvedPlayerId) : player;
 
     const hasPlayerIdTag = tagMatch !== null;
@@ -549,8 +553,7 @@ export const extractChatEvents = (
     }
 
     let formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
-      const targetRawPid = parseInt(pidStr, 10);
-      const targetPid = playerMapping.get(targetRawPid) ?? targetRawPid;
+      const targetPid = parseInt(pidStr, 10);
       const targetPlayer = players.find((p) => p.id === targetPid);
       return targetPlayer?.name || `Player ${targetPid}`;
     });

@@ -108,6 +108,16 @@ export function StatsTab({
     return result;
   }, [events]);
 
+  const chartPlayers = useMemo(() => {
+    const seen = new Set<number>();
+    return players.filter((p) => {
+      if (!showAiApm && p.ai) return false;
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  }, [players, showAiApm]);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="panel rounded-3xl p-6 flex flex-col gap-6">
@@ -123,17 +133,14 @@ export function StatsTab({
         </div>
 
         <APMChart
-          data={players
-            .filter(p => showAiApm || !p.ai)
-            .map(p => ({
-              playerId: p.id,
-              history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
-            }))}
-          players={players.filter(p => showAiApm || !p.ai)}
+          data={chartPlayers.map(p => ({
+            playerId: p.id,
+            history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
+          }))}
+          players={chartPlayers}
           getPlayerColor={getPlayerColor}
           selectedTime={selectedTime}
-          ageTimings={players
-            .filter(p => showAiApm || !p.ai)
+          ageTimings={chartPlayers
             .map(p => ({
               playerId: p.id,
               timings: timelineStats.find(s => s.playerId === p.id)?.ageTimings ?? {},

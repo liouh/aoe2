@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 const formatClock = (seconds: number) => {
   const total = Math.max(seconds, 0);
@@ -66,6 +66,61 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
     return getY(history[history.length - 1].apm);
   };
 
+
+  const renderedAgeIndicators = useMemo(() => {
+    if (!ageTimings) return [];
+    const seenKeys = new Set<string>();
+    const items: React.ReactNode[] = [];
+
+    ageTimings.forEach((playerAge) => {
+      const color = getPlayerColor(playerAge.playerId);
+      const textColor = playerAge.textColor ?? "white";
+      Object.entries(playerAge.timings).forEach(([age, timeSeconds]) => {
+        const key = `${playerAge.playerId}-${age}`;
+        if (seenKeys.has(key)) return;
+        seenKeys.add(key);
+
+        const minute = timeSeconds / 60;
+        const x = getX(minute);
+        const label = AGE_LABELS[age] ?? age;
+
+        if (x < padding.left || x > width - padding.right) return;
+
+        const lineY = getLineYAtMinute(playerAge.playerId, minute);
+        const badgeW = 18;
+        const badgeH = 14;
+
+        items.push(
+          <g key={key}>
+            <rect
+              x={x - badgeW / 2}
+              y={lineY - badgeH / 2}
+              width={badgeW}
+              height={badgeH}
+              rx={4}
+              ry={4}
+              fill={color}
+              fillOpacity={0.75}
+            />
+            <text
+              x={x}
+              y={lineY}
+              fill={textColor}
+              fontSize="8"
+              fontWeight="bold"
+              textAnchor="middle"
+              dominantBaseline="central"
+              style={{ fontFamily: "inherit" }}
+            >
+              {label}
+            </text>
+          </g>
+        );
+      });
+    });
+
+    return items;
+  }, [ageTimings, getPlayerColor, padding.left, padding.right, width, data]);
 
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
@@ -163,52 +218,7 @@ export function APMChart({ data, players, getPlayerColor, selectedTime, ageTimin
         })}
 
         {/* Age-up Indicators */}
-        {ageTimings && ageTimings.flatMap((playerAge) => {
-          const color = getPlayerColor(playerAge.playerId);
-          const textColor = playerAge.textColor ?? "white";
-          return Object.entries(playerAge.timings).map(([age, timeSeconds]) => {
-            const minute = timeSeconds / 60;
-            const x = getX(minute);
-            const label = AGE_LABELS[age] ?? age;
-
-            // Clamp x within chart bounds
-            if (x < padding.left || x > width - padding.right) return null;
-
-            const lineY = getLineYAtMinute(playerAge.playerId, minute);
-
-            const badgeW = 18;
-            const badgeH = 14;
-
-            return (
-              <g key={`${playerAge.playerId}-${age}`}>
-                {/* Badge centered on the line */}
-                <rect
-                  x={x - badgeW / 2}
-                  y={lineY - badgeH / 2}
-                  width={badgeW}
-                  height={badgeH}
-                  rx={4}
-                  ry={4}
-                  fill={color}
-                  fillOpacity={0.75}
-                />
-                {/* Badge text */}
-                <text
-                  x={x}
-                  y={lineY}
-                  fill={textColor}
-                  fontSize="8"
-                  fontWeight="bold"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  style={{ fontFamily: "inherit" }}
-                >
-                  {label}
-                </text>
-              </g>
-            );
-          });
-        })}
+        {renderedAgeIndicators}
       </svg>
     </div>
   );
