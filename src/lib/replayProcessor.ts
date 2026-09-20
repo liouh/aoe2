@@ -43,6 +43,7 @@ import { DEBUG } from "./debug";
 
 export type PlayerSummary = {
   id: number;
+  slotId?: number;
   ai: boolean;
   name: string;
   colorId?: number;
@@ -333,10 +334,12 @@ export const summarizePlayers = (
   const players: PlayerSummary[] = [];
 
   const summaryTeams = summary?.teams ?? [];
+  let playerCounter = 1;
   summaryTeams.forEach((team: any, teamIndex: number) => {
     (team?.players ?? []).forEach((p: any) => {
       players.push({
-        id: p.player_number,
+        id: playerCounter++,
+        slotId: p.player_number,
         ai: p.player_type === 4,
         name: p.name,
         colorId: p.color_id,
@@ -353,19 +356,30 @@ export const summarizePlayers = (
   if (gameSettings?.players) {
     const matchedPlayers = new Set<PlayerSummary>();
     gameSettings.players.forEach((p: any) => {
-      let player = players.find(sp => !matchedPlayers.has(sp) && sp.id === p.player_number && (sp.name === p.name || !sp.name))
-        ?? players.find(sp => !matchedPlayers.has(sp) && sp.id === p.player_number);
+      let player = players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number && (sp.name === p.name || !sp.name))
+        ?? players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number);
 
       if (!player) {
+        const basePlayer = players.find(sp => (sp.slotId ?? sp.id) === p.player_number);
         player = {
-          id: p.player_number,
-          teamId: p.resolved_team_id ?? p.selected_team_id,
+          id: playerCounter++,
+          slotId: p.player_number,
+          colorId: p.color_id ?? basePlayer?.colorId,
+          civId: p.civ_id ?? basePlayer?.civId,
+          teamId: p.resolved_team_id ?? p.selected_team_id ?? basePlayer?.teamId,
           ai: p.player_type === 4,
           name: p.name,
         };
         players.push(player);
       }
       matchedPlayers.add(player);
+
+      if (p.color_id !== undefined && player.colorId === undefined) {
+        player.colorId = p.color_id;
+      }
+      if (p.civ_id !== undefined && player.civId === undefined) {
+        player.civId = p.civ_id;
+      }
 
       const aiName = p.ai_name;
       const displayName = aiName && aiName.length > 0 ? aiName : (p.name && p.name.length > 0 ? p.name : (player.name && player.name.length > 0 ? player.name : `Player ${p.player_number}`));
@@ -536,9 +550,10 @@ export const extractChatEvents = (
     const channel = pickNumber(payload.channel);
     const tagMatch = rawMessage.match(/<player_id,\s*(\d+)[^>]*>/i);
     const tagPlayerId = tagMatch ? pickNumber(parseInt(tagMatch[1], 10)) : undefined;
+    const tagPlayer = tagPlayerId !== undefined ? players.find(p => (p.slotId ?? p.id) === tagPlayerId) : undefined;
     const resolvedPlayerId = (playerId !== undefined && playerId !== 0)
       ? playerId
-      : tagPlayerId;
+      : tagPlayer?.id ?? tagPlayerId;
     const resolvedPlayer = resolvedPlayerId !== undefined ? players.find((p) => p.id === resolvedPlayerId) : player;
 
     const hasPlayerIdTag = tagMatch !== null;
@@ -554,7 +569,7 @@ export const extractChatEvents = (
 
     let formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
       const targetPid = parseInt(pidStr, 10);
-      const targetPlayer = players.find((p) => p.id === targetPid);
+      const targetPlayer = players.find((p) => (p.slotId ?? p.id) === targetPid);
       return targetPlayer?.name || `Player ${targetPid}`;
     });
 
@@ -761,10 +776,11 @@ export const buildTimeline = (
         }
       }
 
+      const initialPlayer = players.find((p) => (p.slotId ?? p.id) === obj.player_id);
       events.push({
         id: `initial-${obj.object_id ?? idx}`,
         time: 0,
-        playerId: obj.player_id,
+        playerId: initialPlayer ? initialPlayer.id : obj.player_id,
         type: "Build",
         category: "build",
         x: obj.x,
@@ -1014,8 +1030,8 @@ export const extractPlayerStats = (
     const playerDurationMinutes = Math.max(playerDurationSeconds, 1) / 60;
 
     const activePlayerEvents = resignTime !== undefined
-      ? playerEvents.filter((e) => e.time <= resignTime)
-      : playerEvents;
+      ? playerEvents.filter((e) => e.time <= resignTime && !e.raw?.isInitial)
+      : playerEvents.filter((e) => !e.raw?.isInitial);
 
     const apm = Math.round(activePlayerEvents.length / playerDurationMinutes);
     const player = players?.find((p) => p.id === playerId);
@@ -1058,7 +1074,11 @@ export const extractPlayerStats = (
     // Extract age-up timings directly from ground-truth chat notifications (supporting all official game languages)
     if (chatEvents && chatEvents.length > 0) {
       chatEvents.forEach((chat) => {
-        if (chat.playerId === playerId && chat.time > 0 && chat.isSystem) {
+        const chatPlayer = players?.find((p) => p.id === chat.playerId);
+        const matchesPlayer = chat.playerId === playerId || (
+          player?.slotId !== undefined && (chatPlayer?.slotId ?? chat.playerId) === player.slotId
+        );
+        if (matchesPlayer && chat.time > 0 && chat.isSystem) {
           const age = detectAgeAdvance(chat.rawMessage, chat.message, chat.playerName);
           if (age && !ageTimings[age]) {
             ageTimings[age] = chat.time;

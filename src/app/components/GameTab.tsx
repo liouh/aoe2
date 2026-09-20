@@ -69,28 +69,35 @@ export function GameTab({
 
   const matchFormat = useMemo(() => {
     if (!players || players.length === 0) return "";
-    if (players.length === 1) return "1";
 
-    const teamCounts = new Map<number, number>();
-    let unteamedCount = 0;
+    const teamSlots = new Map<number, Set<number>>();
+    const unteamedSlots = new Set<number>();
 
     players.forEach((p) => {
+      const slot = p.slotId ?? p.id;
       if (p.teamId !== undefined && p.teamId > 0) {
-        teamCounts.set(p.teamId, (teamCounts.get(p.teamId) || 0) + 1);
+        let slots = teamSlots.get(p.teamId);
+        if (!slots) {
+          slots = new Set();
+          teamSlots.set(p.teamId, slots);
+        }
+        slots.add(slot);
       } else {
-        unteamedCount++;
+        unteamedSlots.add(slot);
       }
     });
 
-    const sortedTeams = Array.from(teamCounts.entries()).sort((a, b) => a[0] - b[0]);
-    const sizes = sortedTeams.map(([_, count]) => count);
+    const sortedTeams = Array.from(teamSlots.entries()).sort((a, b) => a[0] - b[0]);
+    const sizes = sortedTeams.map(([_, slots]) => slots.size);
 
-    for (let i = 0; i < unteamedCount; i++) {
+    unteamedSlots.forEach(() => {
       sizes.push(1);
-    }
+    });
+
+    const totalSlots = sizes.reduce((a, b) => a + b, 0);
 
     if (sizes.length <= 1) {
-      return `${players.length}`;
+      return `${totalSlots}`;
     }
 
     return sizes.join(" vs ");
