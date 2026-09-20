@@ -166,29 +166,33 @@ export function GameTab({
                       </div>
                       <div className="flex flex-col gap-1.5">
                         {hasRmRatingInfo && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-[color:var(--muted)]" title="Random Map 1v1">RM 1v1</span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
-                                {player.elo !== undefined ? `${player.elo} ELO` : "—"}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-[color:var(--muted)] w-14 shrink-0" title="Random Map 1v1">RM 1v1</span>
+                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
+                              <span className="text-white/80">
+                                {player.elo !== undefined ? player.elo : "—"}
                               </span>
-                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
-                                # {player.rank !== undefined && player.rank > 0 ? player.rank : "—"}
-                              </span>
-                            </div>
+                              {player.rank !== undefined && player.rank > 0 ? (
+                                <span className="pl-1.5">(#{player.rank})</span>
+                              ) : (
+                                ""
+                              )}
+                            </span>
                           </div>
                         )}
                         {hasTeamRatingInfo && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-[color:var(--muted)]" title="Team Random Map">Team</span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
-                                {player.teamElo !== undefined ? `${player.teamElo} ELO` : "—"}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-[color:var(--muted)] w-14 shrink-0" title="Team Random Map">Team RM</span>
+                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
+                              <span className="text-white/80">
+                                {player.teamElo !== undefined ? player.teamElo : "—"}
                               </span>
-                              <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">
-                                # {player.teamRank !== undefined && player.teamRank > 0 ? player.teamRank : "—"}
-                              </span>
-                            </div>
+                              {player.teamRank !== undefined && player.teamRank > 0 ? (
+                                <span className="pl-1.5">(#{player.teamRank})</span>
+                              ) : (
+                                ""
+                              )}
+                            </span>
                           </div>
                         )}
                       </div>
