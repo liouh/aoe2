@@ -231,7 +231,7 @@ export function GameTab({
           <div className="bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
             <div className="space-y-1">
               {filteredChat.map((item) => {
-                const timeLabel = formatClock(item.time);
+                const timeLabel = item.time === 0 ? "Lobby" : formatClock(item.time);
                 const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
                 const senderTeamId = item.teamId ?? (item.playerId ? players.find((p) => p.id === item.playerId)?.teamId : undefined);
 

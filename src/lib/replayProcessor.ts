@@ -424,19 +424,19 @@ export const AGE_PATTERNS: Array<{
   age: "Feudal" | "Castle" | "Imperial";
   pattern: RegExp;
 }> = [
-  {
-    age: "Feudal",
-    pattern: /feudal|f[eé]odal|феодальн|封建|領主|봉건|phong ki[eế]n|सामंती/i,
-  },
-  {
-    age: "Castle",
-    pattern: /castle|ritterzeit|castillos|ch[aâ]teaux|castelli|castelos|zamk|замк|城堡|城主|성주|kale|l[aâ]u đ[aà]i|महल/i,
-  },
-  {
-    age: "Imperial",
-    pattern: /imperial|imp[eé]rial|imperiale|имперск|帝王|왕정|imparatorluk|đ[eế] qu[oố]c|शाही/i,
-  },
-];
+    {
+      age: "Feudal",
+      pattern: /feudal|f[eé]odal|феодальн|封建|領主|봉건|phong ki[eế]n|सामंती/i,
+    },
+    {
+      age: "Castle",
+      pattern: /castle|ritterzeit|castillos|ch[aâ]teaux|castelli|castelos|zamk|замк|城堡|城主|성주|kale|l[aâ]u đ[aà]i|महल/i,
+    },
+    {
+      age: "Imperial",
+      pattern: /imperial|imp[eé]rial|imperiale|имперск|帝王|왕정|imparatorluk|đ[eế] qu[oố]c|शाही/i,
+    },
+  ];
 
 export const detectAgeAdvance = (
   rawMessage?: string,
@@ -558,7 +558,7 @@ export const extractChatEvents = (
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
     // In DE replays, empty messageAGP indicates internal engine triggers or pre-game lobby packets
-    if (payload.messageAGP === "") {
+    if (payload.messageAGP === "" && isSystem) {
       return;
     }
 
