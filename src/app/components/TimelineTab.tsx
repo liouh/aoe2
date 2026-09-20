@@ -2,6 +2,8 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Select } from "./Select";
+import { Toggle } from "./Toggle";
+import { AiBadge } from "./AiBadge";
 import { isEconomic } from "./StatsTab";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName } from "@/lib/entityNames";
@@ -157,19 +159,13 @@ export function TimelineTab({
     return (
       <div key={`column-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
         <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
-          <div className="flex items-center">
-            <div className="flex flex-col">
-              <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                {player.name}
-                {player.ai && (
-                  <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                    AI
-                  </span>
-                )}
-              </h3>
-              <div className="flex items-center gap-2 text-xs text-white/40">
-                <span>{getCivName(player.civId)}</span>
-              </div>
+          <div className="flex flex-col">
+            <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
+              {player.name}
+              {player.ai && <AiBadge />}
+            </h3>
+            <div className="flex items-center gap-2 text-xs text-white/40">
+              <span>{getCivName(player.civId)}</span>
             </div>
           </div>
           <Select
@@ -248,7 +244,7 @@ export function TimelineTab({
                 className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
                 style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
               >
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
+                <div className="absolute left-0 top-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
                 <div
                   className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
                   title={`${ageName} Age reached @ ${formatClock(time)}`}
@@ -277,50 +273,26 @@ export function TimelineTab({
   };
 
   return (
-    <section ref={timelineRef as any} className="w-full">
+    <section ref={timelineRef} className="w-full">
       <div className="panel flex flex-col gap-6 rounded-3xl p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="headline text-2xl font-semibold">Timeline</h2>
           <div className="flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={timelineShowResearch}
-                  onChange={(e) => setTimelineShowResearch(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowResearch ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowResearch ? 'translate-x-3' : 'translate-x-0'}`}></div>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Research</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={timelineShowBuildings}
-                  onChange={(e) => setTimelineShowBuildings(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowBuildings ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowBuildings ? 'translate-x-3' : 'translate-x-0'}`}></div>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Buildings</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={timelineShowUnits}
-                  onChange={(e) => setTimelineShowUnits(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${timelineShowUnits ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${timelineShowUnits ? 'translate-x-3' : 'translate-x-0'}`}></div>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Units</span>
-            </label>
+            <Toggle
+              label="Research"
+              checked={timelineShowResearch}
+              onChange={setTimelineShowResearch}
+            />
+            <Toggle
+              label="Buildings"
+              checked={timelineShowBuildings}
+              onChange={setTimelineShowBuildings}
+            />
+            <Toggle
+              label="Units"
+              checked={timelineShowUnits}
+              onChange={setTimelineShowUnits}
+            />
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2">

@@ -468,19 +468,17 @@ export default function Home() {
               </div>
 
               <div className={activeTab === "timeline" ? "block" : "hidden"}>
-                <section className="w-full">
-                  <TimelineTab
-                    players={players}
-                    events={events}
-                    duration={duration}
-                    timelineStats={timelineStats}
-                    selectedTime={selectedTime}
-                    getPlayerColor={getPlayerColor}
-                    formatClock={formatClock}
-                    pendingJump={pendingJump}
-                    onJumpComplete={() => setPendingJump(false)}
-                  />
-                </section>
+                <TimelineTab
+                  players={players}
+                  events={events}
+                  duration={duration}
+                  timelineStats={timelineStats}
+                  selectedTime={selectedTime}
+                  getPlayerColor={getPlayerColor}
+                  formatClock={formatClock}
+                  pendingJump={pendingJump}
+                  onJumpComplete={() => setPendingJump(false)}
+                />
               </div>
             </div>
           )}

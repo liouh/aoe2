@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import { APMChart } from "./APMChart";
 import { TiltCard } from "./TiltCard";
+import { Toggle } from "./Toggle";
+import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName } from "@/lib/entityNames";
 import { type TimelineEvent } from "@/lib/replayProcessor";
@@ -112,19 +114,11 @@ export function StatsTab({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
           {players.some(p => p.ai) && (
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={showAiApm}
-                  onChange={(e) => setShowAiApm(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${showAiApm ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`}></div>
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${showAiApm ? 'translate-x-3' : 'translate-x-0'}`}></div>
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Graph AI APM</span>
-            </label>
+            <Toggle
+              label="Graph AI APM"
+              checked={showAiApm}
+              onChange={setShowAiApm}
+            />
           )}
         </div>
 
@@ -158,15 +152,11 @@ export function StatsTab({
                   <div className="flex flex-col">
                     <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                       {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
+                      {player.ai && <AiBadge />}
                     </h3>
                   </div>
                   <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
+                    className="h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>

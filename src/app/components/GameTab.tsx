@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { TiltCard } from "./TiltCard";
+import { Toggle } from "./Toggle";
+import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
 import { type MatchInfo, type ChatEvent } from "@/lib/replayProcessor";
@@ -68,9 +70,7 @@ export function GameTab({
   return (
     <div className="flex flex-col gap-6">
       <section className="panel rounded-3xl p-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Players</h2>
-        </div>
+        <h2 className="headline text-2xl font-semibold">Players</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const stats = timelineStats.find(
@@ -85,11 +85,7 @@ export function GameTab({
                   <div className="flex flex-col">
                     <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
                       {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
+                      {player.ai && <AiBadge />}
                       {player.won && !allPlayersWon && <sup>👑</sup>}
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-white/40">
@@ -99,7 +95,7 @@ export function GameTab({
                     </div>
                   </div>
                   <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
+                    className="h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
                     style={{ background: getPlayerColor(player.id) }}
                   ></span>
                 </div>
@@ -237,54 +233,22 @@ export function GameTab({
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={chatShowSystem}
-                  onChange={(e) => setChatShowSystem(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowSystem ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowSystem ? 'translate-x-3' : 'translate-x-0'}`} />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                System
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer select-none group">
-              <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={chatShowChat}
-                  onChange={(e) => setChatShowChat(e.target.checked)}
-                />
-                <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowChat ? 'translate-x-3' : 'translate-x-0'}`} />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                Chat
-              </span>
-            </label>
-
+            <Toggle
+              label="System"
+              checked={chatShowSystem}
+              onChange={setChatShowSystem}
+            />
+            <Toggle
+              label="Chat"
+              checked={chatShowChat}
+              onChange={setChatShowChat}
+            />
             {hasAi && isTeamGame && (
-              <label className="flex items-center gap-2 cursor-pointer select-none group">
-                <div className="relative rounded-full focus-within:ring-1 focus-within:ring-white focus-within:ring-offset-2 focus-within:ring-offset-[color:var(--panel)]">
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={chatShowAiTeamChat}
-                    onChange={(e) => setChatShowAiTeamChat(e.target.checked)}
-                  />
-                  <div className={`block w-8 h-5 rounded-full transition-colors ${chatShowAiTeamChat ? 'bg-[color:var(--accent)]' : 'bg-white/10'}`} />
-                  <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${chatShowAiTeamChat ? 'translate-x-3' : 'translate-x-0'}`} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">
-                  AI team chat
-                </span>
-              </label>
+              <Toggle
+                label="AI team chat"
+                checked={chatShowAiTeamChat}
+                onChange={setChatShowAiTeamChat}
+              />
             )}
           </div>
         </div>
@@ -330,11 +294,7 @@ export function GameTab({
                               style={{ background: pColor || "#FFFFFF" }}
                             />
                             <span className="truncate">{item.playerName}</span>
-                            {item.isAi && (
-                              <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                                AI
-                              </span>
-                            )}
+                            {item.isAi && <AiBadge />}
                           </span>
                         )}
 
@@ -369,7 +329,7 @@ export function GameTab({
                     <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 py-0.5" : "mt-0.5 text-white/90"}`}>
                       {item.isSystem && pColor && (
                         <span
-                          className="inline-block h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
+                          className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
                           style={{ background: pColor }}
                         />
                       )}
