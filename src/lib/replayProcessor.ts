@@ -407,6 +407,53 @@ export const buildPlayerMapping = (
   return playerMapping;
 };
 
+export const AGE_PATTERNS: Array<{
+  age: "Feudal" | "Castle" | "Imperial";
+  pattern: RegExp;
+}> = [
+  {
+    age: "Feudal",
+    pattern: /feudal|f[eé]odal|феодальн|封建|領主|봉건|phong ki[eế]n|सामंती/i,
+  },
+  {
+    age: "Castle",
+    pattern: /castle|ritterzeit|castillos|ch[aâ]teaux|castelli|castelos|zamk|замк|城堡|城主|성주|kale|l[aâ]u đ[aà]i|महल/i,
+  },
+  {
+    age: "Imperial",
+    pattern: /imperial|imp[eé]rial|imperiale|имперск|帝王|왕정|imparatorluk|đ[eế] qu[oố]c|शाही/i,
+  },
+];
+
+export const detectAgeAdvance = (
+  rawMessage?: string,
+  formattedMessage?: string,
+  playerName?: string
+): "Feudal" | "Castle" | "Imperial" | null => {
+  // Prefer rawMessage since in DE replays it contains <player_id, X> instead of the actual player username
+  let text = (rawMessage || formattedMessage || "").trim();
+
+  // Strip player_id tags e.g. <player_id, 1> or @<player_id, 1>
+  text = text.replace(/@?<player_id,\s*\d+[^>]*>/gi, "").trim();
+
+  // If playerName is provided and message still has it at the start (e.g. "@Player " or "Player: "), strip it
+  if (playerName) {
+    const escapedName = playerName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    text = text.replace(new RegExp(`^@?${escapedName}\\s*[:\\-]?\\s*`, "i"), "").trim();
+  }
+
+  // Remove leading "@" or ":" that might remain
+  text = text.replace(/^[@:]\s*/, "").trim();
+
+  for (const group of AGE_PATTERNS) {
+    if (group.pattern.test(text)) {
+      return group.age;
+    }
+  }
+
+  return null;
+};
+
 export const extractChatEvents = (
   replay: unknown,
   summary?: any,
@@ -491,7 +538,9 @@ export const extractChatEvents = (
     const resolvedPlayer = resolvedPlayerId !== undefined ? players.find((p) => p.id === resolvedPlayerId) : player;
 
     const hasPlayerIdTag = tagMatch !== null;
-    const isAgeAdvance = rawMessage.toLowerCase().includes("advanced to the");
+    const isCandidateSystem = hasPlayerIdTag || playerId === 0 || playerId === undefined;
+    const detectedAge = isCandidateSystem ? detectAgeAdvance(rawMessage, undefined, resolvedPlayer?.name) : null;
+    const isAgeAdvance = detectedAge !== null;
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
     // In DE replays, empty messageAGP indicates internal engine triggers or pre-game lobby packets
@@ -1003,13 +1052,12 @@ export const extractPlayerStats = (
       }
     });
 
-    // Extract age-up timings directly from ground-truth chat notifications
+    // Extract age-up timings directly from ground-truth chat notifications (supporting all official game languages)
     if (chatEvents && chatEvents.length > 0) {
       chatEvents.forEach((chat) => {
-        if (chat.playerId === playerId && chat.time > 0) {
-          const match = chat.message.match(/advanced to the (Feudal|Castle|Imperial) Age/i);
-          if (match) {
-            const age = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+        if (chat.playerId === playerId && chat.time > 0 && chat.isSystem) {
+          const age = detectAgeAdvance(chat.rawMessage, chat.message, chat.playerName);
+          if (age && !ageTimings[age]) {
             ageTimings[age] = chat.time;
           }
         }
