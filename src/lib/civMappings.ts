@@ -60,6 +60,9 @@ export const CIV_NAMES: Record<number, string> = {
   57: "Muisca",
   58: "Mapuche",
   59: "Tupi",
+  60: "Danes",
+  61: "Saxons",
+  62: "Varangians",
   65537: "Random",
   65539: "Full Random",
 };

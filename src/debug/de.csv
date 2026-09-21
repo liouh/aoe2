@@ -1,2702 +1,2752 @@
-ID,DE 
-0,Moveable Map Revealer
-1,Imperial Legionary
-2,Imperial Legionary (Dead)
-3,Archer (Dead)
-4,Archer
-5,Hand Cannoneer
-6,Elite Skirmisher
-7,Skirmisher
-8,Longbowman
-9,Arrow
-10,Archery Range
-11,Mangudai
-12,Barracks
-13,Fishing Ship
-14,Archery Range
-15,Junk
-16,Bombard Cannon (Dead)
-17,Trade Cog
-18,Blacksmith
-19,Blacksmith
-20,Barracks
-21,War Galley
-22,Beta Berserk (Dead)
-23,Battering Ram (Dead)
-24,Crossbowman
-25,Teutonic Knight
-26,Crossbowman (Dead)
-27,Cataphract (Dead)
-28,Chu Ko Nu (Dead)
-29,Trading Cog (Dead)
-30,Monastery
-31,Monastery
-32,Monastery
-33,Fortress
-34,Cavalry Archer (Dead)
-35,Battering Ram
-36,Bombard Cannon
-37,Camel Rider
-38,Knight
-39,Cavalry Archer
-40,Cataphract
-41,Huskarl
-42,Trebuchet
-43,Deer (Dead)
-44,Mameluke (Dead)
-45,Dock
-46,Janissary
-47,Dock
-48,Wild Boar
-49,Siege Workshop
-50,Farm
-51,Dock
-52,Royal Janissary
-53,Fish (Perch)
-54,Projectile VOL
-55,Fishing Ship (Dead)
-56,Villager Male Fisherman
-57,Villager Female Fisherman
-58,Villager Male Fisherman (Dead)
-59,Forage Bush
-60,Villager Female Fisherman (Dead)
-61,Dolphin
-62,Huskarl (Dead)
-63,Fortified Gate (up.)
-64,Gate (up.)
-65,Deer
-66,Gold Mine
-67,Fortified Gate
-68,Mill
-69,Shore Fish
-70,House
-71,Town Center
-72,Palisade Wall
-73,Chu Ko Nu
-74,Militia
-75,Man-at-Arms
-76,Heavy Swordsman
-77,Long Swordsman
-78,Gate
-79,Watch Tower
-80,Fortified Gate
-81,Gate
-82,Castle
-83,Villager (Male)
-84,Market
-85,Fortified Gate (down.)
-86,Stable
-87,Archery Range
-88,Gate (down.)
-89,Dire Wolf
-90,Fortified Gate
-91,Gate
-92,Fortified Gate
-93,Spearman
-94,Beta Berserk
-95,Gate
-96,Hawk
-97,Arrow
-98,Hand Cannoneer (Dead)
-99,Heavy Swordsman (Dead)
-100,Elite Skirmisher (Dead)
-101,Stable
-102,Stone Mine
-103,Blacksmith
-104,Monastery
-105,Blacksmith
-106,Leif Erikson
-107,Janissary (Dead)
-108,Junk (Dead)
-109,Town Center
-110,Trade Workshop
-111,Knight (Dead)
-112,Flare
-113,Camel Rider (Dead)
-114,Stoertebeker
-115,Longbowman (Dead)
-116,Market
-117,Stone Wall
-118,Villager Male Builder
-119,Fortified Palisade Wall
-120,Villager Male Forager
-121,Mangonel (Dead)
-122,Villager Male Hunter
-123,Villager Male Lumberjack
-124,Villager Male Stone Miner
-125,Monk
-126,Grey Wolf
-127,OLD_EXPLORER
-128,Trade Cart (Empty)
-129,Mill
-130,Mill
-131,Mill
-132,Barracks
-133,Dock
-134,Monk (Dead)
-135,Mangudai (Dead)
-136,War Elephant (Dead)
-137,Market
-138,Spy
-139,Cavalier (Dead)
-140,Spearman (Dead)
-141,Town Center
-142,Town Center
-143,Rubble 1 x 1
-144,Rubble 2 x 2
-145,Rubble 3 x 3
-146,Rubble 4 x 4
-147,Rubble 6 x 6
-148,Rubble 8 x 8
-149,Scorpion (Dead)
-150,Siege Workshop
-151,Samurai (Dead)
-152,Militia (Dead)
-153,Stable
-154,Man-At-Arms (Dead)
-155,Fortified Wall
-156,Villager Repairer Male
-157,Throwing Axeman (Dead)
-158,Outlaw
-159,Relic Cart
-160,Richard the Lionheart
-161,The Black Prince
-162,FLAGX
-163,Friar Tuck
-164,Sheriff of Nottingham
-165,Charlemagne
-166,Roland
-167,Belisarius
-168,Theodoric the Goth
-169,Aethelfrith
-170,Siegfried
-171,Erik the Red
-172,Tamerlane
-173,King Arthur
-174,Lancelot
-175,Gawain
-176,Mordred
-177,Archbishop
-178,Trade Cart Empty (Dead)
-179,Trade Workshop
-180,Long Swordsman (Dead)
-181,Teutonic Knight (Dead)
-182,WNDR
-183,TMISB
-184,Condottiero
-185,Slinger
-186,Slinger (Dead)
-187,Projectile Slinger
-188,Flamethrower
-189,Flamethrower (Dead)
-190,Fire Tower
-191,House
-192,House
-193,Vlad Dracula
-194,Trebuchet (Dead)
-195,Kitabatake
-196,Minamoto
-197,Alexander Nevski
-198,El Cid
-199,Fish Trap
-200,Robin Hood
-201,Tree
-202,Rabid Wolf
-203,Vasco da Gama
-204,Trade Cart (Full)
-205,Trade Cart (Full) (Dead)
-206,VMDL
-207,Imperial Camel Rider
-208,TWAL
-209,University
-210,University
-211,Villager Female (Dead)
-212,Villager Female Builder
-213,Villager Female Builder (Dead)
-214,Villager Female Farmer
-215,Villager Female Farmer (Dead)
-216,Villager Female Hunter
-217,Villager Female Hunter (Dead)
-218,Villager Female Lumberjack
-219,Villager Female Lumberjack (Dead)
-220,Villager Female Stone Miner
-221,Villager Female Stone Miner (Dead)
-222,Villager Female Repairer
-223,Alaric the Goth
-224,Villager Male (Dead)
-225,Villager Male Builder (Dead)
-226,Villager Male Farmer (Dead)
-227,Villager Male Hunter (Dead)
-228,Villager Male Lumberjack (Dead)
-229,Villager Male Stone Miner (Dead)
-230,King Bela IV
-231,Aqueduct
-232,Woad Raider
-233,Woad Raider (Dead)
-234,Guard Tower
-235,Keep
-236,Bombard Tower
-237,Wolf (Dead)
-238,Skirmisher (Dead)
-239,War Elephant
-240,TERRC
-241,Cracks
-242,Projectile Stone Catapult
-243,Doppelganger
-244,Projectile Stone Catapult (Fire)
-245,Projectile Bolt
-246,Projectile Bolt (Fire)
-247,Trail Smoke
-248,Pile of Stone
-249,POREX
-250,Longboat
-251,Amphitheatre
-252,Pile of Gold
-253,Pile of Wood
-254,PILE1
-255,PILE2
-256,PILE3
-257,PILE4
-258,PILE6
-259,Villager Male Farmer
-260,Disabled
-261,PILE8
-262,Pile of Food
-263,Colosseum
-264,Cliff 1
-265,Cliff 2
-266,Cliff 3
-267,Cliff 4
-268,Cliff 5
-269,Cliff 6
-270,Cliff 7
-271,Cliff 8
-272,Cliff 9
-273,-
-274,Flare
-275,Imperial Centurion
-276,Wonder
-277,Imperial Centurion (Dead)
-278,Fish Trap (Dead)
-279,Scorpion
-280,Mangonel
-281,Throwing Axeman
-282,Mameluke
-283,Cavalier
-284,Tree TD
-285,Relic
-286,Monk with Relic
-287,British Relic
-288,Byzantine Relic
-289,Chinese Relic
-290,Frankish Relic
-291,Samurai
-292,Gothic Relic
-293,Villager (Female)
-294,Japanese Relic
-295,Persian Relic
-296,Saracen Relic
-297,Teutonic Relic
-298,Turkish Relic
-299,Bandit
-300,Imperial Camel Rider (Dead)
-301,"Grass Patch, Green"
-302,Bush A
-303,Seagulls
-304,Bonfire
-305,Llama
-306,Black Tile
-307,Cuauhtemoc
-308,Indestructible Outpost
-309,Monk with Turkish Relic
-310,Mountain 1
-311,Mountain 2
-312,Projectile Arrow 2
-313,"Projectile Stone, Trebuchet"
-314,"Projectile Stone, Mangonel"
-315,Projectile Arrow 3
-316,Projectile Arrow 4
-317,Projectile Arrow 5
-318,Projectile Arrow 6
-319,Projectile Arrow 7
-320,Projectile Arrow 8
-321,Projectile Arrow 9
-322,Projectile Arrow 10
-323,"Projectile Stone, Catapult 1"
-324,"Projectile Stone, Catapult 2"
-325,"Projectile Stone, Catapult 3"
-326,"Projectile Stone, Catapult 4"
-327,"Projectile Stone, Catapult 5"
-328,Projectile VOL (Fire)
-329,Camel Rider
-330,Heavy Camel Rider
-331,Trebuchet (Packed)
-332,Flare
-333,Deer
-334,Flowers 1
-335,Flowers 2
-336,Flowers 3
-337,Flowers 4
-338,Path 4
-339,Path 1
-340,Path 2
-341,Path 3
-342,Cuman Chief
-343,TERRV
-344,TERRW
-345,Ruins
-346,TERRY
-347,TERRZ
-348,Tree (Bamboo Forest)
-349,Tree (Oak)
-350,Tree (Pine Forest)
-351,Tree (Palm Forest)
-352,OREMN
-353,Villager Male Forager (Dead)
-354,Villager Female Forager
-355,Villager Female Forager (Dead)
-356,Boar (Dead)
-357,Farm (Dead)
-358,Pikeman
-359,Halberdier
-360,Projectile Arrow (Fire)
-361,Norse Warrior
-362,Norse Warrior (Dead)
-363,Projectile Archer
-364,Projectile Crossbowman
-365,Projectile Skirmisher
-366,Projectile Elite Skirmisher
-367,Projectile Scorpion
-368,Projectile Bombard Cannon
-369,Projectile Mangonel (Secondary)
-370,City Wall
-371,Projectile Trebuchet
-372,Projectile Galleon
-373,Projectile War Galley
-374,Projectile Cannon Galleon
-375,Projectile Crossbowman (Fire)
-376,Projectile Skirmisher (Fire)
-377,Projectile Elite Skirmisher (Fire)
-378,Projectile Scorpion (Fire)
-379,-
-380,Projectile Gunpowder (Primary)
-381,Projectile Bolt (Fire)
-382,-
-383,-
-384,-
-385,Projectile Bolt (Fire)
-386,-
-387,-
-388,-
-389,Sea Rocks 1
-390,TERRB
-391,TERRD
-392,TERRE
-393,TERRF
-394,TERRH
-395,TERRI
-396,Sea Rocks 2
-397,TERRK
-398,TERRL
-399,Tree A
-400,Tree B
-401,Tree C
-402,Tree D
-403,Tree E
-404,Tree F
-405,Tree G
-406,Tree H
-407,Tree I
-408,Tree J
-409,Tree K
-410,Tree L
-411,Tree (Oak Forest)
-412,Monk (Dead)
-413,Tree (Snow Pine)
-414,Tree (Jungle)
-415,Stump
-416,Debris
-417,Dust C
-418,Henry the Lion
-419,Debris B
-420,Cannon Galleon
-421,Cannon Galleon (Dead)
-422,Capped Ram
-423,Capped Ram (Dead)
-424,Charles Martel
-425,Francisco de Orellana
-426,Harald Hardraade
-427,Gonzalo Pizarro
-428,Hrolf the Ganger
-429,Frederick Barbarossa
-430,Joan the Maid
-431,Joan the Maid (Dead)
-432,William Wallace
-433,William Wallace (Dead)
-434,King
-435,King (Dead)
-436,OMTBO
-437,Prithviraj
-438,STRBO
-439,Francesco Sforza
-440,Petard
-441,Hussar
-442,Galleon
-443,Galleon (Dead)
-444,Town Center (Packed)
-445,Poenari Castle
-446,Port
-447,SHALW
-448,Scout Cavalry
-449,Scout Cavalry (Dead)
-450,Great Fish (Marlin1)
-451,Great Fish (Marlin2)
-452,Dolphin
-453,Ataulf
-454,DOLP5
-455,Fish (Dorado)
-456,Fish (Salmon)
-457,Fish (Tuna)
-458,Fish (Snapper)
-459,FISH5
-460,WHAL1
-461,WHAL2
-462,Projectile Mangonel (Fire)
-463,House
-464,House
-465,House
-466,Projectile Archer (Fire)
-467,-
-468,Projectile Mangonel (Secondary Fire)
-469,Projectile Trebuchet (Fire)
-470,Projectile Galley (Fire)
-471,Projectile War Galley (Fire)
-472,Loot
-473,Two-Handed Swordsman
-474,Heavy Cavalry Archer
-475,Projectile HAR (Fire)
-476,Projectile Harold Haraade (Fire)
-477,Projectile HAR
-478,Projectile Harold Haraade
-479,Packed Mangonel
-480,Hussar (Dead)
-481,Town Center
-482,Town Center
-483,Town Center
-484,Town Center
-485,Projectile Town Center
-486,Brown Bear
-487,Gate
-488,Fortified Gate
-489,Bear (Dead)
-490,Gate
-491,Fortified Gate
-492,Arbalest
-493,Advanced Heavy Crossbowman
-494,Camel Rider (Dead)
-495,Heavy Camel Rider (Dead)
-496,Arbalest (Dead)
-497,King (Dead)
-498,Barracks
-499,Torch A
-500,Two Handed Swordsman (Dead)
-501,Pikeman (Dead)
-502,Halberdier (Dead)
-503,Projectile Watch Tower
-504,Projectile Guard Tower
-505,Projectile Keep
-506,Projectile Bombard Tower
-507,Projectile Arbalest
-508,Projectile Advanced Heavy Crossbowman
-509,Projectile Villager
-510,Projectile Chu Ko Nu
-511,Projectile Longbowman
-512,Projectile Longboat
-513,Projectile MSU
-514,Projectile MPC
-515,Projectile Axeman
-516,Projectile Watch Tower (Fire)
-517,Projectile Gaurd Tower (Fire)
-518,Projectile Keep (Fire)
-519,Projectile Arbalest (Fire)
-520,Projectile Heavy Crossbowman (Fire)
-521,Projectile Villager (Fire)
-522,Projectile Cho Ko Nu (Fire)
-523,Projectile Longbowman (Fire)
-524,Projectile Longboat (Fire)
-525,Projectile MPC (Fire)
-526,Projectile MSU (Fire)
-527,Demolition Ship
-528,Heavy Demolition Ship
-529,Fire Ship
-530,Elite Longbowman
-531,Elite Throwing Axeman
-532,Fast Fire Ship
-533,Elite Longboat
-534,Elite Woad Raider
-535,BDGAL
-536,ABGAL
-537,Projectile FRG
-538,Projectile HFG
-539,Galley
-540,Projectile Galley
-541,Projectile Galley (Fire)
-542,Heavy Scorpion
-543,Heavy Scorpion (Dead)
-544,FLDOG
-545,Transport Ship
-546,Light Cavalry
-547,Light Cavalry (Dead)
-548,Siege Ram
-549,Siege Ram (Dead)
-550,Onager
-551,Projectile Onager
-552,Projectile Onager (Fire)
-553,Elite Cataphract
-554,Elite Teutonic Knight
-555,Elite Huskarl
-556,Elite Mameluke
-557,Elite Janissary
-558,Elite War Elephant
-559,Elite Chu Ko Nu
-560,Elite Samurai
-561,Elite Mangudai
-562,Lumber Camp
-563,Lumber Camp
-564,Lumber Camp
-565,Lumber Camp
-566,Watch Tower
-567,Champion
-568,Champion (Dead)
-569,Paladin
-570,Paladin (Dead)
-571,Raider Archer
-572,Raider Archer (Dead)
-573,Raider Swordsman
-574,Raider Swordsman (Dead)
-575,Raider Cavalry
-576,Raider Cavalry (Dead)
-577,Raider Cavalry Archer
-578,Raider Cavalry Archer Dead
-579,Villager Male Gold Miner
-580,Villager Male Gold Miner (Dead)
-581,Villager Female Gold Miner
-582,Villager Female Gold Miner (Dead)
-583,Genitour
-584,Mining Camp
-585,Mining Camp
-586,Mining Camp
-587,Mining Camp
-588,Siege Onager
-589,Siege Onager (Dead)
-590,Villager Female Shepherd
-591,Villager Female Shepherd (Dead)
-592,Villager Male Shepherd
-593,Villager Male Shepherd (Dead)
-594,Sheep
-595,Sheep (Dead)
-596,Elite Genitour
-597,Town Center
-598,Outpost
-599,Cathedral
-600,Flag A
-601,Flag B
-602,Flag C
-603,Flag D
-604,Flag E
-605,Bridge A--Top
-606,Bridge A--Middle
-607,Bridge A--Bottom
-608,Bridge B--Top
-609,Bridge B--Middle
-610,Bridge B--Bottom
-611,Town Center
-612,Town Center
-613,Town Center
-614,Town Center
-615,Town Center
-616,Town Center
-617,Town Center
-618,Town Center
-619,Town Center
-620,Town Center
-621,Town Center
-622,Elite Genitour (Dead)
-623,Rock 1
-624,Pavilion A
-625,Pavilion C
-626,Pavilion B
-627,Projectile Heavy Scorpion
-628,Projectile Heavy Scorpion (Fire)
-629,Joan of Arc
-630,Joan of Arc (Dead)
-631,Subotai (Dead)
-632,Frankish Paladin
-633,Frankish Paladin (Dead)
-634,Sieur de Metz
-635,Burned Building
-636,Sieur Bertrand
-637,Temple of Heaven
-638,Duke D'Alencon
-639,Penguin
-640,La Hire
-641,Penguin (Dead)
-642,Lord de Graville
-643,Lord de Graville (Dead)
-644,Jean de Lorrain
-645,Jean de Lorrain (Dead)
-646,Constable Richemont
-647,Constable Richemont (Dead)
-648,Guy Josselyne
-649,Guy Josselyne (Dead)
-650,Jean Bureau
-651,Jean Bureau (Dead)
-652,Sir John Fastolf
-653,Sir John Fastolf (Dead)
-654,Trail Smoke (Fire)
-655,Mosque
-656,Projectile Mangonel (Primary)
-657,Projectile GP1
-658,Projectile Mangonel (Primary Fire)
-659,Gate (hori.)
-660,Fortified Gate (hori.)
-661,Gate
-662,Fortified Gate
-663,Gate
-664,Fortified Gate
-665,Gate
-666,Fortified Gate
-667,Gate (vert.)
-668,Fortified Gate (vert.)
-669,Gate
-670,Fortified Gate
-671,Gate
-672,Fortified Gate
-673,Gate
-674,Fortified Gate
-675,Onager (Dead)
-676,Projectile Fire Ship
-677,Projectile Fire Ship Small
-678,Reynald de Chatillon
-679,Reynald de Chatillon (Dead)
-680,Master of the Templar
-681,Master of the Templar (Dead)
-682,Bad Neighbor
-683,God's Own Sling
-684,The Accursed Tower
-685,The Tower of Flies
-686,Archer of the Eyes
-687,Archer of the Eyes (Dead)
-688,Piece of the True Cross
-689,Pyramid
-690,Dome of the Rock
-691,Elite Cannon Galleon
-692,Berserk
-693,Berserk (Dead)
-694,Elite Berserk
-695,Elite Berserk (Dead)
-696,Great Pyramid
-697,FLARE4
-698,Subotai
-699,Subotai (Dead)
-700,Hunting Wolf
-701,Hunting Wolf (Dead)
-702,Kushluk
-703,Topa Yupanqui
-704,Shah
-705,Cow A
-706,Saboteur
-707,Ornlu the Wolf
-708,Ornlu the Wolf (Dead)
-709,Cactus
-710,Skeleton
-711,Rugs
-712,Yurt A
-713,Yurt B
-714,Yurt C
-715,Yurt D
-716,Yurt E
-717,Yurt F
-718,Yurt G
-719,Yurt H
-720,Nine Bands
-721,Shipwreck A
-722,Shipwreck B
-723,Crater
-724,Genitour (Dead)
-725,Jaguar Warrior
-726,Elite Jaguar Warrior
-727,-
-728,"Ice, Navigable"
-729,God's Own Sling (Packed)
-730,Bad Neighbor (Packed)
-731,Genghis Khan
-732,King South-East Asia (Dead)
-733,Emperor in a Barrel
-734,Emperor in a Barrel (Dead)
-735,Packed Trebuchet (Dead)
-736,Projectile Mameluke
-737,Bamboo Stump
-738,Bridge A--Cracked
-739,Bridge A--Broken Top
-740,Bridge A--Broken Bottom
-741,Bridge B--Cracked
-742,Bridge B--Broken Top
-743,Bridge B--Broken Bottom
-744,Mountain 3
-745,Mountain 4
-746,Projectile Castle
-747,Projectile Castle (Fire)
-748,Cobra Car
-749,Cusi Yupanqui
-750,Jaguar Warrior (Dead)
-751,Eagle Scout
-752,Elite Eagle Warrior
-753,Eagle Warrior
-754,Eagle Warrior (Dead)
-755,Tarkan
-756,Tarkan (Dead)
-757,Elite Tarkan
-758,Burned building
-759,Huskarl
-760,Huskarl (Dead)
-761,Elite Huskarl
-762,Elite Huskarl (Dead)
-763,Plumed Archer
-764,Plumed Archer (Dead)
-765,Elite Plumed Archer
-766,Elite Plumed Archer (Dead)
-767,Projectile Elite Cannon Galleon
-768,Blue Tree
-769,-
-770,-
-771,Conquistador
-772,Conquistador (Dead)
-773,Elite Conquistador
-774,Elite Conquistador (Dead)
-775,Missionary
-776,Missionary (Dead)
-777,Attila the Hun
-778,Canoe
-779,Bleda the Hun
-780,Llama (Dead)
-781,Pope Leo I
-782,Pope Leo I (Dead)
-783,Scythian Wild Woman
-784,Scythian Wild Woman (Dead)
-785,Sea Tower
-786,Projectile Sea Tower
-787,Projectile Sea Tower (Fire)
-788,Sea Wall
-789,Palisade Gate (up.)
-790,Palisade Gate
-791,Palisade Gate
-792,Palisade Gate
-793,Palisade Gate (down.)
-794,Palisade Gate
-795,Palisade Gate
-796,Palisade Gate
-797,Palisade Gate (hori.)
-798,Palisade Gate
-799,Palisade Gate
-800,Palisade Gate
-801,Palisade Gate (vert.)
-802,Palisade Gate
-803,Palisade Gate
-804,Palisade Gate
-805,Dock
-806,Dock
-807,Dock
-808,Dock
-809,Stump
-810,Iron Boar
-811,Iron Boar (Dead)
-812,Jaguar
-813,Jaguar (Dead)
-814,Horse A
-815,Horse (Dead)
-816,Macaw
-817,Statue A
-818,Plant
-819,Sign
-820,Grave
-821,Head
-822,Javelina
-823,Javelina (Dead)
-824,El Cid Campeador
-825,Amazon Warrior
-826,Monument
-827,War Wagon
-828,War Wagon (Dead)
-829,Elite War Wagon
-830,Elite War Wagon (Dead)
-831,Turtle Ship
-832,Elite Turtle Ship
-833,Turkey
-834,Turkey (Dead)
-835,Wild Horse
-836,Wild Horse (Dead)
-837,Map Revealer
-838,King Sancho
-839,Rock (Stone)
-840,King Alfonso
-841,Rock (Gold)
-842,Imam
-843,Cow (Dead)
-844,Admiral Yi Sun-shin
-845,Nobunaga
-846,Donkey
-847,Henry V
-848,Donkey (Dead)
-849,William the Conqueror
-850,Amazon Archer
-851,ES Flag
-852,Scythian Scout
-853,Scythian Scout (Dead)
-854,Torch A (Convertable)
-855,Old Stone Head
-856,Roman Ruins
-857,Hay Stack
-858,Broken Cart
-859,Flower Bed
-860,Furious the Monkey Boy
-861,Furious the Monkey Boy (Dead)
-862,Stormy Dog
-863,Rubble 1 x 1
-864,Rubble 2 x 2
-865,Rubble 3 x 3
-866,Genoese Crossbowman
-867,Genoese Crossbowman (Dead)
-868,Elite Genoese Crossbowman
-869,Magyar Huszar
-870,Magyar Huszar (Dead)
-871,Elite Magyar Huszar
-872,Quimper Cathedral
-873,Elephant Archer
-874,Elephant Archer (Dead)
-875,Elite Elephant Archer
-876,Boyar
-877,Boyar (Dead)
-878,Elite Boyar
-879,Kamayuk
-880,Kamayuk (Dead)
-881,Elite Kamayuk
-882,Condottiero
-883,Condottiero (Dead)
-884,Wild Camel
-885,Siege Tower
-886,Tarkan
-887,Elite Tarkan
-888,Llama building
-889,Disable llama building
-890,Empty llama annex
-891,Siege Tower (Dead)
-892,Heavy Pikeman
-893,Heavy Pikeman (Dead)
-894,Eastern Swordsman
-895,Eastern Swordsman (Dead)
-896,Waterfall
-897,Camel
-898,Camel (Dead)
-899,Arch of Constantine
-900,Rain
-901,Flag F
-902,Smoke
-903,-
-904,Wooden Bridge A--Top
-905,Wooden Bridge A--Middle
-906,Wooden Bridge A--Bottom
-907,Wooden Bridge B--Top
-908,Wooden Bridge B--Middle
-909,Wooden Bridge B--Bottom
-910,Impaled Corpse
-911,BGAA
-912,BGAB
-913,BGAC
-914,Quarry
-915,Lumber
-916,Goods
-917,Vulture
-918,Rock 2
-919,Amazon Warrior (Dead)
-920,Amazon Archer (Dead)
-921,Imam (Dead)
-922,Monk with Relic
-923,Queen
-924,Queen (Dead)
-925,Sanyogita
-926,Prithvi
-927,Chand Bhai
-928,Chand Bhai (Dead)
-929,Saladin
-930,Khosrau
-931,Jarl
-932,Savar
-933,Barrels
-934,Alfred the Alpaca
-935,Alfred the Alpaca (Dead)
-936,Elephant
-937,Elephant (Dead)
-938,Dragon Ship
-939,Flame 1
-940,Flame 2
-941,Flame 3
-942,Flame 4
-943,Osman
-944,Relic Cart
-945,Shaw (Dead)
-946,-
-947,-
-948,-
-949,-
-950,-
-951,-
-952,-
-953,-
-954,-
-955,-
-956,-
-957,-
-958,-
-959,-
-960,-
-961,-
-962,-
-963,-
-964,-
-965,-
-966,-
-967,-
-968,-
-969,-
-970,-
-971,-
-972,-
-973,-
-974,-
-975,-
-976,-
-977,-
-978,-
-979,-
-980,-
-981,-
-982,-
-983,-
-984,-
-985,-
-986,-
-987,-
-988,-
-989,-
-990,-
-991,-
-992,-
-993,-
-994,-
-995,-
-996,-
-997,-
-998,-
-999,-
-1000,-
-1001,Organ Gun
-1002,Organ Gun (Dead)
-1003,Elite Organ Gun
-1004,Caravel
-1005,Organ Gun (Dead)
-1006,Elite Caravel
-1007,Camel Archer
-1008,Camel Archer (Dead)
-1009,Elite Camel Archer
-1010,Genitour
-1011,Genitour (Dead)
-1012,Elite Genitour
-1013,Gbeto
-1014,Gbeto (Dead)
-1015,Elite Gbeto
-1016,Shotel Warrior
-1017,Shotel Warrior (Dead)
-1018,Elite Shotel Warrior
-1019,Zebra
-1020,Zebra (Dead)
-1021,Feitoria
-1022,Monkboat
-1023,Priest
-1024,Priest (Dead)
-1025,Priest with relic
-1026,Ostrich
-1027,Ostrich (Dead)
-1028,Stork
-1029,Lion
-1030,Lion (Dead)
-1031,Crocodile
-1032,Crocodile (Dead)
-1033,"Grass Patch, Dry"
-1034,Musa ibn Nusayr
-1035,Sundjata
-1036,Tariq ibn Ziyad
-1037,Richard de Clare
-1038,Tristan
-1039,Princess Yodit
-1040,Henry II
-1041,Mountain 5
-1042,Mountain 6
-1043,Mountain 7
-1044,Mountain 8
-1045,Snow Mountain 1
-1046,Snow Mountain 2
-1047,Snow Mountain 3
-1048,Rock Formation 1
-1049,Rock Formation 2
-1050,Rock Formation 3
-1051,Tree (Dragon)
-1052,Tree (Baobab)
-1053,Bush B
-1054,Bush C
-1055,Projectile Knife
-1056,Falcon
-1057,Projectile CVB
-1058,Projectile CVB (Fire)
-1059,Fruit Bush
-1060,Goat
-1061,Goat (Dead)
-1062,Fence
-1063,Tree (Acacia)
-1064,Yekuno Amlak
-1065,Fence (Rubble)
-1066,Yodit
-1067,Itzcoatl
-1068,Mustafa Pasha
-1069,Pacal II
-1070,Babur
-1071,Abraha Elephant
-1072,Guglielmo Embriaco
-1073,Su Dingfang
-1074,Pachacuti
-1075,Huayna Capac
-1076,Miklos Toldi
-1077,Little John
-1078,Zawisza the Black
-1079,GENITOPLACEHOLDER
-1080,Sumanguru
-1081,Storage
-1082,Hut A
-1083,Hut B
-1084,Hut C
-1085,Hut D
-1086,Hut E
-1087,Hut F
-1088,Hut G
-1089,Granary
-1090,Barricade A
-1091,Animal Skeleton
-1092,Stelae A
-1093,Stelae B
-1094,Stelae C
-1095,Gallow
-1096,Palace
-1097,Tent A
-1098,Tent B
-1099,Tent C
-1100,Tent D
-1101,Tent E
-1102,Fortified Tower
-1103,Fire Galley
-1104,Demolition Raft
-1105,Siege Tower
-1106,Dagnajan
-1107,Siege Tower (Dead)
-1108,Dagnajan (Dead)
-1109,Gidajan
-1110,Gidajan (Dead)
-1111,Projectile Light Ballista
-1112,Projectile Light Ballista (Fire)
-1113,Projectile Heavy Scorpion
-1114,Projectile Heavy Scorpion (Fire)
-1115,FACAHOLE
-1116,Eagle Warrior (Dead)
-1117,Elite Eagle Warrior (Dead)
-1118,Inca llama annex
-1119,Projectile Gunpowder (Secondary)
-1120,Ballista Elephant
-1121,Ballista Elephant (Dead)
-1122,Elite Ballista Elephant
-1123,Karambit Warrior
-1124,Karambit Warrior (Dead)
-1125,Elite Karambit Warrior
-1126,Arambai
-1127,Arambai (Dead)
-1128,Elite Arambai
-1129,Rattan Archer
-1130,Rattan Archer (Dead)
-1131,Elite Rattan Archer
-1132,Battle Elephant
-1133,Battle Elephant (Dead)
-1134,Elite Battle Elephant
-1135,Komodo Dragon
-1136,Komodo Dragon (Dead)
-1137,Tiger
-1138,Tiger (Dead)
-1139,Rhinoceros
-1140,Rhinoceros (Dead)
-1141,Box Turtles
-1142,Water Buffalo
-1143,Water Buffalo (Dead)
-1144,Tree (Mangrove)
-1145,Ninja
-1146,Tree (Rainforest)
-1147,Ninja (Dead)
-1148,Rock (Beach)
-1149,Rock (Jungle)
-1150,Flag G
-1151,Flag H
-1152,Flag I
-1153,Flag J
-1154,Elite Battle Elephant (Dead)
-1155,Imperial Skirmisher
-1156,Imperial Skirmisher (Dead)
-1157,Gajah Mada
-1158,Jayanegara
-1159,Raden Wijaya
-1160,Sunda Royal Fighter
-1161,Sunda Royal Fighter (Dead)
-1162,Suryavarman I
-1163,Udayadityavarman I
-1164,Jayaviravarman
-1165,Bayinnaung
-1166,Tabinshwehti
-1167,Projectile Ballista Elephant
-1168,Projectile Ballista Elephant (Fire)
-1169,Projectile Arambai
-1170,Projectile Arambai (Fire)
-1171,Buddha Statue A
-1172,Buddha Statue B
-1173,Buddha Statue C
-1174,Buddha Statue D
-1175,Fern Patch
-1176,Trowulan Gate
-1177,Vases
-1178,Le Loi
-1179,Le Lai
-1180,Le Lai
-1181,Le Trien
-1182,Luu Nhan Chu
-1183,Bui Bi
-1184,Dinh Le
-1185,Wang Tong
-1186,Envoy
-1187,Rice Farm
-1188,Rice Farm (Dead)
-1189,Harbor
-1190,Gajah Mada (Dead)
-1191,Stupa
-1192,Gate
-1193,FARMDROP
-1194,FARMSTACK
-1195,RFARMDROP
-1196,Army Tent A
-1197,Army Tent B
-1198,Army Tent C
-1199,Army Tent D
-1200,Army Tent E
-1201,Pagoda A
-1202,Pagoda B
-1203,Pagoda C
-1204,Bridge C--Top
-1205,Bridge C--Middle
-1206,Bridge C--Bottom
-1207,Bridge D--Top
-1208,Bridge D--Middle
-1209,Bridge D--Bottom
-1210,Bridge C--Cracked
-1211,Bridge C--Broken Top
-1212,Bridge C--Broken Bottom
-1213,Bridge D--Cracked
-1214,Bridge D--Broken Top
-1215,Bridge D--Broken Bottom
-1216,Sanchi Stupa
-1217,Gol Gumbaz
-1218,Barricade B
-1219,Barricade C
-1220,Barricade D
-1221,Itzcoatl (Dead)
-1222,Sharkatzor
-1223,Projectile Cow
-1224,Dinh Le (Dead)
-1225,Konnik
-1226,Konnik (Dead)
-1227,Elite Konnik
-1228,Keshik
-1229,Keshik (Dead)
-1230,Elite Keshik
-1231,Kipchak
-1232,Kipchak (Dead)
-1233,Elite Kipchak
-1234,Leitis
-1235,Leitis (Dead)
-1236,Elite Leitis
-1237,Bactrian Camel
-1238,Bactrian Camel (Dead)
-1239,Ibex
-1240,Ibex (Dead)
-1241,Snow Leopard
-1242,Snow Leopard (Dead)
-1243,Goose
-1244,Goose (Dead)
-1245,Pig
-1246,Pig (Dead)
-1247,Wild Bactrian Camel
-1248,Tree (Oak Autumn)
-1249,Tree (Oak Autumn Snow)
-1250,Tree (Dead)
-1251,Krepost
-1252,Konnik (Dismounted)
-1253,Elite Konnik (Dismounted)
-1254,Konnik
-1255,Elite Konnik
-1256,Elite Konnik (Dead)
-1257,Konnik Infantry (Dead)
-1258,Battering Ram
-1259,CUMANPLACEHOLDER
-1260,Elite Kipchak
-1261,CUMANDISABLED
-1262,Tokhtamysh Khan
-1263,Flaming Camel
-1264,Shrine
-1265,Ivaylo
-1266,Tsar Konstantin
-1267,Kotyan Khan
-1268,Cuman Chief
-1269,Girgen Khan
-1270,Dismantled Cart
-1271,Ox Cart
-1272,Ox Cart (Dead)
-1273,Ox Wagon
-1274,Ox Wagon (Dead)
-1275,Khan
-1276,Urus Khan
-1277,Khan (Dead)
-1278,Vytautas the Great (Dead)
-1279,Statue (Civilization)
-1280,Statue B
-1281,Vytautas the Great
-1282,Flag K
-1283,Flag L
-1284,Flag M
-1285,FE Flag
-1286,Tsar Konstantin (Dead)
-1287,Kotyan Khan (Dead)
-1288,Cuman Chief (Dead)
-1289,Girgen Khan (Dead)
-1290,Ivaylo
-1291,Invisible Object
-1292,Queen
-1293,Sanyogita
-1294,Prithvi
-1295,Chand Bardai
-1296,Saladin
-1297,Khosrau
-1298,Jarl
-1299,Sogdian Cataphract
-1300,Alfred the Alpaca
-1301,Elephant
-1302,Dragon Ship
-1303,Osman
-1304,Relic Cart
-1305,Vulture
-1306,Rain
-1307,Flag F
-1308,Smoke
-1309,Wooden Bridge A--Top
-1310,Wooden Bridge A--Middle
-1311,Wooden Bridge A--Bottom
-1312,Wooden Bridge B--Top
-1313,Wooden Bridge B--Middle
-1314,Wooden Bridge B--Bottom
-1315,Impaled Corpse
-1316,BGAA
-1317,BGAB
-1318,BGAC
-1319,Quarry
-1320,Lumber
-1321,Goods
-1322,Statue (Column)
-1323,Rock 2
-1324,Amazon Warrior (Dead)
-1325,Amazon Archer (Dead)
-1326,Imam (Dead)
-1327,Monk with Relic
-1328,Queen (Dead)
-1329,Monk (Dead)
-1330,Barrels
-1331,Alfred the Alpaca (Dead)
-1332,Elephant (Dead)
-1333,Flame 1
-1334,Flame 2
-1335,Flame 3
-1336,Flame 4
-1337,Shaw (Dead)
-1338,Cart
-1339,CLF01
-1340,CLF02
-1341,CLF03
-1342,CLF04
-1343,Statue (Left)
-1344,CLF06
-1345,Statue (Right)
-1346,CLF08
-1347,Tree (Cypress)
-1348,Tree (Italian Pine)
-1349,Tree (Olive)
-1350,Tree (Reeds)
-1351,Plant (Jungle)
-1352,Plant (Underbrush Tropical)
-1353,Plant (Underbrush)
-1354,Plant (Rainforest)
-1355,Plant (Underbrush Rainforest)
-1356,Horse B
-1357,Horse Heavy (Dead)
-1358,"Grass, Green"
-1359,"Grass, Dry"
-1360,"Plant (Bush, Green)"
-1361,"Plant (Bush, Dry)"
-1362,"Plant (Shrub, Green)"
-1363,"Plant (Shrub, Dry)"
-1364,Plant (Weeds)
-1365,Plant (Dead)
-1366,Plant (Flowers)
-1367,Sankore Madrasah
-1368,Tower of London
-1369,Dormition Cathedral
-1370,Steppe Lancer
-1371,Steppe Lancer (Dead)
-1372,Elite Steppe Lancer
-1373,Elite Steppe Lancer (Dead)
-1374,Iroquois Warrior
-1375,Iroquois Warrior (Dead)
-1376,Torch B
-1377,Torch B (Convertable)
-1378,Rock Church
-1379,Sea Gate
-1380,Sea Gate
-1381,Sea Gate
-1382,Sea Gate
-1383,Sea Gate
-1384,Sea Gate
-1385,Sea Gate
-1386,Sea Gate
-1387,Sea Gate
-1388,Sea Gate
-1389,Sea Gate
-1390,Sea Gate
-1391,Sea Gate
-1392,Sea Gate
-1393,Sea Gate
-1394,Sea Gate
-1395,Sundjata (Dead)
-1396,Chain
-1397,Chain
-1398,Chain
-1399,Chain
-1400,Priest with Relic
-1401,Savar (Dead)
-1402,Barracks DARK (Rubble)
-1403,House DARK (Rubble)
-1404,Mill DARK (Rubble)
-1405,Outpost DARK (Rubble)
-1406,Gate Foundation (Rubble)
-1407,PalisadeWall DARK (Rubble)
-1408,TownCenter DARK (Rubble)
-1409,LumberCamp (Rubble)
-1410,MiningCamp (Rubble)
-1411,Mill Age2 (Rubble)
-1412,Mill Age3 (Rubble)
-1413,Barracks Age2 (Rubble)
-1414,Barracks Age3 (Rubble)
-1415,ArcheryRange Age2 (Rubble)
-1416,ArcheryRange Age3 (Rubble)
-1417,Stable Age2 (Rubble)
-1418,Stable Age3 (Rubble)
-1419,Blacksmith Age2 (Rubble)
-1420,Blacksmith Age3 (Rubble)
-1421,Monastery Age3 (Rubble)
-1422,Market Age2 (Rubble)
-1423,Market Age3 (Rubble)
-1424,Market Age4 (Rubble)
-1425,SiegeWorkshop Age2 (Rubble)
-1426,SiegeWorkshop Age3 (Rubble)
-1427,University Age3 (Rubble)
-1428,University Age4 (Rubble)
-1429,TradeWorkshop Age3 (Rubble)
-1430,Castle Age3 (Rubble)
-1431,TownCenter Age2 (Rubble)
-1432,TownCenter Age3 (Rubble)
-1433,TownCenter Age4 (Rubble)
-1434,House Age2 (Rubble)
-1435,House Age3 (Rubble)
-1436,Tower Age2 (Rubble)
-1437,Tower Age3 (Rubble)
-1438,Tower Age4 (Rubble)
-1439,Tower Bombard (Rubble)
-1440,PalisadeGate DARK NE (Rubble)
-1441,PalisadeGate DARK SE (Rubble)
-1442,PalisadeGate DARK E (Rubble)
-1443,PalisadeGate DARK N (Rubble)
-1444,FortifiedTower (Rubble)
-1445,Wonder (Rubble)
-1446,Feitoria (Rubble)
-1447,Yurt A (Rubble)
-1448,Yurt B (Rubble)
-1449,Yurt C (Rubble)
-1450,Yurt D (Rubble)
-1451,Yurt E (Rubble)
-1452,Yurt F (Rubble)
-1453,Yurt G (Rubble)
-1454,Yurt H (Rubble)
-1455,Hut A (Rubble)
-1456,Hut B (Rubble)
-1457,Hut C (Rubble)
-1458,Hut D (Rubble)
-1459,Hut E (Rubble)
-1460,Hut F (Rubble)
-1461,Hut G (Rubble)
-1462,Tent A (Rubble)
-1463,Tent B (Rubble)
-1464,Tent C (Rubble)
-1465,Tent D (Rubble)
-1466,Tent E (Rubble)
-1467,ArmyTent A (Rubble)
-1468,ArmyTent B (Rubble)
-1469,ArmyTent C (Rubble)
-1470,ArmyTent D (Rubble)
-1471,ArmyTent E (Rubble)
-1472,Barricade A (Rubble)
-1473,Barricade B (Rubble)
-1474,Barricade C (Rubble)
-1475,Barricade D (Rubble)
-1476,Pavilion A (Rubble)
-1477,Pavilion B (Rubble)
-1478,Pavilion C (Rubble)
-1479,Krepost (Rubble)
-1480,Cathedral (Rubble)
-1481,Temple of Heaven (Rubble)
-1482,DomeOfRock (Rubble)
-1483,Shrine (Rubble)
-1484,Storage (Rubble)
-1485,ArchOfConstantine (Rubble)
-1486,Fortress (Rubble)
-1487,GolGumbaz (Rubble)
-1488,PoenariCastle (Rubble)
-1489,QuimperCathedral (Rubble)
-1490,SanchiStupa (Rubble)
-1491,SankoreMadrasah (Rubble)
-1492,TowerOfLondon (Rubble)
-1493,DormitionCathedral (Rubble)
-1494,TheAccursedTower (Rubble)
-1495,TheTowerOfFlies (Rubble)
-1496,Mosque (Rubble)
-1497,Rubble 4 x 4
-1498,Rubble 8 x 8
-1499,Granary (Rubble)
-1500,StoneGate NE (Rubble)
-1501,StoneGate SE (Rubble)
-1502,StoneGate E (Rubble)
-1503,StoneGate N (Rubble)
-1504,FortifiedGate NE (Rubble)
-1505,FortifiedGate SE (Rubble)
-1506,FortifiedGate E (Rubble)
-1507,FortifiedGate N (Rubble)
-1508,StoneWall (Rubble)
-1509,FortifiedWall (Rubble)
-1510,CityGate NE (Rubble)
-1511,CityGate SE (Rubble)
-1512,CityGate E (Rubble)
-1513,CityGate N (Rubble)
-1514,Amphitheatre (Rubble)
-1515,Pyramid (Rubble)
-1516,GreatPyramid (Rubble)
-1517,AachenCathedral (Rubble)
-1518,StoneGate Corner (Rubble)
-1519,FortifiedGate Corner (Rubble)
-1520,Colosseum (Rubble)
-1521,PalisadeGate Corner (Rubble)
-1522,Aqueduct (Rubble)
-1523,CityGate Corner (Rubble)
-1524,Donjon Age2 (Rubble)
-1525,Folwark Age2 (Rubble)
-1526,PaganShrine (Rubble)
-1527,Folwark Age3 (Rubble)
-1528,Folwark Age1 (Rubble)
-1529,Caravanserai (Rubble)
-1530,MinaretOfJam(Rubble)
-1531,FortifiedChurch Age3 (Rubble)
-1532,Yurt I (Rubble)
-1533,Yurt J (Rubble)
-1534,Yurt K (Rubble)
-1535,Yurt L (Rubble)
-1536,Bamboo Stump
-1537,Baobab Stump
-1538,Lush Bamboo Stump
-1539,Felled Tree
-1540,Felled Tree (Bamboo)
-1541,Felled Tree (Baobab)
-1542,Felled Tree (Lush Bamboo)
-1543,PLACEHOLDER
-1544,PLACEHOLDER (LAND)
-1545,PLACEHOLDER (AMPHIBIOUS)
-1546,PLACEHOLDER (NAVAL)
-1547,PLACEHOLDER (WATER)
-1548,-
-1549,Forage Bush
-1550,Bridge E--Top
-1551,Bridge E--Middle
-1552,Bridge E--Bottom
-1553,Bridge F--Top
-1554,Bridge F--Middle
-1555,Bridge F--Bottom
-1556,Bridge E--Cracked
-1557,Bridge E--Broken Top
-1558,Bridge E--Broken Bottom
-1559,Bridge F--Cracked
-1560,Bridge F--Broken Top
-1561,Bridge F--Broken Bottom
-1562,Paifang Gate
-1563,Nubian Pyramid
-1564,Target A
-1565,Target B
-1566,Temple Ruin
-1567,Well
-1568,Mounted Samurai
-1569,Mounted Samurai (Dead)
-1570,Xolotl Warrior
-1571,XolotlWarrior (Dead)
-1572,Merchant
-1573,Merchant (Dead)
-1574,Sosso Guard
-1575,Sosso Gaurd (Dead)
-1576,Royal Janissary (Dead)
-1577,Photonman
-1578,Photonman (Dead)
-1579,City Gate
-1580,City Gate
-1581,City Gate
-1582,City Gate
-1583,City Gate
-1584,City Gate
-1585,City Gate
-1586,City Gate
-1587,City Gate
-1588,City Gate
-1589,City Gate
-1590,City Gate
-1591,City Gate
-1592,City Gate
-1593,City Gate
-1594,City Gate
-1595,Projectile Laser
-1596,Cow B
-1597,Cow B (Dead)
-1598,Cow C
-1599,Cow C (Dead)
-1600,Cow D
-1601,Cow D (Dead)
-1602,Horse C
-1603,Horse C (Dead)
-1604,Horse D
-1605,Horse D (Dead)
-1606,Horse E
-1607,Horse E (Dead)
-1608,Butterflies1
-1609,Butterflies2
-1610,Butterflies3
-1611,Animal Blood Small
-1612,Animal Blood Large
-1613,Terrain blocker
-1614,Bolt explosion
-1615,Sforza (Dead)
-1616,Tariq Ibn Ziyad (Dead)
-1617,Vlad Dracula (Dead)
-1618,Subotai (Dead)
-1619,Attila (Dead)
-1620,Alaric (Dead)
-1621,Sumanguru (Dead)
-1622,Aachen Cathedral
-1623,Le Loi (Dead)
-1624,Ataulf (Dead)
-1625,Yodit (Dead)
-1626,Cusi Yupanqui (Dead)
-1627,Prithviraj (Dead)
-1628,Jarl (Dead)
-1629,Ivaylo (Dead)
-1630,Ivaylo Infantry (Dead)
-1631,The Middlebrook
-1632,Osman (Dead)
-1633,Pachacuti (Dead)
-1634,Baobab Stump
-1635,Waterfall (Background)
-1636,Envoy (Dead)
-1637,Bayinnaung (Dead)
-1638,Kushluk (Dead)
-1639,Monument resources enabler
-1640,Villager building (Male)
-1641,Villager building (Female)
-1642,Villager annex (Chinese)
-1643,Villager building2 (Male)
-1644,Villager annex (Mayan)
-1645,Villager building2 (Female)
-1646,Market
-1647,Trade Workshop
-1648,Trail Smoke (Gunpowder)
-1649,Trophy None
-1650,Trophy Bronze
-1651,Trophy Silver
-1652,Trophy Gold
-1653,Trophy Platinum
-1654,resources
-1655,Coustillier
-1656,Coustillier (Dead)
-1657,Elite Coustillier
-1658,Serjeant
-1659,Elite Serjeant
-1660,Serjeant
-1661,Elite Serjeant
-1662,Serjeant (Dead)
-1663,Flemish Militia Male 
-1664,Flemish Militia Male (Dead)
-1665,Donjon
-1666,HPIKL_D
-1667,Elite Elephant Archer (Dead)
-1668,Camel Scout (Dead)
-1669,Edward Longshanks
-1670,Edward Longshanks (Dead)
-1671,Gilbert de Clare
-1672,Gilbert de Clare (Dead)
-1673,John the Fearless
-1674,John the Fearless (Dead)
-1675,Philip the Good
-1676,Philip the Good (Dead)
-1677,Robert Guiscard
-1678,Robert Guiscard (Dead)
-1679,Roger Bosso
-1680,Roger Bosso (Dead)
-1681,Bohemond
-1682,Bohemond (Dead)
-1683,Llywelyn ap Gruffydd
-1684,Llywelyn ap Gruffydd (Dead)
-1685,Dafydd ap Gruffydd
-1686,Dafydd ap Gruffydd (Dead)
-1687,Bernard d'Armagnac
-1688,Bernard d'Armagnac (Dead)
-1689,Flare (Permanent)
-1690,Warwolf Trebuchet
-1691,Warwolf Trebuchet (Packed)
-1692,Jacqueline of Hainaut
-1693,Sheep building1
-1694,Sheep annex1
-1695,Sheep building2
-1696,Sheep annex2
-1697,Flemish Militia Female
-1698,Flemish Militia Female (Dead)
-1699,Flemish Militia
-1700,Sheep building3
-1701,Obuch
-1702,Obuch (Dead)
-1703,Elite Obuch
-1704,Hussite Wagon
-1705,Hussite Wagon (Dead)
-1706,Elite Hussite Wagon
-1707,Winged Hussar
-1708,Winged Hussar (Dead)
-1709,Houfnice
-1710,Houfnice (Dead)
-1711,Folwark
-1712,Pagan Shrine
-1713,Jan Zizka
-1714,Jan Zizka (Dead)
-1715,Jadwiga
-1716,Jadwiga (Dead)
-1717,Tree (Birch)
-1718,Jogaila
-1719,Jogaila (Dead)
-1720,Folwark
-1721,Kestutis
-1722,Kestutis (Dead)
-1723,Crusader Knight
-1724,Crusader Knight (Dead)
-1725,Algirdas
-1726,Algirdas (Dead)
-1727,Ulrich von Jungingen
-1728,Ulrich von Jungingen (Dead)
-1729,Emperor Sigismund
-1730,Dmitry of Moscow
-1731,Mikhail of Tver
-1732,Young Jadwiga
-1733,Projectile Hussite Wagon
-1734,Folwark
-1735,Urumi Swordsman
-1736,Urumi Swordsman (Dead)
-1737,Elite Urumi Swordsman
-1738,Ratha (Melee)
-1739,Ratha (Melee) (Dead)
-1740,Elite Ratha (Melee)
-1741,Chakram Thrower
-1742,Chakram Thrower (Dead)
-1743,Elite Chakram Thrower
-1744,Armored Elephant
-1745,Armored Elephant (Dead)
-1746,Siege Elephant
-1747,Ghulam
-1748,Ghulam (Dead)
-1749,Elite Ghulam
-1750,Thirisadai
-1751,Shrivamsha Rider
-1752,Shrivamsha Rider (Dead)
-1753,Elite Shrivamsha Rider
-1754,Caravanserai
-1755,Camel Scout
-1756,Projectile Chakram
-1757,Siege Elephant (Dead)
-1758,Gaia transition building
-1759,Ratha (Ranged)
-1760,Ratha (Ranged) (Dead)
-1761,Elite Ratha (Ranged)
-1762,Mihira Bhoja
-1763,Amoghavarsha
-1764,Rajendra Chola
-1765,Rajendra Chola (Dead)
-1766,General Araiyan
-1767,General Araiyan (Dead)
-1768,Young Babur
-1769,Qutlugh
-1770,Qutlugh (Dead)
-1771,Ibrahim Lodi
-1772,Shaybani Khan
-1773,Minaret of Jam
-1774,Map Revealer Medium
-1775,Map Revealer Giant
-1776,Blocker
-1777,Indian Statues
-1778,Rekha-Deul Temple
-1779,Projectile Thirisadai
-1780,Projectile Thirisadai (Fire)
-1781,Projectile Elephant Archer
-1782,Projectile Elephant Archer (Fire)
-1783,Projectile Elite Chakram
-1784,Indian Ruins
-1785,Flare B (Permanent)
-1786,Spearman
-1787,Pikeman
-1788,Halberdier
-1789,Projectile Organ Gun (Secondary)
-1790,Centurion
-1791,Centurion (Dead)
-1792,Elite Centurion
-1793,Legionary
-1794,Legionary (Dead)
-1795,Dromon
-1796,Gazelle
-1797,Gazelle (Dead)
-1798,Projectile Dromon (Greek Fire)
-1799,Trail Smoke (Fire)
-1800,Composite Bowman
-1801,Composite Bowman (Dead)
-1802,Elite Composite Bowman
-1803,Monaspa
-1804,Monaspa (Dead)
-1805,Elite Monaspa
-1806,Fortified Church
-1807,Svan Tower
-1808,Mule Cart
-1809,Mule Cart (Dead)
-1810,Villager
-1811,Warrior Priest
-1812,Warrior Priest (Dead)
-1813,Savar
-1814,Savar (Dead)
-1815,Shah Ismail
-1816,Shah Ismail (Dead)
-1817,Qizilbash Warrior
-1818,Qizilbash Warrior (Dead)
-1819,Ismail
-1820,Selim the Grim
-1821,Thoros
-1822,Tamar
-1823,Tamar (Dead)
-1824,Yury
-1825,Ivane
-1826,Zakare
-1827,Stephan
-1828,Mleh
-1829,Elite Qizilbash Warrior
-1830,Projectile Citadels
-1831,Warrior Priest with Relic
-1832,Yurt I
-1833,Yurt J
-1834,Yurt K
-1835,Yurt L
-1836,Chapel
-1837,Castle Ruins
-1838,Church Ruins
-1839,Bridge Piece--End A
-1840,Bridge Piece--End B
-1841,Bridge Piece--End C
-1842,Bridge Piece--Middle
-1843,Bridge Piece--Broken A
-1844,Bridge Piece--Broken B
-1845,Bridge Piece--Broken C
-1846,Bridge Piece--Cracked
-1847,Bridge Piece--Rails
-1848,Thoros (Dead)
-1849,Cliff (Desert) 01
-1850,Cliff (Desert) 02
-1851,Cliff (Desert) 03
-1852,Cliff (Desert) 04
-1853,Cliff (Desert) 05
-1854,Cliff (Desert) 06
-1855,Cliff (Desert) 07
-1856,Cliff (Desert) 08
-1857,Cliff (Desert) 09
-1858,Cliff (Snow) 01
-1859,Cliff (Snow) 02
-1860,Cliff (Snow) 03
-1861,Cliff (Snow) 04
-1862,Cliff (Snow) 05
-1863,Cliff (Snow) 06
-1864,Cliff (Snow) 07
-1865,Cliff (Snow) 08
-1866,Cliff (Snow) 09
-1867,Projectile SVT
-1868,Projectile SVT (Fire)
-1869,Hunnic Horse
-1870,Chief's Yurt
-1871,ChiefsYurt (Rubble)
-1872,REVEAL1 (TEMP)
-1873,REVEAL2 (TEMP)
-1874,REVEAL3 (TEMP)
-1875,PLACEHOLDER (VILL)
-1876,PLACEHOLDER (VILLF)
-1877,GREN_DELAY_1
-1878,GREN_DELAY_2
-1879,Projectile LCHUAN (Rocket)
-1880,PROJMTREB_D
-1881,LCHUAN_D0
-1882,LCHUAN_EXP
-1883,LCHUAN_DELAY_D
-1884,LCHUAN_DELAY_EXP
-1885,Broken Fence A
-1886,Broken Fence B
-1887,GREN_DELAY_D
-1888,Pasture Post
-1889,Pasture
-1890,Pasture Annex
-1891,Villager Female Herder
-1892,Villager Male Herder
-1893,Pasture
-1894,Dead Pasture
-1895,HRCKTCRT_D0
-1896,Argali
-1897,Pasture
-1898,Dead Pasture
-1899,Argali (Pasture)
-1900,Ibex (Pasture)
-1901,Fire Lancer
-1902,PLACEHOLDER2
-1903,Elite Fire Lancer
-1904,Rocket Cart
-1905,PLACEHOLDER2 (LAND)
-1906,Projectile Rocket Cart
-1907,Heavy Rocket Cart
-1908,Iron Pagoda
-1909,PLACEHOLDER2 (AMPHIBIOUS)
-1910,Elite Iron Pagoda
-1911,Grenadier
-1912,PLACEHOLDER2 (NAVAL)
-1913,Projectile Grenadier
-1914,GREN_DELAYANNEX_D
-1915,GREN_DELAY_EXP
-1916,GREN_D0
-1917,GREN_EXP
-1918,RCKTCRT_D0
-1919,RCKTCRT_EXP
-1920,Liao Dao
-1921,PLACEHOLDER2 (WATER)
-1922,Elite Liao Dao
-1923,Mounted Trebuchet
-1924,-
-1925,Projectile Fire Lancer 
-1926,Projectile Mounted Trebuchet
-1927,Projectile Mounted Trebuchet (Fire)
-1928,ROCKET_DELAY_D
-1929,ROCKET_DELAY_EXP
-1930,Projectile Crossbowman (Secondary)
-1931,Projectile ZhouYu
-1932,Projectile Traction
-1933,Projectile Traction (Fire)
-1934,Projectile Traction (Secondary)
-1935,Projectile Traction (Secondary Fire)
-1936,Projectile LCHUAN (Charge)
-1937,Projectile LCHUAN Fire (Charge)
-1938,Projectile LCHUAN
-1939,Projectile LCHUAN (Fire)
-1940,Pagan Priest
-1941,Pagan Priest with Relic
-1942,Traction Trebuchet
-1943,-
-1944,Hei Guang Cavalry
-1945,Hei Guang Cavalry (Dead)
-1946,Heavy Hei Guang Cavalry
-1947,Heavy Hei Guang Cavalry (Dead)
-1948,Lou Chuan
-1949,Tiger Cavalry
-1950,Tiger Cavalry (Dead)
-1951,Elite Tiger Cavalry
-1952,Xianbei Raider
-1953,Xianbei Raider (Dead)
-1954,Cao Cao
-1955,Red Fox
-1956,Dummy Target
-1957,Projectile War Chariot (Barrage)
-1958,Arctic Fox
-1959,White Feather Guard
-1960,White Feather Guard (Dead)
-1961,Elite White Feather Guard
-1962,War Chariot (Focus Fire)
-1963,Llama B
-1964,Projectile War Chariot (Focus Fire)
-1965,Arctic Wolf
-1966,Liu Bei
-1967,-
-1968,Fire Archer
-1969,Fire Archer (Dead)
-1970,Elite Fire Archer
-1971,Projectile Fire Archer
-1972,Projectile Fire Archer (Red Cliffs)
-1973,Nessie
-1974,Jian Swordsman
-1975,Jian Swordsman (Dead)
-1976,Jian Swordsman
-1977,Jian Swordsman (Dead)
-1978,Sun Jian
-1979,Stonehenge
-1980,War Chariot (Barrage)
-1981,-
-1982,Projectile Xianbei
-1983,Projectile Xianbei (Secondary)
-1984,Tree (Lush Bamboo Forest)
-1985,Lush Bamboo Stump
-1986,Paper Lantern
-1987,Chinese Ruins
-1988,Emperor in a Litter
-1989,Paifang Gate (Small)
-1990,Paifang Gate (Large)
-1991,Fountain
-1992,Bridge Piece CD--End A
-1993,Bridge Piece CD--End B
-1994,Bridge Piece CD--End C
-1995,Bridge Piece CD--Middle A
-1996,Bridge Piece CD--Middle B
-1997,Bridge Piece CD--Middle C
-1998,Bridge Piece CD--Broken A
-1999,Bridge Piece CD--Broken B
-2000,Bridge Piece CD--Broken C
-2001,Bridge Piece CD--Cracked
-2002,Bridge Piece CD--Rails A
-2003,Bridge Piece CD--Rails B
-2004,Bridge Piece CD--Rails C
-2005,Pagoda D
-2006,Pagoda E
-2007,Garden Pavilion
-2008,Rock (Pillar)
-2009,Rock (Limestone)
-2010,Flag N
-2011,Flag O
-2012,Flag P
-2013,Flag Ritual A
-2014,Flag Ritual B
-2015,Flag Ritual C
-2016,Tree (Asian Pine)
-2017,Tree (Peach Blossom)
-2018,Asian Carts
-2019,Weapon Stacks
-2020,Garden Bridge
-2021,Siege Props
-2022,Asian Lanterns
-2023,Burned Building B
-2024,Asian Market Stalls
-2025,Tree (Willow)
-2026,Red Crown Crane
-2027,"Tree (Asian Maple, Green)"
-2028,"Tree (Asian Maple, Autumn)"
-2029,Fallen Leaves (Peach Blossom)
-2030,Fallen Leaves (Maple)
-2031,"Fallen Leaves (Maple, Autumn)"
-2032,LÃ¼ Bu
-2033,Yurt M
-2034,Guan Yu
-2035,-
-2036,Zhuge Liang
-2037,-
-2038,Zhang Fei
-2039,-
-2040,Sun Ce
-2041,-
-2042,Sun Quan
-2043,-
-2044,Zhou Yu
-2045,Dong Zhuo
-2046,Yuan Shao
-2047,Yu Ji
-2048,White Tiger Yan
-2049,Liu Biao
-2050,Zhang Jue
-2051,Zhao Yun
-2052,Cao Cao (Campaign)
-2053,Liu Bei (Campaign)
-2054,Sun Jian (Campaign)
-2055,FIREARCH_EXP
-2056,Projectile LUBU
-2057,Projectile GSTRIKE
-2058,Huabiao Totem
-2059,Que Tower
-2060,Hall of Heroes
-2061,LÃ¼ Bu
-2062,Projectile SUNQUAN
-2063,Sun Quan
-2064,Guan Yu
-2065,Sun Jian
-2066,Liu Bei
-2067,Kongming Lantern
-2068,Kongming Lantern
-2069,Cliff (Limestone) 01
-2070,Cliff (Limestone) 02
-2071,Cliff (Limestone) 03
-2072,Cliff (Limestone) 04
-2073,Cliff (Limestone) 05
-2074,Cliff (Limestone) 06
-2075,Cliff (Limestone) 07
-2076,Cliff (Limestone) 08
-2077,Cliff (Limestone) 09
-2078,Pasture Annex Fences
-2079,Pasture Annex AB
-2080,Pasture Annex CD
-2081,-
-2082,Panda Rock
-2083,Chicken A
-2084,Wild Chicken A
-2085,Chicken B
-2086,Wild Chicken B
-2087,Chicken C
-2088,Wild Chicken C
-2089,Black Bear
-2090,Polar Bear
-2091,Arabian Wolf
-2092,Wild Horse B
-2093,Wild Horse C
-2094,Wild Horse D
-2095,Wild Horse E
-2096,Monkey
-2097,Penguin
-2098,Hare A
-2099,Hare B
-2100,Arctic Hare
-2101,Immortal
-2102,Elite Immortal
-2103,Immortal (Dead)
-2104,Strategos
-2105,Elite Strategos
-2106,Strategos (Dead)
-2107,Hippeus
-2108,Elite Hippeus
-2109,Hippeus (Dead)
-2110,Hoplite
-2111,Elite Hoplite
-2112,Hoplite (Dead)
-2113,-
-2114,-
-2115,-
-2116,-
-2117,Shipyard3
-2118,Shipyard4
-2119,Shipyard2
-2120,Dock
-2121,Dock
-2122,Dock
-2123,Lembos
-2124,War Lembos
-2125,Heavy Lembos
-2126,Elite Lembos
-2127,Monoreme
-2128,Bireme
-2129,Trireme
-2130,Galley - Antiquity
-2131,War Galley - Antiquity
-2132,Elite Galley
-2133,Incendiary Raft
-2134,Incendiary Ship
-2135,Heavy Incendiary Ship
-2136,-
-2137,-
-2138,Catapult Ship
-2139,Onager Ship
-2140,Leviathan
-2141,Port 4
-2142,Port 3
-2143,Port 2
-2144,Dock
-2145,Dock
-2146,Dock
-2147,FSHSP
-2148,XPORT
-2149,Merchant Ship
-2150,War Chariot
-2151,Elite War Chariot
-2152,-
-2153,-
-2154,-
-2155,-
-2156,-
-2157,-
-2158,-
-2159,-
-2160,-
-2161,-
-2162,Polemarch 1
-2163,Basileus (Dead)
-2164,Polemarch 2
-2165,Polemarch 3
-2166,Polemarch 4
-2167,Polemarch 3 with Ephorate
-2168,Hippeus
-2169,Elite Hippeus
-2170,Oysters
-2171,Oystering Ship
-2172,Port 1
-2173,Dock
-2174,Immortal Ranged
-2175,Elite Immortal Ranged
-2176,Greek Army Tent A
-2177,Greek Army Tent A (Rubble)
-2178,Marble Cliff 1
-2179,Marble Cliff 2
-2180,Marble Cliff 3
-2181,Marble Cliff 4
-2182,Marble Cliff 5
-2183,Marble Cliff 6
-2184,Marble Cliff 7
-2185,Marble Cliff 8
-2186,Marble Cliff 9
-2187,Hoplite with Xyphos
-2188,Elite Hoplite with Xyphos
-2189,-
-2190,Short Marble Cliff 1
-2191,Short Marble Cliff 2
-2192,Short Marble Cliff 3
-2193,Short Marble Cliff 4
-2194,Short Marble Cliff 5
-2195,Short Marble Cliff 6
-2196,Short Marble Cliff 7
-2197,Short Marble Cliff 8
-2198,Short Marble Cliff 9
-2199,Short Cliff 1
-2200,Short Cliff 2
-2201,Short Cliff 3
-2202,Short Cliff 4
-2203,Short Cliff 5
-2204,Short Cliff 6
-2205,Short Cliff 7
-2206,Short Cliff 8
-2207,Short Cliff 9
-2208,Short Sand Cliff 1
-2209,Short Sand Cliff 2
-2210,Short Sand Cliff 3
-2211,Short Sand Cliff 4
-2212,Short Sand Cliff 5
-2213,Short Sand Cliff 6
-2214,Short Sand Cliff 7
-2215,Short Sand Cliff 8
-2216,Short Sand Cliff 9
-2217,Short Snow Cliff 1
-2218,Short Snow Cliff 2
-2219,Short Snow Cliff 3
-2220,Short Snow Cliff 4
-2221,Short Snow Cliff 5
-2222,Short Snow Cliff 6
-2223,Short Snow Cliff 7
-2224,Short Snow Cliff 8
-2225,Short Snow Cliff 9
-2226,Projectile Leviathan
-2227,Strategos with Taxiarchs
-2228,Elite Strategos with Taxiarchs
-2229,Government cost change
-2230,First Government cost change
-2231,Second Government cost change
-2232,Third Government cost change
-2233,Fourth Government cost change
-2234,Mediterranean Ruins
-2235,Mediterranean Courtyard Walls
-2236,Lembos spawner
-2237,Lembos spawner part 2
-2238,AI Hint Object
-2239,-
-2240,-
-2241,-
-2242,-
-2243,-
-2244,-
-2245,-
-2246,-
-2247,-
-2248,-
-2249,-
-2250,-
-2251,Mesopotamian Pillar
-2252,Mesopotamian Garden
-2253,Achaemenid Flag 1
-2254,Achaemenid Flag 2
-2255,Achaemenid Flag 3
-2256,Athenian Flag 1
-2257,Athenian Flag 2
-2258,Athenian Flag 3
-2259,Spartan Flag 1
-2260,Spartan Flag 2
-2261,Spartan Flag 3
-2262,Greek Commander Tent A
-2263,Greek Commander Tent A (Rubble)
-2264,Statue Athena Marble
-2265,Statue Athena Painted
-2266,-
-2267,-
-2268,-
-2269,-
-2270,Polemarch 4 with Ephorate
-2271,Polemarch 3 with Morai
-2272,Polemarch 4 with Morai
-2273,Spawn Basileus
-2274,Archaic Fence
-2275,Economic Satrapy
-2276,Defensive Satrapy
-2277,Military Satrapy
-2278,Garden Hedge
-2279,Statue Ares Marble
-2280,Statue Ares Painted
-2281,Sapper Tunnel
-2282,Siege Camp Equipment
-2283,Siege Camp Weapons
-2284,Market Stall
-2285,Stake Barricade
-2286,Tropaion
-2287,Mesopotamian Tomb
-2288,Fire Shrine
-2289,Treasure Chest
-2290,Grapevine
-2291,Leatherworking Equipment
-2292,Antiquity Broken Cart
-2293,Weapon Rack
-2294,Sacred Tree
-2295,-
-2296,-
-2297,-
-2298,-
-2299,-
-2300,-
-2301,Elite Hoplite (Dead)
-2302,War Chariot (Dead)
-2303,Elite War Chariot (Dead)
-2304,Ranged Immortal (Dead)
-2305,-
-2306,Hero Shrine
-2307,Projectile Gastraphetes
-2308,Artaphernes
-2309,Datis
-2310,Aristagoras
-2311,Dionysus
-2312,Artemisia
-2313,Aristides
-2314,Miltiades
-2315,Themistocles
-2316,Leonidas
-2317,Brasidas
-2318,Lysander
-2319,The Aeginetan
-2320,Rhodian Slinger
-2321,Mercenary Hoplite
-2322,Elite Greek Cavalry
-2323,Elite Persian Cavalry
-2324,Elite Persian Archer
-2325,Ekdromos
-2326,Cretan Archer
-2327,Camel Raider
-2328,Tarantine Cavalry
-2329,Sparabara
-2330,Takabara
-2331,Sickle Warrior
-2332,Thracian Peltast
-2333,Villager Male Oyster Gatherer
-2334,Villager Female Oyster Gatherer
-2335,-
-2336,-
-2337,-
-2338,-
-2339,Themistocles Warship
-2340,Mouflon
-2341,Mouflon (Dead)
-2342,Projectile Polycritus
-2343,Military Satrapy Flag
-2344,Defensive Satrapy Flag
-2345,Economic Satrapy Flag
-2346,Cleon
-2347,Darius
-2348,Oracle Temple
-2349,Elite Hoplite
-2350,Mesopotamian Ruins
-2351,Tholos Shrine
-2352,Antiquity Transport Shipwreck
-2353,Leviathan Shipwreck
-2354,Galley Shipwreck
-2355,Catapult Shipwreck
-2356,Antiquity Mode Fishing Ship
-2357,Ekdromos (Dead)
-2358,Sakan Axeman (Dead)
-2359,Brasidas (Dead)
-2360,Themistocles (Dead)
-2361,Mercenary Hoplite (Dead)
-2362,Sickle Warrior (Dead)
-2363,Artaphernes (Dead)
-2364,Datis (Dead)
-2365,Cretan Archer (Dead)
-2366,Bactrian Archer (Dead)
-2367,Rhodian Slinger (Dead)
-2368,Camel Raider (Dead)
-2369,Greek Noble Cavalry (Dead)
-2370,Aristagoras (Dead)
-2371,Lysander (Dead)
-2372,Sparabara (Dead)
-2373,Aura Quest Indicator (Lavender)
-2374,Scythian Axe Cavalry (Dead)
-2375,Tarantine Cavalry (Dead)
-2376,Aristides (Dead)
-2377,Thracian Peltast (Dead)
-2378,Aura Quest Indicator (Shells)
-2379,Aura Quest Indicator (Coins)
-2380,Aura Quest Indicator (Gold and Shells)
-2381,GOAT
-2382,Companion Cavalry
-2383,Elite Companion Cavalry
-2384,Phalangite
-2385,Elite Phalangite
-2386,Rhomphaia Warrior
-2387,Elite Rhomphaia Warrior
-2388,Pattiyodha Longbowman
-2389,Elite Pattiyodha Longbowman
-2390,Sannahya
-2391,Elite Sannahya
-2392,Companion Cavalry (Dead)
-2393,Phalangite (Dead)
-2394,Rhomphaia Warrior (Dead)
-2395,Pattiyodha Longbowman (Dead)
-2396,Sannahya (Dead)
-2397,Alexander Dismounted
-2398,Alexander
-2399,Philip
-2400,Parmenion
-2401,Cleitus
-2402,Hephaistion
-2403,Perdiccas
-2404,Nearchos
-2405,Greek Commander Tent Dropsite
-2406,Camp Stable Age2 (Rubble)
-2407,Rock 1 Hover
-2408,Rock 2 Hover
-2409,Rock Formation 1 Hover
-2410,Rock Jungle Hover
-2411,Rock Limestone Hover
-2412,Full Supply Cart no garrison
-2413,Empty Supply Cart no garrison
-2414,Macedonian Command Post
-2415,Fortified Outpost
-2416,Second Empty TC annex
-2417,Fortified Outpost
-2418,Castle
-2419,Pattiyodha Longbowman
-2420,Elite Pattiyodha Longbowman
-2421,Mole under construction
-2422,Mole constructed
-2423,Blocker 1x3
-2424,Blocker 3x1
-2425,Mole annex 1
-2426,Mole annex 2
-2427,Mole annex 3
-2428,Mole annex 4
-2429,Buildable Blocker 1x3
-2430,Buildable Blocker 3x1
-2431,Removed
-2432,Removed Decay Animation
-2433,Thin blocker spawner A
-2434,Thin blocker spawner B
-2435,Thin blocker
-2436,Porus
-2437,Camp Barracks
-2438,Camp Archery Range
-2439,Camp Stable
-2440,Camp Siege Workshop
-2441,Camp Blacksmith
-2442,Flagship of Nearchos moveable
-2443,WCTWX
-2444,Helepolis
-2445,Projectile Helepolis
-2446,Parmenion Dead
-2447,Macedonian Commander Dead
-2448,Flagship of Nearchos moveable docked
-2449,Indian Tribesman
-2450,Indian Tribesman (Dead)
-2451,Thracian Chieftain
-2452,Thracian Chieftain (Dead)
-2453,Hill Tribesman
-2454,Hill Tribesman (Dead)
-2455,Perdiccas (Dead)
-2456,Antiquity Impaled Corpse
-2457,Beached Whale
-2458,Statue Hermes
-2459,Alexander's Rhomphaia Warrior
-2460,Alexander's Peltast
-2461,Alexander's Ekdromos
-2462,Alexander's Strategos
-2463,Alexander's Slinger
-2464,Alexander's Mercenary Archer
-2465,Alexander's Axe Cavalry
-2466,Alexander's Axeman
-2467,Alexander's Immortal
-2468,Alexander's Immortal Ranged
-2469,Alexander's War Chariot
-2470,Alexander's Skirmisher Cavalry
-2471,Alexander's Heavy Cavalry
-2472,Alexander's Sannahya
-2473,Alexander's Longbowman
-2474,Alexander's Eastern Archer
-2475,Alexander's Sickle Warrior
-2476,Macedonian Command Post (Rubble)
-2477,Ekdromos/Strategos
-2478,Slinger/Mercenary Archer
-2479,Axe Cavalry/Axeman
-2480,Immortal/War Chariot
-2481,Skirmisher Cav/Heavy Cav
-2482,Sannahya/Longbowman
-2483,Eastern Archer/Sickle Warrior
-2484,Helepolis Dead
-2485,Scythian Horse Archer
-2486,Elite Scythian Horse Archer
-2487,Sacred Band
-2488,Statue Artemis
-2489,Fortified Outpost (Rubble)
-2490,Owl
-2491,Water Pots
-2492,Camp Archery Range Age2 (Rubble)
-2493,Porus (Dead)
-2494,Dismounted Alexander (Dead)
-2495,Cleitus (Dead)
-2496,Camp Barracks Age2 (Rubble)
-2497,Scythian Horse Archer (Dead)
-2498,Macedonian Flag
-2499,Thracian Flag
-2500,Puru Flag
-2501,Grain Storage
-2502,Mounted Alexander (Dead)
-2503,Sacred Band (Dead)
-2504,Burned Building Achaemenid
-2505,Burned Building Greek
-2506,Burned Building Greek
-2507,Statue Sphinx
-2508,Burned Building Thracian
-2509,Burned Building Puru
-2510,Furnace
-2511,Water Trough
-2512,Elite Scythian Horse Archer (Dead)
-2513,Boeotian Flag
-2514,Puru Ruins
-2515,Rock 3
-2516,Rock 3 Hover
-2517,Skeleton Civilian
-2518,Skeleton Soldier
-2519,Amphorae
-2520,Construction Crane
-2521,Mole Top
-2522,Mole Bottom
-2523,Benches (Wooden)
-2524,Benches (Stone)
-2525,Bucephalus
-2526,Bucephalus (dead)
-2527,Scaffolding
-2528,Fountain Antiquity
-2529,Cypress Tree (Decorative)
-2530,Theatre
-2531,Statue Alexander
-2532,Statue Hephaistion
-2533,Statue Greek Hero
-2534,Mediterranean Stall
-2535,Mesopotamian Stall
-2536,Water Lily
-2537,Peacock
-2538,Peacock (Dead)
-2539,-
-2540,-
-2541,-
-2542,-
-2543,-
-2544,-
-2545,-
-2546,-
-2547,-
-2548,-
-2549,-
-2550,Champi Scout
-2551,Invisible object B
-2552,Champi Warrior
-2553,Invisible Object C
-2554,Elite Champi Warrior
-2555,Invisible Object D
-2556,Settlement
-2557,Missionary with Relic
-2558,Settlement
-2559,-
-2560,Settlement
-2561,-
-2562,Guecha Warrior
-2563,Invisible Object E
-2564,Elite Guecha Warrior
-2565,Guecha Warrior (Dead)
-2566,Kona
-2567,Tree (Oak Green)
-2568,Elite Kona
-2569,Bolas Rider
-2570,Tree (Monkey Puzzle)
-2571,Elite Bolas Rider
-2572,Projectile Bolas
-2573,Projectile EliteBolas
-2574,Projectile Bolas (Charge)
-2575,Projectile EliteBolas (Charge)
-2576,-
-2577,-
-2578,-
-2579,Blackwood Archer
-2580,Tree (Brazilwood)
-2581,Elite Blackwood Archer
-2582,Ibirapema Warrior
-2583,Tree (Wax Palm)
-2584,Elite Ibirapema Warrior
-2585,Howler Monkey
-2586,Temple Guard
-2587,Elite Temple Guard
-2588,Champi Runner
-2589,Tapir
-2590,Capybara
-2591,Guanaco
-2592,Snake
-2593,Condor
-2594,Caiman
-2595,Black Panther
-2596,Flamingo
-2597,Rhea
-2598,Small Waterfall
-2599,Papaya Tree
-2600,Wooden Fort
-2601,Flag Q
-2602,Flag R
-2603,Flag S
-2604,Flag T
-2605,Flag U
-2606,Burned Building C
-2607,Gunpowder Keg
-2608,Projectile Blackwood Archer
-2609,Projectile Elite Blackwood Archer
-2610,Trail Poison
-2611,Andean Ruins
-2612,War Dog
-2613,Elite War Dog
-2614,Alpaca
-2615,Wild Alpaca
-2616,-
-2617,-
-2618,-
-2619,-
-2620,-
-2621,-
-2622,Trail Rope
-2623,-
-2624,FIRESHIP_EXP
-2625,Whale
-2626,Hulk
-2627,War Hulk
-2628,Carrack
-2629,Projectile Fire Ship (Charge)
-2630,Whaling Ship
-2631,Projectile DOCK
-2632,Projectile DOCK (Fire)
-2633,Catapult Galleon
-2634,-
-2635,Treasure Chest
-2636,Projectile Hook
-2637,Lautaro
-2638,Galvarino
-2639,Guacolda
-2640,Pacanchique
-2641,Arariboia
-2642,Arariboia
-2643,Cunhambebe
-2644,Scaffolding (Walkable)
-2645,-
-2646,-
-2647,-
-2648,-
-2649,-
-2650,Pineapple Bush
-2651,Cliff (Terrace) 01
-2652,Cliff (Terrace) 02
-2653,Cliff (Terrace) 03
-2654,Cliff (Terrace) 04
-2655,Cliff (Terrace) 05
-2656,Cliff (Terrace) 06
-2657,Cliff (Terrace) 07
-2658,Cliff (Terrace) 08
-2659,Cliff (Terrace) 09
-2660,-
-2661,-
-2662,-
-2663,-
-2664,-
-2665,-
-2666,-
-2667,-
-2668,-
-2669,-
-2670,-
-2671,-
-2672,-
-2673,-
-2674,-
-2675,-
-2676,-
-2677,-
-2678,Fort Wall
-2679,Fort Gate
-2680,Fort Gate
-2681,Fort Gate
-2682,Fort Gate
-2683,Fort Gate
-2684,Fort Gate
-2685,Fort Gate
-2686,Fort Gate
-2687,Fort Gate
-2688,Fort Gate
-2689,Fort Gate
-2690,Fort Gate
-2691,Fort Gate
-2692,Fort Gate
-2693,Fort Gate
-2694,Fort Gate
-2695,-
-2696,-
-2697,-
-2698,-
-2699,-
-2700,-
+ID,CONST,DE ,HD+DLC,AoC,Description
+0,,Moveable Map Revealer,Disabled,Disabled,
+1,,Imperial Legionary,Legionary,Disabled,
+2,,Imperial Legionary (Dead),Legionary (Dead),CRASH,
+3,,Archer (Dead),Archer (Dead),Archer (Dead),
+4,ARCHER,Archer,Archer,Archer,
+5,HAND_CANNONEER,Hand Cannoneer,Hand Cannoneer,Hand Cannoneer,
+6,ELITE_SKIRMISHER,Elite Skirmisher,Elite Skirmisher,Elite Skirmisher,
+7,SKIRMISHER,Skirmisher,Skirmisher,Skirmisher,
+8,LONGBOWMAN,Longbowman,Longbowman,Longbowman,
+9,,Arrow,Arrow,Arrow,
+10,ARCHERY_RANGE_C,Archery Range,Archery Range,Archery Range,castle age
+11,MANGUDAI,Mangudai,Mangudai,Mangudai,
+12,BARRACKS,Barracks,Barracks,Barracks,dark age
+13,FISHING_SHIP,Fishing Ship,Fishing Ship,Fishing Ship,
+14,ARCHERY_RANGE_I,Archery Range,Archery Range,Archery Range,imperial age
+15,,Junk,Junk,Junk,
+16,,Bombard Cannon (Dead),Bombard Cannon (Dead),Bombard Cannon (Dead),
+17,TRADE_COG,Trade Cog,Trade Cog,Trade Cog,
+18,BLACKSMITH_C,Blacksmith,Blacksmith,Blacksmith,castle age
+19,BLACKSMITH_I,Blacksmith,Blacksmith,Blacksmith,imperial age
+20,BARRACKS_I,Barracks,Barracks,Barracks,imperial
+21,WAR_GALLEY,War Galley,War Galley,War Galley,
+22,,Beta Berserk (Dead),Beta Berserk (Dead),Beta Berserk (Dead),
+23,,Battering Ram (Dead),Battering Ram (Dead),Battering Ram (Dead),
+24,CROSSBOWMAN,Crossbowman,Crossbowman,Crossbowman,
+25,TEUTONIC_KNIGHT,Teutonic Knight,Teutonic Knight,Teutonic Knight,
+26,,Crossbowman (Dead),Crossbowman (Dead),Crossbowman (Dead),
+27,,Cataphract (Dead),Cataphract (Dead),Cataphract (Dead),
+28,,Chu Ko Nu (Dead),Chu Ko Nu (Dead),Chu Ko Nu (Dead),
+29,,Trading Cog (Dead),Trading Cog (Dead),Trading Cog (Dead),
+30,MONASTERY_F,Monastery,Monastery,Monastery,feudal age
+31,MONASTERY_C,Monastery,Monastery,Monastery,castle age
+32,MONASTERY_I,Monastery,Monastery,Monastery,imperial age
+33,,Fortress,Fortress,Castle,"75 garrison capacity, but does nothing else"
+34,,Cavalry Archer (Dead),Cavalry Archer (Dead),Cavalry Archer (Dead),
+35,BATTERING_RAM,Battering Ram,Battering Ram,Battering Ram,
+36,BOMBARD_CANNON,Bombard Cannon,Bombard Cannon,Bombard Cannon,
+37,,Camel Rider,Camel Rider,Camel Rider,
+38,KNIGHT,Knight,Knight,Knight,
+39,CAVALRY_ARCHER,Cavalry Archer,Cavalry Archer,Cavalry Archer,
+40,CATAPHRACT,Cataphract,Cataphract,Cataphract,
+41,HUSKARL,Huskarl,Huskarl,Huskarl,
+42,TREBUCHET,Trebuchet,Trebuchet,Trebuchet,unpacked
+43,,Deer (Dead),Deer (Dead),Deer (Dead),
+44,,Mameluke (Dead),Mameluke (Dead),Mameluke (Dead),
+45,DOCK,Dock,Dock,Dock,dark age
+46,JANISSARY,Janissary,Janissary,Janissary,
+47,DOCK_C,Dock,Dock,Dock,castle age
+48,"BOAR, WILD_BOAR",Wild Boar,Wild Boar,Wild Boar,
+49,SIEGE_WORKSHOP,Siege Workshop,Siege Workshop,Siege Workshop,
+50,FARM,Farm,Farm,Farm,
+51,DOCK_I,Dock,Dock,Dock,imperial age
+52,,Royal Janissary,Royal Janissary,Disabled,
+53,"FISH, FISH_PERCH",Fish (Perch),Fish (Perch),Fish (Perch),
+54,,Projectile VOL,Arrow,Arrow,
+55,,Fishing Ship (Dead),Fishing Ship (Dead),Fishing Ship (Dead),
+56,VILLAGER_FISHER_M,Villager Male Fisherman,Villager Male Fisherman,Villager Male Fisherman,
+57,VILLAGER_FISHER_F,Villager Female Fisherman,Villager Female Fisherman,Villager Female Fisherman,
+58,,Villager Male Fisherman (Dead),Villager Male Fisherman (Dead),Villager Male Fisherman (Dead),
+59,"FORAGE, FORAGE_BUSH",Forage Bush,Forage Bush,Forage Bush,
+60,,Villager Female Fisherman (Dead),Villager Female Fisherman (Dead),Villager Female Fisherman (Dead),
+61,,Dolphin,Dolphin,Trireme,Dolphin is deep fish; Trireme is eyecandy
+62,,Huskarl (Dead),Huskarl (Dead),Huskarl (Dead),
+63,,Fortified Gate (up.),Fortified Gate (up.),Fortified Gate (up.),
+64,,Gate (up.),Gate (up.),Gate (up.),
+65,DEER,Deer,Deer,Deer,
+66,"GOLD, GOLD_MINE",Gold Mine,Gold Mine,Gold Mine,
+67,,Fortified Gate,Fortified Gate,Fortified Gate,
+68,MILL,Mill,Mill,Mill,dark age
+69,SHORE_FISH,Shore Fish,Shore Fish,Shore Fish,
+70,HOUSE,House,House,House,dark age
+71,TOWN_CENTER_F,Town Center,Town Center,Town Center,feudal age
+72,PALISADE_WALL,Palisade Wall,Palisade Wall,Palisade Wall,
+73,CHU_KO_NU,Chu Ko Nu,Chu Ko Nu,Chu Ko Nu,
+74,MILITIA,Militia,Militia,Militia,
+75,MAN_AT_ARMS,Man-at-Arms,Man-at-Arms,Man-at-Arms,
+76,,Heavy Swordsman,Heavy Swordsman,Heavy Swordsman,
+77,LONG_SWORDSMAN,Long Swordsman,Long Swordsman,Long Swordsman,
+78,,Gate,Gate,Gate,
+79,WATCH_TOWER,Watch Tower,Watch Tower,Watch Tower,
+80,,Fortified Gate,Fortified Gate,Fortified Gate,1x1 tile
+81,,Gate,Gate,Gate,
+82,CASTLE,Castle,Castle,Castle,
+83,"VILLAGER, VILLAGER_BASE_M",Villager (Male),Villager (Male),Villager (Male),VILLAGER will spawn male or female in RMS
+84,MARKET,Market,Market,Market,feudal age
+85,,Fortified Gate (down.),Fortified Gate (down.),Fortified Gate (down.),
+86,STABLE_C,Stable,Stable,Stable,castle age
+87,ARCHERY_RANGE,Archery Range,Archery Range,Archery Range,feudal age
+88,,Gate (down.),Gate (down.),Gate (down.),
+89,DIRE_WOLF,Dire Wolf,Dire Wolf,Dire Wolf,
+90,,Fortified Gate,Fortified Gate,Fortified Gate,
+91,,Gate,Gate,Gate,
+92,,Fortified Gate,Fortified Gate,Fortified Gate,1x1 tile
+93,SPEARMAN,Spearman,Spearman,Spearman,
+94,,Beta Berserk,Beta Berserk,Beta Berserk,no graphics in DE
+95,,Gate,Gate,Gate,
+96,HAWK,Hawk,Hawk,Hawk,
+97,,Arrow,Arrow,Arrow,big bolt
+98,,Hand Cannoneer (Dead),Hand Cannoneer (Dead),Hand Cannoneer (Dead),
+99,,Heavy Swordsman (Dead),Heavy Swordsman (Dead),Heavy Swordsman (Dead),
+100,,Elite Skirmisher (Dead),Elite Skirmisher (Dead),Elite Skirmisher (Dead),
+101,STABLE,Stable,Stable,Stable,feudal age
+102,"STONE, STONE_MINE",Stone Mine,Stone Mine,Stone Mine,
+103,BLACKSMITH,Blacksmith,Blacksmith,Blacksmith,feudal age
+104,MONASTERY,Monastery,Monastery,Monastery,
+105,BLACKSMITH_F,Blacksmith,Blacksmith,Blacksmith,feudal age
+106,,Leif Erikson,Infiltrator (Dead),Infiltrator (Dead),Hero Longboat
+107,,Janissary (Dead),Janissary (Dead),Janissary (Dead),
+108,,Junk (Dead),Junk (Dead),Junk (Dead),
+109,TOWN_CENTER,Town Center,Town Center,Town Center,dark age
+110,TRADE_WORKSHOP,Trade Workshop,Trade Workshop,Trade Workshop,castle age
+111,,Knight (Dead),Knight (Dead),Knight (Dead),
+112,,Flare,Flare,Flare,reveals the map when an enemy attacks you through the fog of war
+113,,Camel Rider (Dead),Camel Rider (Dead),Camel Rider (Dead),
+114,,Stoertebeker,Longboat (Dead),Longboat (Dead),Hero Heavy Demolition Ship
+115,,Longbowman (Dead),Longbowman (Dead),Longbowman (Dead),
+116,MARKET_C,Market,Market,Market,castle age
+117,"WALL, STONE_WALL",Stone Wall,Stone Wall,Stone Wall,
+118,VILLAGER_BUILDER_M,Villager Male Builder,Villager Male Builder,Villager Male Builder,
+119,DLC_FORTIFIED_PALISADE_WALL,Fortified Palisade Wall,Fortified Palisade Wall,Disabled,constant only defined in DE
+120,VILLAGER_FORAGER_M,Villager Male Forager,Villager Male Forager,Villager Male Forager,
+121,,Mangonel (Dead),Mangonel (Dead),Mangonel (Dead),
+122,VILLAGER_HUNTER_M,Villager Male Hunter,Villager Male Hunter,Villager Male Hunter,
+123,VILLAGER_WOOD_M,Villager Male Lumberjack,Villager Male Lumberjack,Villager Male Lumberjack,
+124,VILLAGER_STONE_M,Villager Male Stone Miner,Villager Male Stone Miner,Villager Male Stone Miner,
+125,MONK,Monk,Monk,Monk,
+126,WOLF,Grey Wolf,Wolf,Wolf,
+127,,OLD_EXPLORER,OLD_EXPLORER,OLD_EXPLORER,
+128,TRADE_CART,Trade Cart (Empty),Trade Cart (Empty),Trade Cart (Empty),
+129,MILL_F,Mill,Mill,Mill,feudal age
+130,MILL_C,Mill,Mill,Mill,castle age
+131,MILL_I,Mill,Mill,Mill,imperial age
+132,BARRACKS_C,Barracks,Barracks,Barracks,castle age
+133,DOCK_F,Dock,Dock,Dock,feudal age
+134,,Monk (Dead),Monk (Dead),Monk (Dead),
+135,,Mangudai (Dead),Mangudai (Dead),Mangudai (Dead),
+136,,War Elephant (Dead),War Elephant (Dead),War Elephant (Dead),
+137,MARKET_I,Market,Market,Market,imperial age
+138,,Spy,Spy,Outlaw (Dead),high attack; looks like man-at-arms
+139,,Cavalier (Dead),Cavalier (Dead),Cavalier (Dead),
+140,,Spearman (Dead),Spearman (Dead),Spearman (Dead),
+141,TOWN_CENTER_C,Town Center,Town Center,Town Center,castle age
+142,TOWN_CENTER_I,Town Center,Town Center,Town Center,imperial age
+143,,Rubble 1 x 1,Rubble 1 x 1,Rubble 1 x 1,
+144,,Rubble 2 x 2,Rubble 2 x 2,Rubble 2 x 2,
+145,,Rubble 3 x 3,Rubble 3 x 3,Rubble 3 x 3,
+146,,Rubble 4 x 4,Rubble 4 x 4,Rubble 4 x 4,
+147,,Rubble 6 x 6,Rubble 6 x 6,Rubble 6 x 6,
+148,,Rubble 8 x 8,Rubble 8 x 8,Rubble 8 x 8,
+149,,Scorpion (Dead),Scorpion (Dead),Scorpion (Dead),
+150,SIEGE_WORKSHOP_I,Siege Workshop,Siege Workshop,Siege Workshop,imperial age
+151,,Samurai (Dead),Samurai (Dead),Samurai (Dead),
+152,,Militia (Dead),Militia (Dead),Militia (Dead),
+153,STABLE_I,Stable,Stable,Stable,imperial age
+154,,Man-At-Arms (Dead),Man-At-Arms (Dead),Man-At-Arms (Dead),
+155,FORTIFIED_WALL,Fortified Wall,Fortified Wall,Fortified Wall,
+156,VILLAGER_REPAIRER_M,Villager Repairer Male,Villager Repairer Male,Villager Repairer Male,
+157,,Throwing Axeman (Dead),Throwing Axeman (Dead),Throwing Axeman (Dead),
+158,,Outlaw,Outlaw,Outlaw,15 HP; neutral archer that attacks players
+159,,Relic Cart,Relic Cart,Relic Cart,grants one population space; converts if in enemy line of sight
+160,RICHARD_THE_LIONHEARTED,Richard the Lionheart,Richard the Lionheart,Richard the Lionheart,Hero Paladin
+161,THE_BLACK_PRINCE,The Black Prince,The Black Prince,The Black Prince,Hero Cavalier
+162,,FLAGX,FLAGX,FLAGX,
+163,FRIAR_TUCK,Friar Tuck,Friar Tuck,Friar Tuck,Hero Monk Western
+164,SHERIFF_OF_NOTTINGHAM,Sheriff of Nottingham,Sheriff of Nottingham,Sheriff of Nottingham,Hero Long Swordsman
+165,CHARLEMAGNE,Charlemagne,Charlemagne,Charlemagne,Hero Throwing Axeman
+166,ROLAND,Roland,Roland,Roland,Hero Knight
+167,BELISARIUS,Belisarius,Belisarius,Belisarius,Hero Centurion
+168,THEODORIC_THE_GOTH,Theodoric the Goth,Theodoric the Goth,Theodoric the Goth,Hero Hurkarl
+169,AETHELFIRTH,Aethelfrith,Aethelfrith,Aethelfrith,Hero Woad Raider
+170,SIEGFRIED,Siegfried,Siegfried,Siegfried,Hero Champion
+171,ERIK_THE_RED,Erik the Red,Erik the Red,Erik the Red,Hero Berserk
+172,TAMERLANE,Tamerlane,Tamerlane,Tamerlane,Hero Mangudai
+173,KING_ARTHUR,King Arthur,King Arthur,King Arthur,Hero Champion
+174,LANCELOT,Lancelot,Lancelot,Lancelot,Hero Paladin
+175,GAWAIN,Gawain,Gawain,Gawain,Hero Cavalier
+176,MORDRED,Mordred,Mordred,Mordred,Hero Paladin
+177,ARCHBISHOP,Archbishop,Archbishop,Archbishop,Hero Monk Western
+178,,Trade Cart Empty (Dead),Trade Cart Empty (Dead),Trade Cart Empty (Dead),Imperial
+179,,Trade Workshop,Trade Workshop,Trade Workshop,
+180,,Long Swordsman (Dead),Long Swordsman (Dead),Long Swordsman (Dead),
+181,,Teutonic Knight (Dead),Teutonic Knight (Dead),Teutonic Knight (Dead),
+182,,WNDR,CRASH,TMISA,CRASH
+183,,TMISB,CRASH,TMISB,CRASH
+184,,Condottiero,Condottiero,TMISC,
+185,,Slinger,Slinger,TMISD,
+186,,Slinger (Dead),Slinger (Dead),TMISE,
+187,,Projectile Slinger,Projectile Slinger,TMISF,
+188,,Flamethrower,Flamethrower,TMISG,
+189,,Flamethrower (Dead),Flamethrower (Dead),TMISH,
+190,FIRE_TOWER,Fire Tower,Fire Tower,TMISI,
+191,HOUSE_NOMADS_C,House,Rubble 2x2,TMISJ,
+192,HOUSE_NOMADS_I,House,Rubble 2x2 (temporary),TMISK,
+193,,Vlad Dracula,Vlad Dracula,TMISL,Hero unit (unique graphic)
+194,,Trebuchet (Dead),Trebuchet (Dead),Trebuchet (Dead),
+195,KITABATAKE,Kitabatake,Kitabatake,Kitabatake,Hero Samurai
+196,MINAMOTO,Minamoto,Minamoto,Minamoto,Hero Samurai
+197,ALEXANDER_NEVSKI,Alexander Nevski,Alexander Nevski,Alexander Nevski,Hero Cavalier
+198,EL_CID,El Cid,El Cid,El Cid,Hero Champion
+199,FISH_TRAP,Fish Trap,Fish Trap,Fish Trap,
+200,ROBIN_HOOD,Robin Hood,Robin Hood,Robin Hood,Hero Longbowman
+201,,Tree,FLR_R,FLR_R,not actually a tree; no graphics
+202,RABID_WOLF,Rabid Wolf,Rabid Wolf,Rabid Wolf,
+203,,Vasco da Gama,VMDL,Rabid Wolf (Dead),Hero Caravel
+204,,Trade Cart (Full),Trade Cart (Full),Trade Cart (Full),
+205,,Trade Cart (Full) (Dead),Trade Cart (Full) (Dead),Trade Cart (Full) (Dead),
+206,,VMDL,VMDL,VMDL,Villager Male Dave Lewis; cheat unit; naked villager with super speed but no other abilities
+207,,Imperial Camel Rider,Imperial Camel Rider,VMDL (Dead),
+208,,TWAL,TWAL,TWAL,Town Wall; invisible in DE - use city wall (370) instead
+209,UNIVERSITY,University,University,University,castle age
+210,UNIVERSITY_I,University,University,University,imperial age
+211,,Villager Female (Dead),Villager Female (Dead),Villager Female (Dead),
+212,VILLAGER_BUILDER_F,Villager Female Builder,Villager Female Builder,Villager Female Builder,
+213,,Villager Female Builder (Dead),Villager Female Builder (Dead),Villager Female Builder (Dead),
+214,VILLAGER_FARMER_F,Villager Female Farmer,Villager Female Farmer,Villager Female Farmer,
+215,,Villager Female Farmer (Dead),Villager Female Farmer (Dead),Villager Female Farmer (Dead),
+216,VILLAGER_HUNTER_F,Villager Female Hunter,Villager Female Hunter,Villager Female Hunter,
+217,,Villager Female Hunter (Dead),Villager Female Hunter (Dead),Villager Female Hunter (Dead),
+218,VILLAGER_WOOD_F,Villager Female Lumberjack,Villager Female Lumberjack,Villager Female Lumberjack,
+219,,Villager Female Lumberjack (Dead),Villager Female Lumberjack (Dead),Villager Female Lumberjack (Dead),
+220,VILLAGER_STONE_F,Villager Female Stone Miner,Villager Female Stone Miner,Villager Female Stone Miner,
+221,,Villager Female Stone Miner (Dead),Villager Female Stone Miner (Dead),Villager Female Stone Miner (Dead),
+222,VILLAGER_REPAIRER_F,Villager Female Repairer,Villager Female Repairer,Villager Female Repairer,
+223,ALARIC_THE_GOTH,Alaric the Goth,Villager Female Repairer (Dead),Villager Female Repairer (Dead),
+224,,Villager Male (Dead),Villager Male (Dead),Villager Male (Dead),
+225,,Villager Male Builder (Dead),Villager Male Builder (Dead),Villager Male Builder (Dead),
+226,,Villager Male Farmer (Dead),Villager Male Farmer (Dead),Villager Male Farmer (Dead),
+227,,Villager Male Hunter (Dead),Villager Male Hunter (Dead),Villager Male Hunter (Dead),
+228,,Villager Male Lumberjack (Dead),Villager Male Lumberjack (Dead),Villager Male Lumberjack (Dead),
+229,,Villager Male Stone Miner (Dead),Villager Male Stone Miner (Dead),Villager Male Stone Miner (Dead),
+230,,King Bela IV,Villager Male Repairer (Dead),Villager Male Repairer (Dead),Hero King Western
+231,,Aqueduct,Aqueduct,CRASH,can be placed like walls - but doesn't take extra anti-building damage
+232,WOAD_RAIDER,Woad Raider,Woad Raider,Woad Raider,
+233,,Woad Raider (Dead),Woad Raider (Dead),Woad Raider (Dead),
+234,GUARD_TOWER,Guard Tower,Guard Tower,Guard Tower,
+235,KEEP,Keep,Keep,Keep,
+236,BOMBARD_TOWER,Bombard Tower,Bombard Tower,Bombard Tower,
+237,,Wolf (Dead),Wolf (Dead),Wolf (Dead),
+238,,Skirmisher (Dead),Skirmisher (Dead),Skirmisher (Dead),
+239,WAR_ELEPHANT,War Elephant,War Elephant,War Elephant,
+240,,TERRC,TERRC,TERRC,
+241,CRACKS,Cracks,Cracks,Cracks,
+242,,Projectile Stone Catapult,Projectile Stone Catapult,Projectile Stone Catapult,
+243,,Doppelganger,DOPL,DOPL,
+244,,Projectile Stone Catapult (Fire),Projectile Stone Catapult (Fire),Projectile Stone Catapult (Fire),
+245,,Projectile Bolt,Projectile Bolt,Projectile Bolt,
+246,,Projectile Bolt (Fire),Projectile Bolt (Fire),Projectile Bolt (Fire),
+247,,Trail Smoke,Trail Smoke,Trail Smoke,
+248,,Pile of Stone,Pile of Stone,Pile of Stone,Only 1 stone
+249,,POREX,POREX,POREX,Pile of Ore; unused 5th Resource
+250,LONGBOAT,Longboat,Longboat,Longboat,
+251,,Amphitheatre,Amphitheatre,Disabled,
+252,,Pile of Gold,Pile of Gold,Pile of Gold,Only 1 gold
+253,,Pile of Wood,Pile of Wood,Pile of Wood,Only 1 wood; looks like tree stump
+254,,PILE1,PILE2,PILE3,
+255,,PILE2,PILE3,PILE4,
+256,,PILE3,PILE4,PILE5,
+257,,PILE4,PILE5,PILE6,
+258,,PILE6,PILE7,PILE8,
+259,VILLAGER_FARMER_M,Villager Male Farmer,Villager Male Farmer,Villager Male Farmer,
+260,,Disabled,Disabled,Disabled,
+261,,PILE8,PILE9,PILE10,
+262,,Pile of Food,Pile of Food,Pile of Food,Forage bush with only 1 food
+263,,Colosseum,Colosseum,Disabled,
+264,,Cliff 1,Cliff 1,Cliff 1,
+265,,Cliff 2,Cliff 2,Cliff 2,
+266,,Cliff 3,Cliff 3,Cliff 3,
+267,,Cliff 4,Cliff 4,Cliff 4,
+268,,Cliff 5,Cliff 5,Cliff 5,
+269,,Cliff 6,Cliff 6,Cliff 6,
+270,,Cliff 7,Cliff 7,Cliff 7,
+271,,Cliff 8,Cliff 8,Cliff 8,
+272,,Cliff 9,Cliff 9,Cliff 9,
+273,,-,Cliff 10,Cliff 10,
+274,,Flare,Flare,Flare,
+275,CARAVAN,Imperial Centurion,Centurion,CRASH,
+276,WONDER,Wonder,Wonder,Wonder,
+277,,Imperial Centurion (Dead),Centurion (Dead),CRASH,
+278,,Fish Trap (Dead),Fish Trap (Dead),Fish Trap (Dead),
+279,SCORPION,Scorpion,Scorpion,Scorpion,
+280,MANGONEL,Mangonel,Mangonel,Mangonel,
+281,THROWING_AXEMAN,Throwing Axeman,Throwing Axeman,Throwing Axeman,
+282,MAMELUKE,Mameluke,Mameluke,Mameluke,
+283,CAVALIER,Cavalier,Cavalier,Cavalier,
+284,TREE_TD,Tree TD,Tree TD,Tree TD,
+285,RELIC,Relic,Relic,Relic,
+286,,Monk with Relic,Monk with Relic,Monk with Relic,
+287,BRITISH_RELIC,British Relic,British Relic,British Relic,
+288,BYZANTINE_RELIC,Byzantine Relic,Byzantine Relic,Byzantine Relic,
+289,CHINESE_RELIC,Chinese Relic,Chinese Relic,Chinese Relic,
+290,FRANKISH_RELIC,Frankish Relic,Frankish Relic,Frankish Relic,
+291,SAMURAI,Samurai,Samurai,Samurai,
+292,GOTHIC_RELIC,Gothic Relic,Gothic Relic,Gothic Relic,
+293,VILLAGER_BASE_F,Villager (Female),Villager (Female),Villager (Female),
+294,JAPANESE_RELIC,Japanese Relic,Japanese Relic,Japanese Relic,
+295,PERSIAN_RELIC,Persian Relic,Persian Relic,Persian Relic,
+296,SARACEN_RELIC,Saracen Relic,Saracen Relic,Saracen Relic,
+297,TEUTONIC_RELIC,Teutonic Relic,Teutonic Relic,Teutonic Relic,
+298,TURKISH_RELIC,Turkish Relic,Turkish Relic,Turkish Relic,
+299,,Bandit,Bandit,Infiltrator,"75HP, 10 attack, 0/0 armor."
+300,,Imperial Camel Rider (Dead),Imperial Camel Rider (Dead),Monk With British Relic,
+301,,"Grass Patch, Green",Grass Patch,Monk With Byzantine Relic,
+302,,Bush A,Bush,Monk With Chinese Relic,bushes from jungle forest
+303,,Seagulls,Seagulls,Monk With Frankish Relic,
+304,,Bonfire,Bonfire,Monk With Gothic Relic,
+305,DLC_LLAMA,Llama,Llama,Monk With Japanese Relic,
+306,,Black Tile,Black Tile,Monk With Persian Relic,
+307,,Cuauhtemoc,Cuauhtemoc,Monk With Saracen Relic,
+308,,Indestructible Outpost,Indestructible Outpost,Monk With Teutonic Relic,heavily armored
+309,,Monk with Turkish Relic,Monk with Turkish Relic,Monk With Turkish Relic,
+310,MOUNTAIN1,Mountain 1,Mountain 1,Mountain 1,
+311,MOUNTAIN2,Mountain 2,Mountain 2,Mountain 2,
+312,,Projectile Arrow 2,Projectile Arrow 2,Projectile Arrow 2,
+313,,"Projectile Stone, Trebuchet","Projectile Stone, Trebuchet","Projectile Stone, Trebuchet",
+314,,"Projectile Stone, Mangonel","Projectile Stone, Mangonel","Projectile Stone, Mangonel",
+315,,Projectile Arrow 3,Projectile Arrow 3,Projectile Arrow 3,
+316,,Projectile Arrow 4,Projectile Arrow 4,Projectile Arrow 4,
+317,,Projectile Arrow 5,Projectile Arrow 5,Projectile Arrow 5,
+318,,Projectile Arrow 6,Projectile Arrow 6,Projectile Arrow 6,
+319,,Projectile Arrow 7,Projectile Arrow 7,Projectile Arrow 7,
+320,,Projectile Arrow 8,Projectile Arrow 8,Projectile Arrow 8,
+321,,Projectile Arrow 9,Projectile Arrow 9,Projectile Arrow 9,
+322,,Projectile Arrow 10,Projectile Arrow 10,Projectile Arrow 10,
+323,,"Projectile Stone, Catapult 1","Projectile Stone, Catapult 1","Projectile Stone, Catapult 1",
+324,,"Projectile Stone, Catapult 2","Projectile Stone, Catapult 2","Projectile Stone, Catapult 2",
+325,,"Projectile Stone, Catapult 3","Projectile Stone, Catapult 3","Projectile Stone, Catapult 3",
+326,,"Projectile Stone, Catapult 4","Projectile Stone, Catapult 4","Projectile Stone, Catapult 4",
+327,,"Projectile Stone, Catapult 5","Projectile Stone, Catapult 5","Projectile Stone, Catapult 5",
+328,,Projectile VOL (Fire),Arrow,Arrow,
+329,CAMEL,Camel Rider,Camel Rider,Camel Rider,
+330,HEAVY_CAMEL,Heavy Camel Rider,Heavy Camel Rider,Heavy Camel Rider,
+331,TREBUCHET_PACKED,Trebuchet (Packed),Trebuchet (Packed),Trebuchet (Packed),
+332,,Flare,Flare,Flare,reveals your allies TCs at the start of the game
+333,,Deer,Deer,Deer,Not Huntable
+334,FLOWERS_1,Flowers 1,Flowers 1,Flowers 1,
+335,FLOWERS_2,Flowers 2,Flowers 2,Flowers 2,
+336,FLOWERS_3,Flowers 3,Flowers 3,Flowers 3,
+337,FLOWERS_4,Flowers 4,Flowers 4,Flowers 4,
+338,PATH_4,Path 4,Path 4,Path 4,
+339,PATH_1,Path 1,Path 1,Path 1,
+340,PATH_2,Path 2,Path 2,Path 2,
+341,PATH_3,Path 3,Path 3,Path 3,
+342,,Cuman Chief,TERRU,TERRU,no graphics in DE
+343,,TERRV,TERRV,TERRV,
+344,,TERRW,TERRW,TERRW,
+345,RUINS,Ruins,Ruins,Ruins,
+346,,TERRY,TERRY,TERRY,
+347,,TERRZ,TERRZ,TERRZ,
+348,"BAMBOO_TREE, BAMBOO_FOREST_TREE",Tree (Bamboo Forest),Bamboo Forest Tree,Bamboo Forest Tree,
+349,"OAKTREE, OAK_FOREST_TREE",Tree (Oak),Oak Forest Tree,Oak Forest Tree,
+350,"PINETREE, PINE_FOREST_TREE",Tree (Pine Forest),Pine Forest Tree,Pine Forest Tree,
+351,"PALMTREE, PALM_FOREST_TREE",Tree (Palm Forest),Palm Forest Tree,Palm Forest Tree,
+352,,OREMN,OREMN,OREMN,Ore Mine; Unused 5th resource
+353,,Villager Male Forager (Dead),Villager Male Forager (Dead),Villager Male Forager (Dead),
+354,VILLAGER_FORAGER_F,Villager Female Forager,Villager Female Forager,Villager Female Forager,
+355,,Villager Female Forager (Dead),Villager Female Forager (Dead),Villager Female Forager (Dead),
+356,,Boar (Dead),Boar (Dead),Boar (Dead),
+357,,Farm (Dead),Farm (Dead),Farm (Dead),
+358,PIKEMAN,Pikeman,Pikeman,Pikeman,
+359,HALBERDIER,Halberdier,Halberdier,Halberdier,
+360,,Projectile Arrow (Fire),Projectile Arrow (Fire),Projectile Arrow (Fire),
+361,,Norse Warrior,Norse Warrior,CRASH,
+362,,Norse Warrior (Dead),Norse Warrior (Dead),CRASH,
+363,,Projectile Archer,Projectile Archer,Projectile Archer,
+364,,Projectile Crossbowman,Projectile Crossbowman,Projectile Crossbowman,
+365,,Projectile Skirmisher,Projectile Skirmisher,Projectile Skirmisher,
+366,,Projectile Elite Skirmisher,Projectile Elite Skirmisher,Projectile Elite Skirmisher,
+367,,Projectile Scorpion,Projectile Scorpion,Projectile Scorpion,
+368,,Projectile Bombard Cannon,Projectile Bombard Cannon,Projectile Bombard Cannon,
+369,,Projectile Mangonel (Secondary),Projectile Mangonel (Secondary),Projectile Mangonel (Secondary),
+370,,City Wall,City Wall,Disabled,
+371,,Projectile Trebuchet,Projectile Trebuchet,Projectile Trebuchet,
+372,,Projectile Galleon,Projectile Galleon,Projectile Galleon,
+373,,Projectile War Galley,Projectile War Galley,Projectile War Galley,
+374,,Projectile Cannon Galleon,Projectile Cannon Galleon,Projectile Cannon Galleon,
+375,,Projectile Crossbowman (Fire),Projectile Crossbowman (Fire),Projectile Crossbowman (Fire),
+376,,Projectile Skirmisher (Fire),Projectile Skirmisher (Fire),Projectile Skirmisher (Fire),
+377,,Projectile Elite Skirmisher (Fire),Projectile Elite Skirmisher (Fire),Projectile Elite Skirmisher (Fire),
+378,,Projectile Scorpion (Fire),Projectile Scorpion (Fire),Projectile Scorpion (Fire),
+379,,-,CRASH,CRASH,
+380,,Projectile Gunpowder (Primary),Projectile Gunpowder (Primary),Projectile Gunpowder (Primary),
+381,,Projectile Bolt (Fire),Projectile Bolt (Fire),Projectile Bolt (Fire),
+382,,-,CRASH,CRASH,
+383,,-,CRASH,CRASH,
+384,,-,CRASH,CRASH,
+385,,Projectile Bolt (Fire),Projectile Bolt (Fire),Projectile Bolt (Fire),
+386,,-,CRASH,CRASH,
+387,,-,CRASH,CRASH,
+388,,-,CRASH,CRASH,
+389,SEA_ROCKS_1,Sea Rocks 1,Sea Rocks 1,Sea Rocks 1,
+390,,TERRB,TERRB,TERRB,
+391,,TERRD,TERRD,TERRD,
+392,,TERRE,TERRE,TERRE,
+393,,TERRF,TERRF,TERRF,
+394,,TERRH,TERRH,TERRH,
+395,,TERRI,TERRI,TERRI,
+396,SEA_ROCKS_2,Sea Rocks 2,Sea Rocks 2,Sea Rocks 2,
+397,,TERRK,TERRK,TERRK,
+398,,TERRL,TERRL,TERRL,
+399,"TREE1, TREE_A",Tree A,Tree A,Tree A,
+400,"TREE2, TREE_B",Tree B,Tree B,Tree B,
+401,"TREE3, TREE_C",Tree C,Tree C,Tree C,
+402,"TREE4, TREE_D",Tree D,Tree D,Tree D,
+403,"TREE5, TREE_E",Tree E,Tree E,Tree E,
+404,TREE_F,Tree F,Tree F,Tree F,
+405,TREE_G,Tree G,Tree G,Tree G,
+406,TREE_H,Tree H,Tree H,Tree H,
+407,TREE_I,Tree I,Tree I,Tree I,
+408,TREE_J,Tree J,Tree J,Tree J,
+409,TREE_K,Tree K,Tree K,Tree K,
+410,TREE_L,Tree L,Tree L,Tree L,
+411,FOREST_TREE,Tree (Oak Forest),Forest Tree,Forest Tree,
+412,,Monk (Dead),Monk (Dead),CRASH,
+413,"SNOWPINETREE, SNOW_PINE_TREE",Tree (Snow Pine),Snow Pine Tree,Snow Pine Tree,
+414,"JUNGLETREE, JUNGLE_TREE",Tree (Jungle),Jungle Tree,Jungle Tree,
+415,,Stump,Stump,Stump,
+416,,Debris,Debris,Debris,
+417,,Dust C,Dust C,Dust C,
+418,,Henry the Lion,Henry the Lion,Henry the Lion,Hero Knight
+419,,Debris B,Debris B,Debris B,
+420,CANNON_GALLEON,Cannon Galleon,Cannon Galleon,Cannon Galleon,
+421,,Cannon Galleon (Dead),Cannon Galleon (Dead),Cannon Galleon (Dead),
+422,CAPPED_RAM,Capped Ram,Capped Ram,Capped Ram,
+423,,Capped Ram (Dead),Capped Ram (Dead),Capped Ram (Dead),
+424,CHARLES_MARTEL,Charles Martel,Charles Martel,Charles Martel,Hero Throwing Axeman
+425,,Francisco de Orellana,Francisco de Orellana,Charles Martel (Dead),Hero Conquistador
+426,HARALD_HARDRAADE,Harald Hardraade,Harald Hardraade,Harald Hardraade,Hero Berserk
+427,,Gonzalo Pizarro,Gonzalo Pizarro,Harald Hardraade (Dead),Hero Conquistador
+428,HROLF_THE_GANGER,Hrolf the Ganger,Hrolf the Ganger,Hrolf the Ganger,Hero Elite Berserk
+429,,Frederick Barbarossa,Frederick Barbarossa,Hrolf the Ganger (Dead),Hero Teutonic Knight
+430,JOAN_THE_MAID,Joan the Maid,Joan the Maid,Joan the Maid,Hero unit (unique graphic)
+431,,Joan the Maid (Dead),Joan the Maid (Dead),Joan the Maid (Dead),
+432,WILLIAM_WALLACE,William Wallace,William Wallace,William Wallace,
+433,,William Wallace (Dead),William Wallace (Dead),William Wallace (Dead),
+434,KING,King,King,King,
+435,,King (Dead),King (Dead),King (Dead),
+436,,OMTBO,OMTBO,OMTBO,Off Map Trading Boat; Invisible in DE
+437,,Prithviraj,Prithviraj,OMTBO (Dead),Hero unit (unique graphic)
+438,,STRBO,STRBO,STRBO,Boat with Junk graphics; Invisible in DE
+439,,Francesco Sforza,Francesco Sforza,STRBO (Dead),Hero unit (unique graphic)
+440,PETARD,Petard,Petard,Petard,
+441,HUSSAR,Hussar,Hussar,Hussar,
+442,GALLEON,Galleon,Galleon,Galleon,
+443,,Galleon (Dead),Trireme,Trireme,
+444,,Town Center (Packed),Town Center (Packed),Town Center (Packed),In DE it looks like an Ox Wagon and can unpack to build a Town Center (buggy pre-DE)
+445,,Poenari Castle,Poenari Castle,Church 4,
+446,,Port,Port,Port,Invisible in DE
+447,,SHALW,SHALW,SHALW,Small pond; invisible in DE?
+448,"SCOUT, SCOUT_CAVALRY",Scout Cavalry,Scout Cavalry,Scout Cavalry,
+449,,Scout Cavalry (Dead),Scout Cavalry (Dead),Scout Cavalry (Dead),
+450,"MARLIN1, GREAT_FISH_MARLIN",Great Fish (Marlin1),Great Fish (Marlin1),Great Fish (Marlin1),
+451,"MARLIN2, GREAT_FISH_MARLIN2",Great Fish (Marlin2),Great Fish (Marlin2),Great Fish (Marlin2),
+452,,Dolphin,Dolphin,DOLP3,Marlin1; underwater only; 200 food; oversized slection outline; invisible prior to DE
+453,,Ataulf,DOLP4,DOLP4,Hero unit (unique graphic)
+454,,DOLP5,DOLP5,DOLP5,Dorado; underwater only; 200 food; cannot be selected; invisible prior to DE
+455,"DORADO, FISH_DORADO",Fish (Dorado),Fish (Dorado),Fish (Dorado),
+456,"SALMON, FISH_SALMON",Fish (Salmon),Fish (Salmon),Fish (Salmon),
+457,"TUNA, FISH_TUNA",Fish (Tuna),Fish (Tuna),Fish (Tuna),
+458,"SNAPPER, FISH_SNAPPER",Fish (Snapper),Fish (Snapper),Fish (Snapper),
+459,,FISH5,FISH5,FISH5,Salmon; underwater only; 200 food; tiny slection outline; invisible prior to DE
+460,,WHAL1,WHAL1,WHAL1,Tuna; underwater only; 200 food; tiny slection outline; invisible prior to DE
+461,,WHAL2,WHAL2,WHAL2,Snapper; underwater only; 200 food; tiny slection outline; invisible prior to DE
+462,,Projectile Mangonel (Fire),Projectile Mangonel (Fire),Projectile Mangonel (Fire),
+463,HOUSE_F,House,House,House,feudal age
+464,HOUSE_C,House,House,House,castle age
+465,HOUSE_I,House,House,House,imperial age
+466,,Projectile Archer (Fire),Projectile Archer (Fire),Projectile Archer (Fire),
+467,,-,CRASH,CRASH,
+468,,Projectile Mangonel (Secondary Fire),Projectile Mangonel (Secondary Fire),Projectile Mangonel (Secondary Fire),
+469,,Projectile Trebuchet (Fire),Projectile Trebuchet (Fire),Projectile Trebuchet (Fire),
+470,,Projectile Galley (Fire),Projectile Galley (Fire),Projectile Galley (Fire),
+471,,Projectile War Galley (Fire),Projectile War Galley (Fire),Projectile War Galley (Fire),
+472,,Loot,Loot,CRASH,
+473,TWO_HANDED_SWORDSMAN,Two-Handed Swordsman,Two-Handed Swordsman,Two-Handed Swordsman,
+474,HEAVY_CAVALRY_ARCHER,Heavy Cavalry Archer,Heavy Cavalry Archer,Heavy Cavalry Archer,
+475,,Projectile HAR (Fire),Projectile HAR (Fire),Projectile HAR (Fire),
+476,,Projectile Harold Haraade (Fire),Projectile Harold Haraade (Fire),Projectile Harold Haraade (Fire),
+477,,Projectile HAR,Projectile HAR,Projectile HAR,
+478,,Projectile Harold Haraade,Projectile Harold Haraade,Projectile Harold Haraade,
+479,,Packed Mangonel,Packed Mangonel,Packed Mangonel,looks like trebuchet; crashes game if unpacked
+480,,Hussar (Dead),Hussar (Dead),Hussar (Dead),
+481,,Town Center,Town Center,Town Center,
+482,,Town Center,Town Center,Town Center,
+483,,Town Center,Town Center,Town Center,
+484,TOWN_CENTER_FOUNDATION_C,Town Center,Town Center,Town Center,castle age
+485,,Projectile Town Center,Projectile Town Center,Projectile Town Center,
+486,DLC_BEAR,Brown Bear,Bear,CRASH,Predator like wolf
+487,,Gate,Gate,Gate,
+488,,Fortified Gate,Fortified Gate,Fortified Gate,
+489,,Bear (Dead),Bear (Dead),CRASH,
+490,,Gate,Gate,Gate,
+491,,Fortified Gate,Fortified Gate,Fortified Gate,
+492,ARBALEST,Arbalest,Arbalest,Arbalest,
+493,,Advanced Heavy Crossbowman,Advanced Heavy Crossbowman,Advanced Heavy Crossbowman,
+494,,Camel Rider (Dead),Camel Rider (Dead),Camel Rider (Dead),
+495,,Heavy Camel Rider (Dead),Heavy Camel Rider (Dead),Heavy Camel Rider (Dead),
+496,,Arbalest (Dead),Arbalest (Dead),Arbalest (Dead),
+497,,King (Dead),King (Dead),King (Dead),western
+498,BARRACKS_F,Barracks,Barracks,Barracks,feudal; cannot train units
+499,TORCH,Torch A,Torch A,Torch A,
+500,,Two Handed Swordsman (Dead),Two Handed Swordsman (Dead),Two Handed Swordsman (Dead),
+501,,Pikeman (Dead),Pikeman (Dead),Pikeman (Dead),
+502,,Halberdier (Dead),Halberdier (Dead),Halberdier (Dead),
+503,,Projectile Watch Tower,Projectile Watch Tower,Projectile Watch Tower,
+504,,Projectile Guard Tower,Projectile Guard Tower,Projectile Guard Tower,
+505,,Projectile Keep,Projectile Keep,Projectile Keep,
+506,,Projectile Bombard Tower,Projectile Bombard Tower,Projectile Bombard Tower,
+507,,Projectile Arbalest,Projectile Arbalest,Projectile Arbalest,
+508,,Projectile Advanced Heavy Crossbowman,Projectile Advanced Heavy Crossbowman,Projectile Advanced Heavy Crossbowman,spear
+509,,Projectile Villager,Projectile Villager,Projectile Villager,
+510,,Projectile Chu Ko Nu,Projectile Chu Ko Nu,Projectile Chu Ko Nu,
+511,,Projectile Longbowman,Projectile Longbowman,Projectile Longbowman,
+512,,Projectile Longboat,Projectile Longboat,Projectile Longboat,
+513,,Projectile MSU,Projectile MSU,Projectile MSU,rock
+514,,Projectile MPC,Projectile MPC,Projectile MPC,arrow
+515,,Projectile Axeman,Projectile Axeman,Projectile Axeman,
+516,,Projectile Watch Tower (Fire),Projectile Watch Tower (Fire),Projectile Watch Tower (Fire),
+517,,Projectile Gaurd Tower (Fire),Projectile Gaurd Tower (Fire),Projectile Gaurd Tower (Fire),
+518,,Projectile Keep (Fire),Projectile Keep (Fire),Projectile Keep (Fire),
+519,,Projectile Arbalest (Fire),Projectile Arbalest (Fire),Projectile Arbalest (Fire),
+520,,Projectile Heavy Crossbowman (Fire),Projectile Heavy Crossbowman (Fire),Projectile Heavy Crossbowman (Fire),spear
+521,,Projectile Villager (Fire),Projectile Villager (Fire),Projectile Villager (Fire),
+522,,Projectile Cho Ko Nu (Fire),Projectile Cho Ko Nu (Fire),Projectile Cho Ko Nu (Fire),
+523,,Projectile Longbowman (Fire),Projectile Longbowman (Fire),Projectile Longbowman (Fire),
+524,,Projectile Longboat (Fire),Projectile Longboat (Fire),Projectile Longboat (Fire),
+525,,Projectile MPC (Fire),Projectile MPC (Fire),Projectile MPC (Fire),
+526,,Projectile MSU (Fire),Projectile MSU (Fire),Projectile MSU (Fire),
+527,DEMOLITION_SHIP,Demolition Ship,Demolition Ship,Demolition Ship,
+528,HEAVY_DEMOLITION_SHIP,Heavy Demolition Ship,Heavy Demolition Ship,Heavy Demolition Ship,
+529,FIRE_SHIP,Fire Ship,Fire Ship,Fire Ship,
+530,ELITE_LONGBOWMAN,Elite Longbowman,Elite Longbowman,Elite Longbowman,
+531,ELITE_THROWING_AXEMAN,Elite Throwing Axeman,Elite Throwing Axeman,Elite Throwing Axeman,
+532,FAST_FIRE_SHIP,Fast Fire Ship,Fast Fire Ship,Fast Fire Ship,
+533,ELITE_LONGBOAT,Elite Longboat,Elite Longboat,Elite Longboat,
+534,ELITE_WOAD_RAIDER,Elite Woad Raider,Elite Woad Raider,Elite Woad Raider,
+535,,BDGAL,BDGAL,BDGAL,boarding galley
+536,,ABGAL,ABGAL,ABGAL,advanced boarding galley
+537,,Projectile FRG,Projectile FRG,Projectile FRG,
+538,,Projectile HFG,Projectile HFG,Projectile HFG,
+539,GALLEY,Galley,Galley,Galley,
+540,,Projectile Galley,Projectile Galley,Projectile Galley,
+541,,Projectile Galley (Fire),Projectile Galley (Fire),Projectile Galley (Fire),
+542,HEAVY_SCORPION,Heavy Scorpion,Heavy Scorpion,Heavy Scorpion,
+543,,Heavy Scorpion (Dead),Heavy Scorpion (Dead),Heavy Scorpion (Dead),
+544,,FLDOG,FLDOG,FLDOG,wolf that moves across the map like a bird; some roations invisible in DE
+545,TRANSPORT_SHIP,Transport Ship,Transport Ship,Transport Ship,
+546,LIGHT_CAVALRY,Light Cavalry,Light Cavalry,Light Cavalry,
+547,,Light Cavalry (Dead),Light Cavalry (Dead),Light Cavalry (Dead),
+548,SIEGE_RAM,Siege Ram,Siege Ram,Siege Ram,
+549,,Siege Ram (Dead),Siege Ram (Dead),Siege Ram (Dead),
+550,ONAGER,Onager,Onager,Onager,
+551,,Projectile Onager,Projectile Onager,Projectile Onager,
+552,,Projectile Onager (Fire),Projectile Onager (Fire),Projectile Onager (Fire),
+553,ELITE_CATAPHRACT,Elite Cataphract,Elite Cataphract,Elite Cataphract,
+554,ELITE_TEUTONIC_KNIGHT,Elite Teutonic Knight,Elite Teutonic Knight,Elite Teutonic Knight,
+555,ELITE_HUSKARL,Elite Huskarl,Elite Huskarl,Elite Huskarl,
+556,ELITE_MAMELUKE,Elite Mameluke,Elite Mameluke,Elite Mameluke,
+557,ELITE_JANISSARY,Elite Janissary,Elite Janissary,Elite Janissary,
+558,ELITE_WAR_ELEPHANT,Elite War Elephant,Elite War Elephant,Elite War Elephant,
+559,ELITE_CHU_KO_NU,Elite Chu Ko Nu,Elite Chu Ko Nu,Elite Chu Ko Nu,
+560,ELITE_SAMURAI,Elite Samurai,Elite Samurai,Elite Samurai,
+561,ELITE_MANGUDAI,Elite Mangudai,Elite Mangudai,Elite Mangudai,
+562,LUMBER_CAMP,Lumber Camp,Lumber Camp,Lumber Camp,dark age
+563,LUMBER_CAMP_F,Lumber Camp,Lumber Camp,Lumber Camp,feudal age
+564,LUMBER_CAMP_C,Lumber Camp,Lumber Camp,Lumber Camp,castle age
+565,LUMBER_CAMP_I,Lumber Camp,Lumber Camp,Lumber Camp,imperial age
+566,,Watch Tower,Watch Tower,Watch Tower,
+567,CHAMPION,Champion,Champion,Champion,
+568,,Champion (Dead),Champion (Dead),Champion (Dead),
+569,PALADIN,Paladin,Paladin,Paladin,
+570,,Paladin (Dead),Paladin (Dead),Paladin (Dead),
+571,,Raider Archer,Raider Archer,Raider Archer,"35 HP, 0 attack, 0+1000/1000 armor, 4 range"
+572,,Raider Archer (Dead),Raider Archer (Dead),Raider Archer (Dead),
+573,,Raider Swordsman,Raider Swordsman,Raider Swordsman,"45 HP, 0 attack,  0+1000/1000 armor"
+574,,Raider Swordsman (Dead),Raider Swordsman (Dead),Raider Swordsman (Dead),
+575,,Raider Cavalry,Raider Cavalry,Raider Cavalry,"75 HP, 0 attack, 0+1000/1000 armor"
+576,,Raider Cavalry (Dead),Raider Cavalry (Dead),Raider Cavalry (Dead),
+577,,Raider Cavalry Archer,Raider Cavalry Archer,Raider Cavalry Archer,"55 HP, 0 attack, 0+1000/1000 armor, 4 range"
+578,,Raider Cavalry Archer Dead,Raider Cavalry Archer Dead,Raider Cavalry Archer Dead,
+579,VILLAGER_GOLD_M,Villager Male Gold Miner,Villager Male Gold Miner,Villager Male Gold Miner,
+580,,Villager Male Gold Miner (Dead),Villager Male Gold Miner (Dead),Villager Male Gold Miner (Dead),
+581,VILLAGER_GOLD_F,Villager Female Gold Miner,Villager Female Gold Miner,Villager Female Gold Miner,
+582,,Villager Female Gold Miner (Dead),Villager Female Gold Miner (Dead),Villager Female Gold Miner (Dead),
+583,GENITOUR,Genitour,Genitour,Genitour,Militia graphics
+584,MINING_CAMP,Mining Camp,Mining Camp,Mining Camp,dark age
+585,MINING_CAMP_F,Mining Camp,Mining Camp,Mining Camp,feudal age
+586,MINING_CAMP_C,Mining Camp,Mining Camp,Mining Camp,castle age
+587,MINING_CAMP_I,Mining Camp,Mining Camp,Mining Camp,imperial age
+588,SIEGE_ONAGER,Siege Onager,Siege Onager,Siege Onager,
+589,,Siege Onager (Dead),Siege Onager (Dead),Siege Onager (Dead),
+590,VILLAGER_SHEPHERD_F,Villager Female Shepherd,Villager Female Shepherd,Villager Female Shepherd,
+591,,Villager Female Shepherd (Dead),Villager Female Shepherd (Dead),Villager Female Shepherd (Dead),
+592,VILLAGER_SHEPHERD_M,Villager Male Shepherd,Villager Male Shepherd,Villager Male Shepherd,
+593,,Villager Male Shepherd (Dead),Villager Male Shepherd (Dead),Villager Male Shepherd (Dead),
+594,SHEEP,Sheep,Sheep,Sheep,
+595,,Sheep (Dead),Sheep (Dead),Sheep (Dead),
+596,ELITE_GENITOUR,Elite Genitour,Elite Genitour,Elite Genitour,militia graphics
+597,TOWN_CENTER_FOUNDATION_I,Town Center,Town Center,Town Center,imperial age
+598,OUTPOST,Outpost,Outpost,Outpost,
+599,CATHEDRAL,Cathedral,Cathedral,Cathedral,
+600,FLAG_A,Flag A,Flag A,Flag A,
+601,FLAG_B,Flag B,Flag B,Flag B,
+602,FLAG_C,Flag C,Flag C,Flag C,
+603,FLAG_D,Flag D,Flag D,Flag D,
+604,FLAG_E,Flag E,Flag E,Flag E,
+605,,Bridge A--Top,Bridge A--Top,Bridge A--Top,
+606,,Bridge A--Middle,Bridge A--Middle,Bridge A--Middle,
+607,,Bridge A--Bottom,Bridge A--Bottom,Bridge A--Bottom,
+608,,Bridge B--Top,Bridge B--Top,Bridge B--Top,
+609,,Bridge B--Middle,Bridge B--Middle,Bridge B--Middle,
+610,,Bridge B--Bottom,Bridge B--Bottom,Bridge B--Bottom,
+611,,Town Center,Town Center,Town Center,
+612,,Town Center,Town Center,Town Center,
+613,,Town Center,Town Center,Town Center,
+614,,Town Center,Town Center,Town Center,
+615,,Town Center,Town Center,Town Center,
+616,,Town Center,Town Center,Town Center,
+617,TOWN_CENTER_FOUNDATION_F,Town Center,Town Center,Town Center,feudal age
+618,,Town Center,Town Center,Town Center,
+619,,Town Center,Town Center,Town Center,
+620,,Town Center,Town Center,Town Center,
+621,TOWN_CENTER_FOUNDATION,Town Center,Town Center,Town Center,
+622,,Elite Genitour (Dead),Iron Boar (Dead),Iron Boar (Dead),
+623,ROCK,Rock 1,Rock 1,Rock,
+624,PAVILION,Pavilion A,Pavilion 1,Pavilion 1,
+625,PAVILION3,Pavilion C,Pavilion 3,Pavilion 3,
+626,PAVILION2,Pavilion B,Pavilion 2,Pavilion 2,
+627,,Projectile Heavy Scorpion,Projectile Heavy Scorpion,Projectile Heavy Scorpion,
+628,,Projectile Heavy Scorpion (Fire),Projectile Heavy Scorpion (Fire),Projectile Heavy Scorpion (Fire),
+629,JOAN_OF_ARC,Joan of Arc,Joan of Arc,Joan of Arc,
+630,,Joan of Arc (Dead),Joan of Arc (Dead),Joan of Arc (Dead),
+631,,Subotai (Dead),Subotai (Dead),Subotai (Dead),
+632,FRANKISH_PALADIN,Frankish Paladin,Frankish Paladin,Frankish Paladin,
+633,,Frankish Paladin (Dead),Frankish Paladin (Dead),Frankish Paladin (Dead),
+634,SIEUR_DE_METZ,Sieur de Metz,Sieur de Metz,Sieur de Metz,
+635,,Burned Building,Burned Building,Sieur de Metz (Dead),
+636,SIEUR_BERTRAND,Sieur Bertrand,Sieur Bertrand,Sieur Bertrand,Hero Knight
+637,,Temple of Heaven,Temple of Heaven,Sieur Bertrand (Dead),
+638,DUKE_D_ALENCON,Duke D'Alencon,Duke D'Alencon,Duke D'Alencon,Hero Frankish Paladin
+639,DLC_PENGUIN,Penguin,Penguin,Duke D'Alencon (Dead),Cheat Unit; 16 attack; constant only defined in  DE
+640,LA_HIRE,La Hire,La Hire,La Hire,Hero Champion
+641,,Penguin (Dead),Penguin (Dead),La Hire (Dead),
+642,LORD_DE_GRAVILLE,Lord de Graville,Lord de Graville,Lord de Graville,Hero Arbalest
+643,,Lord de Graville (Dead),Lord de Graville (Dead),Lord de Graville (Dead),
+644,JEAN_DE_LORRAIN,Jean de Lorrain,Jean de Lorrain,Jean de Lorrain,Hero Bombard Cannon
+645,,Jean de Lorrain (Dead),Jean de Lorrain (Dead),Jean de Lorrain (Dead),
+646,CONSTABLE_RICHEMONT,Constable Richemont,Constable Richemont,Constable Richemont,Hero Frankish Paladin
+647,,Constable Richemont (Dead),Constable Richemont (Dead),Constable Richemont (Dead),
+648,GUY_JOSSELYNE,Guy Josselyne,Guy Josselyne,Guy Josselyne,Hero Paladin
+649,,Guy Josselyne (Dead),Guy Josselyne (Dead),Guy Josselyne (Dead),
+650,JEAN_BUREAU,Jean Bureau,Jean Bureau,Jean Bureau,Hero Bombard Cannon
+651,,Jean Bureau (Dead),Jean Bureau (Dead),Jean Bureau (Dead),
+652,SIR_JOHN_FASTOLF,Sir John Fastolf,Sir John Fastolf,Sir John Fastolf,Hero Frankish Paladin
+653,,Sir John Fastolf (Dead),Sir John Fastolf (Dead),Sir John Fastolf (Dead),
+654,,Trail Smoke (Fire),Trail Smoke (Fire),Trail Smoke (Fire),
+655,MOSQUE,Mosque,Mosque,Mosque,
+656,,Projectile Mangonel (Primary),Projectile Mangonel (Primary),Projectile Mangonel (Primary),
+657,,Projectile GP1,Projectile GP1,Projectile GP1,Rock
+658,,Projectile Mangonel (Primary Fire),Projectile Mangonel (Primary Fire),Projectile Mangonel (Primary Fire),
+659,,Gate (hori.),Gate (hori.),Gate (hori.),
+660,,Fortified Gate (hori.),Fortified Gate (hori.),Fortified Gate (hori.),
+661,,Gate,Gate,Gate,
+662,,Fortified Gate,Fortified Gate,Fortified Gate,
+663,,Gate,Gate,Gate,
+664,,Fortified Gate,Fortified Gate,Fortified Gate,
+665,,Gate,Gate,Gate,
+666,,Fortified Gate,Fortified Gate,Fortified Gate,
+667,,Gate (vert.),Gate (vert.),Gate (vert.),
+668,,Fortified Gate (vert.),Fortified Gate (vert.),Fortified Gate (vert.),
+669,,Gate,Gate,Gate,
+670,,Fortified Gate,Fortified Gate,Fortified Gate,
+671,,Gate,Gate,Gate,
+672,,Fortified Gate,Fortified Gate,Fortified Gate,
+673,,Gate,Gate,Gate,
+674,,Fortified Gate,Fortified Gate,Fortified Gate,
+675,,Onager (Dead),Onager (Dead),Onager (Dead),
+676,,Projectile Fire Ship,Projectile Fire Ship,Projectile Fire Ship,
+677,,Projectile Fire Ship Small,Projectile Fire Ship Small,Projectile Fire Ship Small,
+678,REYNALD_DE_CHATILLON,Reynald de Chatillon,Reynald de Chatillon,Reynald de Chatillon,Hero Frankish Paladin
+679,,Reynald de Chatillon (Dead),Reynald de Chatillon (Dead),Reynald de Chatillon (Dead),
+680,MASTER_OF_THE_TEMPLAR,Master of the Templar,Master of the Templar,Master of the Templar,Hero Frankish Paladin
+681,,Master of the Templar (Dead),Master of the Templar (Dead),Master of the Templar (Dead),
+682,BAD_NEIGHBOR,Bad Neighbor,Bad Neighbor,Bad Neighbor,Hero Trebuchet
+683,GODS_OWN_SLING,God's Own Sling,God's Own Sling,God's Own Sling,Hero Trebuchet
+684,THE_ACCURSED_TOWER,The Accursed Tower,The Accursed Tower,The Accursed Tower,
+685,THE_TOWER_OF_FLIES,The Tower of Flies,The Tower of Flies,The Tower of Flies,
+686,ARCHERS_OF_THE_EYES,Archer of the Eyes,Archer of the Eyes,Archer of the Eyes,Hero Arbalest
+687,,Archer of the Eyes (Dead),Archer of the Eyes (Dead),Archer of the Eyes (Dead),
+688,PIECE_OF_THE_TRUE_CROSS,Piece of the True Cross,Piece of the True Cross,Piece of the True Cross,
+689,PYRAMID,Pyramid,Pyramid,Pyramid,
+690,DOME_OF_THE_ROCK,Dome of the Rock,Dome of the Rock,Dome of the Rock,
+691,ELITE_CANNON_GALLEON,Elite Cannon Galleon,Elite Cannon Galleon,Elite Cannon Galleon,
+692,BERSERK,Berserk,Berserk,Berserk,
+693,,Berserk (Dead),Berserk (Dead),Berserk (Dead),
+694,ELITE_BERSERK,Elite Berserk,Elite Berserk,Elite Berserk,
+695,,Elite Berserk (Dead),Elite Berserk (Dead),Elite Berserk (Dead),
+696,GREAT_PYRAMID,Great Pyramid,Great Pyramid,Great Pyramid,
+697,,FLARE4,FLARE4,FLARE4,
+698,SUBOTAI,Subotai,Subotai,Subotai,
+699,,Subotai (Dead),Subotai (Dead),Subotai (Dead),
+700,HUNTING_WOLF,Hunting Wolf,Hunting Wolf,Hunting Wolf,
+701,,Hunting Wolf (Dead),Hunting Wolf (Dead),Hunting Wolf (Dead),
+702,KUSHLUK,Kushluk,Kushluk,Kushluk,
+703,,Topa Yupanqui,Kushluk (Dead),Kushluk (Dead),Hero Jaguar Warrior
+704,SHAH,Shah,Shah,Shah,Hero King Oriental
+705,DLC_COW,Cow A,Cow,Shah (Dead),Cow Black White
+706,SABOTEUR,Saboteur,Saboteur,Saboteur,Hero Petard
+707,ORNLU_THE_WOLF,Ornlu the Wolf,Ornlu the Wolf,Ornlu the Wolf,Hero Wolf
+708,,Ornlu the Wolf (Dead),Ornlu the Wolf (Dead),Ornlu the Wolf (Dead),
+709,CACTUS,Cactus,Cactus,Cactus,
+710,SKELETON,Skeleton,Skeleton,Skeleton,
+711,RUGS,Rugs,Rugs,Rugs,
+712,YURT,Yurt A,Yurt,Yurt,
+713,YURT2,Yurt B,Yurt 2,Yurt 2,
+714,YURT3,Yurt C,Yurt 3,Yurt 3,
+715,YURT4,Yurt D,Yurt 4,Yurt 4,
+716,YURT5,Yurt E,Yurt 5,Yurt 5,
+717,YURT6,Yurt F,Yurt 6,Yurt 6,
+718,YURT7,Yurt G,Yurt 7,Yurt 7,
+719,YURT8,Yurt H,Yurt 8,Yurt 8,
+720,NINE_BANDS,Nine Bands,Nine Bands,Nine Bands,
+721,SHIPWRECK,Shipwreck A,Shipwreck 1,Shipwreck 1,
+722,SHIPWRECK2,Shipwreck B,Shipwreck 2,Shipwreck 2,
+723,CRATER,Crater,Crater,Crater,
+724,,Genitour (Dead),Genitour (Dead),Genitour (Dead),
+725,JAGUAR_WARRIOR,Jaguar Warrior,Jaguar Warrior,Jaguar Warrior,
+726,ELITE_JAGUAR_WARRIOR,Elite Jaguar Warrior,Elite Jaguar Warrior,Elite Jaguar Warrior,
+727,,-,CRASH,CRASH,
+728,,"Ice, Navigable",Ice,Ice,small patch of ice
+729,GODS_OWN_SLING_PACKED,God's Own Sling (Packed),God's Own Sling (Packed),God's Own Sling (Packed),Hero Trebuchet
+730,BAD_NEIGHBOR_PACKED,Bad Neighbor (Packed),Bad Neighbor (Packed),Bad Neighbor (Packed),Hero Trebuchet
+731,GENGHIS_KHAN,Genghis Khan,Genghis Khan,Genghis Khan,Hero Mangudai
+732,,King South-East Asia (Dead),Genghis Khan (Dead),Genghis Khan (Dead),
+733,EMPEROR_IN_A_BARREL,Emperor in a Barrel,Emperor in a Barrel,Emperor in a Barrel,Hero Trade Cart Full
+734,,Emperor in a Barrel (Dead),Emperor in a Barrel (Dead),Emperor in a Barrel (Dead),
+735,,Packed Trebuchet (Dead),Packed Trebuchet (Dead),Packed Trebuchet (Dead),
+736,,Projectile Mameluke,Projectile Mameluke,Projectile Mameluke,
+737,,Bamboo Stump,Bamboo Stump,Bamboo Stump,
+738,,Bridge A--Cracked,Bridge A--Cracked,Bridge A--Cracked,
+739,,Bridge A--Broken Top,Bridge A--Broken Top,Bridge A--Broken Top,
+740,,Bridge A--Broken Bottom,Bridge A--Broken Bottom,Bridge A--Broken Bottom,
+741,,Bridge B--Cracked,Bridge B--Cracked,Bridge B--Cracked,
+742,,Bridge B--Broken Top,Bridge B--Broken Top,Bridge B--Broken Top,
+743,,Bridge B--Broken Bottom,Bridge B--Broken Bottom,Bridge B--Broken Bottom,
+744,MOUNTAIN_3,Mountain 3,Mountain 3,Mountain 3,
+745,MOUNTAIN_4,Mountain 4,Mountain 4,Mountain 4,
+746,,Projectile Castle,Projectile Castle,Projectile Castle,
+747,,Projectile Castle (Fire),Projectile Castle (Fire),Projectile Castle (Fire),
+748,,Cobra Car,Cobra Car,Cobra Car,
+749,,Cusi Yupanqui,Cobra Car (Dead),Cobra Car (Dead),Hero unit (unique graphic)
+750,,Jaguar Warrior (Dead),Jaguar Warrior (Dead),Jaguar Warrior (Dead),
+751,EAGLE_WARRIOR,Eagle Scout,Eagle Scout,Eagle Warrior,
+752,ELITE_EAGLE_WARRIOR,Elite Eagle Warrior,Elite Eagle Warrior,Elite Eagle Warrior,
+753,,Eagle Warrior,Eagle Warrior,CRASH,
+754,,Eagle Warrior (Dead),Eagle Warrior (Dead),Eagle Warrior (Dead),
+755,TARKAN,Tarkan,Tarkan,Tarkan,
+756,,Tarkan (Dead),Tarkan (Dead),Tarkan (Dead),
+757,ELITE_TARKAN,Elite Tarkan,Elite Tarkan,Elite Tarkan,
+758,,Burned building,Burned building,CRASH,
+759,,Huskarl,Huskarl,Huskarl,barracks version
+760,,Huskarl (Dead),Huskarl (Dead),Huskarl (Dead),barracks version
+761,,Elite Huskarl,Elite Huskarl,Elite Huskarl,barracks version
+762,,Elite Huskarl (Dead),Elite Huskarl (Dead),Elite Huskarl (Dead),barracks version
+763,PLUMED_ARCHER,Plumed Archer,Plumed Archer,Plumed Archer,
+764,,Plumed Archer (Dead),Plumed Archer (Dead),Plumed Archer (Dead),
+765,ELITE_PLUMED_ARCHER,Elite Plumed Archer,Elite Plumed Archer,Elite Plumed Archer,
+766,,Elite Plumed Archer (Dead),Elite Plumed Archer (Dead),Elite Plumed Archer (Dead),
+767,,Projectile Elite Cannon Galleon,Projectile Elite Cannon Galleon,Projectile Elite Cannon Galleon,
+768,,Blue Tree,CRASH,CRASH,invisible in DE and can crash if you click on it
+769,,-,CRASH,CRASH,
+770,,-,CRASH,CRASH,
+771,CONQUISTADOR,Conquistador,Conquistador,Conquistador,
+772,,Conquistador (Dead),Conquistador (Dead),Conquistador (Dead),
+773,ELITE_CONQUISTADOR,Elite Conquistador,Elite Conquistador,Elite Conquistador,
+774,,Elite Conquistador (Dead),Elite Conquistador (Dead),Elite Conquistador (Dead),
+775,MISSIONARY,Missionary,Missionary,Missionary,
+776,,Missionary (Dead),Missionary (Dead),Missionary (Dead),
+777,ATTILA_THE_HUN,Attila the Hun,Attila the Hun,Attila the Hun,
+778,,Canoe,Canoe,Attila the Hun (Dead),
+779,BLEDA_THE_HUN,Bleda the Hun,Bleda the Hun,Bleda the Hun,
+780,,Llama (Dead),Llama (Dead),Bleda the Hun (Dead),
+781,POPE_LEO_I,Pope Leo I,Pope Leo I,Pope Leo I,Hero Monk Western
+782,,Pope Leo I (Dead),Pope Leo I (Dead),Pope Leo I (Dead),
+783,SCYTHIAN_WILD_WOMAN,Scythian Wild Woman,Scythian Wild Woman,Scythian Wild Woman,
+784,,Scythian Wild Woman (Dead),Scythian Wild Woman (Dead),Scythian Wild Woman (Dead),
+785,SEA_TOWER,Sea Tower,Sea Tower,Sea Tower,constant only defined in DE
+786,,Projectile Sea Tower,Projectile Sea Tower,Projectile Sea Tower,
+787,,Projectile Sea Tower (Fire),Projectile Sea Tower (Fire),Projectile Sea Tower (Fire),
+788,,Sea Wall,Sea Wall,Sea Wall,
+789,,Palisade Gate (up.),Palisade Gate,Sea Gate,
+790,,Palisade Gate,Palisade Gate,Sea Gate,
+791,,Palisade Gate,Palisade Gate,Sea Gate,
+792,,Palisade Gate,Palisade Gate,Sea Gate,
+793,,Palisade Gate (down.),Palisade Gate,Sea Gate,
+794,,Palisade Gate,Palisade Gate,Sea Gate,
+795,,Palisade Gate,Palisade Gate,Sea Gate,
+796,,Palisade Gate,Palisade Gate,Sea Gate,
+797,,Palisade Gate (hori.),Palisade Gate,Sea Gate,
+798,,Palisade Gate,Palisade Gate,Sea Gate,
+799,,Palisade Gate,Palisade Gate,Sea Gate,
+800,,Palisade Gate,Palisade Gate,Sea Gate,
+801,,Palisade Gate (vert.),Palisade Gate,Sea Gate,
+802,,Palisade Gate,Palisade Gate,Sea Gate,
+803,,Palisade Gate,Palisade Gate,Sea Gate,
+804,,Palisade Gate,Palisade Gate,Sea Gate,
+805,,Dock,Dock,Dock,Dark age
+806,,Dock,Dock,Dock,Feudal age
+807,,Dock,Dock,Dock,Castle age
+808,,Dock,Dock,Dock,Imperial age
+809,STUMP,Stump,Stump,Stump,
+810,IRON_BOAR,Iron Boar,Iron Boar,Iron Boar,
+811,,Iron Boar (Dead),Iron Boar (Dead),Iron Boar (Dead),
+812,JAGUAR,Jaguar,Jaguar,Jaguar,Predator like wolf
+813,,Jaguar (Dead),Jaguar (Dead),Jaguar (Dead),
+814,HORSE,Horse A,Horse,Horse,
+815,,Horse (Dead),Horse (Dead),Horse (Dead),
+816,MACAW,Macaw,Macaw,Macaw,
+817,STATUE,Statue A,Statue,Statue,
+818,"PLANTS, PLANT",Plant,Plant,Plant,
+819,SIGN,Sign,Sign,Sign,
+820,GRAVE,Grave,Grave,Grave,
+821,HEAD,Head,Head,Head,
+822,JAVELINA,Javelina,Javelina,Javelina,"like boar, but only 300 food"
+823,,Javelina (Dead),Javelina (Dead),Javelina (Dead),
+824,EL_CID_CAMPEADOR,El Cid Campeador,El Cid Campeador,El Cid Campeador,
+825,,Amazon Warrior,Amazon Warrior,El Cid Campeador (Dead),
+826,MONUMENT,Monument,Monument,Monument,for King of The Hill
+827,WAR_WAGON,War Wagon,War Wagon,War Wagon,
+828,,War Wagon (Dead),War Wagon (Dead),War Wagon (Dead),
+829,ELITE_WAR_WAGON,Elite War Wagon,Elite War Wagon,Elite War Wagon,
+830,,Elite War Wagon (Dead),Elite War Wagon (Dead),Elite War Wagon (Dead),
+831,TURTLE_SHIP,Turtle Ship,Turtle Ship,Turtle Ship,
+832,ELITE_TURTLE_SHIP,Elite Turtle Ship,Elite Turtle Ship,Elite Turtle Ship,
+833,TURKEY,Turkey,Turkey,Turkey,
+834,,Turkey (Dead),Turkey (Dead),Turkey (Dead),
+835,WILD_HORSE,Wild Horse,Wild Horse,Wild Horse,
+836,,Wild Horse (Dead),Wild Horse (Dead),Wild Horse (Dead),
+837,MAP_REVEALER,Map Revealer,Map Revealer,Map Revealer,
+838,KING_SANCHO,King Sancho,King Sancho,King Sancho,
+839,,Rock (Stone),Rock (Stone),King Sancho (Dead),Rocks (turn into stone when attacked by villagers)
+840,KING_ALFONSO,King Alfonso,King Alfonso,King Alfonso,
+841,,Rock (Gold),Rock (Gold),King Alfonso (Dead),Rocks (turn into gold when attacked by villagers)
+842,IMAM,Imam,Imam,Imam,
+843,,Cow (Dead),Cow (Dead),Imam (Dead),
+844,ADMIRAL_YI_SUN_SHIN,Admiral Yi Sun-shin,Admiral Yi Sun-shin,Admiral Yi Sun-shin,Hero turtle ship
+845,NOBUNAGA,Nobunaga,Nobunaga,Nobunaga,
+846,,Donkey,Donkey,Nobunaga (Dead),can be used like a trade cart
+847,HENRY_V,Henry V,Henry V,Henry V,
+848,,Donkey (Dead),Donkey (Dead),Henry V (Dead),
+849,WILLIAM_THE_CONQUEROR,William the Conqueror,William the Conqueror,William the Conqueror,
+850,,Amazon Archer,Amazon Archer,William the Conqueror (Dead),
+851,ES_FLAG,ES Flag,ES Flag,ES Flag,
+852,SCYTHIAN_SCOUT,Scythian Scout,Scythian Scout,Scythian Scout,Hero light cavalry
+853,,Scythian Scout (Dead),Scythian Scout (Dead),Scythian Scout (Dead),
+854,TORCH_CONVERTING,Torch A (Convertable),Torch A (Convertable),Torch A (Convertable),
+855,OLD_STONE_HEAD,Old Stone Head,Old Stone Head,Old Stone Head,
+856,ROMAN_RUINS,Roman Ruins,Roman Ruins,Roman Ruins,
+857,HAY_STACK,Hay Stack,Hay Stack,Hay Stack,
+858,BROKEN_CART,Broken Cart,Broken Cart,Broken Cart,
+859,FLOWER_BED,Flower Bed,Flower Bed,Flower Bed,
+860,,Furious the Monkey Boy,Furious the Monkey Boy,Furious the Monkey Boy,agressive like a wolf if given to gaia
+861,,Furious the Monkey Boy (Dead),Furious the Monkey Boy (Dead),Furious the Monkey Boy (Dead),
+862,,Stormy Dog,Stormy Dog,Stormy Dog,flying dog from the cheat
+863,RUBBLE_1_X_1,Rubble 1 x 1,Rubble 1 x 1,Rubble 1 x 1,
+864,RUBBLE_2_X_2,Rubble 2 x 2,Rubble 2 x 2,Rubble 2 x 2,
+865,RUBBLE_3_X_3,Rubble 3 x 3,Rubble 3 x 3,Rubble 3 x 3,
+866,,Genoese Crossbowman,Genoese Crossbowman,CRASH,
+867,,Genoese Crossbowman (Dead),Genoese Crossbowman (Dead),CRASH,
+868,,Elite Genoese Crossbowman,Elite Genoese Crossbowman,CRASH,
+869,,Magyar Huszar,Magyar Huszar,CRASH,
+870,,Magyar Huszar (Dead),Magyar Huszar (Dead),CRASH,
+871,,Elite Magyar Huszar,Elite Magyar Huszar,CRASH,
+872,,Quimper Cathedral,Quimter Cathederal,CRASH,
+873,,Elephant Archer,Elephant Archer,CRASH,
+874,,Elephant Archer (Dead),Elephant Archer (Dead),CRASH,
+875,,Elite Elephant Archer,Elite Elephant Archer,CRASH,
+876,,Boyar,Boyar,CRASH,
+877,,Boyar (Dead),Boyar (Dead),CRASH,
+878,,Elite Boyar,Elite Boyar,CRASH,
+879,,Kamayuk,Kamayuk,CRASH,
+880,,Kamayuk (Dead),Kamayuk (Dead),CRASH,
+881,,Elite Kamayuk,Elite Kamayuk,CRASH,
+882,,Condottiero,Condottiero,CRASH,
+883,,Condottiero (Dead),Condottiero (Dead),CRASH,
+884,DLC_WILD_CAMEL,Wild Camel,Wild Camel,CRASH,"no food, does not convert; constant only defined in DE"
+885,,Siege Tower,Siege Tower,CRASH,"6 attack 6 garrison space, does not help units over walls"
+886,,Tarkan,Tarkan,CRASH,stable version
+887,,Elite Tarkan,Elite Tarkan,CRASH,stable version
+888,,Llama building,Llama building,CRASH,
+889,,Disable llama building,Disable llama building,CRASH,
+890,,Empty llama annex,Empty llama annex,CRASH,
+891,,Siege Tower (Dead),Siege Tower (Dead),CRASH,
+892,,Heavy Pikeman,Heavy Pikeman,CRASH,
+893,,Heavy Pikeman (Dead),Heavy Pikeman (Dead),CRASH,
+894,,Eastern Swordsman,Eastern Swordsman,CRASH,
+895,,Eastern Swordsman (Dead),Eastern Swordsman (Dead),CRASH,
+896,,Waterfall,Waterfall,CRASH,
+897,,Camel,Camel (Gaia),CRASH,"convertible, no food"
+898,,Camel (Dead),Camel (Dead),CRASH,
+899,,Arch of Constantine,Arch of Constantine,CRASH,
+900,,Rain,Rain,CRASH,USE 1300+ VERSION INSTEAD
+901,,Flag F,Flag F,CRASH,USE 1300+ VERSION INSTEAD
+902,,Smoke,Smoke,CRASH,USE 1300+ VERSION INSTEAD
+903,,-,CRASH,CRASH,
+904,,Wooden Bridge A--Top,Wooden Bridge A--Top,CRASH,USE 1300+ VERSION INSTEAD
+905,,Wooden Bridge A--Middle,Wooden Bridge A--Middle,CRASH,USE 1300+ VERSION INSTEAD
+906,,Wooden Bridge A--Bottom,Wooden Bridge A--Bottom,CRASH,USE 1300+ VERSION INSTEAD
+907,,Wooden Bridge B--Top,Wooden Bridge B--Top,CRASH,USE 1300+ VERSION INSTEAD
+908,,Wooden Bridge B--Middle,Wooden Bridge B--Middle,CRASH,USE 1300+ VERSION INSTEAD
+909,,Wooden Bridge B--Bottom,Wooden Bridge B--Bottom,CRASH,USE 1300+ VERSION INSTEAD
+910,,Impaled Corpse,Impaled Corpse,CRASH,USE 1300+ VERSION INSTEAD
+911,,BGAA,boardwalk (like 904),CRASH,USE 1300+ VERSION INSTEAD
+912,,BGAB,boardwalk (like 905),CRASH,USE 1300+ VERSION INSTEAD
+913,,BGAC,boardwalk (like 906),CRASH,USE 1300+ VERSION INSTEAD
+914,,Quarry,Quarry,CRASH,USE 1300+ VERSION INSTEAD
+915,,Lumber,Lumber,CRASH,USE 1300+ VERSION INSTEAD
+916,,Goods,Goods,CRASH,USE 1300+ VERSION INSTEAD
+917,,Vulture,Vulture,CRASH,USE 1300+ VERSION INSTEAD
+918,,Rock 2,Rock 2,CRASH,USE 1300+ VERSION INSTEAD
+919,,Amazon Warrior (Dead),Amazon Warrior (Dead),CRASH,USE 1300+ VERSION INSTEAD
+920,,Amazon Archer (Dead),Amazon Archer (Dead),CRASH,USE 1300+ VERSION INSTEAD
+921,,Imam (Dead),Imam (Dead),CRASH,USE 1300+ VERSION INSTEAD
+922,,Monk with Relic,Monk with relic,CRASH,USE 1300+ VERSION INSTEAD
+923,,Queen,Queen,CRASH,USE 1300+ VERSION INSTEAD
+924,,Queen (Dead),Queen (Dead),CRASH,USE 1300+ VERSION INSTEAD
+925,,Sanyogita,Sanyogita,CRASH,USE 1300+ VERSION INSTEAD
+926,,Prithvi,Prithvi,CRASH,USE 1300+ VERSION INSTEAD
+927,,Chand Bhai,Chand Bhai,CRASH,USE 1300+ VERSION INSTEAD
+928,,Chand Bhai (Dead),Chand Bhai (Dead),CRASH,USE 1300+ VERSION INSTEAD
+929,,Saladin,Saladin,CRASH,USE 1300+ VERSION INSTEAD
+930,,Khosrau,Khosrau,CRASH,USE 1300+ VERSION INSTEAD
+931,,Norse Chieftain,Jarl,CRASH,USE 1300+ VERSION INSTEAD
+932,,Savar,Savaran,CRASH,USE 1300+ VERSION INSTEAD
+933,,Barrels,Barrels,CRASH,USE 1300+ VERSION INSTEAD
+934,,Alfred the Alpaca,Alfred the Alpaca,CRASH,USE 1300+ VERSION INSTEAD
+935,,Alfred the Alpaca (Dead),Alfred the Alpaca (Dead),CRASH,USE 1300+ VERSION INSTEAD
+936,,Elephant,Elephant,CRASH,USE 1300+ VERSION INSTEAD
+937,,Elephant (Dead),Elephant (Dead),CRASH,USE 1300+ VERSION INSTEAD
+938,,Dragon Ship,Dragon Ship,CRASH,USE 1300+ VERSION INSTEAD
+939,,Flame 1,Flame 1,CRASH,USE 1300+ VERSION INSTEAD
+940,,Flame 2,Flame 2,CRASH,USE 1300+ VERSION INSTEAD
+941,,Flame 3,Flame 3,CRASH,USE 1300+ VERSION INSTEAD
+942,,Flame 4,Flame 4,CRASH,USE 1300+ VERSION INSTEAD
+943,,Osman,Osman,CRASH,USE 1300+ VERSION INSTEAD
+944,,Relic Cart,Relic Cart,CRASH,USE 1300+ VERSION INSTEAD
+945,,Shaw (Dead),Shaw (Dead),CRASH,USE 1300+ VERSION INSTEAD
+946,,-,-,CRASH,
+947,,-,-,CRASH,
+948,,-,-,CRASH,
+949,,-,-,CRASH,
+950,,-,-,CRASH,
+951,,-,-,CRASH,
+952,,-,-,CRASH,
+953,,-,-,CRASH,
+954,,-,-,CRASH,
+955,,-,-,CRASH,
+956,,-,-,CRASH,
+957,,-,-,CRASH,
+958,,-,-,CRASH,
+959,,-,-,CRASH,
+960,,-,-,CRASH,
+961,,-,-,CRASH,
+962,,-,-,CRASH,
+963,,-,-,CRASH,
+964,,-,-,CRASH,
+965,,-,-,CRASH,
+966,,-,-,CRASH,
+967,,-,-,CRASH,
+968,,-,-,CRASH,
+969,,-,-,CRASH,
+970,,-,-,CRASH,
+971,,-,-,CRASH,
+972,,-,-,CRASH,
+973,,-,-,CRASH,
+974,,-,-,CRASH,
+975,,-,-,CRASH,
+976,,-,-,CRASH,
+977,,-,-,CRASH,
+978,,-,-,CRASH,
+979,,-,-,CRASH,
+980,,-,-,CRASH,
+981,,-,-,CRASH,
+982,,-,-,CRASH,
+983,,-,-,CRASH,
+984,,-,-,CRASH,
+985,,-,-,CRASH,
+986,,-,-,CRASH,
+987,,-,-,CRASH,
+988,,-,-,CRASH,
+989,,-,-,CRASH,
+990,,-,-,CRASH,
+991,,-,-,CRASH,
+992,,-,-,CRASH,
+993,,-,-,CRASH,
+994,,-,-,CRASH,
+995,,-,-,CRASH,
+996,,-,-,CRASH,
+997,,-,-,CRASH,
+998,,-,-,CRASH,
+999,,-,-,CRASH,
+1000,,-,-,CRASH,
+1001,DLC_ORGANGUN,Organ Gun,Organ Gun,CRASH,
+1002,,Organ Gun (Dead),Organ Gun (Dead),CRASH,
+1003,DLC_ELITEORGANGUN,Elite Organ Gun,Elite Organ Gun,CRASH,
+1004,DLC_CARAVEL,Caravel,Caravel,CRASH,
+1005,,Organ Gun (Dead),Organ Gun (Dead),CRASH,
+1006,DLC_ELITECARAVEL,Elite Caravel,Elite Caravel,CRASH,
+1007,DLC_CAMELARCHER,Camel Archer,Camel Archer,CRASH,
+1008,,Camel Archer (Dead),Camel Archer (Dead),CRASH,
+1009,DLC_ELITECAMELARCHER,Elite Camel Archer,Elite Camel Archer,CRASH,
+1010,DLC_GENITOUR,Genitour,Genitour,CRASH,
+1011,,Genitour (Dead),Genitour (Dead),CRASH,
+1012,DLC_ELITEGENITOUR,Elite Genitour,Elite Genitour,CRASH,
+1013,DLC_GBETO,Gbeto,Gbeto,CRASH,
+1014,,Gbeto (Dead),Gbeto (Dead),CRASH,
+1015,DLC_ELITEGBETO,Elite Gbeto,Elite Gbeto,CRASH,
+1016,DLC_SHOTELWARRIOR,Shotel Warrior,Shotel Warrior,CRASH,
+1017,,Shotel Warrior (Dead),Shotel Warrior (Dead),CRASH,
+1018,DLC_ELITESHOTELWARRIOR,Elite Shotel Warrior,Elite Shotel Warrior,CRASH,
+1019,DLC_ZEBRA,Zebra,Zebra,CRASH,huntable like deer
+1020,,Zebra (Dead),Zebra (Dead),CRASH,
+1021,DLC_FEITORIA,Feitoria,Feitoria,CRASH,Portuguese building that generates resources
+1022,,Monkboat,Monkboat,CRASH,Boat that converts enemies
+1023,DLC_AOE1PRIEST,Priest,Priest,CRASH,Monk with AoE1 graphics
+1024,,Priest (Dead),Priest (Dead),CRASH,
+1025,,Priest with relic,Preist with relic,CRASH,
+1026,DLC_OSTRICH,Ostrich,Ostrich,CRASH,huntable like deer
+1027,,Ostrich (Dead),Ostrich (Dead),CRASH,
+1028,DLC_STORK,Stork,Stork,CRASH,
+1029,DLC_LION,Lion,Lion,CRASH,Predator like wolf
+1030,,Lion (Dead),Lion (Dead),CRASH,
+1031,DLC_CROCODILE,Crocodile,Crocodile,CRASH,Predator like wolf
+1032,,Crocodile (Dead),Crocodile (Dead),CRASH,
+1033,DLC_SAVANNAHPATCH,"Grass Patch, Dry",Savannah Grass Patch,CRASH,
+1034,DLC_MUSA,Musa ibn Nusayr,Musa ibn Nusayr,CRASH,Hero Camel Archer
+1035,DLC_SUNDJATA,Sundjata,Sundjata,CRASH,
+1036,DLC_TARIQ,Tariq ibn Ziyad,Tariq ibn Ziyad,CRASH,
+1037,DLC_RICHARDDECLARE,Richard de Clare,Richard de Clare,CRASH,Hero Light Cavalry
+1038,DLC_TRISTAN,Tristan,Tristan,CRASH,Hero Magyar Huszar
+1039,DLC_YODIT,Princess Yodit,Princess Yodit,CRASH,Hero Queen Western
+1040,DLC_HENRY2,Henry II,Henry II,CRASH,Hero Two Handed Swordsman
+1041,DLC_MOUNTAIN_5,Mountain 5,Mountain 5,CRASH,
+1042,DLC_MOUNTAIN_6,Mountain 6,Mountain 6,CRASH,
+1043,DLC_MOUNTAIN_7,Mountain 7,Mountain 7,CRASH,
+1044,DLC_MOUNTAIN_8,Mountain 8,Mountain 8,CRASH,
+1045,DLC_MOUNTAIN_9,Snow Mountain 1,Snow Mountain 1,CRASH,
+1046,DLC_MOUNTAIN_10,Snow Mountain 2,Snow Mountain 2,CRASH,
+1047,DLC_MOUNTAIN_11,Snow Mountain 3,Snow Mountain 3,CRASH,
+1048,,Rock Formation 1,Rock Formation 1,CRASH,
+1049,DLC_BOULDER_B,Rock Formation 2,Rock Formation 2,CRASH,
+1050,DLC_BOULDER_C,Rock Formation 3,Rock Formation 3,CRASH,
+1051,DLC_DRAGONTREE,Tree (Dragon),Dragon Tree,CRASH,
+1052,DLC_BAOBABTREE,Tree (Baobab),Baobab Tree,CRASH,200 wood
+1053,DLC_AFRICANBUSH,Bush B,Bush 2,CRASH,100 wood
+1054,DLC_AFRICANBUSH_2,Bush C,Bush 3,CRASH,"snowy, 100 wood"
+1055,,Projectile Knife,Projectile Knife,CRASH,
+1056,,Falcon,Falcon,CRASH,like hawk
+1057,,Projectile CVB,Projectile CVB,CRASH,
+1058,,Projectile CVB (Fire),Projectile CVB (Fire),CRASH,
+1059,DLC_ORANGEBUSH,Fruit Bush,Fruit Bush,CRASH,like forage bush
+1060,DLC_GOAT,Goat,Goat,CRASH,herdable like sheep
+1061,,Goat (Dead),Goat (Dead),CRASH,
+1062,DLC_FENCE,Fence,Fence,CRASH,can be placed as wall
+1063,DLC_ACACIATREE,Tree (Acacia),Acacia Tree,CRASH,
+1064,DLC_YEKUNOAMLACK,Yekuno Amlak,Yekuno Amlak,CRASH,Hero Shotel Warrior
+1065,,Fence (Rubble),wooden rubble 1x1,CRASH,
+1066,DLC_WARRIORYODIT,Yodit,Yodit,CRASH,
+1067,DLC_ITZCOATL,Itzcoatl,Itzcoatl,CRASH,
+1068,DLC_MUSTAFA,Mustafa Pasha,Mustafa Pasha,CRASH,Hero Janissary
+1069,DLC_PACAL2,Pacal II,Pacal II,CRASH,Hero Plumed Archer
+1070,DLC_BABUR,Babur,Babur,CRASH,Hero Imperial Camel Rider
+1071,DLC_ABRAHAELEPHANT,Abraha Elephant,Abraha Elephant,CRASH,Hero War Elephant
+1072,DLC_GUGLIEMLO,Guglielmo Embriaco,Guglielmo Embriaco,CRASH,Hero Genoese Crossbowman
+1073,DLC_SU_DINGFANG,Su Dingfang,Su Dingfang,CRASH,Hero Chu Ko Nu
+1074,DLC_PACHACUTI,Pachacuti,Pachacuti,CRASH,
+1075,DLC_HUAYNA_CAPAC,Huayna Capac,Huayna Capac,CRASH,Hero Slinger
+1076,DLC_MIKLOSTOLDI,Miklos Toldi,Miklos Toldi,CRASH,Hero Magyar Huszar
+1077,DLC_LITTLEJOHN,Little John,Little John,CRASH,Hero Spearman
+1078,DLC_ZAWISZATHEBLACK,Zawisza the Black,Zawisza the Black,CRASH,Hero Hussar
+1079,,GENITOPLACEHOLDER,GENITOPLACEHOLDER,CRASH,Genitour
+1080,DLC_SUMANGURU,Sumanguru,Sumanguru,CRASH,Hero unit (unique graphic)
+1081,DLC_STORAGE,Storage,Storage,CRASH,
+1082,DLC_AFRICANHUT_A,Hut A,Hut,CRASH,
+1083,DLC_AFRICANHUT_B,Hut B,Hut,CRASH,
+1084,DLC_AFRICANHUT_C,Hut C,Hut,CRASH,
+1085,DLC_AFRICANHUT_D,Hut D,Hut,CRASH,
+1086,DLC_AFRICANHUT_E,Hut E,Hut,CRASH,
+1087,DLC_AFRICANHUT_F,Hut F,Hut,CRASH,
+1088,DLC_AFRICANHUT_G,Hut G,Hut,CRASH,
+1089,DLC_GRANARY,Granary,Granary,CRASH,
+1090,DLC_BARRICADE,Barricade A,Barricade,CRASH,
+1091,DLC_ANIMALSKELETON,Animal Skeleton,Animal Skeleton,CRASH,
+1092,DLC_STELAE_A,Stelae A,Stelae A,CRASH,
+1093,DLC_STELAE_B,Stelae B,Stelae B,CRASH,
+1094,DLC_STELAE_C,Stelae C,Stelae C,CRASH,
+1095,DLC_GALLOW,Gallow,Gallow,CRASH,
+1096,,Palace,Palace,CRASH,
+1097,,Tent A,Tent,CRASH,
+1098,,Tent B,Tent,CRASH,
+1099,,Tent C,Tent,CRASH,
+1100,,Tent D,Tent,CRASH,
+1101,,Tent E,Tent,CRASH,
+1102,DLC_FORTIFIED_TOWER,Fortified Tower,Sea Fortification,CRASH,must be placed on land; constant only defined in DE
+1103,DLC_FIREGALLEY,Fire Galley,Fire Galley,CRASH,
+1104,DLC_DEMOLITIONRAFT,Demolition Raft,Demolition Raft,CRASH,
+1105,DLC_SIEGETOWER,Siege Tower,Siege Tower,CRASH,
+1106,DLC_DAGNAJAN,Dagnajan,Dagnajan,CRASH,Hero unit (unique graphic)
+1107,,Siege Tower (Dead),Siege Tower (Dead),CRASH,
+1108,,Dagnajan (Dead),Dagnajan (Dead),CRASH,
+1109,,Gidajan,Gidajan,CRASH,Hero unit (unique graphic)
+1110,,Gidajan (Dead),Gidajan (Dead),CRASH,
+1111,,Projectile Light Ballista,Projectile Light Ballista,CRASH,
+1112,,Projectile Light Ballista (Fire),Projectile Light Ballista (Fire),CRASH,
+1113,,Projectile Heavy Scorpion,Projectile Heavy Scorpion,CRASH,
+1114,,Projectile Heavy Scorpion (Fire),Projectile Heavy Scorpion (Fire),CRASH,
+1115,,FACAHOLE,FACAHOLE,CRASH,
+1116,,Eagle Warrior (Dead),Eagle Warrior (Dead),CRASH,
+1117,,Elite Eagle Warrior (Dead),Elite Eagle Warrior (Dead),CRASH,
+1118,,Inca llama annex,Inca llama annex,CRASH,
+1119,,Projectile Gunpowder (Secondary),MROGN,CRASH,
+1120,DLC_BALLISTAELEPHANT,Ballista Elephant,Ballista Elephant,CRASH,
+1121,,Ballista Elephant (Dead),Ballista Elephant (Dead),CRASH,
+1122,DLC_ELITEBALLISTAELEPHANT,Elite Ballista Elephant,Elite Ballista Elephant,CRASH,
+1123,DLC_KARAMBIT,Karambit Warrior,Karambit Warrior,CRASH,
+1124,,Karambit Warrior (Dead),Karambit Warrior (Dead),CRASH,
+1125,DLC_ELITEKARAMBIT,Elite Karambit Warrior,Elite Karambit Warrior,CRASH,
+1126,DLC_ARAMBAI,Arambai,Arambai,CRASH,
+1127,,Arambai (Dead),Arambai (Dead),CRASH,
+1128,DLC_ELITEARAMBAI,Elite Arambai,Elite Arambai,CRASH,
+1129,DLC_RATTANARCHER,Rattan Archer,Rattan Archer,CRASH,
+1130,,Rattan Archer (Dead),Rattan Archer (Dead),CRASH,
+1131,DLC_ELITERATTANARCHER,Elite Rattan Archer,Elite Rattan Archer,CRASH,
+1132,DLC_BATTLEELEPHANT,Battle Elephant,Battle Elephant,CRASH,
+1133,,Battle Elephant (Dead),Battle Elephant (Dead),CRASH,
+1134,DLC_ELITEBATTLEELEPHANT,Elite Battle Elephant,Elite Battle Elephant,CRASH,
+1135,DLC_KOMODO,Komodo Dragon,Komodo Dragon,CRASH,Predator like wolf
+1136,,Komodo Dragon (Dead),Komodo Dragon (Dead),CRASH,
+1137,DLC_TIGER,Tiger,Tiger,CRASH,Predator like wolf
+1138,,Tiger (Dead),Tiger (Dead),CRASH,
+1139,DLC_RHINO,Rhinoceros,Rhinoceros,CRASH,"like boar, but 400 food"
+1140,,Rhinoceros (Dead),Rhinoceros (Dead),CRASH,
+1141,DLC_BOXTURTLE,Box Turtles,Box Turtles,CRASH,like shore fish
+1142,DLC_WATERBUFFALO,Water Buffalo,Water Buffalo,CRASH,"herdable like sheep, but 150 food"
+1143,,Water Buffalo (Dead),Water Buffalo (Dead),CRASH,
+1144,DLC_MANGROVE_TREE,Tree (Mangrove),Mangrove Tree,CRASH,
+1145,,Ninja,-,CRASH,
+1146,DLC_RAINTREE,Tree (Rainforest),Rainforest Tree,CRASH,
+1147,,Ninja (Dead),-,CRASH,
+1148,DLC_ROCKBEACH,Rock (Beach),Rock (Beach),CRASH,massive rocky outcropping
+1149,DLC_ROCKJUNGLE,Rock (Jungle),Rock (Jungle),CRASH,plant-covered rocks
+1150,,Flag G,Flag G,CRASH,
+1151,,Flag H,Flag H,CRASH,
+1152,,Flag I,Flag I,CRASH,
+1153,,Flag J,Flag J,CRASH,
+1154,,Elite Battle Elephant (Dead),Elite Battle Elephant (Dead),CRASH,
+1155,DLC_IMPERIALSKIRMISHER,Imperial Skirmisher,Imperial Skirmisher,CRASH,
+1156,,Imperial Skirmisher (Dead),Imperial Skirmisher (Dead),CRASH,
+1157,DLC_GAJAH_MADA,Gajah Mada,Gajah Mada,CRASH,"in HD, use DLC_GADJAH_MADA"
+1158,DLC_JAYANEGARA,Jayanegara,Jayanegara,CRASH,Hero King South-East Asia
+1159,DLC_RADEN_WIJAYA,Raden Wijaya,Raden Wijaya,CRASH,Hero Cavalier
+1160,DLC_SUNDA_ROYAL_FIGHTER,Sunda Royal Fighter,Sunda Royal Fighter,CRASH,
+1161,,Sunda Royal Fighter (Dead),Sunda Royal Fighter (Dead),CRASH,
+1162,DLC_SURYAVARMAN_I,Suryavarman I,Suryavarman I,CRASH,Hero Elite Battle Elephant
+1163,DLC_UDAYADITYAVARMAN_I,Udayadityavarman I,Udayadityavarman I,CRASH,Hero King South-East Asia
+1164,DLC_JAYAVIRAVARMAN,Jayaviravarman,Jayaviravarman,CRASH,Hero Karambit Warrior
+1165,DLC_BAYINNAUNG,Bayinnaung,Bayinnaung,CRASH,Hero Elite Battle Elephant
+1166,DLC_TABINSHWEHTI,Tabinshwehti,Tabinshwehti,CRASH,Hero Elephant Archer
+1167,,Projectile Ballista Elephant,Projectile Ballista Elephant,CRASH,
+1168,,Projectile Ballista Elephant (Fire),Projectile Ballista Elephant (Fire),CRASH,
+1169,,Projectile Arambai,Projectile Arambai,CRASH,
+1170,,Projectile Arambai (Fire),Projectile Arambai (Fire),CRASH,
+1171,DLC_BUDDHA_STATUE_A,Buddha Statue A,Buddha Statue A,CRASH,
+1172,DLC_BUDDHA_STATUE_B,Buddha Statue B,Buddha Statue B,CRASH,
+1173,DLC_BUDDHA_STATUE_C,Buddha Statue C,Buddha Statue C,CRASH,
+1174,DLC_BUDDHA_STATUE_D,Buddha Statue D,Buddha Statue D,CRASH,
+1175,DLC_FERN_PATCH,Fern Patch,Fern Patch,CRASH,
+1176,DLC_TROWULAN_GATE,Trowulan Gate,Trowulan Gate,CRASH,
+1177,DLC_VASES,Vases,Vases,CRASH,
+1178,DLC_LELOI,Le Loi,Le Loi,CRASH,
+1179,DLC_LELAI1,Le Lai,Le Lai,CRASH,Hero Champion
+1180,DLC_LELAI2,Le Lai,Le Lai,CRASH,
+1181,DLC_LETRIEN,Le Trien,Le Trien,CRASH,Hero Champion
+1182,DLC_LUUNHANCHU,Luu Nhan Chu,Luu Nhan Chu,CRASH,Hero Arbalest
+1183,DLC_BUIBI,Bui Bi,Bui Bi,CRASH,Hero Monk Asia
+1184,DLC_DINHLE,Dinh Le,Dihn Le,CRASH,
+1185,DLC_WANGTONG,Wang Tong,Wang Tong,CRASH,
+1186,DLC_ENVOY,Envoy,Envoy,CRASH,Hero Light Cavalry
+1187,,Rice Farm,Rice Farm,CRASH,
+1188,,Rice Farm (Dead),Rice Farm (Dead),CRASH,
+1189,,Harbor,Harbor,CRASH,shoots arrows
+1190,,Gajah Mada (Dead),Gajah Mada (Dead),CRASH,
+1191,,Stupa,Stupa,CRASH,
+1192,,Gate,Villager Male Farmer,CRASH,
+1193,,FARMDROP,FARMDROP,CRASH,
+1194,,FARMSTACK,FARMSTACK,CRASH,
+1195,,RFARMDROP,RFARMDROP,CRASH,
+1196,,Army Tent A,Army Tent,CRASH,
+1197,,Army Tent B,Army Tent,CRASH,
+1198,,Army Tent C,Army Tent,CRASH,
+1199,,Army Tent D,Army Tent,CRASH,
+1200,,Army Tent E,Army Tent,CRASH,
+1201,,Pagoda A,Pagoda,CRASH,
+1202,,Pagoda B,Pagoda,CRASH,
+1203,,Pagoda C,Pagoda,CRASH,
+1204,,Bridge C--Top,Bridge C--Top,CRASH,
+1205,,Bridge C--Middle,Bridge C--Middle,CRASH,
+1206,,Bridge C--Bottom,Bridge C--Bottom,CRASH,
+1207,,Bridge D--Top,Bridge D--Top,CRASH,
+1208,,Bridge D--Middle,Bridge D--Middle,CRASH,
+1209,,Bridge D--Bottom,Bridge D--Bottom,CRASH,
+1210,,Bridge C--Cracked,Bridge C--Cracked,CRASH,
+1211,,Bridge C--Broken Top,Bridge C--Broken Top,CRASH,
+1212,,Bridge C--Broken Bottom,Bridge C--Broken Bottom,CRASH,
+1213,,Bridge D--Cracked,Bridge D--Cracked,CRASH,
+1214,,Bridge D--Broken Top,Bridge D--Broken Top,CRASH,
+1215,,Bridge D--Broken Bottom,Bridge D--Broken Bottom,CRASH,
+1216,,Sanchi Stupa,Sanchi Stupa,CRASH,
+1217,,Gol Gumbaz,Gol Gumbaz,CRASH,
+1218,,Barricade B,Barricade,CRASH,
+1219,,Barricade C,Barricade,CRASH,
+1220,,Barricade D,Barricade,CRASH,
+1221,,Itzcoatl (Dead),-,CRASH,
+1222,,Sharkatzor,Sharkatzor,CRASH,flying cheat unit that shoots explosive cows in HD (hovers and shoots laser bolts in DE)
+1223,,Projectile Cow,Projectile Cow,CRASH,fired by Sharkatzor
+1224,,Dinh Le (Dead),-,CRASH,
+1225,,Konnik,-,CRASH,
+1226,,Konnik (Dead),-,CRASH,
+1227,,Elite Konnik,-,CRASH,
+1228,,Keshik,-,CRASH,
+1229,,Keshik (Dead),-,CRASH,
+1230,,Elite Keshik,-,CRASH,
+1231,,Kipchak,-,CRASH,
+1232,,Kipchak (Dead),-,CRASH,
+1233,,Elite Kipchak,-,CRASH,
+1234,,Leitis,-,CRASH,
+1235,,Leitis (Dead),-,CRASH,
+1236,,Elite Leitis,-,CRASH,
+1237,DLC_DROMEDARY,Bactrian Camel,-,CRASH,
+1238,,Bactrian Camel (Dead),-,CRASH,
+1239,DLC_IBEX,Ibex,-,CRASH,
+1240,,Ibex (Dead),-,CRASH,
+1241,DLC_SNOWLEOPARD,Snow Leopard,-,CRASH,Predator like wolf
+1242,,Snow Leopard (Dead),-,CRASH,
+1243,DLC_GOOSE,Goose,-,CRASH,
+1244,,Goose (Dead),-,CRASH,
+1245,DLC_PIG,Pig,-,CRASH,
+1246,,Pig (Dead),-,CRASH,
+1247,DLC_WILD_DROMEDARY,Wild Bactrian Camel,-,CRASH,
+1248,DLC_AUTUMNTREE,Tree (Oak Autumn),-,CRASH,
+1249,DLC_AUTUMNSNOWTREE,Tree (Oak Autumn Snow),-,CRASH,
+1250,DLC_DEADTREE,Tree (Dead),-,CRASH,"tree without leaves, part of the dead snow forest"
+1251,,Krepost,-,CRASH,
+1252,,Konnik (Dismounted),-,CRASH,
+1253,,Elite Konnik (Dismounted),-,CRASH,
+1254,,Konnik,-,CRASH,krepost version
+1255,,Elite Konnik,-,CRASH,krepost version
+1256,,Elite Konnik (Dead),-,CRASH,
+1257,,Konnik Infantry (Dead),-,CRASH,
+1258,,Battering Ram,-,CRASH,
+1259,,CUMANPLACEHOLDER,-,CRASH,Kipchack
+1260,,Elite Kipchak,-,CRASH,free Mercenary Kiphack
+1261,,CUMANDISABLED,-,CRASH,Kipchack
+1262,,Tokhtamysh Khan,-,CRASH,Hero Keshik
+1263,,Flaming Camel,-,CRASH,anti-cavalry petard
+1264,,Shrine,-,CRASH,
+1265,,Ivaylo,-,CRASH,Hero (like Konnik)
+1266,,Tsar Konstantin,-,CRASH,
+1267,,Kotyan Khan,-,CRASH,
+1268,,Cuman Chief,-,CRASH,
+1269,,Girgen Khan,-,CRASH,
+1270,,Dismantled Cart,-,CRASH,
+1271,,Ox Cart,-,CRASH,
+1272,,Ox Cart (Dead),-,CRASH,
+1273,,Ox Wagon,-,CRASH,
+1274,,Ox Wagon (Dead),-,CRASH,
+1275,,Khan,-,CRASH,
+1276,,Urus Khan,-,CRASH,Hero Kipchak
+1277,,Khan (Dead),-,CRASH,
+1278,,Vytautas the Great (Dead),-,CRASH,
+1279,,Statue (Civilization),-,CRASH,
+1280,,Statue B,-,CRASH,
+1281,,Vytautas the Great,-,CRASH,
+1282,,Flag K,-,CRASH,
+1283,,Flag L,-,CRASH,
+1284,,Flag M,-,CRASH,
+1285,,FE Flag,-,CRASH,
+1286,,Tsar Konstantin (Dead),-,CRASH,
+1287,,Kotyan Khan (Dead),-,CRASH,
+1288,,Cuman Chief (Dead),-,CRASH,
+1289,,Girgen Khan (Dead),-,CRASH,
+1290,,Ivaylo,-,CRASH,Hero (like Konnik Infantry)
+1291,,Invisible Object,-,CRASH,Invisible object that keeps player alive
+1292,,Queen,-,CRASH,Western
+1293,,Sanyogita,-,CRASH,Hero Queen Western
+1294,,Prithvi,-,CRASH,Hero Crossbowman
+1295,,Chand Bardai,-,CRASH,Hero Monk Asian
+1296,,Saladin,-,CRASH,Hero Mameluke
+1297,,Khosrau,-,CRASH,Hero Elephant Archer
+1298,,Norse Chieftain,-,CRASH,Hero unit (unique graphic)
+1299,,Sogdian Cataphract,-,CRASH,
+1300,,Alfred the Alpaca,-,CRASH,"cheat unit, 120 attack"
+1301,DLC_ELEPHANT,Elephant,-,CRASH,"like a boar, but 400 food"
+1302,,Dragon Ship,-,CRASH,
+1303,,Osman,-,CRASH,Hero unit (unique graphic)
+1304,,Relic Cart,-,CRASH,
+1305,DLC_VULTURE,Vulture,-,CRASH,
+1306,,Rain,-,CRASH,
+1307,,Flag F,-,CRASH,with a golden emblem
+1308,,Smoke,-,CRASH,
+1309,,Wooden Bridge A--Top,-,CRASH,
+1310,,Wooden Bridge A--Middle,-,CRASH,
+1311,,Wooden Bridge A--Bottom,-,CRASH,
+1312,,Wooden Bridge B--Top,-,CRASH,
+1313,,Wooden Bridge B--Middle,-,CRASH,
+1314,,Wooden Bridge B--Bottom,-,CRASH,
+1315,,Impaled Corpse,-,CRASH,
+1316,,BGAA,-,CRASH,Wooden Bridge A Top
+1317,,BGAB,-,CRASH,Wooden Bridge A Middle
+1318,,BGAC,-,CRASH,Wooden Bridge A Bottom 
+1319,,Quarry,-,CRASH,
+1320,,Lumber,-,CRASH,
+1321,,Goods,-,CRASH,fruit market stall
+1322,,Statue (Column),-,CRASH,
+1323,,Rock 2,-,CRASH,brown heap of rocks
+1324,,Amazon Warrior (Dead),-,CRASH,
+1325,,Amazon Archer (Dead),-,CRASH,
+1326,,Imam (Dead),-,CRASH,
+1327,,Monk with Relic,-,CRASH,
+1328,,Queen (Dead),-,CRASH,Western
+1329,,Monk (Dead),-,CRASH,Asian
+1330,,Barrels,-,CRASH,
+1331,,Alfred the Alpaca (Dead),-,CRASH,
+1332,,Elephant (Dead),-,CRASH,
+1333,,Flame 1,-,CRASH,small
+1334,,Flame 2,-,CRASH,small
+1335,,Flame 3,-,CRASH,large
+1336,,Flame 4,-,CRASH,large
+1337,,Shaw (Dead),-,CRASH,Oriental King Dead
+1338,,Cart,-,CRASH,full trade cart??
+1339,,CLF01,-,CRASH,cliff??
+1340,,CLF02,-,CRASH,cliff??
+1341,,CLF03,-,CRASH,cliff??
+1342,,CLF04,-,CRASH,cliff??
+1343,,Statue (Left),-,CRASH,
+1344,,CLF06,-,CRASH,cliff??
+1345,,Statue (Right),-,CRASH,
+1346,,CLF08,-,CRASH,cliff??
+1347,CYPRESS_TREE,Tree (Cypress),-,CRASH,
+1348,ITALIAN_PINETREE,Tree (Italian Pine),-,CRASH,
+1349,OLIVE_TREE,Tree (Olive),-,CRASH,
+1350,,Tree (Reeds),-,CRASH,only 50 wood
+1351,,Plant (Jungle),-,CRASH,
+1352,,Plant (Underbrush Tropical),-,CRASH,
+1353,,Plant (Underbrush),-,CRASH,
+1354,,Plant (Rainforest),-,CRASH,
+1355,,Plant (Underbrush Rainforest),-,CRASH,
+1356,HORSE_B,Horse B,-,CRASH,Horse Heavy
+1357,,Horse Heavy (Dead),-,CRASH,
+1358,,"Grass, Green",-,CRASH,
+1359,,"Grass, Dry",-,CRASH,
+1360,,"Plant (Bush, Green)",-,CRASH,
+1361,,"Plant (Bush, Dry)",-,CRASH,
+1362,,"Plant (Shrub, Green)",-,CRASH,
+1363,,"Plant (Shrub, Dry)",-,CRASH,
+1364,,Plant (Weeds),-,CRASH,
+1365,,Plant (Dead),-,CRASH,
+1366,,Plant (Flowers),-,CRASH,
+1367,,Sankore Madrasah,-,CRASH,
+1368,,Tower of London,-,CRASH,
+1369,,Dormition Cathedral,-,CRASH,
+1370,,Steppe Lancer,-,CRASH,
+1371,,Steppe Lancer (Dead),-,CRASH,
+1372,,Elite Steppe Lancer,-,CRASH,
+1373,,Elite Steppe Lancer (Dead),-,CRASH,
+1374,,Iroquois Warrior,-,CRASH,
+1375,,Iroquois Warrior (Dead),-,CRASH,
+1376,,Torch B,-,CRASH,
+1377,,Torch B (Convertable),-,CRASH,
+1378,,Rock Church,-,CRASH,
+1379,,Sea Gate,-,CRASH,
+1380,,Sea Gate,-,CRASH,
+1381,,Sea Gate,-,CRASH,
+1382,,Sea Gate,-,CRASH,
+1383,,Sea Gate,-,CRASH,
+1384,,Sea Gate,-,CRASH,
+1385,,Sea Gate,-,CRASH,
+1386,,Sea Gate,-,CRASH,
+1387,,Sea Gate,-,CRASH,
+1388,,Sea Gate,-,CRASH,
+1389,,Sea Gate,-,CRASH,
+1390,,Sea Gate,-,CRASH,
+1391,,Sea Gate,-,CRASH,
+1392,,Sea Gate,-,CRASH,
+1393,,Sea Gate,-,CRASH,
+1394,,Sea Gate,-,CRASH,
+1395,,Sundjata (Dead),-,CRASH,
+1396,,Chain,-,CRASH,
+1397,,Chain,-,CRASH,
+1398,,Chain,-,CRASH,
+1399,,Chain,-,CRASH,
+1400,,Priest with Relic,-,CRASH,
+1401,,Savar (Dead),CRASH,CRASH,
+1402,,Barracks DARK (Rubble),CRASH,CRASH,
+1403,,House DARK (Rubble),CRASH,CRASH,
+1404,,Mill DARK (Rubble),CRASH,CRASH,
+1405,,Outpost DARK (Rubble),CRASH,CRASH,
+1406,,Gate Foundation (Rubble),CRASH,CRASH,
+1407,,PalisadeWall DARK (Rubble),CRASH,CRASH,
+1408,,TownCenter DARK (Rubble),CRASH,CRASH,
+1409,,LumberCamp (Rubble),CRASH,CRASH,
+1410,,MiningCamp (Rubble),CRASH,CRASH,
+1411,,Mill Age2 (Rubble),CRASH,CRASH,
+1412,,Mill Age3 (Rubble),CRASH,CRASH,
+1413,,Barracks Age2 (Rubble),CRASH,CRASH,
+1414,,Barracks Age3 (Rubble),CRASH,CRASH,
+1415,,ArcheryRange Age2 (Rubble),CRASH,CRASH,
+1416,,ArcheryRange Age3 (Rubble),CRASH,CRASH,
+1417,,Stable Age2 (Rubble),CRASH,CRASH,
+1418,,Stable Age3 (Rubble),CRASH,CRASH,
+1419,,Blacksmith Age2 (Rubble),CRASH,CRASH,
+1420,,Blacksmith Age3 (Rubble),CRASH,CRASH,
+1421,,Monastery Age3 (Rubble),CRASH,CRASH,
+1422,,Market Age2 (Rubble),CRASH,CRASH,
+1423,,Market Age3 (Rubble),CRASH,CRASH,
+1424,,Market Age4 (Rubble),CRASH,CRASH,
+1425,,SiegeWorkshop Age2 (Rubble),CRASH,CRASH,
+1426,,SiegeWorkshop Age3 (Rubble),CRASH,CRASH,
+1427,,University Age3 (Rubble),CRASH,CRASH,
+1428,,University Age4 (Rubble),CRASH,CRASH,
+1429,,TradeWorkshop Age3 (Rubble),CRASH,CRASH,
+1430,,Castle Age3 (Rubble),CRASH,CRASH,
+1431,,TownCenter Age2 (Rubble),CRASH,CRASH,
+1432,,TownCenter Age3 (Rubble),CRASH,CRASH,
+1433,,TownCenter Age4 (Rubble),CRASH,CRASH,
+1434,,House Age2 (Rubble),CRASH,CRASH,
+1435,,House Age3 (Rubble),CRASH,CRASH,
+1436,,Tower Age2 (Rubble),CRASH,CRASH,
+1437,,Tower Age3 (Rubble),CRASH,CRASH,
+1438,,Tower Age4 (Rubble),CRASH,CRASH,
+1439,,Tower Bombard (Rubble),CRASH,CRASH,
+1440,,PalisadeGate DARK NE (Rubble),CRASH,CRASH,
+1441,,PalisadeGate DARK SE (Rubble),CRASH,CRASH,
+1442,,PalisadeGate DARK E (Rubble),CRASH,CRASH,
+1443,,PalisadeGate DARK N (Rubble),CRASH,CRASH,
+1444,,FortifiedTower (Rubble),CRASH,CRASH,
+1445,,Wonder (Rubble),CRASH,CRASH,
+1446,,Feitoria (Rubble),CRASH,CRASH,
+1447,,Yurt A (Rubble),CRASH,CRASH,
+1448,,Yurt B (Rubble),CRASH,CRASH,
+1449,,Yurt C (Rubble),CRASH,CRASH,
+1450,,Yurt D (Rubble),CRASH,CRASH,
+1451,,Yurt E (Rubble),CRASH,CRASH,
+1452,,Yurt F (Rubble),CRASH,CRASH,
+1453,,Yurt G (Rubble),CRASH,CRASH,
+1454,,Yurt H (Rubble),CRASH,CRASH,
+1455,,Hut A (Rubble),CRASH,CRASH,
+1456,,Hut B (Rubble),CRASH,CRASH,
+1457,,Hut C (Rubble),CRASH,CRASH,
+1458,,Hut D (Rubble),CRASH,CRASH,
+1459,,Hut E (Rubble),CRASH,CRASH,
+1460,,Hut F (Rubble),CRASH,CRASH,
+1461,,Hut G (Rubble),CRASH,CRASH,
+1462,,Tent A (Rubble),CRASH,CRASH,
+1463,,Tent B (Rubble),CRASH,CRASH,
+1464,,Tent C (Rubble),CRASH,CRASH,
+1465,,Tent D (Rubble),CRASH,CRASH,
+1466,,Tent E (Rubble),CRASH,CRASH,
+1467,,ArmyTent A (Rubble),CRASH,CRASH,
+1468,,ArmyTent B (Rubble),CRASH,CRASH,
+1469,,ArmyTent C (Rubble),CRASH,CRASH,
+1470,,ArmyTent D (Rubble),CRASH,CRASH,
+1471,,ArmyTent E (Rubble),CRASH,CRASH,
+1472,,Barricade A (Rubble),CRASH,CRASH,
+1473,,Barricade B (Rubble),CRASH,CRASH,
+1474,,Barricade C (Rubble),CRASH,CRASH,
+1475,,Barricade D (Rubble),CRASH,CRASH,
+1476,,Pavilion A (Rubble),CRASH,CRASH,
+1477,,Pavilion B (Rubble),CRASH,CRASH,
+1478,,Pavilion C (Rubble),CRASH,CRASH,
+1479,,Krepost (Rubble),CRASH,CRASH,
+1480,,Cathedral (Rubble),CRASH,CRASH,
+1481,,Temple of Heaven (Rubble),CRASH,CRASH,
+1482,,DomeOfRock (Rubble),CRASH,CRASH,
+1483,,Shrine (Rubble),CRASH,CRASH,
+1484,,Storage (Rubble),CRASH,CRASH,
+1485,,ArchOfConstantine (Rubble),CRASH,CRASH,
+1486,,Fortress (Rubble),CRASH,CRASH,
+1487,,GolGumbaz (Rubble),CRASH,CRASH,
+1488,,PoenariCastle (Rubble),CRASH,CRASH,
+1489,,QuimperCathedral (Rubble),CRASH,CRASH,
+1490,,SanchiStupa (Rubble),CRASH,CRASH,
+1491,,SankoreMadrasah (Rubble),CRASH,CRASH,
+1492,,TowerOfLondon (Rubble),CRASH,CRASH,
+1493,,DormitionCathedral (Rubble),CRASH,CRASH,
+1494,,TheAccursedTower (Rubble),CRASH,CRASH,
+1495,,TheTowerOfFlies (Rubble),CRASH,CRASH,
+1496,,Mosque (Rubble),CRASH,CRASH,
+1497,,Rubble 4 x 4,CRASH,CRASH,
+1498,,Rubble 8 x 8,CRASH,CRASH,
+1499,,Granary (Rubble),CRASH,CRASH,
+1500,,StoneGate NE (Rubble),CRASH,CRASH,
+1501,,StoneGate SE (Rubble),CRASH,CRASH,
+1502,,StoneGate E (Rubble),CRASH,CRASH,
+1503,,StoneGate N (Rubble),CRASH,CRASH,
+1504,,FortifiedGate NE (Rubble),CRASH,CRASH,
+1505,,FortifiedGate SE (Rubble),CRASH,CRASH,
+1506,,FortifiedGate E (Rubble),CRASH,CRASH,
+1507,,FortifiedGate N (Rubble),CRASH,CRASH,
+1508,,StoneWall (Rubble),CRASH,CRASH,
+1509,,FortifiedWall (Rubble),CRASH,CRASH,
+1510,,CityGate NE (Rubble),CRASH,CRASH,
+1511,,CityGate SE (Rubble),CRASH,CRASH,
+1512,,CityGate E (Rubble),CRASH,CRASH,
+1513,,CityGate N (Rubble),CRASH,CRASH,
+1514,,Amphitheatre (Rubble),CRASH,CRASH,
+1515,,Pyramid (Rubble),CRASH,CRASH,
+1516,,GreatPyramid (Rubble),CRASH,CRASH,
+1517,,AachenCathedral (Rubble),CRASH,CRASH,
+1518,,StoneGate Corner (Rubble),CRASH,CRASH,
+1519,,FortifiedGate Corner (Rubble),CRASH,CRASH,
+1520,,Colosseum (Rubble),CRASH,CRASH,
+1521,,PalisadeGate Corner (Rubble),CRASH,CRASH,
+1522,,Aqueduct (Rubble),CRASH,CRASH,
+1523,,CityGate Corner (Rubble),CRASH,CRASH,
+1524,,Donjon Age2 (Rubble),CRASH,CRASH,
+1525,,Folwark Age2 (Rubble),CRASH,CRASH,
+1526,,PaganShrine (Rubble),CRASH,CRASH,
+1527,,Folwark Age3 (Rubble),CRASH,CRASH,
+1528,,Folwark Age1 (Rubble),CRASH,CRASH,
+1529,,Caravanserai (Rubble),CRASH,CRASH,
+1530,,MinaretOfJam(Rubble),CRASH,CRASH,
+1531,,FortifiedChurch Age3 (Rubble),CRASH,CRASH,
+1532,,Yurt I (Rubble),CRASH,CRASH,
+1533,,Yurt J (Rubble),CRASH,CRASH,
+1534,,Yurt K (Rubble),CRASH,CRASH,
+1535,,Yurt L (Rubble),CRASH,CRASH,
+1536,BAMBOO_STUMP,Bamboo Stump,CRASH,CRASH,permanent
+1537,BAOBAB_STUMP,Baobab Stump,CRASH,CRASH,permanent
+1538,LUSH_BAMBOO_STUMP,Lush Bamboo Stump,CRASH,CRASH,permanent
+1539,FELLED_TREE,Felled Tree,CRASH,CRASH,permanent
+1540,FELLED_TREE_BAMBOO,Felled Tree (Bamboo),CRASH,CRASH,
+1541,FELLED_TREE_BAOBAB,Felled Tree (Baobab),CRASH,CRASH,
+1542,FELLED_TREE_LUSH_BAMBOO,Felled Tree (Lush Bamboo),CRASH,CRASH,
+1543,,PLACEHOLDER,CRASH,CRASH,on grid; No terrain restrictions
+1544,,PLACEHOLDER (LAND),CRASH,CRASH,on grid; Restricted to land
+1545,,PLACEHOLDER (AMPHIBIOUS),CRASH,CRASH,"on grid; Restricted to land, beaches and shallows"
+1546,,PLACEHOLDER (NAVAL),CRASH,CRASH,"on grid; Restricted to beaches, shallows and water"
+1547,,PLACEHOLDER (WATER),CRASH,CRASH,on grid; Restricted to water
+1548,,Projectile CHURCH,CRASH,CRASH,
+1549,,Forage Bush,CRASH,CRASH,for the Gurjara bonus
+1550,,Bridge E--Top,CRASH,CRASH,
+1551,,Bridge E--Middle,CRASH,CRASH,
+1552,,Bridge E--Bottom,CRASH,CRASH,
+1553,,Bridge F--Top,CRASH,CRASH,
+1554,,Bridge F--Middle,CRASH,CRASH,
+1555,,Bridge F--Bottom,CRASH,CRASH,
+1556,,Bridge E--Cracked,CRASH,CRASH,
+1557,,Bridge E--Broken Top,CRASH,CRASH,
+1558,,Bridge E--Broken Bottom,CRASH,CRASH,
+1559,,Bridge F--Cracked,CRASH,CRASH,
+1560,,Bridge F--Broken Top,CRASH,CRASH,
+1561,,Bridge F--Broken Bottom,CRASH,CRASH,
+1562,,Paifang Gate,CRASH,CRASH,
+1563,,Nubian Pyramid,CRASH,CRASH,
+1564,,Target A,CRASH,CRASH,
+1565,,Target B,CRASH,CRASH,
+1566,,Temple Ruin,CRASH,CRASH,
+1567,,Well,CRASH,CRASH,
+1568,,Mounted Samurai,CRASH,CRASH,
+1569,,Mounted Samurai (Dead),CRASH,CRASH,
+1570,,Xolotl Warrior,CRASH,CRASH,Mesoamerican cavalry unit
+1571,,XolotlWarrior (Dead),CRASH,CRASH,
+1572,,Merchant,CRASH,CRASH,looks like King?
+1573,,Merchant (Dead),CRASH,CRASH,
+1574,,Sosso Guard,CRASH,CRASH,Hero unit (unique graphic)
+1575,,Sosso Gaurd (Dead),CRASH,CRASH,
+1576,,Royal Janissary (Dead),CRASH,CRASH,
+1577,,Photonman,CRASH,CRASH,cheat unit unit with explosive rifle; 30 attack
+1578,,Photonman (Dead),CRASH,CRASH,
+1579,,City Gate,CRASH,CRASH,
+1580,,City Gate,CRASH,CRASH,
+1581,,City Gate,CRASH,CRASH,
+1582,,City Gate,CRASH,CRASH,
+1583,,City Gate,CRASH,CRASH,
+1584,,City Gate,CRASH,CRASH,
+1585,,City Gate,CRASH,CRASH,
+1586,,City Gate,CRASH,CRASH,
+1587,,City Gate,CRASH,CRASH,
+1588,,City Gate,CRASH,CRASH,
+1589,,City Gate,CRASH,CRASH,
+1590,,City Gate,CRASH,CRASH,
+1591,,City Gate,CRASH,CRASH,
+1592,,City Gate,CRASH,CRASH,
+1593,,City Gate,CRASH,CRASH,
+1594,,City Gate,CRASH,CRASH,
+1595,,Projectile Laser,CRASH,CRASH,fired by Photonman unit
+1596,DLC_COW_B,Cow B,CRASH,CRASH,Cow Black
+1597,,Cow B (Dead),CRASH,CRASH,
+1598,DLC_COW_C,Cow C,CRASH,CRASH,Cow Brown and White
+1599,,Cow C (Dead),CRASH,CRASH,
+1600,DLC_COW_D,Cow D,CRASH,CRASH,Cow Brown
+1601,,Cow D (Dead),CRASH,CRASH,
+1602,HORSE_C,Horse C,CRASH,CRASH,Horse Grey Black
+1603,,Horse C (Dead),CRASH,CRASH,
+1604,HORSE_D,Horse D,CRASH,CRASH,Horse Grey Brown
+1605,,Horse D (Dead),CRASH,CRASH,
+1606,HORSE_E,Horse E,CRASH,CRASH,Horse White Brown
+1607,,Horse E (Dead),CRASH,CRASH,
+1608,,Butterflies1,CRASH,CRASH,large numbers of butterflies may cause crashes
+1609,,Butterflies2,CRASH,CRASH,large numbers of butterflies may cause crashes
+1610,,Butterflies3,CRASH,CRASH,large numbers of butterflies may cause crashes
+1611,,Animal Blood Small,CRASH,CRASH,
+1612,,Animal Blood Large,CRASH,CRASH,
+1613,,Terrain blocker,CRASH,CRASH,invisible; blocks terrains from spawning decorative plants; can be used as an on-grid placeholder
+1614,,Bolt explosion,CRASH,CRASH,
+1615,,Sforza (Dead),CRASH,CRASH,
+1616,,Tariq Ibn Ziyad (Dead),CRASH,CRASH,
+1617,,Vlad Dracula (Dead),CRASH,CRASH,
+1618,,Subotai (Dead),CRASH,CRASH,
+1619,,Attila (Dead),CRASH,CRASH,
+1620,,Alaric (Dead),CRASH,CRASH,
+1621,,Sumanguru (Dead),CRASH,CRASH,
+1622,,Aachen Cathedral,CRASH,CRASH,
+1623,,Le Loi (Dead),CRASH,CRASH,
+1624,,Ataulf (Dead),CRASH,CRASH,
+1625,,Yodit (Dead),CRASH,CRASH,
+1626,,Cusi Yupanqui (Dead),CRASH,CRASH,
+1627,,Prithviraj (Dead),CRASH,CRASH,
+1628,,Jarl (Dead),CRASH,CRASH,
+1629,,Ivaylo (Dead),CRASH,CRASH,
+1630,,Ivaylo Infantry (Dead),CRASH,CRASH,
+1631,,The Middlebrook,CRASH,CRASH,Hero Longboat
+1632,,Osman (Dead),CRASH,CRASH,
+1633,,Pachacuti (Dead),CRASH,CRASH,
+1634,,Baobab Stump,CRASH,CRASH,
+1635,,Waterfall (Background),CRASH,CRASH,
+1636,,Envoy (Dead),CRASH,CRASH,
+1637,,Bayinnaung (Dead),CRASH,CRASH,
+1638,,Kushluk (Dead),CRASH,CRASH,
+1639,,Monument resources enabler,CRASH,CRASH,"Place this as an object for each player, to allow monuments to generate resources for player controlling the monument"
+1640,,Villager building (Male),CRASH,CRASH,
+1641,,Villager building (Female),CRASH,CRASH,
+1642,,Villager annex (Chinese),CRASH,CRASH,used to produce extra Chinese villagers
+1643,,Villager building2 (Male),CRASH,CRASH,
+1644,,Villager annex (Mayan),CRASH,CRASH,used to produce extra Mayan villagers
+1645,,Villager building2 (Female),CRASH,CRASH,
+1646,,Market,CRASH,CRASH,indestructibe market to give gaia for trade
+1647,,Trade Workshop,CRASH,CRASH,"Used in Battle Royale; Generates wood, food, gold.  Allows trade like market.  Very high HP."
+1648,,Trail Smoke (Gunpowder),CRASH,CRASH,
+1649,,Trophy None,CRASH,CRASH,
+1650,,Trophy Bronze,CRASH,CRASH,
+1651,,Trophy Silver,CRASH,CRASH,
+1652,,Trophy Gold,CRASH,CRASH,
+1653,,Trophy Platinum,CRASH,CRASH,
+1654,,resources,CRASH,CRASH,Used in battle royale. Grants players and trickle of food+wood+gold
+1655,,Coustillier,CRASH,CRASH,
+1656,,Coustillier (Dead),CRASH,CRASH,
+1657,,Elite Coustillier,CRASH,CRASH,
+1658,,Serjeant,CRASH,CRASH,trainable from castle
+1659,,Elite Serjeant,CRASH,CRASH,trainable from castle
+1660,,Serjeant,CRASH,CRASH,trainable from donjon
+1661,,Elite Serjeant,CRASH,CRASH,trainable from donjon
+1662,,Serjeant (Dead),CRASH,CRASH,
+1663,,Flemish Militia Male ,CRASH,CRASH,
+1664,,Flemish Militia Male (Dead),CRASH,CRASH,
+1665,,Donjon,CRASH,CRASH,
+1666,,HPIKL_D,CRASH,CRASH,uses dead trade cart graphics
+1667,,Elite Elephant Archer (Dead),CRASH,CRASH,
+1668,,Camel Scout (Dead),CRASH,CRASH,
+1669,,Edward Longshanks,CRASH,CRASH,
+1670,,Edward Longshanks (Dead),CRASH,CRASH,
+1671,,Gilbert de Clare,CRASH,CRASH,
+1672,,Gilbert de Clare (Dead),CRASH,CRASH,
+1673,,John the Fearless,CRASH,CRASH,
+1674,,John the Fearless (Dead),CRASH,CRASH,
+1675,,Philip the Good,CRASH,CRASH,
+1676,,Philip the Good (Dead),CRASH,CRASH,
+1677,,Robert Guiscard,CRASH,CRASH,
+1678,,Robert Guiscard (Dead),CRASH,CRASH,
+1679,,Roger Bosso,CRASH,CRASH,
+1680,,Roger Bosso (Dead),CRASH,CRASH,
+1681,,Bohemond,CRASH,CRASH,
+1682,,Bohemond (Dead),CRASH,CRASH,
+1683,,Llywelyn ap Gruffydd,CRASH,CRASH,
+1684,,Llywelyn ap Gruffydd (Dead),CRASH,CRASH,
+1685,,Dafydd ap Gruffydd,CRASH,CRASH,
+1686,,Dafydd ap Gruffydd (Dead),CRASH,CRASH,
+1687,,Bernard d'Armagnac,CRASH,CRASH,
+1688,,Bernard d'Armagnac (Dead),CRASH,CRASH,
+1689,,Flare (Permanent),CRASH,CRASH,
+1690,,Warwolf Trebuchet,CRASH,CRASH,hero trebuchet
+1691,,Warwolf Trebuchet (Packed),CRASH,CRASH,hero trebuchet
+1692,,Jacqueline of Hainaut,CRASH,CRASH,hero queen western
+1693,,Sheep building1,CRASH,CRASH,for the Tatar sheep bonus
+1694,,Sheep annex1,CRASH,CRASH,for the Tatar sheep bonus
+1695,,Sheep building2,CRASH,CRASH,for the Tatar sheep bonus
+1696,,Sheep annex2,CRASH,CRASH,for the Tatar sheep bonus
+1697,,Flemish Militia Female,CRASH,CRASH,
+1698,,Flemish Militia Female (Dead),CRASH,CRASH,
+1699,,Flemish Militia,CRASH,CRASH,from the barracks
+1700,,Sheep building3,CRASH,CRASH,for the Tatar sheep bonus
+1701,,Obuch,CRASH,CRASH,
+1702,,Obuch (Dead),CRASH,CRASH,
+1703,,Elite Obuch,CRASH,CRASH,
+1704,,Hussite Wagon,CRASH,CRASH,
+1705,,Hussite Wagon (Dead),CRASH,CRASH,
+1706,,Elite Hussite Wagon,CRASH,CRASH,
+1707,,Winged Hussar,CRASH,CRASH,
+1708,,Winged Hussar (Dead),CRASH,CRASH,
+1709,,Houfnice,CRASH,CRASH,
+1710,,Houfnice (Dead),CRASH,CRASH,
+1711,,Folwark,CRASH,CRASH,feudal age
+1712,,Pagan Shrine,CRASH,CRASH,
+1713,,Jan Zizka,CRASH,CRASH,
+1714,,Jan Zizka (Dead),CRASH,CRASH,
+1715,,Jadwiga,CRASH,CRASH,
+1716,,Jadwiga (Dead),CRASH,CRASH,
+1717,BIRCH_TREE,Tree (Birch),CRASH,CRASH,
+1718,,Jogaila,CRASH,CRASH,
+1719,,Jogaila (Dead),CRASH,CRASH,
+1720,,Folwark,CRASH,CRASH,castle age
+1721,,Kestutis,CRASH,CRASH,
+1722,,Kestutis (Dead),CRASH,CRASH,
+1723,CRUSADER_KNIGHT,Crusader Knight,CRASH,CRASH,
+1724,,Crusader Knight (Dead),CRASH,CRASH,
+1725,,Algirdas,CRASH,CRASH,
+1726,,Algirdas (Dead),CRASH,CRASH,
+1727,,Ulrich von Jungingen,CRASH,CRASH,
+1728,,Ulrich von Jungingen (Dead),CRASH,CRASH,
+1729,,Emperor Sigismund,CRASH,CRASH,Frankish Paladin
+1730,,Dmitry of Moscow,CRASH,CRASH,Hero Cavalier
+1731,,Mikhail of Tver,CRASH,CRASH,Hero Boyar
+1732,,Young Jadwiga,CRASH,CRASH,Joan the Maid
+1733,,Projectile Hussite Wagon,CRASH,CRASH,
+1734,,Folwark,CRASH,CRASH,dark age
+1735,,Urumi Swordsman,CRASH,CRASH,Formerly the Sicilian free transport
+1736,,Urumi Swordsman (Dead),CRASH,CRASH,
+1737,,Elite Urumi Swordsman,,,
+1738,,Ratha (Melee),,,
+1739,,Ratha (Melee) (Dead),,,
+1740,,Elite Ratha (Melee),,,
+1741,,Chakram Thrower,,,
+1742,,Chakram Thrower (Dead),,,
+1743,,Elite Chakram Thrower,,,
+1744,,Armored Elephant,,,
+1745,,Armored Elephant (Dead),,,
+1746,,Siege Elephant,,,
+1747,,Ghulam,,,
+1748,,Ghulam (Dead),,,
+1749,,Elite Ghulam,,,
+1750,,Thirisadai,,,Dravidian unique ship
+1751,,Shrivamsha Rider,,,
+1752,,Shrivamsha Rider (Dead),,,
+1753,,Elite Shrivamsha Rider,,,
+1754,,Caravanserai,,,
+1755,,Camel Scout,,,
+1756,,Projectile Chakram,,,
+1757,,Siege Elephant (Dead),,,
+1758,,Gaia transition building,,,can be used to spawn gaia objects from player objects
+1759,,Ratha (Ranged),,,
+1760,,Ratha (Ranged) (Dead),,,
+1761,,Elite Ratha (Ranged),,,
+1762,,Mihira Bhoja,,,Hero Shrivamsha Rider
+1763,,Amoghavarsha,,,Hero Urumi Swordsman
+1764,,Rajendra Chola,,,
+1765,,Rajendra Chola (Dead),,,
+1766,,General Araiyan,,,
+1767,,General Araiyan (Dead),,,
+1768,,Young Babur,,,Hero Heavy Camel Rider
+1769,,Qutlugh,,,
+1770,,Qutlugh (Dead),,,
+1771,,Ibrahim Lodi,,,Hero Khan
+1772,,Shaybani Khan,,,Hero Girgen Khan
+1773,,Minaret of Jam,,,
+1774,,Map Revealer Medium,,,
+1775,,Map Revealer Giant,,,
+1776,,Blocker,,,
+1777,,Indian Statues,,,
+1778,,Rekha-Deul Temple,,,
+1779,,Projectile Thirisadai,,,
+1780,,Projectile Thirisadai (Fire),,,
+1781,,Projectile Elephant Archer,,,
+1782,,Projectile Elephant Archer (Fire),,,
+1783,,Projectile Elite Chakram,,,
+1784,,Indian Ruins,,,
+1785,,Flare B (Permanent),,,
+1786,,Spearman,,,trained from Donjon
+1787,,Pikeman,,,trained from Donjon
+1788,,Halberdier,,,trained from Donjon
+1789,,Projectile Organ Gun (Secondary),,,
+1790,,Centurion,,,
+1791,,Centurion (Dead),,,
+1792,,Elite Centurion,,,
+1793,,Legionary,,,
+1794,,Legionary (Dead),,,
+1795,,Dromon,,,
+1796,GAZELLE,Gazelle,,,huntable like deer
+1797,,Gazelle (Dead),,,
+1798,,Projectile Dromon (Greek Fire),,,
+1799,,Trail Smoke (Fire),,,
+1800,,Composite Bowman,,,
+1801,,Composite Bowman (Dead),,,
+1802,,Elite Composite Bowman,,,
+1803,,Monaspa,,,
+1804,,Monaspa (Dead),,,
+1805,,Elite Monaspa,,,
+1806,,Fortified Church,,,
+1807,,Svan Tower,,,
+1808,,Mule Cart,,,mobile drop off point for gold/stone/wood/hunt
+1809,,Mule Cart (Dead),,,
+1810,,Villager,,,male villager (function unknown)
+1811,,Warrior Priest,,,
+1812,,Warrior Priest (Dead),,,
+1813,,Savar,,,
+1814,,Savar (Dead),,,
+1815,,Shah Ismail,,,Hero unit (unique graphic)
+1816,,Shah Ismail (Dead),,,
+1817,,Qizilbash Warrior,,,
+1818,,Qizilbash Warrior (Dead),,,
+1819,,Ismail,,,Hero scout cavalry
+1820,,Selim the Grim,,,Hero Savar
+1821,,Thoros,,,Hero unit (unique graphic)
+1822,,Tamar,,,Hero unit (unique graphic)
+1823,,Tamar (Dead),,,
+1824,,Yury,,,Hero (uses Ivaylo foot graphics)
+1825,,Ivane,,,Hero Cataphract
+1826,,Zakare,,,Hero Warrior Priest
+1827,,Stephan,,,Hero Warrior Priest
+1828,,Mleh,,,Hero two handed swordsman
+1829,,Elite Qizilbash Warrior,,,
+1830,,Projectile Citadels,,,
+1831,,Warrior Priest with Relic,,,
+1832,,Yurt I,,,
+1833,,Yurt J,,,
+1834,,Yurt K,,,
+1835,,Yurt L,,,
+1836,,Chapel,,,
+1837,,Castle Ruins,,,
+1838,,Church Ruins,,,
+1839,,Bridge Piece--End A,,,
+1840,,Bridge Piece--End B,,,
+1841,,Bridge Piece--End C,,,
+1842,,Bridge Piece--Middle,,,
+1843,,Bridge Piece--Broken A,,,
+1844,,Bridge Piece--Broken B,,,
+1845,,Bridge Piece--Broken C,,,
+1846,,Bridge Piece--Cracked,,,
+1847,,Bridge Piece--Rails,,,
+1848,,Thoros (Dead),,,
+1849,,Cliff (Desert) 01,,,
+1850,,Cliff (Desert) 02,,,
+1851,,Cliff (Desert) 03,,,
+1852,,Cliff (Desert) 04,,,
+1853,,Cliff (Desert) 05,,,
+1854,,Cliff (Desert) 06,,,
+1855,,Cliff (Desert) 07,,,
+1856,,Cliff (Desert) 08,,,
+1857,,Cliff (Desert) 09,,,
+1858,,Cliff (Snow) 01,,,
+1859,,Cliff (Snow) 02,,,
+1860,,Cliff (Snow) 03,,,
+1861,,Cliff (Snow) 04,,,
+1862,,Cliff (Snow) 05,,,
+1863,,Cliff (Snow) 06,,,
+1864,,Cliff (Snow) 07,,,
+1865,,Cliff (Snow) 08,,,
+1866,,Cliff (Snow) 09,,,
+1867,,Projectile SVT,,,
+1868,,Projectile SVT (Fire),,,
+1869,,Hunnic Horse,,,Spawned from a Hunnic TC on nomad maps
+1870,,Chief's Yurt,,,
+1871,,ChiefsYurt (Rubble),,,
+1872,,REVEAL1 (TEMP),,,"Small Revealer, 4 LOS"
+1873,,REVEAL2 (TEMP),,,"Medium Revealer, 10 LOS"
+1874,,REVEAL3 (TEMP),,,"Large Revealer, 20 LOS"
+1875,,PLACEHOLDER (VILL),,,idle male villager for empire wars
+1876,,PLACEHOLDER (VILLF),,,idle female villager for empire wars
+1877,,GREN_DELAY_1,,,
+1878,,GREN_DELAY_2,,,
+1879,,Projectile LCHUAN (Rocket),,,
+1880,,PROJMTREB_D,,,
+1881,,LCHUAN_D0,,,
+1882,,LCHUAN_EXP,,,
+1883,,LCHUAN_DELAY_D,,,
+1884,,LCHUAN_DELAY_EXP,,,
+1885,,Broken Fence A,,,pasture fence
+1886,,Broken Fence B,,,pasture fence
+1887,,GREN_DELAY_D,,,
+1888,,Pasture Post,,,
+1889,,Pasture,,,
+1890,,Pasture Annex,,,
+1891,,Villager Female Herder,,,
+1892,,Villager Male Herder,,,
+1893,,Pasture,,,pasture mangrove (currently unused)
+1894,,Dead Pasture,,,dead pasture mangrove
+1895,,HRCKTCRT_D0,,,
+1896,ARGALI,Argali,,,huntable
+1897,,Pasture,,,
+1898,,Dead Pasture,,,
+1899,,Argali (Pasture),,,cannot be gathered from if placed directly
+1900,,Ibex (Pasture),,,cannot be gathered from if placed directly
+1901,,Fire Lancer,,,
+1902,,PLACEHOLDER2,,,off grid; No terrain restrictions
+1903,,Elite Fire Lancer,,,
+1904,,Rocket Cart,,,
+1905,,PLACEHOLDER2 (LAND),,,off grid; Restricted to land
+1906,,Projectile Rocket Cart,,,
+1907,,Heavy Rocket Cart,,,
+1908,,Iron Pagoda,,,
+1909,,PLACEHOLDER2 (AMPHIBIOUS),,,"off grid; Restricted to land, beaches and shallows"
+1910,,Elite Iron Pagoda,,,
+1911,,Grenadier,,,
+1912,,PLACEHOLDER2 (NAVAL),,,"off grid; Restricted to beaches, shallows and water"
+1913,,Projectile Grenadier,,,
+1914,,GREN_DELAYANNEX_D,,,
+1915,,GREN_DELAY_EXP,,,
+1916,,GREN_D0,,,
+1917,,GREN_EXP,,,
+1918,,RCKTCRT_D0,,,
+1919,,RCKTCRT_EXP,,,
+1920,,Liao Dao,,,
+1921,,PLACEHOLDER2 (WATER),,,off grid; Restricted to water
+1922,,Elite Liao Dao,,,
+1923,,Mounted Trebuchet,,,
+1924,WALRUS,Walrus,,,340 food
+1925,,Projectile Fire Lancer ,,,
+1926,,Projectile Mounted Trebuchet,,,
+1927,,Projectile Mounted Trebuchet (Fire),,,
+1928,,ROCKET_DELAY_D,,,
+1929,,ROCKET_DELAY_EXP,,,
+1930,,Projectile Crossbowman (Secondary),,,
+1931,,Projectile ZhouYu,,,
+1932,,Projectile Traction,,,
+1933,,Projectile Traction (Fire),,,
+1934,,Projectile Traction (Secondary),,,
+1935,,Projectile Traction (Secondary Fire),,,
+1936,,Projectile LCHUAN (Charge),,,
+1937,,Projectile LCHUAN Fire (Charge),,,
+1938,,Projectile LCHUAN,,,
+1939,,Projectile LCHUAN (Fire),,,
+1940,,Pagan Priest,,,
+1941,,Pagan Priest with Relic,,,
+1942,,Traction Trebuchet,,,
+1943,,Weapon Stacks B,,,
+1944,,Hei Guang Cavalry,,,
+1945,,Hei Guang Cavalry (Dead),,,
+1946,,Heavy Hei Guang Cavalry,,,
+1947,,Heavy Hei Guang Cavalry (Dead),,,
+1948,,Lou Chuan,,,siege warship
+1949,,Tiger Cavalry,,,
+1950,,Tiger Cavalry (Dead),,,
+1951,,Elite Tiger Cavalry,,,
+1952,,Xianbei Raider,,,
+1953,,Xianbei Raider (Dead),,,
+1954,,Cao Cao,,,
+1955,RED_FOX,Red Fox,,,huntable for 35 gold
+1956,,Dummy Target,,,
+1957,,Projectile War Chariot (Barrage),,,
+1958,ARCTIC_FOX,Arctic Fox,,,huntable for 35 gold
+1959,,White Feather Guard,,,
+1960,,White Feather Guard (Dead),,,
+1961,,Elite White Feather Guard,,,
+1962,,War Chariot (Focus Fire),,,
+1963,LLAMA_B,Llama B,,,herdable
+1964,,Projectile War Chariot (Focus Fire),,,
+1965,ARCTIC_WOLF,Arctic Wolf,,,predator
+1966,,Liu Bei,,,
+1967,ROCK_MOSSY,Rock (Mossy),,,
+1968,,Fire Archer,,,
+1969,,Fire Archer (Dead),,,
+1970,,Elite Fire Archer,,,
+1971,,Projectile Fire Archer,,,
+1972,,Projectile Fire Archer (Red Cliffs),,,
+1973,,Nessie,,,"if placed on deep or medium water it surfaces every 10 min (Water 2D, Deep, Deep Ocean, Green, Medium, Water - Shallow, Yellow Deep)"
+1974,,Jian Swordsman,,,shielded
+1975,,Jian Swordsman (Dead),,,shielded
+1976,,Jian Swordsman,,,unshielded
+1977,,Jian Swordsman (Dead),,,unshielded
+1978,,Sun Jian,,,
+1979,,Stonehenge,,,eyecandy
+1980,,War Chariot (Barrage),,,
+1981,,Kelp Seaweeds,,,animated
+1982,,Projectile Xianbei,,,
+1983,,Projectile Xianbei (Secondary),,,
+1984,LUSH_BAMBOO_TREE,Tree (Lush Bamboo Forest),,,
+1985,,Lush Bamboo Stump,,,
+1986,,Paper Lantern,,,
+1987,,Chinese Ruins,,,
+1988,,Emperor in a Litter,,,
+1989,,Paifang Gate (Small),,,
+1990,,Paifang Gate (Large),,,
+1991,,Fountain,,,
+1992,,Bridge Piece CD--End A,,,
+1993,,Bridge Piece CD--End B,,,
+1994,,Bridge Piece CD--End C,,,
+1995,,Bridge Piece CD--Middle A,,,
+1996,,Bridge Piece CD--Middle B,,,
+1997,,Bridge Piece CD--Middle C,,,
+1998,,Bridge Piece CD--Broken A,,,
+1999,,Bridge Piece CD--Broken B,,,
+2000,,Bridge Piece CD--Broken C,,,
+2001,,Bridge Piece CD--Cracked,,,
+2002,,Bridge Piece CD--Rails A,,,
+2003,,Bridge Piece CD--Rails B,,,
+2004,,Bridge Piece CD--Rails C,,,
+2005,,Pagoda D,,,
+2006,,Pagoda E,,,
+2007,,Garden Pavilion,,,
+2008,,Rock (Pillar),,,
+2009,,Rock (Limestone),,,
+2010,,Flag N,,,
+2011,,Flag O,,,
+2012,,Flag P,,,
+2013,,Flag Ritual A,,,
+2014,,Flag Ritual B,,,red bull wololo flag
+2015,,Flag Ritual C,,,
+2016,ASIAN_PINE_TREE,Tree (Asian Pine),,,
+2017,PEACH_BLOSSOM_TREE,Tree (Peach Blossom),,,
+2018,,Asian Carts,,,
+2019,,Weapon Stacks,,,
+2020,,Garden Bridge,,,
+2021,,Siege Props,,,
+2022,,Asian Lanterns,,,
+2023,,Burned Building B,,,
+2024,,Asian Market Stalls,,,
+2025,WILLOW_TREE,Tree (Willow),,,
+2026,,Red Crown Crane,,,bird
+2027,ASIAN_MAPLE_GREEN_TREE,"Tree (Asian Maple, Green)",,,
+2028,ASIAN_MAPLE_AUTUMN_TREE,"Tree (Asian Maple, Autumn)",,,
+2029,,Fallen Leaves (Peach Blossom),,,
+2030,,Fallen Leaves (Maple),,,
+2031,,"Fallen Leaves (Maple, Autumn)",,,
+2032,,LÃ¼ Bu,,,
+2033,,Yurt M,,,
+2034,,Guan Yu,,,
+2035,,Burned Building E,,,
+2036,,Zhuge Liang,,,
+2037,,Wooden Bridge Piece--End A,,,
+2038,,Zhang Fei,,,
+2039,,Wooden Bridge Piece--End B,,,
+2040,,Sun Ce,,,
+2041,,Wooden Bridge Piece--End C,,,
+2042,,Sun Quan,,,
+2043,,Wooden Bridge Piece--Middle,,,
+2044,,Zhou Yu,,,hero elite fire archer
+2045,,Dong Zhuo,,,hero heavy Hei Guang
+2046,,Yuan Shao,,,hero Xianbei raider
+2047,,Yu Ji,,,hero monk
+2048,,White Tiger Yan,,,hero elite tiger cavalry
+2049,,Liu Biao,,,hero war chariot
+2050,,Zhang Jue,,,hero monk
+2051,,Zhao Yun,,,hero elite steppe lancer
+2052,,Cao Cao (Campaign),,,
+2053,,Liu Bei (Campaign),,,
+2054,,Sun Jian (Campaign),,,
+2055,,FIREARCH_EXP,,,
+2056,,Projectile LUBU,,,
+2057,,Projectile GSTRIKE,,,
+2058,,Huabiao Totem,,,
+2059,,Que Tower,,,
+2060,,Hall of Heroes,,,
+2061,,LÃ¼ Bu,,,
+2062,,Projectile SUNQUAN,,,
+2063,,Sun Quan,,,
+2064,,Guan Yu,,,
+2065,,Sun Jian,,,
+2066,,Liu Bei,,,
+2067,,Kongming Lantern,,,
+2068,,Kongming Lantern,,,
+2069,,Cliff (Limestone) 01,,,
+2070,,Cliff (Limestone) 02,,,
+2071,,Cliff (Limestone) 03,,,
+2072,,Cliff (Limestone) 04,,,
+2073,,Cliff (Limestone) 05,,,
+2074,,Cliff (Limestone) 06,,,
+2075,,Cliff (Limestone) 07,,,
+2076,,Cliff (Limestone) 08,,,
+2077,,Cliff (Limestone) 09,,,
+2078,,Pasture Annex Fences,,,
+2079,,Pasture Annex AB,,,
+2080,,Pasture Annex CD,,,
+2081,,Wooden Bridge Piece--Rails,,,
+2082,,Panda Rock,,,decorative only
+2083,CHICKEN_A,Chicken A,,,herdable; brown
+2084,WILD_CHICKEN_A,Wild Chicken A,,,huntable; brown
+2085,CHICKEN_B,Chicken B,,,herdable; white
+2086,WILD_CHICKEN_B,Wild Chicken B,,,huntable; white
+2087,CHICKEN_C,Chicken C,,,herdable; black
+2088,WILD_CHICKEN_C,Wild Chicken C,,,huntable; black
+2089,BLACK_BEAR,Black Bear,,,
+2090,POLAR_BEAR,Polar Bear,,,
+2091,ARABIAN_WOLF,Arabian Wolf,,,
+2092,WILD_HORSE_B,Wild Horse B,,,
+2093,WILD_HORSE_C,Wild Horse C,,,
+2094,WILD_HORSE_D,Wild Horse D,,,
+2095,WILD_HORSE_E,Wild Horse E,,,
+2096,WILD_MONKEY,Monkey,,,
+2097,WILD_PENGUIN,Penguin,,,
+2098,HARE_A,Hare A,,,huntable; brown
+2099,HARE_B,Hare B,,,huntable; grey
+2100,ARCTIC_HARE,Arctic Hare,,,huntable; white
+2101,,Immortal,,,Achaemenid unique unit
+2102,,Elite Immortal,,,Achaemenid unique unit
+2103,,Immortal (Dead),,,
+2104,,Strategos,,,Athenian unique unit
+2105,,Elite Strategos,,,Athenian unique unit
+2106,,Strategos (Dead),,,
+2107,,Hippeus,,,Spartan unique unit
+2108,,Elite Hippeus,,,Spartan unique unit
+2109,,Hippeus (Dead),,,
+2110,,Hoplite,,,Greek regional infantry
+2111,,Elite Hoplite,,,Greek regional infantry
+2112,,Hoplite (Dead),,,
+2113,,-,,,
+2114,,-,,,
+2115,,-,,,
+2116,,-,,,
+2117,,Shipyard3,,,classical age
+2118,,Shipyard4,,,imperial age
+2119,,Shipyard2,,,civic age
+2120,,Dock,,,civic age
+2121,,Dock,,,
+2122,,Dock,,,
+2123,,Lembos,,,scout ship
+2124,,War Lembos,,,
+2125,,Heavy Lembos,,,
+2126,,Elite Lembos,,,
+2127,,Monoreme,,,melee ship with charge attack
+2128,,Bireme,,,
+2129,,Trireme,,,
+2130,,Galley - Antiquity,,,
+2131,,War Galley - Antiquity,,,
+2132,,Elite Galley,,,
+2133,,Incendiary Raft,,,
+2134,,Incendiary Ship,,,
+2135,,Heavy Incendiary Ship,,,
+2136,,-,,,
+2137,,-,,,
+2138,,Catapult Ship,,,
+2139,,Onager Ship,,,
+2140,,Leviathan,,,
+2141,,Port 4,,,imperial age
+2142,,Port 3,,,classical age
+2143,,Port 2,,,civic age
+2144,,Dock,,,civic age
+2145,,Dock,,,
+2146,,Dock,,,
+2147,,FSHSP,,,antiquity fishing ship
+2148,,XPORT,,,antiquity transport ship
+2149,,Merchant Ship,,,antiquity trade cog
+2150,,War Chariot,,,
+2151,,Elite War Chariot,,,
+2152,,-,,,
+2153,,-,,,
+2154,,-,,,
+2155,,-,,,
+2156,,-,,,
+2157,,-,,,
+2158,,-,,,
+2159,,-,,,
+2160,,-,,,
+2161,,-,,,
+2162,,Polemarch 1,,,
+2163,,Basileus (Dead),,,
+2164,,Polemarch 2,,,
+2165,,Polemarch 3,,,
+2166,,Polemarch 4,,,
+2167,,Polemarch 3 with Ephorate,,,
+2168,,Hippeus,,,
+2169,,Elite Hippeus,,,
+2170,OYSTERS,Oysters,,,450 gold; placed on water and amphibious terrains
+2171,,Oystering Ship,,,
+2172,,Port 1,,,archaic age
+2173,,Dock,,,archaic age
+2174,,Immortal Ranged,,,Achaemenid unique unit
+2175,,Elite Immortal Ranged,,,Achaemenid unique unit
+2176,,Greek Army Tent A,,,
+2177,,Greek Army Tent A (Rubble),,,
+2178,,Marble Cliff 1,,,
+2179,,Marble Cliff 2,,,
+2180,,Marble Cliff 3,,,
+2181,,Marble Cliff 4,,,
+2182,,Marble Cliff 5,,,
+2183,,Marble Cliff 6,,,
+2184,,Marble Cliff 7,,,
+2185,,Marble Cliff 8,,,
+2186,,Marble Cliff 9,,,
+2187,,Hoplite with Xyphos,,,
+2188,,Elite Hoplite with Xyphos,,,
+2189,,-,,,
+2190,,Short Marble Cliff 1,,,
+2191,,Short Marble Cliff 2,,,
+2192,,Short Marble Cliff 3,,,
+2193,,Short Marble Cliff 4,,,
+2194,,Short Marble Cliff 5,,,
+2195,,Short Marble Cliff 6,,,
+2196,,Short Marble Cliff 7,,,
+2197,,Short Marble Cliff 8,,,
+2198,,Short Marble Cliff 9,,,
+2199,,Short Cliff 1,,,
+2200,,Short Cliff 2,,,
+2201,,Short Cliff 3,,,
+2202,,Short Cliff 4,,,
+2203,,Short Cliff 5,,,
+2204,,Short Cliff 6,,,
+2205,,Short Cliff 7,,,
+2206,,Short Cliff 8,,,
+2207,,Short Cliff 9,,,
+2208,,Short Sand Cliff 1,,,
+2209,,Short Sand Cliff 2,,,
+2210,,Short Sand Cliff 3,,,
+2211,,Short Sand Cliff 4,,,
+2212,,Short Sand Cliff 5,,,
+2213,,Short Sand Cliff 6,,,
+2214,,Short Sand Cliff 7,,,
+2215,,Short Sand Cliff 8,,,
+2216,,Short Sand Cliff 9,,,
+2217,,Short Snow Cliff 1,,,
+2218,,Short Snow Cliff 2,,,
+2219,,Short Snow Cliff 3,,,
+2220,,Short Snow Cliff 4,,,
+2221,,Short Snow Cliff 5,,,
+2222,,Short Snow Cliff 6,,,
+2223,,Short Snow Cliff 7,,,
+2224,,Short Snow Cliff 8,,,
+2225,,Short Snow Cliff 9,,,
+2226,,Projectile Leviathan,,,
+2227,,Strategos with Taxiarchs,,,
+2228,,Elite Strategos with Taxiarchs,,,
+2229,,Government cost change,,,
+2230,,First Government cost change,,,
+2231,,Second Government cost change,,,
+2232,,Third Government cost change,,,
+2233,,Fourth Government cost change,,,
+2234,,Mediterranean Ruins,,,
+2235,,Mediterranean Courtyard Walls,,,
+2236,,Lembos spawner,,,
+2237,,Lembos spawner part 2,,,
+2238,,AI Hint Object,,,
+2239,,-,,,
+2240,,-,,,
+2241,,-,,,
+2242,,-,,,
+2243,,-,,,
+2244,,-,,,
+2245,,-,,,
+2246,,-,,,
+2247,,-,,,
+2248,,-,,,
+2249,,-,,,
+2250,,-,,,
+2251,,Mesopotamian Pillar,,,
+2252,,Mesopotamian Garden,,,
+2253,,Achaemenid Flag 1,,,
+2254,,Achaemenid Flag 2,,,
+2255,,Achaemenid Flag 3,,,
+2256,,Athenian Flag 1,,,
+2257,,Athenian Flag 2,,,
+2258,,Athenian Flag 3,,,
+2259,,Spartan Flag 1,,,
+2260,,Spartan Flag 2,,,
+2261,,Spartan Flag 3,,,
+2262,,Greek Commander Tent A,,,
+2263,,Greek Commander Tent A (Rubble),,,
+2264,,Statue Athena Marble,,,
+2265,,Statue Athena Painted,,,
+2266,,-,,,
+2267,,-,,,
+2268,,-,,,
+2269,,-,,,
+2270,,Polemarch 4 with Ephorate,,,
+2271,,Polemarch 3 with Morai,,,
+2272,,Polemarch 4 with Morai,,,
+2273,,Spawn Basileus,,,
+2274,,Archaic Fence,,,
+2275,,Economic Satrapy,,,economic town center
+2276,,Defensive Satrapy,,,defensive town center
+2277,,Military Satrapy,,,military town center
+2278,,Garden Hedge,,,
+2279,,Statue Ares Marble,,,
+2280,,Statue Ares Painted,,,
+2281,,Sapper Tunnel,,,
+2282,,Siege Camp Equipment,,,
+2283,,Siege Camp Weapons,,,
+2284,,Market Stall,,,
+2285,,Stake Barricade,,,
+2286,,Tropaion,,,
+2287,,Mesopotamian Tomb,,,
+2288,,Fire Shrine,,,
+2289,,Treasure Chest,,,
+2290,,Grapevine,,,
+2291,,Leatherworking Equipment,,,
+2292,,Antiquity Broken Cart,,,
+2293,,Weapon Rack,,,
+2294,,Sacred Tree,,,
+2295,,-,,,
+2296,,-,,,
+2297,,-,,,
+2298,,-,,,
+2299,,-,,,
+2300,,-,,,
+2301,,Elite Hoplite (Dead),,,
+2302,,War Chariot (Dead),,,
+2303,,Elite War Chariot (Dead),,,
+2304,,Ranged Immortal (Dead),,,
+2305,,-,,,
+2306,,Hero Shrine,,,
+2307,,Projectile Gastraphetes,,,
+2308,,Artaphernes,,,Hero unit (unique graphic)
+2309,,Datis,,,Hero unit (unique graphic)
+2310,,Aristagoras,,,Hero unit (unique graphic)
+2311,,Dionysus,,,Hero ship
+2312,,Artemisia,,,Hero ship
+2313,,Aristides,,,Hero unit (unique graphic)
+2314,,Miltiades,,,Hero infantry
+2315,,Themistocles,,,Hero unit (unique graphic)
+2316,,Leonidas,,,Hero Hippeus
+2317,,Brasidas,,,Hero unit (unique graphic)
+2318,,Lysander,,,Hero unit (unique graphic)
+2319,,The Aeginetan,,,Hero ship
+2320,,Rhodian Slinger,,,
+2321,,Mercenary Hoplite,,,
+2322,,Elite Greek Cavalry,,,
+2323,,Elite Persian Cavalry,,,
+2324,,Elite Persian Archer,,,
+2325,,Ekdromos,,,
+2326,,Cretan Archer,,,
+2327,,Camel Raider,,,
+2328,,Tarantine Cavalry,,,
+2329,,Sparabara,,,
+2330,,Takabara,,,sakan axeman
+2331,,Sickle Warrior,,,
+2332,,Thracian Peltast,,,
+2333,,Villager Male Oyster Gatherer,,,
+2334,,Villager Female Oyster Gatherer,,,
+2335,,-,,,
+2336,,-,,,
+2337,,-,,,
+2338,,-,,,
+2339,,Themistocles Warship,,,Hero ship
+2340,,Mouflon,,,huntable like deer
+2341,,Mouflon (Dead),,,
+2342,,Projectile Polycritus,,,
+2343,,Military Satrapy Flag,,,
+2344,,Defensive Satrapy Flag,,,
+2345,,Economic Satrapy Flag,,,
+2346,,Cleon,,,Hero Strategos
+2347,,Darius,,,Hero War Chariot
+2348,,Oracle Temple,,,antiquity monastery
+2349,,Elite Hoplite,,,
+2350,,Mesopotamian Ruins,,,
+2351,,Tholos Shrine,,,
+2352,,Antiquity Transport Shipwreck,,,
+2353,,Leviathan Shipwreck,,,
+2354,,Galley Shipwreck,,,
+2355,,Catapult Shipwreck,,,
+2356,,Antiquity Mode Fishing Ship,,,
+2357,,Ekdromos (Dead),,,
+2358,,Sakan Axeman (Dead),,,
+2359,,Brasidas (Dead),,,
+2360,,Themistocles (Dead),,,
+2361,,Mercenary Hoplite (Dead),,,
+2362,,Sickle Warrior (Dead),,,
+2363,,Artaphernes (Dead),,,
+2364,,Datis (Dead),,,
+2365,,Cretan Archer (Dead),,,
+2366,,Bactrian Archer (Dead),,,
+2367,,Rhodian Slinger (Dead),,,
+2368,,Camel Raider (Dead),,,
+2369,,Greek Noble Cavalry (Dead),,,
+2370,,Aristagoras (Dead),,,
+2371,,Lysander (Dead),,,
+2372,,Sparabara (Dead),,,
+2373,,Aura Quest Indicator (Lavender),,,
+2374,,Scythian Axe Cavalry (Dead),,,
+2375,,Tarantine Cavalry (Dead),,,
+2376,,Aristides (Dead),,,
+2377,,Thracian Peltast (Dead),,,
+2378,,Aura Quest Indicator (Shells),,,
+2379,,Aura Quest Indicator (Coins),,,
+2380,,Aura Quest Indicator (Gold and Shells),,,
+2381,,GOAT,,,unconvertible goat
+2382,,Companion Cavalry,,,Macedonian unique cavalry unit
+2383,,Elite Companion Cavalry,,,Macedonian unique cavalry unit
+2384,,Phalangite,,,Macedonian unique infantry unit
+2385,,Elite Phalangite,,,Macedonian unique infantry unit
+2386,,Rhomphaia Warrior,,,Thracian unique infantry unit
+2387,,Elite Rhomphaia Warrior,,,Thracian unique infantry unit
+2388,,Pattiyodha Longbowman,,,Puru unique archer unit
+2389,,Elite Pattiyodha Longbowman,,,Puru unique archer unit
+2390,,Sannahya,,,Puru unique elephant unit
+2391,,Elite Sannahya,,,Puru unique elephant unit
+2392,,Companion Cavalry (Dead),,,
+2393,,Phalangite (Dead),,,
+2394,,Rhomphaia Warrior (Dead),,,
+2395,,Pattiyodha Longbowman (Dead),,,
+2396,,Sannahya (Dead),,,
+2397,,Alexander Dismounted,,,hero infantry (unique graphic)
+2398,,Alexander,,,hero cavalry (unique graphic)
+2399,,Philip,,,hero Macedonian commander
+2400,,Parmenion,,,hero infantry (unique graphic)
+2401,,Cleitus,,,hero cavalry (unique graphic)
+2402,,Hephaistion,,,hero Macedonian commander
+2403,,Perdiccas,,,hero cavalry (unique graphic)
+2404,,Nearchos,,,hero Macedonian commander
+2405,,Greek Commander Tent Dropsite,,,functions as a resource drop off point
+2406,,Camp Stable Age2 (Rubble),,,
+2407,,Rock 1 Hover,,,no collision
+2408,,Rock 2 Hover,,,no collision
+2409,,Rock Formation 1 Hover,,,no collision
+2410,,Rock Jungle Hover,,,no collision
+2411,,Rock Limestone Hover,,,no collision
+2412,,Full Supply Cart no garrison,,,
+2413,,Empty Supply Cart no garrison,,,
+2414,,Macedonian Command Post,,,
+2415,,Fortified Outpost,,,shoots arrows
+2416,,Second Empty TC annex,,,
+2417,,Fortified Outpost,,,shoots arrows
+2418,,Castle,,,cannot train anything
+2419,,Pattiyodha Longbowman,,,
+2420,,Elite Pattiyodha Longbowman,,,
+2421,,Mole under construction,,,sandstone bridge
+2422,,Mole constructed,,,sandstone bridge
+2423,,Blocker 1x3,,,
+2424,,Blocker 3x1,,,
+2425,,Mole annex 1,,,sandstone bridge
+2426,,Mole annex 2,,,sandstone bridge
+2427,,Mole annex 3,,,sandstone bridge
+2428,,Mole annex 4,,,sandstone bridge
+2429,,Buildable Blocker 1x3,,,
+2430,,Buildable Blocker 3x1,,,
+2431,,Removed,,,"unfinished petard style unit, stone icon, cart graphics"
+2432,,Removed Decay Animation,,,decay animation for 2431
+2433,,Thin blocker spawner A,,,
+2434,,Thin blocker spawner B,,,
+2435,,Thin blocker,,,
+2436,,Porus,,,
+2437,,Camp Barracks,,,cannot train anything by default
+2438,,Camp Archery Range,,,cannot train anything by default
+2439,,Camp Stable,,,cannot train anything by default
+2440,,Camp Siege Workshop,,,
+2441,,Camp Blacksmith,,,
+2442,,Flagship of Nearchos moveable,,,hero ship
+2443,,WCTWX,,,
+2444,,Helepolis,,,siege tower with ranged attack
+2445,,Projectile Helepolis,,,
+2446,,Parmenion Dead,,,
+2447,,Macedonian Commander Dead,,,
+2448,,Flagship of Nearchos moveable docked,,,hero ship
+2449,,Indian Tribesman,,,spear unit
+2450,,Indian Tribesman (Dead),,,
+2451,,Thracian Chieftain,,,hero cavalry (unique graphic)
+2452,,Thracian Chieftain (Dead),,,
+2453,,Hill Tribesman,,,infantry unit with ability bar
+2454,,Hill Tribesman (Dead),,,
+2455,,Perdiccas (Dead),,,
+2456,,Antiquity Impaled Corpse,,,
+2457,,Beached Whale,,,decoration only
+2458,,Statue Hermes,,,
+2459,,Alexander's Rhomphaia Warrior,,,
+2460,,Alexander's Peltast,,,
+2461,,Alexander's Ekdromos,,,
+2462,,Alexander's Strategos,,,
+2463,,Alexander's Slinger,,,
+2464,,Alexander's Mercenary Archer,,,
+2465,,Alexander's Axe Cavalry,,,
+2466,,Alexander's Axeman,,,
+2467,,Alexander's Immortal,,,
+2468,,Alexander's Immortal Ranged,,,
+2469,,Alexander's War Chariot,,,
+2470,,Alexander's Skirmisher Cavalry,,,
+2471,,Alexander's Heavy Cavalry,,,
+2472,,Alexander's Sannahya,,,
+2473,,Alexander's Longbowman,,,
+2474,,Alexander's Eastern Archer,,,
+2475,,Alexander's Sickle Warrior,,,
+2476,,Macedonian Command Post (Rubble),,,
+2477,,Ekdromos/Strategos,,,0 line of sight
+2478,,Slinger/Mercenary Archer,,,0 line of sight
+2479,,Axe Cavalry/Axeman,,,0 line of sight
+2480,,Immortal/War Chariot,,,0 line of sight
+2481,,Skirmisher Cav/Heavy Cav,,,0 line of sight
+2482,,Sannahya/Longbowman,,,0 line of sight
+2483,,Eastern Archer/Sickle Warrior,,,0 line of sight
+2484,,Helepolis Dead,,,
+2485,,Scythian Horse Archer,,,cavalry archer
+2486,,Elite Scythian Horse Archer,,,cavalry archer
+2487,,Sacred Band,,,infantry unit
+2488,,Statue Artemis,,,
+2489,,Fortified Outpost (Rubble),,,
+2490,,Owl,,,bird like hawk
+2491,,Water Pots,,,
+2492,,Camp Archery Range Age2 (Rubble),,,
+2493,,Porus (Dead),,,
+2494,,Dismounted Alexander (Dead),,,
+2495,,Cleitus (Dead),,,
+2496,,Camp Barracks Age2 (Rubble),,,
+2497,,Scythian Horse Archer (Dead),,,
+2498,,Macedonian Flag,,,
+2499,,Thracian Flag,,,
+2500,,Puru Flag,,,
+2501,,Grain Storage,,,
+2502,,Mounted Alexander (Dead),,,
+2503,,Sacred Band (Dead),,,
+2504,,Burned Building Achaemenid,,,
+2505,,Burned Building Greek,,,
+2506,,Burned Building Greek,,,
+2507,,Statue Sphinx,,,
+2508,,Burned Building Thracian,,,
+2509,,Burned Building Puru,,,
+2510,,Furnace,,,
+2511,,Water Trough,,,
+2512,,Elite Scythian Horse Archer (Dead),,,
+2513,,Boeotian Flag,,,
+2514,,Puru Ruins,,,
+2515,,Rock 3,,,small desert rock
+2516,,Rock 3 Hover,,,no collision
+2517,,Skeleton Civilian,,,
+2518,,Skeleton Soldier,,,
+2519,,Amphorae,,,
+2520,,Construction Crane,,,
+2521,,Mole Top,,,
+2522,,Mole Bottom,,,
+2523,,Benches (Wooden),,,
+2524,,Benches (Stone),,,
+2525,,Bucephalus,,,hero horse scout (unique graphic)
+2526,,Bucephalus (dead),,,
+2527,,Scaffolding,,,
+2528,,Fountain Antiquity,,,
+2529,,Cypress Tree (Decorative),,,cannot be chopped
+2530,,Theatre,,,
+2531,,Statue Alexander,,,
+2532,,Statue Hephaistion,,,
+2533,,Statue Greek Hero,,,
+2534,,Mediterranean Stall,,,
+2535,,Mesopotamian Stall,,,
+2536,,Water Lily,,,
+2537,,Peacock,,,"unpushable hunt, 85 food"
+2538,,Peacock (Dead),,,
+2539,,-,,,
+2540,,-,,,
+2541,,-,,,
+2542,,-,,,
+2543,,-,,,
+2544,,-,,,
+2545,,-,,,
+2546,,-,,,
+2547,,-,,,
+2548,,-,,,
+2549,,-,,,
+2550,,Champi Scout,,,
+2551,,Invisible object B,,,
+2552,,Champi Warrior,,,
+2553,,Invisible Object C,,,
+2554,,Elite Champi Warrior,,,
+2555,,Invisible Object D,,,
+2556,,Settlement,,,dark age
+2557,,Missionary with Relic,,,
+2558,,Settlement,,,feudal age
+2559,,Longhouse A,,,provides 5 population
+2560,,Settlement,,,castle age
+2561,,Longhouse B,,,provides 5 population
+2562,,Guecha Warrior,,,Muisca unique unit
+2563,,Invisible Object E,,,
+2564,,Elite Guecha Warrior,,,Muisca unique unit
+2565,,Guecha Warrior (Dead),,,
+2566,,Kona,,,Mapuche unique unit
+2567,TREE_GREEN_OAK,Tree (Oak Green),,,
+2568,,Elite Kona,,,Mapuche unique unit
+2569,,Bolas Rider,,,Mapuche unique unit
+2570,TREE_MONKEY_PUZZLE,Tree (Monkey Puzzle),,,
+2571,,Elite Bolas Rider,,,Mapuche unique unit
+2572,,Projectile Bolas,,,
+2573,,Projectile EliteBolas,,,
+2574,,Projectile Bolas (Charge),,,
+2575,,Projectile EliteBolas (Charge),,,
+2576,,Torch C,,,
+2577,,Flotsam,,,animated
+2578,RAVEN,Raven,,,bird
+2579,,Blackwood Archer,,,Tupi unqiue unit
+2580,TREE_BRAZILWOOD,Tree (Brazilwood),,,
+2581,,Elite Blackwood Archer,,,Tupi unqiue unit
+2582,,Ibirapema Warrior,,,Tupi unqiue unit
+2583,TREE_WAX_PALM,Tree (Wax Palm),,,
+2584,,Elite Ibirapema Warrior,,,Tupi unqiue unit
+2585,,Howler Monkey,,,"animated scenery, like the panda rock"
+2586,,Temple Guard,,,Muisca unique unit
+2587,,Elite Temple Guard,,,Muisca unique unit
+2588,,Champi Runner,,,
+2589,TAPIR,Tapir,,,like boar
+2590,CAPYBARA,Capybara,,,like sheep
+2591,GUANACO,Guanaco,,,like deer
+2592,SNAKE,Snake,,,predator that roams the whole map and can swim and deals bleed damage
+2593,CONDOR,Condor,,,bird
+2594,CAIMAN,Caiman,,,predator with charge attack
+2595,BLACK_PANTHER,Black Panther,,,predator
+2596,FLAMINGO,Flamingo,,,bird
+2597,RHEA,Rhea,,,like deer
+2598,,Small Waterfall,,,
+2599,PAPAYA_TREE,Papaya Tree,,,125 food; like forage bush
+2600,,Wooden Fort,,,like a castle; 30 garrison space; cannot train aynthing
+2601,,Flag Q,,,
+2602,,Flag R,,,
+2603,,Flag S,,,
+2604,,Flag T,,,
+2605,,Flag U,,,
+2606,,Burned Building C,,,
+2607,,Gunpowder Keg,,,75 hp; explodes when destroyed
+2608,,Projectile Blackwood Archer,,,
+2609,,Projectile Elite Blackwood Archer,,,
+2610,,Trail Poison,,,
+2611,,Andean Ruins,,,
+2612,,War Dog,,,
+2613,,Elite War Dog,,,
+2614,ALPACA,Alpaca,,,like horse; can autoscout
+2615,WILD_ALPACA,Wild Alpaca,,,like wild horse; no food
+2616,,Invisible Spawner A,,,
+2617,,Invisible Spawner B,,,
+2618,,Invisible Spawner C,,,
+2619,,Invisible Spawner D,,,
+2620,,Invisible Spawner E,,,
+2621,,Invisible Spawner F,,,
+2622,,Trail Rope,,,
+2623,,Projectile Harald,,,
+2624,,FIRESHIP_EXP,,,fireship explosion
+2625,,Whale,,,1000 gold; gatherbale by fishing ships
+2626,,Hulk,,,melee ship
+2627,,War Hulk,,,melee ship
+2628,,Carrack,,,melee ship
+2629,,Projectile Fire Ship (Charge),,,
+2630,,Whaling Ship,,,fishing ship when tasked to whales
+2631,,Projectile DOCK,,,
+2632,,Projectile DOCK (Fire),,,
+2633,,Catapult Galleon,,,
+2634,,-,,,
+2635,,Treasure Chest,,,
+2636,,Projectile Hook,,,hulk projectile
+2637,,Lautaro,,,cavalry hero that boosts nearby attack speed
+2638,,Galvarino,,,infantry hero
+2639,,Guacolda,,,infantry hero that causes nearby units to regenerate
+2640,,Pacanchique,,,infantry hero that boosts nearby armor
+2641,,Arariboia,,,melee mode hero that boosts nearby unit speed
+2642,,Arariboia,,,ranged mode hero that boosts nearby unit speed
+2643,,Cunhambebe,,,infantry hero that deals area damage
+2644,,Scaffolding (Walkable),,,
+2645,,Invisible Spawner G,,,
+2646,,Invisible Spawner H,,,
+2647,,Invisible Spawner I,,,
+2648,,Invisible Spawner J,,,
+2649,,-,,,
+2650,PINEAPPLE_BUSH,Pineapple Bush,,,125 food; like forage bush
+2651,,Cliff (Terrace) 01,,,
+2652,,Cliff (Terrace) 02,,,
+2653,,Cliff (Terrace) 03,,,
+2654,,Cliff (Terrace) 04,,,
+2655,,Cliff (Terrace) 05,,,
+2656,,Cliff (Terrace) 06,,,
+2657,,Cliff (Terrace) 07,,,
+2658,,Cliff (Terrace) 08,,,
+2659,,Cliff (Terrace) 09,,,
+2660,,-,,,
+2661,,-,,,
+2662,,-,,,
+2663,,-,,,
+2664,,-,,,
+2665,,-,,,
+2666,,-,,,
+2667,,-,,,
+2668,,-,,,
+2669,,-,,,
+2670,,-,,,
+2671,,-,,,
+2672,,-,,,
+2673,,-,,,
+2674,,-,,,
+2675,,-,,,
+2676,,-,,,
+2677,,-,,,
+2678,,Fort Wall,,,tall palisade wall; 2500 hp
+2679,,Fort Gate,,,
+2680,,Fort Gate,,,
+2681,,Fort Gate,,,
+2682,,Fort Gate,,,
+2683,,Fort Gate,,,
+2684,,Fort Gate,,,
+2685,,Fort Gate,,,
+2686,,Fort Gate,,,
+2687,,Fort Gate,,,
+2688,,Fort Gate,,,
+2689,,Fort Gate,,,
+2690,,Fort Gate,,,
+2691,,Fort Gate,,,
+2692,,Fort Gate,,,
+2693,,Fort Gate,,,
+2694,,Fort Gate,,,
+2695,,-,,,
+2696,,-,,,
+2697,,-,,,
+2698,,-,,,
+2699,,-,,,
+2700,,Mounted Crossbowman,,,regional cavalry archer replacement
+2701,,Heavy Mounted Crossbowman,,,regional cavalry archer replacement
+2702,,Projectile Hearth Troop,,,
+2703,,Varangian Guard,,,regional shock infantry
+2704,,Elite Varangian Guard,,,regional shock infantry
+2705,,Hearth Troop,,,Saxon unique unit
+2706,,Elite Hearth Troop,,,Saxon unique unit
+2707,,Projectile Elite Hearth Troop,,,
+2708,,Jarl,,,Varangian unique unit
+2709,,Elite Jarl,,,Varangian unique unit
+2710,,Projectile Gothikon,,,
+2711,,Jomsviking,,,Danish unique unit
+2712,,Elite Jomsviking,,,Danish unique unit
+2713,,Projectile Jomsviking,,,
+2714,,Villager Repairer (Male),,,
+2715,,Villager Repairer (Female),,,
+2716,,Castle/TC Infantry Discount Removal,,,
+2717,,Castle/TC Infantry Discount,,,
+2718,,Empty Castle Annex,,,
+2719,,Projectile Jarl,,,
+2720,,Projectile EliteJarl,,,
+2721,,Harald,,,infantry hero
+2722,,Ulf Ospaksson,,,infantry hero; has aura that boosts varangian guards
+2723,,Halldor Snorrason,,,infantry hero
+2724,,Tostig Godwinson,,,cavalry hero
+2725,,Finn Arnason,,,halberdier hero
+2726,,Kalf Arnason,,,longswordsman hero
+2727,,Einar Paunch-Shaker,,,elite composite bowman hero
+2728,,Dreki,,,ship hero
+2729,,Legendary Item,,,can be interacted with; has relic glow
+2730,,Wheeled Ship,,,unit that moves on land
+2731,TREE_SPRUCE,Tree (Spruce),,,100 wood
+2732,TREE_SPRUCE_SNOW,Tree (Spruce Snow),,,101 wood
+2733,BUSH_GORSE,Bush D,,,102 wood
+2734,ROCK_SNOW,Rock (Snow),,,
+2735,SEAL,Seal,,,140 food
+2736,LYNX,Lynx,,,predator
+2737,ELK,Elk,,,380 food
+2738,,Runestones,,,
+2739,PHEASANT,Pheasant,,,75 food
+2740,,Driftwood (Ground),,,
+2741,,Driftwood (Water),,,animated
+2742,FLAMING_BIRD,Flaming Bird,,,bird
+2743,PLANT_HEATHER,Plant (Heather),,,
+2744,,Burned Building D,,,
+2745,,Army Tent F,,,provides 5 population
+2746,SHIPWRECK3,Shipwreck C,,,
+2747,,Norse Column,,,
+2748,,Wooden Road,,,
+2749,,Norse Banner,,,
+2750,,-,,,

@@ -19,7 +19,6 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   49: { w: 4, h: 4 }, // Siege Workshop
   50: { w: 3, h: 3 }, // Farm
   51: { w: 3, h: 3 }, // Dock, Imperial Age
-  56: { w: 3, h: 3 }, // Fisherman, Male
   63: { w: 2, h: 1 }, // Fortified Gate, Ascending Closed
   64: { w: 2, h: 1 }, // Gate, Ascending Closed
   67: { w: 2, h: 1 }, // Fortified Gate, Ascending Open
@@ -74,6 +73,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   236: { w: 1, h: 1 }, // Bombard Tower
   241: { w: 1, h: 1 }, // Cracks
   276: { w: 5, h: 5 }, // Wonder
+  444: { w: 4, h: 4 }, // Town Center, Packed
   463: { w: 2, h: 2 }, // House, Feudal Age
   464: { w: 2, h: 2 }, // House, Castle Age
   465: { w: 2, h: 2 }, // House, Imperial Age
@@ -214,12 +214,14 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1889: { w: 4, h: 4 }, // Pasture
   1893: { w: 4, h: 4 }, // Pasture, Mangrove
   1897: { w: 4, h: 4 }, // Pasture, Land
+  2119: { w: 4, h: 4 }, // Shipyard
   2120: { w: 3, h: 3 }, // Dock
   2121: { w: 3, h: 3 }, // Dock
   2122: { w: 3, h: 3 }, // Dock
   2144: { w: 3, h: 3 }, // Dock
   2145: { w: 3, h: 3 }, // Dock
   2146: { w: 3, h: 3 }, // Dock
+  2172: { w: 4, h: 4 }, // Port
   2173: { w: 3, h: 3 }, // Dock
   2300: { w: 4, h: 4 }, // Castle
   2348: { w: 3, h: 3 }, // Oracle Temple
@@ -233,7 +235,28 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   2441: { w: 3, h: 3 }, // Camp Blacksmith
   2556: { w: 3, h: 3 }, // Settlement, Dark Age
   2558: { w: 3, h: 3 }, // Settlement, Feudal Age
+  2559: { w: 2, h: 2 }, // Longhouse A
   2560: { w: 3, h: 3 }, // Settlement, Castle Age
+  2561: { w: 2, h: 2 }, // Longhouse B
+  2600: { w: 4, h: 4 }, // Wooden Fort
+  2678: { w: 1, h: 1 }, // Fort Wall
+  2679: { w: 2, h: 1 }, // Fort Gate, Ascending Closed
+  2680: { w: 2, h: 1 }, // Fort Gate, Ascending Open
+  2681: { w: 1, h: 1 }, // Fort Gate, Ascending Endpieces
+  2682: { w: 4, h: 1 }, // Fort Gate, Ascending Foundation
+  2683: { w: 1, h: 2 }, // Fort Gate, Descending Closed
+  2684: { w: 1, h: 2 }, // Fort Gate, Descending Open
+  2685: { w: 1, h: 1 }, // Fort Gate, Descending Endpieces
+  2686: { w: 1, h: 4 }, // Fort Gate, Descending Foundation
+  2687: { w: 2, h: 2 }, // Fort Gate, Horizontal Closed
+  2688: { w: 2, h: 2 }, // Fort Gate, Horizontal Open
+  2689: { w: 1, h: 1 }, // Fort Gate, Horizontal Endpieces
+  2690: { w: 1, h: 1 }, // Fort Gate, Horizontal Foundation
+  2691: { w: 2, h: 2 }, // Fort Gate, Vertical Closed
+  2692: { w: 2, h: 2 }, // Fort Gate, Vertical Open
+  2693: { w: 1, h: 1 }, // Fort Gate, Vertical Endpieces
+  2694: { w: 1, h: 1 }, // Fort Gate, Vertical Foundation
+  2745: { w: 2, h: 2 }, // Army Tent F
 };
 
 export const getBuildingFootprint = (

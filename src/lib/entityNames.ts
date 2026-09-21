@@ -1482,6 +1482,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1545: "PLACEHOLDER",	// AMPHIBIOUS
   1546: "PLACEHOLDER",	// NAVAL
   1547: "PLACEHOLDER",	// WATER
+  1548: "Projectile CHURCH",
   1549: "Forage Bush",	// Gurjaras
   1550: "Bridge E--Top",
   1551: "Bridge E--Middle",
@@ -1857,6 +1858,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1921: "PLACEHOLDER2",	// WATER
   1922: "Elite Liao Dao",
   1923: "Mounted Trebuchet",
+  1924: "Walrus",
   1925: "Projectile Fire Lancer",
   1926: "Projectile Mounted Trebuchet",
   1927: "Projectile Mounted Trebuchet",	// Fire
@@ -1875,6 +1877,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1940: "Pagan Priest",
   1941: "Pagan Priest with Relic",
   1942: "Traction Trebuchet",
+  1943: "Weapon Stacks B",
   1944: "Hei Guang Cavalry",
   1945: "Hei Guang Cavalry",	// Dead
   1946: "Heavy Hei Guang Cavalry",
@@ -1898,6 +1901,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1964: "Projectile War Chariot",	// Focus Fire
   1965: "Arctic Wolf",
   1966: "Liu Bei",
+  1967: "Rock (Mossy)",
   1968: "Fire Archer",
   1969: "Fire Archer",	// Dead
   1970: "Elite Fire Archer",
@@ -1911,6 +1915,7 @@ const ENTITY_NAMES: Record<number, string> = {
   1978: "Sun Jian",
   1979: "Stonehenge",
   1980: "War Chariot",	// Barrage
+  1981: "Kelp Seaweeds",
   1982: "Projectile Xianbei",
   1983: "Projectile Xianbei",	// Secondary
   1984: "Lush Bamboo Tree",
@@ -1964,10 +1969,15 @@ const ENTITY_NAMES: Record<number, string> = {
   2032: "LÃ¼ Bu",
   2033: "Yurt M",
   2034: "Guan Yu",
+  2035: "Burned Building E",
   2036: "Zhuge Liang",
+  2037: "Wooden Bridge Piece--End A",
   2038: "Zhang Fei",
+  2039: "Wooden Bridge Piece--End B",
   2040: "Sun Ce",
+  2041: "Wooden Bridge Piece--End C",
   2042: "Sun Quan",
+  2043: "Wooden Bridge Piece--Middle",
   2044: "Zhou Yu",
   2045: "Dong Zhuo",
   2046: "Yuan Shao",
@@ -2005,6 +2015,7 @@ const ENTITY_NAMES: Record<number, string> = {
   2078: "Pasture Annex Fences",
   2079: "Pasture Annex AB",
   2080: "Pasture Annex CD",
+  2081: "Wooden Bridge Piece--Rails",
   2082: "Panda Rock",
   2083: "Chicken A",
   2084: "Wild Chicken A",
@@ -2427,7 +2438,9 @@ const ENTITY_NAMES: Record<number, string> = {
   2556: "Settlement",	// Dark Age
   2557: "Missionary with Relic",
   2558: "Settlement",	// Feudal Age
+  2559: "Longhouse A",
   2560: "Settlement",	// Castle Age
+  2561: "Longhouse B",
   2562: "Guecha Warrior",
   2563: "Invisible Object E",
   2564: "Elite Guecha Warrior",
@@ -2442,6 +2455,9 @@ const ENTITY_NAMES: Record<number, string> = {
   2573: "Projectile EliteBolas",
   2574: "Projectile Bolas",	// Charge
   2575: "Projectile EliteBolas",	// Charge
+  2576: "Torch C",
+  2577: "Flotsam",
+  2578: "Raven",
   2579: "Blackwood Archer",
   2580: "Tree",	// Brazilwood
   2581: "Elite Blackwood Archer",
@@ -2479,7 +2495,14 @@ const ENTITY_NAMES: Record<number, string> = {
   2613: "Elite War Dog",
   2614: "Alpaca",
   2615: "Wild Alpaca",
+  2616: "Invisible Spawner A",
+  2617: "Invisible Spawner B",
+  2618: "Invisible Spawner C",
+  2619: "Invisible Spawner D",
+  2620: "Invisible Spawner E",
+  2621: "Invisible Spawner F",
   2622: "Trail Rope",
+  2623: "Projectile Harald",
   2624: "FIRESHIP_EXP",
   2625: "Whale",
   2626: "Hulk",
@@ -2500,6 +2523,10 @@ const ENTITY_NAMES: Record<number, string> = {
   2642: "Arariboia",
   2643: "Cunhambebe",
   2644: "Scaffolding",	// Walkable
+  2645: "Invisible Spawner G",
+  2646: "Invisible Spawner H",
+  2647: "Invisible Spawner I",
+  2648: "Invisible Spawner J",
   2650: "Pineapple Bush",
   2651: "Cliff 01",	// Terrace
   2652: "Cliff 02",	// Terrace
@@ -2511,22 +2538,72 @@ const ENTITY_NAMES: Record<number, string> = {
   2658: "Cliff 08",	// Terrace
   2659: "Cliff 09",	// Terrace
   2678: "Fort Wall",
-  2679: "Fort Gate",
-  2680: "Fort Gate",
-  2681: "Fort Gate",
-  2682: "Fort Gate",
-  2683: "Fort Gate",
-  2684: "Fort Gate",
-  2685: "Fort Gate",
-  2686: "Fort Gate",
-  2687: "Fort Gate",
-  2688: "Fort Gate",
-  2689: "Fort Gate",
-  2690: "Fort Gate",
-  2691: "Fort Gate",
-  2692: "Fort Gate",
-  2693: "Fort Gate",
-  2694: "Fort Gate",
+  2679: "Fort Gate", // Ascending Closed
+  2680: "Fort Gate", // Ascending Open
+  2681: "Fort Gate", // Ascending Endpieces
+  2682: "Fort Gate", // Ascending Foundation
+  2683: "Fort Gate", // Descending Closed
+  2684: "Fort Gate", // Descending Open
+  2685: "Fort Gate", // Descending Endpieces
+  2686: "Fort Gate", // Descending Foundation
+  2687: "Fort Gate", // Horizontal Closed
+  2688: "Fort Gate", // Horizontal Open
+  2689: "Fort Gate", // Horizontal Endpieces
+  2690: "Fort Gate", // Horizontal Foundation
+  2691: "Fort Gate", // Vertical Closed
+  2692: "Fort Gate", // Vertical Open
+  2693: "Fort Gate", // Vertical Endpieces
+  2694: "Fort Gate", // Vertical Foundation
+  2700: "Mounted Crossbowman",
+  2701: "Heavy Mounted Crossbowman",
+  2702: "Projectile Hearth Troop",
+  2703: "Varangian Guard",
+  2704: "Elite Varangian Guard",
+  2705: "Hearth Troop",
+  2706: "Elite Hearth Troop",
+  2707: "Projectile Elite Hearth Troop",
+  2708: "Jarl",
+  2709: "Elite Jarl",
+  2710: "Projectile Gothikon",
+  2711: "Jomsviking",
+  2712: "Elite Jomsviking",
+  2713: "Projectile Jomsviking",
+  2714: "Villager Repairer (Male)",
+  2715: "Villager Repairer (Female)",
+  2716: "Castle/TC Infantry Discount Removal",
+  2717: "Castle/TC Infantry Discount",
+  2718: "Empty Castle Annex",
+  2719: "Projectile Jarl",
+  2720: "Projectile EliteJarl",
+  2721: "Harald",
+  2722: "Ulf Ospaksson",
+  2723: "Halldor Snorrason",
+  2724: "Tostig Godwinson",
+  2725: "Finn Arnason",
+  2726: "Kalf Arnason",
+  2727: "Einar Paunch-Shaker",
+  2728: "Dreki",
+  2729: "Legendary Item",
+  2730: "Wheeled Ship",
+  2731: "Tree (Spruce)",
+  2732: "Tree (Spruce Snow)",
+  2733: "Bush D",
+  2734: "Rock (Snow)",
+  2735: "Seal",
+  2736: "Lynx",
+  2737: "Elk",
+  2738: "Runestones",
+  2739: "Pheasant",
+  2740: "Driftwood (Ground)",
+  2741: "Driftwood (Water)",
+  2742: "Flaming Bird",
+  2743: "Plant (Heather)",
+  2744: "Burned Building D",
+  2745: "Army Tent F",
+  2746: "Shipwreck C",
+  2747: "Norse Column",
+  2748: "Wooden Road",
+  2749: "Norse Banner",
 };
 
 export const getEntityName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined);
