@@ -19,34 +19,45 @@ const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
 const MINIMAP_ZOOM_MAX = 7;
 const MINIMAP_ZOOM_MAX_MOBILE = 17;
 
-const MINIMAP_ICON_SIZE_MIN = 25;
-const MINIMAP_ICON_SCALE_FACTOR = 2.5;
+const MINIMAP_ICON_SIZE_MIN = 24;
+const MINIMAP_ICON_SCALE_FACTOR = 2.4;
 const MINIMAP_LANDMARK_ICON_BORDER_WIDTH = 16;
 
-const MINIMAP_EMOJI_SCALE = 0.23;
+const MINIMAP_EMOJI_SCALE = 0.2;
 const MINIMAP_EMOJI_ALPHA = 0.8;
 const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.8;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 
-const MINIMAP_BUILDING_ALPHA = 0.8;
-const MINIMAP_FARMS_OFF_ALPHA = 0.1;
-const MINIMAP_BUILDING_OUTLINE_WIDTH = 0.5;
-const MINIMAP_BUILDING_OUTLINE_ALPHA = 0.2;
+const MINIMAP_BUILDING_ALPHA = 0.9;
+const MINIMAP_BUILDING_OUTLINE_MIN_WIDTH = 1;
+const MINIMAP_BUILDING_OUTLINE_SCALE = 0.1;
+const MINIMAP_BUILDING_BORDER_OFFSET = 0.5;
+const MINIMAP_BUILDING_HIGHLIGHT_PERCENT = 15;
+const MINIMAP_BUILDING_SHADOW_PERCENT = -20;
+const MINIMAP_FARMS_ALPHA = 0.7;
+const MINIMAP_FARMS_OUTLINE_WIDTH = 0.5;
+const MINIMAP_FARMS_OUTLINE_ALPHA = 0.3;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
 
-const MINIMAP_UNIT_ALPHA = 1;
+const MINIMAP_UNIT_ALPHA = 0.8;
 const MINIMAP_UNIT_RADIUS_MOBILE = 3;
 const MINIMAP_UNIT_RADIUS_DESKTOP = 5;
-const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 1;
-const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 2;
+const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 0.5;
+const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 1.5;
 const MINIMAP_UNIT_FADE_SECONDS = 30;
-const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 300;
+const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 120;
 
-const MINIMAP_TERRAIN_ELEVATION_STEP = 2;
+const MINIMAP_TERRAIN_ELEVATION_STEP = 3;
+const MINIMAP_TERRAIN_ELEVATION_TAPER = 0.7;
 const MINIMAP_TERRAIN_ALPHA = 1;
-const MINIMAP_TERRAIN_OFF_ALPHA = 0.1;
-const BASE_TERRAIN_SCALE = 40;
+const MINIMAP_TERRAIN_CONTOUR_WIDTH = 2.5;
+const MINIMAP_TERRAIN_HIGHLIGHT_PERCENT = 15;
+const MINIMAP_TERRAIN_SHADOW_PERCENT = -20;
+const BASE_TERRAIN_SCALE = 50;
 
+const MINIMAP_RESOURCE_BORDER_WIDTH = 5;
+const MINIMAP_RESOURCE_HIGHLIGHT_PERCENT = 15;
+const MINIMAP_RESOURCE_SHADOW_PERCENT = -30;
 const MINIMAP_RESOURCE_COLORS = {
   gold: "#ffd700",
   stone: "#91a1ad",
@@ -84,6 +95,20 @@ function shadeColor(hex: string, percent: number) {
   const G = Math.min(255, Math.max(0, Math.round(((num >> 8) & 0xff) * factor)));
   const B = Math.min(255, Math.max(0, Math.round((num & 0xff) * factor)));
   return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
+}
+
+/**
+ * Calculates diminishing elevation shade percentage.
+ * Higher step between 0 -> 1 and 1 -> 2, tapering off smoothly at higher elevations.
+ * When elevation is 0, returns 0%.
+ */
+function getElevationShadePercent(elevation: number): number {
+  if (elevation <= 0) return 0;
+  if (MINIMAP_TERRAIN_ELEVATION_TAPER >= 1) {
+    return elevation * MINIMAP_TERRAIN_ELEVATION_STEP;
+  }
+  const taper = Math.max(0.01, MINIMAP_TERRAIN_ELEVATION_TAPER);
+  return (MINIMAP_TERRAIN_ELEVATION_STEP * (1 - Math.pow(taper, elevation))) / (1 - taper);
 }
 
 const clamp = (value: number, min: number, max: number) =>
@@ -567,7 +592,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${Object.keys(mapResources).length},${showResources},${showRelics},${showTerrain}`;
+    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${MINIMAP_TERRAIN_CONTOUR_WIDTH},${MINIMAP_TERRAIN_ELEVATION_STEP},${MINIMAP_TERRAIN_ELEVATION_TAPER},${MINIMAP_TERRAIN_HIGHLIGHT_PERCENT},${MINIMAP_TERRAIN_SHADOW_PERCENT},${MINIMAP_RESOURCE_BORDER_WIDTH},${MINIMAP_RESOURCE_HIGHLIGHT_PERCENT},${MINIMAP_RESOURCE_SHADOW_PERCENT},${Object.keys(mapResources).length},${showResources},${showRelics},${showTerrain}`;
 
     if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
@@ -600,33 +625,33 @@ export function Minimap({
 
         const tiles = mapInfo?.tiles;
         if (tiles && tiles.length >= sizeX * sizeY) {
-          terrainContext.globalAlpha = showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA;
-          for (let y = 0; y < sizeY; y += 1) {
-            for (let x = 0; x < sizeX; x += 1) {
-              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
-              const terrainType = tile?.terrain_type ?? 14;
-              let terrainColor = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
-
-              if (tile?.elevation !== undefined) {
-                terrainColor = shadeColor(terrainColor, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
-              }
-
-              const p1 = toOffscreen(x, y);
-              const p2 = toOffscreen(x + 1, y);
-              const p3 = toOffscreen(x + 1, y + 1);
-              const p4 = toOffscreen(x, y + 1);
-              terrainContext.fillStyle = terrainColor;
-              terrainContext.beginPath();
-              terrainContext.moveTo(p1.x, p1.y);
-              terrainContext.lineTo(p2.x, p2.y);
-              terrainContext.lineTo(p3.x, p3.y);
-              terrainContext.lineTo(p4.x, p4.y);
-              terrainContext.closePath();
-              terrainContext.fill();
-            }
-          }
-
           if (showTerrain) {
+            terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
+            for (let y = 0; y < sizeY; y += 1) {
+              for (let x = 0; x < sizeX; x += 1) {
+                const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
+                const terrainType = tile?.terrain_type ?? 14;
+                let terrainColor = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
+
+                if (tile?.elevation !== undefined) {
+                  terrainColor = shadeColor(terrainColor, getElevationShadePercent(tile.elevation));
+                }
+
+                const p1 = toOffscreen(x, y);
+                const p2 = toOffscreen(x + 1, y);
+                const p3 = toOffscreen(x + 1, y + 1);
+                const p4 = toOffscreen(x, y + 1);
+                terrainContext.fillStyle = terrainColor;
+                terrainContext.beginPath();
+                terrainContext.moveTo(p1.x, p1.y);
+                terrainContext.lineTo(p2.x, p2.y);
+                terrainContext.lineTo(p3.x, p3.y);
+                terrainContext.lineTo(p4.x, p4.y);
+                terrainContext.closePath();
+                terrainContext.fill();
+              }
+            }
+
             const shadowSegmentsByColor: Record<string, number[]> = {};
             const highlightSegmentsByColor: Record<string, number[]> = {};
 
@@ -644,9 +669,11 @@ export function Minimap({
                     const higherElev = higherTile?.elevation ?? 0;
                     const terType = higherTile?.terrain_type ?? 14;
                     const baseColor = TERRAIN_MINIMAP_COLORS[terType] ?? "#cbb892";
-                    const higherColor = shadeColor(baseColor, higherElev * MINIMAP_TERRAIN_ELEVATION_STEP);
+                    const higherColor = shadeColor(baseColor, getElevationShadePercent(higherElev));
                     const isHighlight = e > eEast;
-                    const lineColor = isHighlight ? shadeColor(higherColor, 20) : shadeColor(higherColor, -25);
+                    const lineColor = isHighlight
+                      ? shadeColor(higherColor, MINIMAP_TERRAIN_HIGHLIGHT_PERCENT)
+                      : shadeColor(higherColor, MINIMAP_TERRAIN_SHADOW_PERCENT);
                     const targetMap = isHighlight ? highlightSegmentsByColor : shadowSegmentsByColor;
 
                     if (!targetMap[lineColor]) targetMap[lineColor] = [];
@@ -665,9 +692,11 @@ export function Minimap({
                     const higherElev = higherTile?.elevation ?? 0;
                     const terType = higherTile?.terrain_type ?? 14;
                     const baseColor = TERRAIN_MINIMAP_COLORS[terType] ?? "#cbb892";
-                    const higherColor = shadeColor(baseColor, higherElev * MINIMAP_TERRAIN_ELEVATION_STEP);
+                    const higherColor = shadeColor(baseColor, getElevationShadePercent(higherElev));
                     const isHighlight = e < eSouth;
-                    const lineColor = isHighlight ? shadeColor(higherColor, 20) : shadeColor(higherColor, -25);
+                    const lineColor = isHighlight
+                      ? shadeColor(higherColor, MINIMAP_TERRAIN_HIGHLIGHT_PERCENT)
+                      : shadeColor(higherColor, MINIMAP_TERRAIN_SHADOW_PERCENT);
                     const targetMap = isHighlight ? highlightSegmentsByColor : shadowSegmentsByColor;
 
                     if (!targetMap[lineColor]) targetMap[lineColor] = [];
@@ -679,8 +708,10 @@ export function Minimap({
               }
             }
 
-            terrainContext.globalAlpha = showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA;
-            terrainContext.lineWidth = 1.5;
+            terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
+            terrainContext.lineWidth = MINIMAP_TERRAIN_CONTOUR_WIDTH;
+            terrainContext.lineCap = "round";
+            terrainContext.lineJoin = "round";
 
             // Draw darker shadow lines first
             for (const [lineColor, coords] of Object.entries(shadowSegmentsByColor)) {
@@ -744,8 +775,8 @@ export function Minimap({
               return (nRes === "relic" && showRelics) || (nRes !== "relic" && showResources);
             };
 
-            const highlightColor = shadeColor(baseColor, 25);
-            const shadowColor = shadeColor(baseColor, -30);
+            const highlightColor = shadeColor(baseColor, MINIMAP_RESOURCE_HIGHLIGHT_PERCENT);
+            const shadowColor = shadeColor(baseColor, MINIMAP_RESOURCE_SHADOW_PERCENT);
 
             // NW edge (p1 -> p2): faces North-West sunward -> Highlight
             if (!isSameVisible(x, y - 1)) {
@@ -773,7 +804,9 @@ export function Minimap({
           }
 
           // Stroke 3D resource outline edges: darker lines first, bright highlights on top
-          terrainContext.lineWidth = 4;
+          terrainContext.lineWidth = MINIMAP_RESOURCE_BORDER_WIDTH;
+          terrainContext.lineCap = "butt";
+          terrainContext.lineJoin = "round";
 
           // 1. Shadow lines first
           for (const [lineColor, coords] of Object.entries(resourceShadowLinesByColor)) {
@@ -797,19 +830,6 @@ export function Minimap({
             terrainContext.stroke();
           }
         }
-        terrainContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
-        terrainContext.lineWidth = 1;
-        terrainContext.beginPath();
-        const top = toOffscreen(0, 0);
-        const right = toOffscreen(sizeX, 0);
-        const bottom = toOffscreen(sizeX, sizeY);
-        const left = toOffscreen(0, sizeY);
-        terrainContext.moveTo(top.x, top.y);
-        terrainContext.lineTo(right.x, right.y);
-        terrainContext.lineTo(bottom.x, bottom.y);
-        terrainContext.lineTo(left.x, left.y);
-        terrainContext.closePath();
-        terrainContext.stroke();
       }
       terrainCacheKeyRef.current = terrainCacheKey;
     }
@@ -855,10 +875,15 @@ export function Minimap({
 
     const { tileToAnchor, anchorToEvent } = buildingData;
     const iconBuildings: TimelineEvent[] = [];
+    const buildingShadowLinesByColor: Record<string, number[]> = {};
+    const buildingHighlightLinesByColor: Record<string, number[]> = {};
+    const buildingLineWidth = Math.max(MINIMAP_BUILDING_OUTLINE_MIN_WIDTH, isoScale * MINIMAP_BUILDING_OUTLINE_SCALE);
+    const buildingOffset = buildingLineWidth * MINIMAP_BUILDING_BORDER_OFFSET;
 
     const drawBuilding = (event: TimelineEvent) => {
       if (!showBuildingOutlines) return;
       const isFarm = isFarmId(event.buildingTypeId);
+      if (isFarm && !showFarms) return;
 
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
@@ -883,20 +908,55 @@ export function Minimap({
       context.closePath();
 
       // 1. Fill the shape with player's color
+      const playerColor = getPlayerColor(event.playerId);
       if (showBuildingOutlines) {
         context.save();
-        context.globalAlpha = isFarm && !showFarms ? MINIMAP_FARMS_OFF_ALPHA : MINIMAP_BUILDING_ALPHA;
-        context.fillStyle = getPlayerColor(event.playerId);
+        context.globalAlpha = isFarm ? MINIMAP_FARMS_ALPHA : MINIMAP_BUILDING_ALPHA;
+        context.fillStyle = playerColor;
         context.fill();
         context.restore();
       }
 
-      // 2. Add the thin building outline (conditional on zoom)
-      if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
-        context.globalAlpha = isFarm && !showFarms ? 0 : MINIMAP_BUILDING_OUTLINE_ALPHA;
-        context.strokeStyle = getPlayerOutline(event.playerId);
-        context.lineWidth = MINIMAP_BUILDING_OUTLINE_WIDTH;
-        context.stroke();
+      // 2. Outlines
+      if (isFarm) {
+        // Farms and pastures are left unchanged
+        if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
+          context.globalAlpha = MINIMAP_FARMS_OUTLINE_ALPHA;
+          context.strokeStyle = getPlayerOutline(event.playerId);
+          context.lineWidth = MINIMAP_FARMS_OUTLINE_WIDTH;
+          context.stroke();
+        }
+      } else if (showBuildingOutlines) {
+        // Inset inside in all directions for non-farm buildings
+        const insetY = Math.min((buildingOffset * Math.sqrt(5)) / 2, (p4.y - p2.y) * 0.4);
+        const insetX = insetY * 2;
+        const ip1 = { x: p1.x + insetX, y: p1.y };
+        const ip2 = { x: p2.x, y: p2.y + insetY };
+        const ip3 = { x: p3.x - insetX, y: p3.y };
+        const ip4 = { x: p4.x, y: p4.y - insetY };
+
+        // 3D directional bevel outline edges for non-farm buildings
+        const highlightColor = shadeColor(playerColor, MINIMAP_BUILDING_HIGHLIGHT_PERCENT);
+        const shadowColor = shadeColor(playerColor, MINIMAP_BUILDING_SHADOW_PERCENT);
+        // NW & NE edges (ip1 -> ip2 -> ip3): faces sunward -> Highlight
+        if (!buildingHighlightLinesByColor[highlightColor]) {
+          buildingHighlightLinesByColor[highlightColor] = [];
+        }
+        buildingHighlightLinesByColor[highlightColor].push(
+          ip1.x, ip1.y,
+          ip2.x, ip2.y,
+          ip3.x, ip3.y
+        );
+
+        // SE & SW edges (ip3 -> ip4 -> ip1): faces leeward -> Shadow
+        if (!buildingShadowLinesByColor[shadowColor]) {
+          buildingShadowLinesByColor[shadowColor] = [];
+        }
+        buildingShadowLinesByColor[shadowColor].push(
+          ip3.x, ip3.y,
+          ip4.x, ip4.y,
+          ip1.x, ip1.y
+        );
       }
       context.restore();
 
@@ -912,6 +972,39 @@ export function Minimap({
         }
       });
 
+      // Stroke 3D building outline edges: darker lines first, bright highlights on top
+      if (showBuildingOutlines) {
+        context.save();
+        context.lineWidth = buildingLineWidth;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+
+        // 1. Darker shadow lines first
+        for (const [lineColor, coords] of Object.entries(buildingShadowLinesByColor)) {
+          context.strokeStyle = lineColor;
+          context.beginPath();
+          for (let i = 0; i < coords.length; i += 6) {
+            context.moveTo(coords[i], coords[i + 1]);
+            context.lineTo(coords[i + 2], coords[i + 3]);
+            context.lineTo(coords[i + 4], coords[i + 5]);
+          }
+          context.stroke();
+        }
+
+        // 2. Bright highlight lines on top
+        for (const [lineColor, coords] of Object.entries(buildingHighlightLinesByColor)) {
+          context.strokeStyle = lineColor;
+          context.beginPath();
+          for (let i = 0; i < coords.length; i += 6) {
+            context.moveTo(coords[i], coords[i + 1]);
+            context.lineTo(coords[i + 2], coords[i + 3]);
+            context.lineTo(coords[i + 4], coords[i + 5]);
+          }
+          context.stroke();
+        }
+        context.restore();
+      }
+
       if (showBuildingOutlines && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
         const anchorKey = hoveredEntity.anchorKey;
         const footprint = anchorToEvent.get(anchorKey) ? getBuildingFootprint(anchorToEvent.get(anchorKey)!.buildingTypeId) : null;
@@ -925,6 +1018,8 @@ export function Minimap({
           context.save();
           context.strokeStyle = getPlayerOutline(hoveredEntity.playerId);
           context.lineWidth = MINIMAP_BUILDING_HOVER_WIDTH;
+          context.lineCap = "round";
+          context.lineJoin = "round";
           context.beginPath();
           context.moveTo(p1.x, p1.y);
           context.lineTo(p2.x, p2.y);
@@ -960,7 +1055,7 @@ export function Minimap({
           const centerTileX = baseX + footprint.w / 2;
           const centerTileY = baseY + footprint.h / 2;
           const center = toCanvas(centerTileX, centerTileY);
-          const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.max(footprint.w, footprint.h)) / 2;
+          const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.min(footprint.w, footprint.h)) / 2;
           const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
           const color = getPlayerColor(event.playerId);
           const outline = getPlayerOutline(event.playerId);
