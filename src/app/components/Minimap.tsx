@@ -40,12 +40,16 @@ const MINIMAP_FARMS_OUTLINE_ALPHA = 0.3;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
 
 const MINIMAP_UNIT_ALPHA = 0.8;
-const MINIMAP_UNIT_RADIUS_MOBILE = 3;
-const MINIMAP_UNIT_RADIUS_DESKTOP = 5;
+const MINIMAP_UNIT_RADIUS_MOBILE = 2;
+const MINIMAP_UNIT_RADIUS_DESKTOP = 4;
 const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 0.5;
 const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 1.5;
 const MINIMAP_UNIT_FADE_SECONDS = 30;
 const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 120;
+const MINIMAP_FLARE_WIDTH = 3;
+const MINIMAP_FLARE_OUTLINE_WIDTH = 6;
+const MINIMAP_FLARE_SIZE = 8;
+const MINIMAP_FLARE_FADE_SECONDS = 120;
 
 const MINIMAP_TERRAIN_ELEVATION_STEP = 3;
 const MINIMAP_TERRAIN_ELEVATION_TAPER = 0.7;
@@ -136,7 +140,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "gatherpoints", "farms", "landmark_icons", "resources", "relics"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "gatherpoints", "farms", "landmark_icons", "resources", "relics", "flares"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -208,6 +212,7 @@ export function Minimap({
     { id: "icons", label: "▸ Building icons" },
     { id: "gatherpoints", label: "▸ Gather points" },
     { id: "moves", label: "Unit movements" },
+    { id: "flares", label: "Flares" },
   ];
 
   const toggleFullscreen = (value?: boolean) => {
@@ -275,6 +280,7 @@ export function Minimap({
   const showResources = minimapViewFilters.includes("resources");
   const showRelics = minimapViewFilters.includes("relics");
   const showTerrain = minimapViewFilters.includes("terrain");
+  const showFlares = minimapViewFilters.includes("flares");
   const showBuildings = showBuildingOutlines || showBuildingIcons || showFarms || showLandmarkIcons;
 
   // Reset internal state when a new replay is loaded
@@ -282,7 +288,7 @@ export function Minimap({
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "gatherpoints", "resources", "farms", "landmark_icons", "relics"]);
+    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "gatherpoints", "resources", "farms", "landmark_icons", "relics", "flares"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -485,6 +491,25 @@ export function Minimap({
       return events.filter(
         (event) =>
           event.category === "gatherpoint" &&
+          event.x !== undefined &&
+          event.y !== undefined &&
+          event.x >= 0 &&
+          event.y >= 0 &&
+          event.x <= sizeX &&
+          event.y <= sizeY &&
+          (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))
+      );
+    },
+    [events, selectedPlayerIds, mapInfo]
+  );
+
+  const flareEvents = useMemo(
+    () => {
+      const sizeX = mapInfo?.size_x ?? 120;
+      const sizeY = mapInfo?.size_y ?? 120;
+      return events.filter(
+        (event) =>
+          event.category === "flare" &&
           event.x !== undefined &&
           event.y !== undefined &&
           event.x >= 0 &&
@@ -1218,6 +1243,45 @@ export function Minimap({
       context.globalAlpha = 1;
     }
 
+    if (showFlares) {
+      for (let i = flareEvents.length - 1; i >= 0; i--) {
+        const event = flareEvents[i];
+        if (event.time > selectedTime) continue;
+        const age = selectedTime - event.time;
+        if (age > MINIMAP_FLARE_FADE_SECONDS) break;
+
+        if (event.x === undefined || event.y === undefined) continue;
+
+        const progress = Math.min(1, age / MINIMAP_FLARE_FADE_SECONDS);
+        const alpha = Math.max(0, 1 - Math.pow(progress, 3));
+        const pos = toCanvas(event.x, event.y);
+
+        context.save();
+        context.globalAlpha = alpha;
+        context.lineCap = "round";
+
+        context.beginPath();
+        context.moveTo(pos.x - MINIMAP_FLARE_SIZE, pos.y - MINIMAP_FLARE_SIZE);
+        context.lineTo(pos.x + MINIMAP_FLARE_SIZE, pos.y + MINIMAP_FLARE_SIZE);
+        context.moveTo(pos.x + MINIMAP_FLARE_SIZE, pos.y - MINIMAP_FLARE_SIZE);
+        context.lineTo(pos.x - MINIMAP_FLARE_SIZE, pos.y + MINIMAP_FLARE_SIZE);
+
+        // Thicker outline/shadow matching player outline color
+        context.strokeStyle = getPlayerOutline(event.playerId);
+        context.lineWidth = MINIMAP_FLARE_OUTLINE_WIDTH;
+        context.stroke();
+
+        // Foreground X stroke
+        context.strokeStyle = getPlayerColor(event.playerId);
+        context.lineWidth = MINIMAP_FLARE_WIDTH;
+        context.stroke();
+
+        context.restore();
+      }
+
+      context.globalAlpha = 1;
+    }
+
     entityLookupRef.current = {
       tileToAnchor: tileToAnchor,
       buildings: anchorToEvent,
@@ -1244,8 +1308,10 @@ export function Minimap({
     showRelics,
     showTerrain,
     showGatherpoints,
+    showFlares,
     moveEvents,
     gatherpointEvents,
+    flareEvents,
     activeGatherpoints,
     hoveredEntity,
     selectedPlayerIds,

@@ -1,4 +1,4 @@
-export type TimelineEventCategory = "build" | "move" | "research" | "train" | "autoscout" | "market" | "gatherpoint" | "other";
+export type TimelineEventCategory = "build" | "move" | "research" | "train" | "autoscout" | "market" | "gatherpoint" | "flare" | "other";
 
 export type TimelineEvent = {
   id: string;
@@ -99,6 +99,8 @@ const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
     case "Buy":
     case "Sell":
       return "market";
+    case "Flare":
+      return "flare";
   }
   return "other";
 };
@@ -323,6 +325,12 @@ const parseActionData = (type: string, data: number[]) => {
         const x = view.getFloat32(4, true);
         const y = view.getFloat32(8, true);
         return { x, y, unitIds: extractUnitIds(selected, 16) };
+      }
+      case "Flare": {
+        if (bytes.length < 12) return undefined;
+        const x = view.getFloat32(4, true);
+        const y = view.getFloat32(8, true);
+        return { x, y };
       }
     }
   } catch (e) {
