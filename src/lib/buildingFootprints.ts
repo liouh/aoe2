@@ -273,7 +273,7 @@ export const isBuildingId = (id: number): boolean => {
 
 export const isFarmId = (id?: number): boolean => {
   if (id === undefined) return false;
-  // 50: Farm, 1187: Rice Farm
-  // 1889, 1893, 1897: Pasture
-  return [50, 1187, 1889, 1893, 1897].includes(id);
+  // 50: Farm, 357: Dead Farm, 1187: Rice Farm, 1188: Dead Rice Farm
+  // 1889, 1893, 1897: Pasture, 1894, 1898: Dead Pasture
+  return [50, 357, 1187, 1188, 1889, 1893, 1894, 1897, 1898].includes(id);
 };
