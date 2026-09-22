@@ -19,12 +19,13 @@ const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
 const MINIMAP_ZOOM_MAX = 7;
 const MINIMAP_ZOOM_MAX_MOBILE = 17;
 
-const MINIMAP_ICON_SIZE_MIN = 24;
+const MINIMAP_ICON_SIZE_MIN_MOBILE = 16;
+const MINIMAP_ICON_SIZE_MIN_DESKTOP = 24;
 const MINIMAP_ICON_SCALE_FACTOR = 2.4;
 const MINIMAP_LANDMARK_ICON_BORDER_WIDTH = 16;
 
 const MINIMAP_EMOJI_SCALE = 0.2;
-const MINIMAP_EMOJI_ALPHA = 0.8;
+const MINIMAP_EMOJI_ALPHA = 0.9;
 const MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE = 1.8;
 const MINIMAP_EMOJI_ZOOM_THRESHOLD = 10;
 
@@ -34,6 +35,7 @@ const MINIMAP_BUILDING_OUTLINE_SCALE = 0.1;
 const MINIMAP_BUILDING_BORDER_OFFSET = 0.5;
 const MINIMAP_BUILDING_HIGHLIGHT_PERCENT = 15;
 const MINIMAP_BUILDING_SHADOW_PERCENT = -20;
+const MINIMAP_BUILDING_FADE_IN_SECONDS = 30;
 const MINIMAP_FARMS_ALPHA = 0.7;
 const MINIMAP_FARMS_OUTLINE_WIDTH = 0.5;
 const MINIMAP_FARMS_OUTLINE_ALPHA = 0.3;
@@ -46,6 +48,7 @@ const MINIMAP_UNIT_BORDER_WIDTH_MOBILE = 0.5;
 const MINIMAP_UNIT_BORDER_WIDTH_DESKTOP = 1.5;
 const MINIMAP_UNIT_FADE_SECONDS = 30;
 const MINIMAP_ACTIVE_GATHERPOINT_FADE_SECONDS = 120;
+
 const MINIMAP_FLARE_WIDTH = 3;
 const MINIMAP_FLARE_OUTLINE_WIDTH = 6;
 const MINIMAP_FLARE_SIZE = 8;
@@ -140,7 +143,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "moves", "gatherpoints", "farms", "landmark_icons", "resources", "relics", "flares"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "gatherpoints", "farms", "landmark_icons", "resources", "relics", "flares"]);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -211,8 +214,8 @@ export function Minimap({
     { id: "landmark_icons", label: "▸ TC & castle markers" },
     { id: "icons", label: "▸ Building icons" },
     { id: "gatherpoints", label: "▸ Gather points" },
-    { id: "moves", label: "Unit movements" },
     { id: "flares", label: "Flares" },
+    { id: "moves", label: "Unit movements" },
   ];
 
   const toggleFullscreen = (value?: boolean) => {
@@ -288,7 +291,7 @@ export function Minimap({
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
     setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["terrain", "footprints", "icons", "moves", "gatherpoints", "resources", "farms", "landmark_icons", "relics", "flares"]);
+    setMinimapViewFilters(["terrain", "footprints", "icons", "gatherpoints", "resources", "farms", "landmark_icons", "relics", "flares"]);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -900,15 +903,26 @@ export function Minimap({
 
     const { tileToAnchor, anchorToEvent } = buildingData;
     const iconBuildings: TimelineEvent[] = [];
+    const minIconSize = isMobile ? MINIMAP_ICON_SIZE_MIN_MOBILE : MINIMAP_ICON_SIZE_MIN_DESKTOP;
     const buildingShadowLinesByColor: Record<string, number[]> = {};
     const buildingHighlightLinesByColor: Record<string, number[]> = {};
     const buildingLineWidth = Math.max(MINIMAP_BUILDING_OUTLINE_MIN_WIDTH, isoScale * MINIMAP_BUILDING_OUTLINE_SCALE);
     const buildingOffset = buildingLineWidth * MINIMAP_BUILDING_BORDER_OFFSET;
 
+    const getBuildingFadeProgress = (event: TimelineEvent) => {
+      if (event.raw?.isInitial || event.time === 0) return 1;
+      const age = selectedTime - event.time;
+      if (age >= MINIMAP_BUILDING_FADE_IN_SECONDS) return 1;
+      if (age <= 0) return 0.05;
+      return 0.05 + 0.95 * (age / MINIMAP_BUILDING_FADE_IN_SECONDS);
+    };
+
     const drawBuilding = (event: TimelineEvent) => {
       if (!showBuildingOutlines) return;
       const isFarm = isFarmId(event.buildingTypeId);
       if (isFarm && !showFarms) return;
+
+      const fadeProgress = getBuildingFadeProgress(event);
 
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
@@ -936,7 +950,7 @@ export function Minimap({
       const playerColor = getPlayerColor(event.playerId);
       if (showBuildingOutlines) {
         context.save();
-        context.globalAlpha = isFarm ? MINIMAP_FARMS_ALPHA : MINIMAP_BUILDING_ALPHA;
+        context.globalAlpha = (isFarm ? MINIMAP_FARMS_ALPHA : MINIMAP_BUILDING_ALPHA) * fadeProgress;
         context.fillStyle = playerColor;
         context.fill();
         context.restore();
@@ -946,12 +960,12 @@ export function Minimap({
       if (isFarm) {
         // Farms and pastures are left unchanged
         if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
-          context.globalAlpha = MINIMAP_FARMS_OUTLINE_ALPHA;
+          context.globalAlpha = MINIMAP_FARMS_OUTLINE_ALPHA * fadeProgress;
           context.strokeStyle = getPlayerOutline(event.playerId);
           context.lineWidth = MINIMAP_FARMS_OUTLINE_WIDTH;
           context.stroke();
         }
-      } else if (showBuildingOutlines) {
+      } else if (showBuildingOutlines && fadeProgress >= 1) {
         // Inset inside in all directions for non-farm buildings
         const insetY = Math.min((buildingOffset * Math.sqrt(5)) / 2, (p4.y - p2.y) * 0.4);
         const insetX = insetY * 2;
@@ -963,6 +977,7 @@ export function Minimap({
         // 3D directional bevel outline edges for non-farm buildings
         const highlightColor = shadeColor(playerColor, MINIMAP_BUILDING_HIGHLIGHT_PERCENT);
         const shadowColor = shadeColor(playerColor, MINIMAP_BUILDING_SHADOW_PERCENT);
+
         // NW & NE edges (ip1 -> ip2 -> ip3): faces sunward -> Highlight
         if (!buildingHighlightLinesByColor[highlightColor]) {
           buildingHighlightLinesByColor[highlightColor] = [];
@@ -985,7 +1000,7 @@ export function Minimap({
       }
       context.restore();
 
-      if (isIconBuilding(event.buildingTypeId)) {
+      if (isIconBuilding(event.buildingTypeId) && fadeProgress >= 1) {
         iconBuildings.push(event);
       }
     };
@@ -1081,7 +1096,7 @@ export function Minimap({
           const centerTileY = baseY + footprint.h / 2;
           const center = toCanvas(centerTileX, centerTileY);
           const footprintScale = Math.max(MINIMAP_EMOJI_FOOTPRINT_MIN_SIZE, Math.min(footprint.w, footprint.h)) / 2;
-          const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
+          const iconSize = Math.max(minIconSize, isoScale * MINIMAP_ICON_SCALE_FACTOR) * footprintScale;
           const color = getPlayerColor(event.playerId);
           const outline = getPlayerOutline(event.playerId);
           const emojiSize = iconSize * MINIMAP_EMOJI_SCALE;
@@ -1146,7 +1161,7 @@ export function Minimap({
             const centerTileX = baseX + footprint.w / 2;
             const centerTileY = baseY + footprint.h / 2;
             const center = toCanvas(centerTileX, centerTileY);
-            const iconSize = Math.max(MINIMAP_ICON_SIZE_MIN, isoScale * MINIMAP_ICON_SCALE_FACTOR);
+            const iconSize = Math.max(minIconSize, isoScale * MINIMAP_ICON_SCALE_FACTOR);
 
             const iconPath = name.includes("Castle") ? castlePath : townCenterPath;
             const color = getPlayerColor(event.playerId);
@@ -1318,6 +1333,7 @@ export function Minimap({
     getPlayerColor,
     getPlayerOutline,
     isFullscreen,
+    isMobile,
     resizeKey,
   ]);
 
