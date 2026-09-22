@@ -79,11 +79,11 @@ interface MinimapProps {
 
 function shadeColor(hex: string, percent: number) {
   const num = parseInt(hex.replace("#", ""), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = (num >> 16) + amt;
-  const G = (num >> 8 & 0x00FF) + amt;
-  const B = (num & 0x0000FF) + amt;
-  return "#" + (0x1000000 + (R < 255 ? R < 0 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 0 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 0 ? 0 : B : 255)).toString(16).slice(1);
+  const factor = 1 + percent / 100;
+  const R = Math.min(255, Math.max(0, Math.round(((num >> 16) & 0xff) * factor)));
+  const G = Math.min(255, Math.max(0, Math.round(((num >> 8) & 0xff) * factor)));
+  const B = Math.min(255, Math.max(0, Math.round((num & 0xff) * factor)));
+  return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
 }
 
 const clamp = (value: number, min: number, max: number) =>
@@ -600,6 +600,7 @@ export function Minimap({
 
         const tiles = mapInfo?.tiles;
         if (tiles && tiles.length >= sizeX * sizeY) {
+          terrainContext.globalAlpha = showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
               const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
@@ -610,21 +611,11 @@ export function Minimap({
                 terrainColor = shadeColor(terrainColor, tile.elevation * MINIMAP_TERRAIN_ELEVATION_STEP);
               }
 
-              const resourceKey = `${x},${y}`;
-              const resource = mapResources[resourceKey];
-              const isResource = resource && (
-                (resource === "relic" && showRelics) ||
-                (resource !== "relic" && showResources)
-              );
-
-              const color = isResource ? MINIMAP_RESOURCE_COLORS[resource] : terrainColor;
-              terrainContext.globalAlpha = isResource ? 1.0 : (showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA);
-
               const p1 = toOffscreen(x, y);
               const p2 = toOffscreen(x + 1, y);
               const p3 = toOffscreen(x + 1, y + 1);
               const p4 = toOffscreen(x, y + 1);
-              terrainContext.fillStyle = color;
+              terrainContext.fillStyle = terrainColor;
               terrainContext.beginPath();
               terrainContext.moveTo(p1.x, p1.y);
               terrainContext.lineTo(p2.x, p2.y);
@@ -634,7 +625,177 @@ export function Minimap({
               terrainContext.fill();
             }
           }
+
+          if (showTerrain) {
+            const shadowSegmentsByColor: Record<string, number[]> = {};
+            const highlightSegmentsByColor: Record<string, number[]> = {};
+
+            for (let y = 0; y < sizeY; y += 1) {
+              for (let x = 0; x < sizeX; x += 1) {
+                const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
+                const e = tile?.elevation ?? 0;
+
+                // Check East boundary (shared edge p2 -> p3)
+                if (x + 1 < sizeX) {
+                  const neighbor = tiles[y * sizeX + (x + 1)] as { terrain_type?: number; elevation?: number };
+                  const eEast = neighbor?.elevation ?? e;
+                  if (e !== eEast) {
+                    const higherTile = e >= eEast ? tile : neighbor;
+                    const higherElev = higherTile?.elevation ?? 0;
+                    const terType = higherTile?.terrain_type ?? 14;
+                    const baseColor = TERRAIN_MINIMAP_COLORS[terType] ?? "#cbb892";
+                    const higherColor = shadeColor(baseColor, higherElev * MINIMAP_TERRAIN_ELEVATION_STEP);
+                    const isHighlight = e > eEast;
+                    const lineColor = isHighlight ? shadeColor(higherColor, 20) : shadeColor(higherColor, -25);
+                    const targetMap = isHighlight ? highlightSegmentsByColor : shadowSegmentsByColor;
+
+                    if (!targetMap[lineColor]) targetMap[lineColor] = [];
+                    const p2 = toOffscreen(x + 1, y);
+                    const p3 = toOffscreen(x + 1, y + 1);
+                    targetMap[lineColor].push(p2.x, p2.y, p3.x, p3.y);
+                  }
+                }
+
+                // Check South boundary (shared edge p4 -> p3)
+                if (y + 1 < sizeY) {
+                  const neighbor = tiles[(y + 1) * sizeX + x] as { terrain_type?: number; elevation?: number };
+                  const eSouth = neighbor?.elevation ?? e;
+                  if (e !== eSouth) {
+                    const higherTile = e >= eSouth ? tile : neighbor;
+                    const higherElev = higherTile?.elevation ?? 0;
+                    const terType = higherTile?.terrain_type ?? 14;
+                    const baseColor = TERRAIN_MINIMAP_COLORS[terType] ?? "#cbb892";
+                    const higherColor = shadeColor(baseColor, higherElev * MINIMAP_TERRAIN_ELEVATION_STEP);
+                    const isHighlight = e < eSouth;
+                    const lineColor = isHighlight ? shadeColor(higherColor, 20) : shadeColor(higherColor, -25);
+                    const targetMap = isHighlight ? highlightSegmentsByColor : shadowSegmentsByColor;
+
+                    if (!targetMap[lineColor]) targetMap[lineColor] = [];
+                    const p4 = toOffscreen(x, y + 1);
+                    const p3 = toOffscreen(x + 1, y + 1);
+                    targetMap[lineColor].push(p4.x, p4.y, p3.x, p3.y);
+                  }
+                }
+              }
+            }
+
+            terrainContext.globalAlpha = showTerrain ? MINIMAP_TERRAIN_ALPHA : MINIMAP_TERRAIN_OFF_ALPHA;
+            terrainContext.lineWidth = 1.5;
+
+            // Draw darker shadow lines first
+            for (const [lineColor, coords] of Object.entries(shadowSegmentsByColor)) {
+              terrainContext.strokeStyle = lineColor;
+              terrainContext.beginPath();
+              for (let i = 0; i < coords.length; i += 4) {
+                terrainContext.moveTo(coords[i], coords[i + 1]);
+                terrainContext.lineTo(coords[i + 2], coords[i + 3]);
+              }
+              terrainContext.stroke();
+            }
+
+            // Draw bright highlight lines on top
+            for (const [lineColor, coords] of Object.entries(highlightSegmentsByColor)) {
+              terrainContext.strokeStyle = lineColor;
+              terrainContext.beginPath();
+              for (let i = 0; i < coords.length; i += 4) {
+                terrainContext.moveTo(coords[i], coords[i + 1]);
+                terrainContext.lineTo(coords[i + 2], coords[i + 3]);
+              }
+              terrainContext.stroke();
+            }
+          }
+
+          // Draw resources above terrain and contour lines with 3D directional bevel outlines
           terrainContext.globalAlpha = 1.0;
+          const resourceShadowLinesByColor: Record<string, number[]> = {};
+          const resourceHighlightLinesByColor: Record<string, number[]> = {};
+
+          for (const [resourceKey, resource] of Object.entries(mapResources)) {
+            const isVisible =
+              (resource === "relic" && showRelics) ||
+              (resource !== "relic" && showResources);
+            if (!isVisible) continue;
+
+            const commaIdx = resourceKey.indexOf(",");
+            if (commaIdx === -1) continue;
+            const x = Number(resourceKey.slice(0, commaIdx));
+            const y = Number(resourceKey.slice(commaIdx + 1));
+
+            const p1 = toOffscreen(x, y);
+            const p2 = toOffscreen(x + 1, y);
+            const p3 = toOffscreen(x + 1, y + 1);
+            const p4 = toOffscreen(x, y + 1);
+            const baseColor = MINIMAP_RESOURCE_COLORS[resource];
+
+            // Fill resource diamond
+            terrainContext.fillStyle = baseColor;
+            terrainContext.beginPath();
+            terrainContext.moveTo(p1.x, p1.y);
+            terrainContext.lineTo(p2.x, p2.y);
+            terrainContext.lineTo(p3.x, p3.y);
+            terrainContext.lineTo(p4.x, p4.y);
+            terrainContext.closePath();
+            terrainContext.fill();
+
+            // Collect 3D directional outline edges
+            const isSameVisible = (nx: number, ny: number) => {
+              const nRes = mapResources[`${nx},${ny}`];
+              if (nRes !== resource) return false;
+              return (nRes === "relic" && showRelics) || (nRes !== "relic" && showResources);
+            };
+
+            const highlightColor = shadeColor(baseColor, 25);
+            const shadowColor = shadeColor(baseColor, -30);
+
+            // NW edge (p1 -> p2): faces North-West sunward -> Highlight
+            if (!isSameVisible(x, y - 1)) {
+              if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
+              resourceHighlightLinesByColor[highlightColor].push(p1.x, p1.y, p2.x, p2.y);
+            }
+
+            // NE edge (p2 -> p3): faces North-East sunward -> Highlight
+            if (!isSameVisible(x + 1, y)) {
+              if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
+              resourceHighlightLinesByColor[highlightColor].push(p2.x, p2.y, p3.x, p3.y);
+            }
+
+            // SE edge (p3 -> p4): faces South-East leeward -> Shadow
+            if (!isSameVisible(x, y + 1)) {
+              if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
+              resourceShadowLinesByColor[shadowColor].push(p3.x, p3.y, p4.x, p4.y);
+            }
+
+            // SW edge (p4 -> p1): faces South-West leeward -> Shadow
+            if (!isSameVisible(x - 1, y)) {
+              if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
+              resourceShadowLinesByColor[shadowColor].push(p4.x, p4.y, p1.x, p1.y);
+            }
+          }
+
+          // Stroke 3D resource outline edges: darker lines first, bright highlights on top
+          terrainContext.lineWidth = 4;
+
+          // 1. Shadow lines first
+          for (const [lineColor, coords] of Object.entries(resourceShadowLinesByColor)) {
+            terrainContext.strokeStyle = lineColor;
+            terrainContext.beginPath();
+            for (let i = 0; i < coords.length; i += 4) {
+              terrainContext.moveTo(coords[i], coords[i + 1]);
+              terrainContext.lineTo(coords[i + 2], coords[i + 3]);
+            }
+            terrainContext.stroke();
+          }
+
+          // 2. Bright highlight lines on top
+          for (const [lineColor, coords] of Object.entries(resourceHighlightLinesByColor)) {
+            terrainContext.strokeStyle = lineColor;
+            terrainContext.beginPath();
+            for (let i = 0; i < coords.length; i += 4) {
+              terrainContext.moveTo(coords[i], coords[i + 1]);
+              terrainContext.lineTo(coords[i + 2], coords[i + 3]);
+            }
+            terrainContext.stroke();
+          }
         }
         terrainContext.strokeStyle = "rgba(28, 22, 16, 0.2)";
         terrainContext.lineWidth = 1;
