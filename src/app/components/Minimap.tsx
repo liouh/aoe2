@@ -59,7 +59,7 @@ const MINIMAP_TERRAIN_ALPHA = 1;
 const MINIMAP_TERRAIN_CONTOUR_WIDTH = 2.5;
 const MINIMAP_TERRAIN_HIGHLIGHT_PERCENT = 15;
 const MINIMAP_TERRAIN_SHADOW_PERCENT = -20;
-const BASE_TERRAIN_SCALE = 50;
+const BASE_TERRAIN_SCALE = 34;
 
 const MINIMAP_RESOURCE_BORDER_WIDTH = 5;
 const MINIMAP_RESOURCE_HIGHLIGHT_PERCENT = 15;
@@ -832,7 +832,7 @@ export function Minimap({
 
           // Stroke 3D resource outline edges: darker lines first, bright highlights on top
           terrainContext.lineWidth = MINIMAP_RESOURCE_BORDER_WIDTH;
-          terrainContext.lineCap = "butt";
+          terrainContext.lineCap = "round";
           terrainContext.lineJoin = "round";
 
           // 1. Shadow lines first
