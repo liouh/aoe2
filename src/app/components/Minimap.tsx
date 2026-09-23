@@ -69,6 +69,7 @@ const MINIMAP_RESOURCE_COLORS = {
   stone: "#91a1ad",
   forage: "#34d399",
   relic: "#ffffff",
+  wood: "#195e2b",
 } as const;
 
 const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];

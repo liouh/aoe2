@@ -16,7 +16,7 @@ export type TimelineEvent = {
   raw: Record<string, unknown>;
 };
 
-export type MapResourceType = "gold" | "stone" | "forage" | "relic";
+export type MapResourceType = "gold" | "stone" | "forage" | "relic" | "wood";
 
 export type ChatEvent = {
   id: string;
@@ -881,6 +881,8 @@ export const buildTimeline = (
           typeName.includes("Papaya Tree")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
+        } else if (typeName.toLowerCase().includes("tree") || typeName.toLowerCase().includes("bush")) {
+          mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "wood";
         }
         return;
       }
