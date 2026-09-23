@@ -189,16 +189,6 @@ export function Minimap({
   const [isMobile, setIsMobile] = useState(false);
   const [resizeKey, setResizeKey] = useState(0);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setResizeKey(prev => prev + 1);
-      setHoveredEntity(null);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
     return players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }));
@@ -326,8 +316,8 @@ export function Minimap({
     if (!rect.width || !rect.height) return pan;
 
     const z = zoom ?? mapZoom;
-    const sizeX = mapInfo?.size_x;
-    const sizeY = mapInfo?.size_y;
+    const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+    const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
     const mapSpan = Math.max(sizeX, sizeY);
 
     const widthScale = (rect.width - 2) / mapSpan;
@@ -364,7 +354,54 @@ export function Minimap({
       x: clamp(pan.x, minPanX, maxPanX),
       y: clamp(pan.y, minPanY, maxPanY),
     };
-  }, [mapZoom, mapInfo]);
+  }, [mapZoom, mapInfo, matchInfo]);
+
+  const canPan = useMemo(() => {
+    const container = mapContainerRef.current;
+    if (!container) return mapZoom > 1;
+    const rect = container.getBoundingClientRect();
+    if (!rect.width || !rect.height) return mapZoom > 1;
+
+    const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+    const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
+    const mapSpan = Math.max(sizeX, sizeY);
+
+    const widthScale = (rect.width - 2) / mapSpan;
+    const heightScale = rect.height / (mapSpan * 0.5);
+    const isoScale = Math.max(1, Math.min(widthScale, heightScale) * mapZoom);
+
+    const diamondWidth = mapSpan * isoScale;
+    const diamondHeight = mapSpan * isoScale * 0.5;
+
+    const isOverflowing = diamondWidth > rect.width || diamondHeight > rect.height;
+    return isOverflowing || mapPan.x !== 0 || mapPan.y !== 0;
+  }, [mapZoom, mapInfo, matchInfo, mapPan, isFullscreen, resizeKey]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setResizeKey((prev) => prev + 1);
+      setHoveredEntity(null);
+      setMapPan((prev) => clampPan(prev));
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    const container = mapContainerRef.current;
+    let observer: ResizeObserver | null = null;
+    if (container && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        handleResize();
+      });
+      observer.observe(container);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      observer?.disconnect();
+    };
+  }, [clampPan]);
 
   const handleZoom = useMemo(() => (targetX: number, targetY: number, zoomFactor: number) => {
     const canvas = canvasRef.current;
@@ -596,8 +633,8 @@ export function Minimap({
 
     context.clearRect(0, 0, bounds.width, bounds.height);
 
-    const sizeX = mapInfo?.size_x;
-    const sizeY = mapInfo?.size_y;
+    const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+    const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
     const mapSpan = Math.max(sizeX, sizeY);
     const widthScale = (bounds.width - 2) / mapSpan;
     const heightScale = bounds.height / (mapSpan * 0.5);
@@ -605,10 +642,14 @@ export function Minimap({
       1,
       Math.min(widthScale, heightScale) * mapZoom
     );
-    const isoOriginX = bounds.width * 0.5 + mapPan.x;
+    const effectivePan = clampPan(mapPan);
+    if (effectivePan.x !== mapPan.x || effectivePan.y !== mapPan.y) {
+      setMapPan(effectivePan);
+    }
+    const isoOriginX = bounds.width * 0.5 + effectivePan.x;
     const diamondHeight = mapSpan * isoScale * 0.5;
     const isoOriginY =
-      (bounds.height - diamondHeight) / 2 + mapPan.y;
+      (bounds.height - diamondHeight) / 2 + effectivePan.y;
 
     const toCanvas = (x: number, y: number) => {
       const rx = y;
@@ -1369,7 +1410,7 @@ export function Minimap({
           }`}
         ref={mapContainerRef}
         style={{
-          touchAction: mapZoom > 1 ? "none" : "pan-y",
+          touchAction: canPan ? "none" : "pan-y",
         }}
         onPointerDown={(event) => {
           const now = performance.now();
@@ -1389,14 +1430,24 @@ export function Minimap({
           }
           lastTapRef.current = { time: now, x: cursorX, y: cursorY };
 
-          if (mapZoom <= 1) return;
+          const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+          const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
+          const mapSpan = Math.max(sizeX, sizeY);
+          const widthScale = (rect.width - 2) / mapSpan;
+          const heightScale = rect.height / (mapSpan * 0.5);
+          const isoScale = Math.max(1, Math.min(widthScale, heightScale) * mapZoom);
+          const isOverflowing =
+            mapSpan * isoScale > rect.width ||
+            mapSpan * isoScale * 0.5 > rect.height;
+
+          if (!isOverflowing && mapPan.x === 0 && mapPan.y === 0) return;
           event.preventDefault();
           isDraggingRef.current = true;
           lastPointerRef.current = { x: event.clientX, y: event.clientY };
           (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
-          if (mapZoom > 1 && isDraggingRef.current && lastPointerRef.current) {
+          if (isDraggingRef.current && lastPointerRef.current) {
             const dx = event.clientX - lastPointerRef.current.x;
             const dy = event.clientY - lastPointerRef.current.y;
             lastPointerRef.current = { x: event.clientX, y: event.clientY };
