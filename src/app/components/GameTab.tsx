@@ -303,7 +303,7 @@ export function GameTab({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                       title={`Jump to ${timeLabel}`}
-                      className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                      className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono tabular-nums font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
                     >
                       {timeLabel}
                     </button>
