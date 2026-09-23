@@ -655,6 +655,11 @@ export const extractChatEvents = (
       return;
     }
 
+    // When DEBUG is false, hide lobby chats
+    if (!DEBUG && currentTime === 0) {
+      return;
+    }
+
     let formattedMessage = rawMessage.replace(/<player_id,\s*(\d+)[^>]*>/gi, (_, pidStr) => {
       const targetPid = parseInt(pidStr, 10);
       const targetPlayer = players.find((p) => (p.slotId ?? p.id) === targetPid);
