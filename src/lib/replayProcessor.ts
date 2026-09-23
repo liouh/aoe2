@@ -610,8 +610,8 @@ export const extractChatEvents = (
             playerName,
             teamId: cheatPlayer?.teamId,
             isAi: !!cheatPlayer?.ai,
-            message: `${playerName} used a cheat.`,
-            rawMessage: `${playerName} used a cheat.`,
+            message: `${playerName} used cheat: ${cheatName}`,
+            rawMessage: `${playerName} used cheat: ${cheatName}`,
             isSystem: true,
             raw: { ...cheatData, type: "Cheat", cheatId, cheatName },
           });
