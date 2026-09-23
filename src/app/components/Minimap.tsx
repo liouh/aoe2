@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { type MapResourceType, type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
 import { Select, type SelectOption } from "./Select";
-import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainPalette";
-import { getBuildingFootprint, isFarmId } from "@/lib/buildingFootprints";
-import { getBuildingName } from "@/lib/entityNames";
-import { getBuildingIcon } from "@/lib/buildingIcons";
+import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainMappings";
+import { getBuildingFootprint, isFarmId, getBuildingIcon } from "@/lib/buildingMappings";
+import { getBuildingName } from "@/lib/entityMappings";
 
 const LOADING_STEPS = [
   "Loading replay...",

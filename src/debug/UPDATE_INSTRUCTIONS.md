@@ -6,7 +6,7 @@ This document explains how to update the internal ID mappings for civilizations,
 
 ## 1. Quick Automated Check
 
-Run the built-in update script to fetch the latest community entity spreadsheet, update `src/debug/de.csv`, and compare against `src/lib/entityNames.ts`:
+Run the built-in update script to fetch the latest community entity spreadsheet, update `src/debug/de.csv`, and compare against `src/lib/entityMappings.ts`:
 
 ```bash
 node src/debug/update-mappings.js
@@ -15,7 +15,7 @@ node src/debug/update-mappings.js
 The script will:
 1. Download the latest CSV export from the authoritative community spreadsheet.
 2. Update the local `src/debug/de.csv` snapshot.
-3. Compare all entries against `src/lib/entityNames.ts`.
+3. Compare all entries against `src/lib/entityMappings.ts`.
 4. Output any newly added or missing entity IDs along with their names and descriptions.
 5. Check `AoE2ScenarioParser` for any new civilization constants.
 
@@ -66,8 +66,8 @@ Keep these references handy when investigating new DLCs, expansions, or patch ID
    ```
 3. If new map dimensions or game sizes are added, update `MAP_SIZES`.
 
-### C. Entities, Units, & Scenery (`src/lib/entityNames.ts`)
-1. Run `node src/debug/update-mappings.js` to see all IDs present in the spreadsheet that are missing in `src/lib/entityNames.ts`.
+### C. Entities, Units, & Scenery (`src/lib/entityMappings.ts`)
+1. Run `node src/debug/update-mappings.js` to see all IDs present in the spreadsheet that are missing in `src/lib/entityMappings.ts`.
 2. Add the new entries into `ENTITY_NAMES` in numerical order:
    ```typescript
    2700: "Mounted Crossbowman",
@@ -93,7 +93,7 @@ Keep these references handy when investigating new DLCs, expansions, or patch ID
    1418: "Gothikon",
    ```
 
-### E. Building Footprints (`src/lib/buildingFootprints.ts`)
+### E. Buildings, Footprints, & Icons (`src/lib/buildingMappings.ts`)
 1. If new constructible buildings, forts, or unique structures are introduced, determine their tile dimensions (`w` and `h`):
    - Typical houses/tents/annexes: `{ w: 2, h: 2 }`
    - Typical military production / monasteries / camps: `{ w: 3, h: 3 }`
@@ -106,15 +106,13 @@ Keep these references handy when investigating new DLCs, expansions, or patch ID
    2678: { w: 1, h: 1 }, // Fort Wall
    2745: { w: 2, h: 2 }, // Army Tent F
    ```
-
-### F. Building Minimap Icons (`src/lib/buildingIcons.ts`)
-1. If the building belongs to a new type or uses a unique naming scheme, add a substring rule to `getBuildingIcon`:
+3. If the building belongs to a new type or uses a unique naming scheme, add a substring rule to `getBuildingIcon`:
    ```typescript
    else if (name.includes("Castle")) icon = "🏰";
    else if (name.includes("Tower") || name.includes("Donjon") || name.includes("Krepost") || name.includes("Fort")) icon = "♜";
    ```
 
-### G. Terrain Palette (`src/lib/terrainPalette.ts`)
+### F. Terrain Palette (`src/lib/terrainMappings.ts`)
 1. In the Genie engine, terrain IDs currently span from `0` to `130` (e.g. `0: Grass 1`, `32: Snow`, `35: Ice`, `104: Forest Autumn`, `117: Pasture`, `130: Water Weeds`).
 2. When new expansion biomes or map terrains are added, check `AoE2ScenarioParser/datasets/terrains.py` (`TerrainId` enum) and `siegeengineers/aoc-reference-data` (`data/datasets/100.json` under `"terrain"`).
 3. Ensure colors match standard minimap conventions:
@@ -149,8 +147,9 @@ After editing the mappings:
    node -e "
    const { getCivName } = require('./src/lib/civMappings.ts');
    const { getMapName } = require('./src/lib/gameMappings.ts');
-   const { getUnitName } = require('./src/lib/entityNames.ts');
+   const { getUnitName } = require('./src/lib/entityMappings.ts');
    const { getTechName } = require('./src/lib/techMappings.ts');
+   const { getBuildingFootprint, getBuildingIcon } = require('./src/lib/buildingMappings.ts');
    console.log('Civ 60:', getCivName(60));
    console.log('Map 174:', getMapName(174));
    console.log('Unit 2711:', getUnitName(2711));

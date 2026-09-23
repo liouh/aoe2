@@ -365,7 +365,23 @@ export function GameTab({
 
       {matchInfo && (
         <section className="panel flex flex-col gap-4 rounded-3xl p-6">
-          <h2 className="headline text-2xl font-semibold">Game info</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="headline text-2xl font-semibold">Game info</h2>
+            {matchInfo.timestamp !== undefined && (
+              <span
+                className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10"
+                title={new Date(matchInfo.timestamp * 1000).toISOString()}
+              >
+                {new Date(matchInfo.timestamp * 1000).toLocaleString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+              </span>
+            )}
+          </div>
           <div className="grid gap-6 md:grid-cols-3">
             {matchInfo.gameTypeId !== undefined && (
               <div className="flex flex-col gap-1">

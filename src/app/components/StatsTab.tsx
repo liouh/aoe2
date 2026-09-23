@@ -6,7 +6,7 @@ import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
 import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
-import { getUnitName } from "@/lib/entityNames";
+import { getUnitName } from "@/lib/entityMappings";
 import { type TimelineEvent } from "@/lib/replayProcessor";
 
 export const isEconomic = (name: string) => {

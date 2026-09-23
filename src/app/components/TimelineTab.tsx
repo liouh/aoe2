@@ -6,7 +6,7 @@ import { Toggle } from "./Toggle";
 import { AiBadge } from "./AiBadge";
 import { isEconomic } from "./StatsTab";
 import { getCivName } from "@/lib/civMappings";
-import { getUnitName, getBuildingName } from "@/lib/entityNames";
+import { getUnitName, getBuildingName } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
 

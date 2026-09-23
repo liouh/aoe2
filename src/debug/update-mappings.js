@@ -7,7 +7,7 @@
  * This script:
  * 1. Fetches the latest authoritative entity definitions from the community Google Sheet.
  * 2. Updates src/debug/de.csv with the latest export.
- * 3. Compares the sheet with src/lib/entityNames.ts and reports new or missing IDs.
+ * 3. Compares the sheet with src/lib/entityMappings.ts and reports new or missing IDs.
  * 4. Checks AoE2ScenarioParser datasets for new civs and technologies.
  */
 
@@ -17,7 +17,7 @@ const path = require('path');
 
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1llyn7FWKEtmss_WE-6hinMItpsV-h-6qsY8xBlkxUzw/export?format=csv&gid=193837369';
 const DE_CSV_PATH = path.join(__dirname, 'de.csv');
-const ENTITY_NAMES_PATH = path.join(__dirname, '..', 'lib', 'entityNames.ts');
+const ENTITY_NAMES_PATH = path.join(__dirname, '..', 'lib', 'entityMappings.ts');
 const CIV_MAPPINGS_PATH = path.join(__dirname, '..', 'lib', 'civMappings.ts');
 const TECH_MAPPINGS_PATH = path.join(__dirname, '..', 'lib', 'techMappings.ts');
 
@@ -94,13 +94,13 @@ async function main() {
   const sheetEntities = parseCsv(csvData);
   console.log(`✓ Found ${sheetEntities.size} valid entities in spreadsheet.`);
 
-  // Parse local entityNames.ts
+  // Parse local entityMappings.ts
   const localContent = fs.readFileSync(ENTITY_NAMES_PATH, 'utf-8');
   const localEntities = new Map();
   for (const match of localContent.matchAll(/^\s*(\d+):\s*"([^"]+)"/gm)) {
     localEntities.set(parseInt(match[1], 10), match[2]);
   }
-  console.log(`✓ Local entityNames.ts contains ${localEntities.size} mapped entities.\n`);
+  console.log(`✓ Local entityMappings.ts contains ${localEntities.size} mapped entities.\n`);
 
   // Compare entities
   const missingInLocal = [];
@@ -111,13 +111,13 @@ async function main() {
   }
 
   if (missingInLocal.length === 0) {
-    console.log('✓ entityNames.ts is completely up-to-date with the Google Sheet!');
+    console.log('✓ entityMappings.ts is completely up-to-date with the Google Sheet!');
   } else {
-    console.log(`! Found ${missingInLocal.length} entities in the sheet not present in entityNames.ts:`);
+    console.log(`! Found ${missingInLocal.length} entities in the sheet not present in entityMappings.ts:`);
     for (const item of missingInLocal) {
       console.log(`  ${item.id}: "${item.name}" ${item.desc ? `(${item.desc})` : ''}`);
     }
-    console.log('\nTo add them, edit src/lib/entityNames.ts and add the entries listed above.');
+    console.log('\nTo add them, edit src/lib/entityMappings.ts and add the entries listed above.');
   }
 
   // Check AoE2ScenarioParser dev branch for new civs

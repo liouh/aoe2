@@ -266,3 +266,46 @@ export const MAP_TYPES: Record<number, string> = {
 };
 
 export const getMapName = (id?: number) => (id !== undefined ? MAP_TYPES[id] : undefined);
+
+export const CHEAT_ID_TO_NAME: Record<number, string> = {
+  // AoE2 Definitive Edition Base Cheats (110 - 143)
+  110: "lumberjack",
+  111: "cheese steak jimmy's",
+  112: "robin hood",
+  113: "rock on",
+  114: "ninjalui",
+  115: "natural wonders",
+  116: "aegis",
+  117: "marco",
+  118: "polo",
+  119: "woof woof",
+  120: "how do you turn this on",
+  121: "yes we khan",
+  122: "put on your capes",
+  123: "tech tech one two free",
+  124: "i r winner",
+  125: "resign",
+  126: "wimpywimpywimpy",
+  127: "black death",
+  128: "torpedo1",
+  129: "torpedo2",
+  130: "torpedo3",
+  131: "torpedo4",
+  132: "torpedo5",
+  133: "torpedo6",
+  134: "torpedo7",
+  135: "torpedo8",
+  136: "going above and beyond",
+  137: "to smithereens",
+  138: "alpaca simulator",
+  139: "furious the monkey boy",
+  140: "i love the monkey head",
+  141: "i don't exist",
+  142: "catzor",
+  143: "photon man",
+};
+
+export const getCheatName = (cheatId: number): string => {
+  return CHEAT_ID_TO_NAME[cheatId] ?? `unknown cheat (${cheatId})`;
+};
+

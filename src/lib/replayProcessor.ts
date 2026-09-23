@@ -36,8 +36,10 @@ export type ChatEvent = {
   raw: Record<string, unknown>;
 };
 
-import { getEntityName, getBuildingName } from "./entityNames";
-import { getBuildingFootprint, isBuildingId } from "./buildingFootprints";
+import { getEntityName, getBuildingName } from "./entityMappings";
+import { getBuildingFootprint, isBuildingId } from "./buildingMappings";
+import { CHEAT_ID_TO_NAME, getCheatName } from "./gameMappings";
+export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
 
@@ -588,6 +590,36 @@ export const extractChatEvents = (
       return;
     }
 
+    if (actionData?.Game) {
+      const gameData = actionData.Game as Record<string, unknown>;
+      const gameCommand = gameData?.game_command as Record<string, unknown> | undefined;
+      if (gameCommand?.Cheat) {
+        const cheatData = gameCommand.Cheat as Record<string, unknown>;
+        const cheatId = pickNumber(cheatData?.cheat_id);
+        if (cheatId !== undefined) {
+          const cheatName = getCheatName(cheatId);
+          const rawPid = pickNumber(gameData?.player_id);
+          const pid = rawPid !== undefined ? (playerMapping.get(rawPid) ?? rawPid) : undefined;
+          const cheatPlayer = pid !== undefined ? players.find((p) => p.id === pid) : undefined;
+          const playerName = cheatPlayer?.name || (pid !== undefined ? `Player ${pid}` : "Unknown Player");
+
+          chatEvents.push({
+            id: `chat-cheat-${index}`,
+            time: Math.round(currentTime * 10) / 10,
+            playerId: pid,
+            playerName,
+            teamId: cheatPlayer?.teamId,
+            isAi: !!cheatPlayer?.ai,
+            message: `${playerName} used a cheat.`,
+            rawMessage: `${playerName} used a cheat.`,
+            isSystem: true,
+            raw: { ...cheatData, type: "Cheat", cheatId, cheatName },
+          });
+        }
+      }
+      return;
+    }
+
     const chatOp = op.Chat as { padding?: number[]; text?: string } | undefined;
     if (!chatOp || typeof chatOp.text !== "string") return;
 
@@ -707,7 +739,7 @@ export const extractChatEvents = (
     });
   });
 
-  return chatEvents;
+  return chatEvents.sort((a, b) => a.time - b.time);
 };
 
 export const buildTimeline = (
@@ -1201,6 +1233,7 @@ export type MatchInfo = {
   cheats: boolean;
   filename?: string;
   sourceUrl?: string;
+  timestamp?: number;
 };
 
 export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string): MatchInfo => {
@@ -1209,6 +1242,15 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
 
   const difficultyId = pickNumber(settings?.difficulty);
   const difficultyName = typeof settings?.difficulty === "string" ? settings.difficulty : undefined;
+
+  const rawTimestamp = pickNumber(source?.zheader?.timestamp)
+    ?? pickNumber(source?.zheader?.game_settings?.timestamp)
+    ?? pickNumber(source?.header?.timestamp)
+    ?? pickNumber(source?.header?.game_settings?.timestamp)
+    ?? pickNumber(source?.meta?.timestamp)
+    ?? pickNumber(source?.timestamp);
+
+  const timestamp = rawTimestamp !== undefined && rawTimestamp > 0 ? rawTimestamp : undefined;
 
   return {
     mapTypeId: pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id),
@@ -1221,5 +1263,6 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
     cheats: settings?.cheats,
     filename,
     sourceUrl,
+    timestamp,
   };
 };
