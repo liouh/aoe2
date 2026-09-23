@@ -551,6 +551,8 @@ export const detectAgeAdvance = (
   return null;
 };
 
+const NINJALUI_SEQUENCE = Array.from({ length: 40 }, (_, i) => [102, 101, 103, 104][i % 4]);
+
 export const extractChatEvents = (
   replay: unknown,
   summary?: any,
@@ -577,12 +579,17 @@ export const extractChatEvents = (
 
   const chatEvents: ChatEvent[] = [];
   const resignedPlayerIds = new Set<number>();
+  const consumedCheatOpIndices = new Set<number>();
   let currentTime = 0;
 
   operations.forEach((op, index) => {
     const action = op.Action as Record<string, unknown> | undefined;
     if (action?.world_time !== undefined) {
       currentTime = (pickNumber(action.world_time) ?? 0) / 1000;
+    }
+
+    if (consumedCheatOpIndices.has(index)) {
+      return;
     }
 
     const actionData = action?.action_data as Record<string, unknown> | undefined;
@@ -618,11 +625,42 @@ export const extractChatEvents = (
         const cheatData = gameCommand.Cheat as Record<string, unknown>;
         const cheatId = pickNumber(cheatData?.cheat_id);
         if (cheatId !== undefined) {
-          const cheatName = getCheatName(cheatId);
           const rawPid = pickNumber(gameData?.player_id);
           const pid = rawPid !== undefined ? (playerMapping.get(rawPid) ?? rawPid) : undefined;
           const cheatPlayer = pid !== undefined ? players.find((p) => p.id === pid) : undefined;
           const playerName = cheatPlayer?.name || (pid !== undefined ? `Player ${pid}` : "Unknown Player");
+
+          let cheatName = getCheatName(cheatId);
+
+          // "ninjaconnor", "ninjalui", and "rowshep" cheat codes expand into sequential calls of:
+          // 102 ("cheese steak jimmy's"), 101 ("lumberjack"), 103 ("robin hood"), 104 ("rock on") repeated 10x in quick succession.
+          if (cheatId === NINJALUI_SEQUENCE[0]) {
+            const matchedIndices: number[] = [];
+            let expectedIdx = 1;
+            for (let j = index + 1; j < operations.length && expectedIdx < NINJALUI_SEQUENCE.length; j++) {
+              const nextAction = operations[j]?.Action as Record<string, unknown> | undefined;
+              if (!nextAction) continue;
+              const nextTime = (pickNumber(nextAction.world_time) ?? (currentTime * 1000)) / 1000;
+              if (nextTime - currentTime > 2) break;
+              const nextGameData = (nextAction.action_data as Record<string, unknown> | undefined)?.Game as Record<string, unknown> | undefined;
+              const nextGameCmd = nextGameData?.game_command as Record<string, unknown> | undefined;
+              const nextCheat = nextGameCmd?.Cheat as Record<string, unknown> | undefined;
+              if (!nextCheat) continue;
+              const nextRawPid = pickNumber(nextGameData?.player_id);
+              const nextPid = nextRawPid !== undefined ? (playerMapping.get(nextRawPid) ?? nextRawPid) : undefined;
+              if (nextPid !== pid) continue;
+              if (pickNumber(nextCheat.cheat_id) === NINJALUI_SEQUENCE[expectedIdx]) {
+                matchedIndices.push(j);
+                expectedIdx++;
+              } else {
+                break;
+              }
+            }
+            if (expectedIdx === NINJALUI_SEQUENCE.length) {
+              matchedIndices.forEach((idx) => consumedCheatOpIndices.add(idx));
+              cheatName = "ninjaconnor / ninjalui / rowshep";
+            }
+          }
 
           chatEvents.push({
             id: `chat-cheat-${index}`,
@@ -634,7 +672,9 @@ export const extractChatEvents = (
             message: `${playerName} used a cheat: ${cheatName}`,
             rawMessage: `${playerName} used a cheat: ${cheatName}`,
             isSystem: true,
-            raw: { ...cheatData, type: "Cheat", cheatId, cheatName },
+            raw: cheatName === "ninjaconnor / ninjalui / rowshep"
+              ? { type: "Cheat", cheatName }
+              : { ...cheatData, type: "Cheat", cheatName },
           });
         }
       }
