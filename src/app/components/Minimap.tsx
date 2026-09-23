@@ -71,6 +71,42 @@ const MINIMAP_RESOURCE_COLORS = {
   relic: "#ffffff",
 } as const;
 
+const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
+const ALL_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
+
+const VIEW_OPTIONS = [
+  {
+    id: "default",
+    label: "Default view",
+    layers: DEFAULT_LAYERS,
+  },
+  {
+    id: "all",
+    label: "All layers view",
+    layers: ALL_LAYERS,
+  },
+  {
+    id: "classic",
+    label: "Classic view",
+    layers: ["terrain", "resources", "relics", "footprints", "icons", "flares"],
+  },
+  {
+    id: "map_only",
+    label: "Map only view",
+    layers: ["terrain", "resources", "relics"],
+  },
+  {
+    id: "moves",
+    label: "Unit movements view",
+    layers: ["terrain", "resources", "relics", "landmark_icons", "flares", "moves"],
+  },
+  {
+    id: "zen",
+    label: "Zen view",
+    layers: ["footprints", "farms"],
+  },
+];
+
 interface MinimapProps {
   replay: any;
   matchInfo: MatchInfo | null;
@@ -142,7 +178,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
 }: MinimapProps) {
-  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(["terrain", "footprints", "icons", "gatherpoints", "farms", "landmark_icons", "resources", "relics", "flares"]);
+  const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(DEFAULT_LAYERS);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -152,7 +188,7 @@ export function Minimap({
     anchorKey?: string;
   } | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>(players.map(p => p.id));
+  const selectedPlayerIds = useMemo(() => players.map(p => p.id), [players]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -190,19 +226,37 @@ export function Minimap({
   const [resizeKey, setResizeKey] = useState(0);
 
 
-  const minimapPlayers: SelectOption<number | undefined>[] = useMemo(() => {
-    return players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }));
-  }, [players, getPlayerColor]);
+  const currentViewId = useMemo(() => {
+    const matched = VIEW_OPTIONS.find(p =>
+      p.layers.length === minimapViewFilters.length &&
+      p.layers.every(layer => minimapViewFilters.includes(layer))
+    );
+    return matched ? matched.id : "custom";
+  }, [minimapViewFilters]);
+
+  const viewSelectOptions: SelectOption<string>[] = useMemo(() => {
+    return VIEW_OPTIONS.map(p => ({
+      id: p.id,
+      label: p.label,
+    }));
+  }, []);
+
+  const handleViewSelect = (id: string) => {
+    const view = VIEW_OPTIONS.find(p => p.id === id);
+    if (view) {
+      setMinimapViewFilters(view.layers);
+    }
+  };
 
   const minimapViewOptions: SelectOption<string>[] = [
     { id: "terrain", label: "Terrain" },
-    { id: "resources", label: "Resources" },
-    { id: "relics", label: "Relics" },
+    { id: "resources", label: "▸ Resources" },
+    { id: "relics", label: "▸ Relics" },
+    { id: "landmark_icons", label: "TC & castle markers" },
     { id: "footprints", label: "Buildings" },
     { id: "farms", label: "▸ Farms & pastures" },
-    { id: "landmark_icons", label: "▸ TC & castle markers" },
     { id: "icons", label: "▸ Building icons" },
-    { id: "gatherpoints", label: "▸ Gather points" },
+    { id: "gatherpoints", label: "Gather points" },
     { id: "flares", label: "Flares" },
     { id: "moves", label: "Unit movements" },
   ];
@@ -217,21 +271,6 @@ export function Minimap({
   const filters = useMemo(() => (
     <>
       <Select
-        options={minimapPlayers}
-        selectedId={selectedPlayerIds}
-        onSelect={(id) => {
-          setSelectedPlayerIds(prev =>
-            prev.includes(id as number)
-              ? prev.filter(p => p !== id)
-              : [...prev, id as number]
-          );
-        }}
-        multi
-        multiLabel="players"
-        placeholder="Select players"
-        align="left"
-      />
-      <Select
         options={minimapViewOptions}
         selectedId={minimapViewFilters}
         onSelect={(id) => {
@@ -239,16 +278,23 @@ export function Minimap({
             const isAdding = !prev.includes(id as string);
             let next = isAdding ? [...prev, id as string] : prev.filter(f => f !== id);
 
-            if (id === "footprints") {
+            if (id === "terrain") {
+              if (isAdding) {
+                if (!next.includes("resources")) next.push("resources");
+                if (!next.includes("relics")) next.push("relics");
+              } else {
+                next = next.filter(f => f !== "resources" && f !== "relics");
+              }
+            } else if ((id === "resources" || id === "relics") && isAdding) {
+              if (!next.includes("terrain")) next.push("terrain");
+            } else if (id === "footprints") {
               if (isAdding) {
                 if (!next.includes("farms")) next.push("farms");
                 if (!next.includes("icons")) next.push("icons");
-                if (!next.includes("landmark_icons")) next.push("landmark_icons");
-                if (!next.includes("gatherpoints")) next.push("gatherpoints");
               } else {
-                next = next.filter(f => f !== "farms" && f !== "icons" && f !== "landmark_icons" && f !== "gatherpoints");
+                next = next.filter(f => f !== "farms" && f !== "icons");
               }
-            } else if ((id === "farms" || id === "icons" || id === "landmark_icons" || id === "gatherpoints") && isAdding) {
+            } else if ((id === "farms" || id === "icons") && isAdding) {
               if (!next.includes("footprints")) next.push("footprints");
             }
 
@@ -260,8 +306,15 @@ export function Minimap({
         placeholder="Select layers"
         align="left"
       />
+      <Select
+        options={viewSelectOptions}
+        selectedId={currentViewId}
+        onSelect={(id) => handleViewSelect(id as string)}
+        placeholder="Custom view"
+        align="left"
+      />
     </>
-  ), [minimapPlayers, selectedPlayerIds, minimapViewFilters, minimapViewOptions]);
+  ), [minimapViewOptions, minimapViewFilters, viewSelectOptions, currentViewId]);
 
   const showBuildingOutlines = minimapViewFilters.includes("footprints");
   const showBuildingIcons = minimapViewFilters.includes("icons");
@@ -279,8 +332,7 @@ export function Minimap({
   useEffect(() => {
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
-    setSelectedPlayerIds(players.map(p => p.id));
-    setMinimapViewFilters(["terrain", "footprints", "icons", "gatherpoints", "resources", "farms", "landmark_icons", "relics", "flares"]);
+    setMinimapViewFilters(DEFAULT_LAYERS);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
   }, [replay]);
@@ -958,11 +1010,19 @@ export function Minimap({
     };
 
     const drawBuilding = (event: TimelineEvent) => {
-      if (!showBuildingOutlines) return;
       const isFarm = isFarmId(event.buildingTypeId);
-      if (isFarm && !showFarms) return;
+      const isVisible = isFarm ? showFarms : showBuildingOutlines;
+      const canHaveIcon = isIconBuilding(event.buildingTypeId);
+
+      if (!isVisible && !canHaveIcon) return;
 
       const fadeProgress = getBuildingFadeProgress(event);
+
+      if (canHaveIcon && fadeProgress >= 1) {
+        iconBuildings.push(event);
+      }
+
+      if (!isVisible) return;
 
       if (event.x === undefined || event.y === undefined) return;
       if (event.x < 0 || event.y < 0 || event.x > (sizeX ?? 120) || event.y > (sizeY ?? 120)) return;
@@ -988,18 +1048,16 @@ export function Minimap({
 
       // 1. Fill the shape with player's color
       const playerColor = getPlayerColor(event.playerId);
-      if (showBuildingOutlines) {
-        context.save();
-        context.globalAlpha = (isFarm ? MINIMAP_FARMS_ALPHA : MINIMAP_BUILDING_ALPHA) * fadeProgress;
-        context.fillStyle = playerColor;
-        context.fill();
-        context.restore();
-      }
+      context.save();
+      context.globalAlpha = (isFarm ? MINIMAP_FARMS_ALPHA : MINIMAP_BUILDING_ALPHA) * fadeProgress;
+      context.fillStyle = playerColor;
+      context.fill();
+      context.restore();
 
       // 2. Outlines
       if (isFarm) {
         // Farms and pastures are left unchanged
-        if (showBuildingOutlines && isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
+        if (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) {
           context.globalAlpha = MINIMAP_FARMS_OUTLINE_ALPHA * fadeProgress;
           context.strokeStyle = getPlayerOutline(event.playerId);
           context.lineWidth = MINIMAP_FARMS_OUTLINE_WIDTH;
@@ -1085,9 +1143,11 @@ export function Minimap({
         context.restore();
       }
 
-      if (showBuildingOutlines && hoveredEntity?.type === "building" && hoveredEntity.anchorKey) {
+      const hoveredBuilding = hoveredEntity?.type === "building" && hoveredEntity.anchorKey ? anchorToEvent.get(hoveredEntity.anchorKey) : null;
+      const showHoverOutline = hoveredBuilding && (isFarmId(hoveredBuilding.buildingTypeId) ? showFarms : showBuildingOutlines);
+      if (showHoverOutline && hoveredEntity?.anchorKey) {
         const anchorKey = hoveredEntity.anchorKey;
-        const footprint = anchorToEvent.get(anchorKey) ? getBuildingFootprint(anchorToEvent.get(anchorKey)!.buildingTypeId) : null;
+        const footprint = hoveredBuilding ? getBuildingFootprint(hoveredBuilding.buildingTypeId) : null;
         if (footprint) {
           const [ax, ay] = anchorKey.split(",").map(Number);
           const p1 = toCanvas(ax, ay);
@@ -1483,19 +1543,17 @@ export function Minimap({
 
             const anchorKey = tileToAnchor.get(tileKey);
             const building = anchorKey ? buildings.get(anchorKey) : null;
-            if (building && showBuildingOutlines) {
-              const buildingIsFarm = isFarmId(building.buildingTypeId);
-              if (buildingIsFarm && !showFarms) {
-                setHoveredEntity(null);
-              } else {
-                setHoveredEntity({
-                  name: getBuildingName(building.buildingTypeId),
-                  playerId: building.playerId,
-                  type: "building",
-                  anchorKey,
-                });
-                setTooltipPos({ x: event.clientX, y: event.clientY });
-              }
+            const isVisibleBuilding = building && (
+              isFarmId(building.buildingTypeId) ? showFarms : showBuildingOutlines
+            );
+            if (isVisibleBuilding && building) {
+              setHoveredEntity({
+                name: getBuildingName(building.buildingTypeId),
+                playerId: building.playerId,
+                type: "building",
+                anchorKey,
+              });
+              setTooltipPos({ x: event.clientX, y: event.clientY });
             } else {
               setHoveredEntity(null);
             }

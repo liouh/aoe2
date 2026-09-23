@@ -18,6 +18,7 @@ interface SelectProps<T> {
   className?: string;
   multi?: boolean;
   multiLabel?: string;
+  singleLabel?: string;
   placeholder?: string;
 }
 
@@ -29,6 +30,7 @@ export function Select<T extends string | number | undefined>({
   className = "",
   multi = false,
   multiLabel = "items",
+  singleLabel,
   placeholder = "Select...",
 }: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,7 +102,9 @@ export function Select<T extends string | number | undefined>({
   const getButtonLabel = () => {
     if (!multi) return primaryOption?.label || placeholder;
     if (selectedOptions.length === 0) return placeholder;
-    if (selectedOptions.length === 1) return selectedOptions[0].label;
+    if (selectedOptions.length === 1) {
+      return `1 ${singleLabel || (multiLabel.endsWith("s") ? multiLabel.slice(0, -1) : multiLabel)}`;
+    }
     if (selectedOptions.length === options.length) return "All " + multiLabel;
     if (selectedOptions.length === options.length - 1 && options.some(o => o.id === undefined)) return "All " + multiLabel;
     return `${selectedOptions.length} ${multiLabel}`;
@@ -128,7 +132,7 @@ export function Select<T extends string | number | undefined>({
         {!multi && primaryOption?.icon && (
           <span className="shrink-0">{primaryOption.icon}</span>
         )}
-        <span className="font-medium truncate max-w-[130px]">
+        <span className="font-medium truncate max-w-[170px]">
           {getButtonLabel()}
         </span>
         {!multi && primaryOption?.isAi && (
