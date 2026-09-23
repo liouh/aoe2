@@ -100,6 +100,10 @@ export function GameTab({
       return `${totalSlots}`;
     }
 
+    if (sizes.every((s) => s === 1) && sizes.length > 2) {
+      return `${sizes.length} player FFA`;
+    }
+
     return sizes.join(" vs ");
   }, [players]);
 
@@ -383,7 +387,7 @@ export function GameTab({
             )}
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            {matchInfo.gameTypeId !== undefined && (
+            {matchInfo?.gameTypeId !== undefined && (
               <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
                 <span className="font-semibold text-[color:var(--foreground)]">
