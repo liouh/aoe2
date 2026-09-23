@@ -5,7 +5,7 @@
     "Stéphane Bisinger <stephane@sbisinger.ch>"
   ],
   "description": "WASM version of aoe2rec to parse Age of Empires II: Definitive Edition recorded games in the browser",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,6 +1,5 @@
 export class GameSettings {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(GameSettings.prototype);
         obj.__wbg_ptr = ptr;
         GameSettingsFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -219,7 +218,7 @@ export class GameSettings {
      */
     get rms_strings() {
         const ret = wasm.__wbg_get_gamesettings_rms_strings(this.__wbg_ptr);
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]);
         wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         return v1;
     }
@@ -578,7 +577,6 @@ if (Symbol.dispose) GameSettings.prototype[Symbol.dispose] = GameSettings.protot
 
 export class Player {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(Player.prototype);
         obj.__wbg_ptr = ptr;
         PlayerFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -663,7 +661,7 @@ export class Player {
      * @returns {number}
      */
     get profile_id() {
-        const ret = wasm.__wbg_get_gamesettings_difficulty(this.__wbg_ptr);
+        const ret = wasm.__wbg_get_player_profile_id(this.__wbg_ptr);
         return ret;
     }
     /**
@@ -726,7 +724,7 @@ export class Player {
      * @param {number} arg0
      */
     set player_number(arg0) {
-        wasm.__wbg_set_gamesettings_map_size(this.__wbg_ptr, arg0);
+        wasm.__wbg_set_player_player_number(this.__wbg_ptr, arg0);
     }
     /**
      * @param {number} arg0
@@ -744,7 +742,7 @@ export class Player {
      * @param {number} arg0
      */
     set profile_id(arg0) {
-        wasm.__wbg_set_gamesettings_difficulty(this.__wbg_ptr, arg0);
+        wasm.__wbg_set_player_profile_id(this.__wbg_ptr, arg0);
     }
     /**
      * @param {boolean} arg0
@@ -775,7 +773,6 @@ if (Symbol.dispose) Player.prototype[Symbol.dispose] = Player.prototype.free;
 
 export class Replay {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(Replay.prototype);
         obj.__wbg_ptr = ptr;
         ReplayFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -851,14 +848,14 @@ export class Replay {
      * @returns {number}
      */
     get random_seed_2() {
-        const ret = wasm.__wbg_get_player_player_type(this.__wbg_ptr);
+        const ret = wasm.__wbg_get_replay_random_seed_2(this.__wbg_ptr);
         return ret >>> 0;
     }
     /**
      * @returns {number}
      */
     get random_seed() {
-        const ret = wasm.__wbg_get_player_civ_id(this.__wbg_ptr);
+        const ret = wasm.__wbg_get_replay_random_seed(this.__wbg_ptr);
         return ret >>> 0;
     }
     /**
@@ -948,13 +945,13 @@ export class Replay {
      * @param {number} arg0
      */
     set random_seed_2(arg0) {
-        wasm.__wbg_set_player_player_type(this.__wbg_ptr, arg0);
+        wasm.__wbg_set_replay_random_seed_2(this.__wbg_ptr, arg0);
     }
     /**
      * @param {number} arg0
      */
     set random_seed(arg0) {
-        wasm.__wbg_set_player_civ_id(this.__wbg_ptr, arg0);
+        wasm.__wbg_set_replay_random_seed(this.__wbg_ptr, arg0);
     }
     /**
      * @param {number} arg0
@@ -991,7 +988,6 @@ if (Symbol.dispose) Replay.prototype[Symbol.dispose] = Replay.prototype.free;
 
 export class SavegameHeader {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(SavegameHeader.prototype);
         obj.__wbg_ptr = ptr;
         SavegameHeaderFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -1084,7 +1080,7 @@ export class SavegameHeader {
     set game_string(arg0) {
         const ptr0 = passStringToWasm0(arg0, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        wasm.__wbg_set_player_name(this.__wbg_ptr, ptr0, len0);
+        wasm.__wbg_set_savegameheader_game_string(this.__wbg_ptr, ptr0, len0);
     }
     /**
      * @param {Replay} arg0
@@ -1117,7 +1113,6 @@ if (Symbol.dispose) SavegameHeader.prototype[Symbol.dispose] = SavegameHeader.pr
 
 export class SavegameSummary {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(SavegameSummary.prototype);
         obj.__wbg_ptr = ptr;
         SavegameSummaryFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -1152,7 +1147,7 @@ export class SavegameSummary {
      */
     get teams() {
         const ret = wasm.__wbg_get_savegamesummary_teams(this.__wbg_ptr);
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]);
         wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         return v1;
     }
@@ -1183,7 +1178,6 @@ if (Symbol.dispose) SavegameSummary.prototype[Symbol.dispose] = SavegameSummary.
 
 export class Team {
     static __wrap(ptr) {
-        ptr = ptr >>> 0;
         const obj = Object.create(Team.prototype);
         obj.__wbg_ptr = ptr;
         TeamFinalization.register(obj, obj.__wbg_ptr, obj);
@@ -1210,7 +1204,7 @@ export class Team {
      */
     get players() {
         const ret = wasm.__wbg_get_team_players(this.__wbg_ptr);
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]);
         wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         return v1;
     }
@@ -1255,26 +1249,26 @@ export function parse_rec_summary(buffer) {
     const ret = wasm.parse_rec_summary(buffer);
     return SavegameSummary.__wrap(ret);
 }
-export function __wbg_Error_8c4e43fe74559d73(arg0, arg1) {
+export function __wbg_Error_408e67f47ca7b58b(arg0, arg1) {
     const ret = Error(getStringFromWasm0(arg0, arg1));
     return ret;
 }
-export function __wbg_Number_04624de7d0e8332d(arg0) {
+export function __wbg_Number_3890faa6d3ff057d(arg0) {
     const ret = Number(arg0);
     return ret;
 }
-export function __wbg___wbindgen_debug_string_0bc8482c6e3508ae(arg0, arg1) {
+export function __wbg___wbindgen_debug_string_a57024b9c6e4a48b(arg0, arg1) {
     const ret = debugString(arg1);
     const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len1 = WASM_VECTOR_LEN;
     getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
     getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
 }
-export function __wbg___wbindgen_is_string_cd444516edc5b180(arg0) {
+export function __wbg___wbindgen_is_string_e6f02f0ea5f20a32(arg0) {
     const ret = typeof(arg0) === 'string';
     return ret;
 }
-export function __wbg___wbindgen_string_get_72fb696202c56729(arg0, arg1) {
+export function __wbg___wbindgen_string_get_d154f1e671052120(arg0, arg1) {
     const obj = arg1;
     const ret = typeof(obj) === 'string' ? obj : undefined;
     var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1282,10 +1276,10 @@ export function __wbg___wbindgen_string_get_72fb696202c56729(arg0, arg1) {
     getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
     getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
 }
-export function __wbg___wbindgen_throw_be289d5034ed271b(arg0, arg1) {
+export function __wbg___wbindgen_throw_bb96b2010945f0bc(arg0, arg1) {
     throw new Error(getStringFromWasm0(arg0, arg1));
 }
-export function __wbg_error_7534b8e9a36f1ab4(arg0, arg1) {
+export function __wbg_error_757e9472f8410341(arg0, arg1) {
     let deferred0_0;
     let deferred0_1;
     try {
@@ -1296,28 +1290,28 @@ export function __wbg_error_7534b8e9a36f1ab4(arg0, arg1) {
         wasm.__wbindgen_free(deferred0_0, deferred0_1, 1);
     }
 }
-export function __wbg_length_32ed9a279acd054c(arg0) {
+export function __wbg_length_36bd29c6848c2144(arg0) {
     const ret = arg0.length;
     return ret;
 }
-export function __wbg_new_361308b2356cecd0() {
-    const ret = new Object();
-    return ret;
-}
-export function __wbg_new_3eb36ae241fe6f44() {
+export function __wbg_new_116be93542d39019() {
     const ret = new Array();
     return ret;
 }
-export function __wbg_new_8a6f238a6ece86ea() {
+export function __wbg_new_227d7c05414eb861() {
     const ret = new Error();
     return ret;
 }
-export function __wbg_new_dca287b076112a51() {
+export function __wbg_new_77cc4f4f472aeb81(arg0) {
+    const ret = new Uint8Array(arg0);
+    return ret;
+}
+export function __wbg_new_cdf041679ded4c5f() {
     const ret = new Map();
     return ret;
 }
-export function __wbg_new_dd2b680c8bf6ae29(arg0) {
-    const ret = new Uint8Array(arg0);
+export function __wbg_new_ebe3e0f6837f0879() {
+    const ret = new Object();
     return ret;
 }
 export function __wbg_player_new(arg0) {
@@ -1328,20 +1322,20 @@ export function __wbg_player_unwrap(arg0) {
     const ret = Player.__unwrap(arg0);
     return ret;
 }
-export function __wbg_prototypesetcall_bdcdcc5842e4d77d(arg0, arg1, arg2) {
+export function __wbg_prototypesetcall_de8e0d9553586985(arg0, arg1, arg2) {
     Uint8Array.prototype.set.call(getArrayU8FromWasm0(arg0, arg1), arg2);
 }
-export function __wbg_set_1eb0999cf5d27fc8(arg0, arg1, arg2) {
+export function __wbg_set_014226dfeca53178(arg0, arg1, arg2) {
     const ret = arg0.set(arg1, arg2);
     return ret;
 }
-export function __wbg_set_3f1d0b984ed272ed(arg0, arg1, arg2) {
+export function __wbg_set_6be42768c690e380(arg0, arg1, arg2) {
     arg0[arg1] = arg2;
 }
-export function __wbg_set_f43e577aea94465b(arg0, arg1, arg2) {
+export function __wbg_set_a80955eb93b145c6(arg0, arg1, arg2) {
     arg0[arg1 >>> 0] = arg2;
 }
-export function __wbg_stack_0ed75d68575b0f3c(arg0, arg1) {
+export function __wbg_stack_3b0d974bbf31e44f(arg0, arg1) {
     const ret = arg1.stack;
     const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len1 = WASM_VECTOR_LEN;
@@ -1366,6 +1360,11 @@ export function __wbindgen_cast_0000000000000002(arg0, arg1) {
     const ret = getStringFromWasm0(arg0, arg1);
     return ret;
 }
+export function __wbindgen_cast_0000000000000003(arg0) {
+    // Cast intrinsic for `U64 -> Externref`.
+    const ret = BigInt.asUintN(64, arg0);
+    return ret;
+}
 export function __wbindgen_init_externref_table() {
     const table = wasm.__wbindgen_externrefs;
     const offset = table.grow(4);
@@ -1377,22 +1376,22 @@ export function __wbindgen_init_externref_table() {
 }
 const GameSettingsFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_gamesettings_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_gamesettings_free(ptr, 1));
 const PlayerFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_player_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_player_free(ptr, 1));
 const ReplayFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_replay_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_replay_free(ptr, 1));
 const SavegameHeaderFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_savegameheader_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_savegameheader_free(ptr, 1));
 const SavegameSummaryFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_savegamesummary_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_savegamesummary_free(ptr, 1));
 const TeamFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_team_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_team_free(ptr, 1));
 
 function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
@@ -1501,8 +1500,7 @@ function getDataViewMemory0() {
 }
 
 function getStringFromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return decodeText(ptr, len);
+    return decodeText(ptr >>> 0, len);
 }
 
 let cachedUint32ArrayMemory0 = null;

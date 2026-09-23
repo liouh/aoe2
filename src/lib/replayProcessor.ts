@@ -43,6 +43,20 @@ export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
 
+export const normalizeReplay = (rec: any): any => {
+  if (!rec || typeof rec !== "object") return rec;
+  const chapters = Array.isArray(rec.chapters) ? rec.chapters : undefined;
+  const zheader = rec.zheader ?? chapters?.[0]?.zheader;
+  const operations = rec.operations ?? chapters?.flatMap((c: any) => c.operations ?? []) ?? [];
+  const meta = rec.meta ?? operations.find((op: any) => op && typeof op === "object" && "Pregame" in op)?.Pregame;
+  return {
+    ...rec,
+    zheader,
+    operations,
+    meta,
+  };
+};
+
 export type PlayerSummary = {
   id: number;
   slotId?: number;
@@ -345,9 +359,10 @@ export const summarizePlayers = (
   summary: any,
   replay?: any
 ): PlayerSummary[] => {
+  const normReplay = normalizeReplay(replay);
   const players: PlayerSummary[] = [];
 
-  const postGameOp = replay?.operations?.find((op: any) => op.PostGame)?.PostGame;
+  const postGameOp = normReplay?.operations?.find((op: any) => op.PostGame)?.PostGame;
   const leaderboardsBlock = postGameOp?.blocks?.find((b: any) => b.Leaderboards)?.Leaderboards;
   const leaderboards = leaderboardsBlock?.leaderboards || [];
   const rm1v1Lb = leaderboards.find((l: any) => l.id === 3);
@@ -396,7 +411,7 @@ export const summarizePlayers = (
     });
   });
 
-  const source = replay || summary;
+  const source = normReplay || summary;
   const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
 
   if (gameSettings?.players) {
@@ -536,13 +551,13 @@ export const extractChatEvents = (
   providedPlayers?: PlayerSummary[]
 ): ChatEvent[] => {
   if (!replay) return [];
-  const replayRecord = replay as Record<string, unknown>;
+  const replayRecord = normalizeReplay(replay) as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   if (!operations) return [];
 
-  const players = providedPlayers ?? summarizePlayers(summary, replay);
+  const players = providedPlayers ?? summarizePlayers(summary, replayRecord);
   const playerMapping = buildPlayerMapping(operations, players);
   const isTeamGame = players.length > 2 || (() => {
     const teamCounts = new Map<number, number>();
@@ -756,13 +771,13 @@ export const buildTimeline = (
   chatEvents: ChatEvent[];
 } => {
   if (!replay) return { events: [], mapResources: {}, chatEvents: [] };
-  const replayRecord = replay as Record<string, unknown>;
+  const replayRecord = normalizeReplay(replay) as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   const events: TimelineEvent[] = [];
-  const players = summarizePlayers(summary, replay);
-  const chatEvents = extractChatEvents(replay, summary, players);
+  const players = summarizePlayers(summary, replayRecord);
+  const chatEvents = extractChatEvents(replayRecord, summary, players);
 
   // Process initial object instances if available
   const zheader = replayRecord.zheader as any;
@@ -1242,18 +1257,19 @@ export type MatchInfo = {
 };
 
 export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string): MatchInfo => {
-  const settings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
-  const replayData = source?.header?.replay || source?.replay;
+  const normSource = normalizeReplay(source);
+  const settings = normSource?.zheader?.game_settings || normSource?.header?.game_settings || normSource?.game_settings;
+  const replayData = normSource?.header?.replay || normSource?.replay;
 
   const difficultyId = pickNumber(settings?.difficulty);
   const difficultyName = typeof settings?.difficulty === "string" ? settings.difficulty : undefined;
 
-  const rawTimestamp = pickNumber(source?.zheader?.timestamp)
-    ?? pickNumber(source?.zheader?.game_settings?.timestamp)
-    ?? pickNumber(source?.header?.timestamp)
-    ?? pickNumber(source?.header?.game_settings?.timestamp)
-    ?? pickNumber(source?.meta?.timestamp)
-    ?? pickNumber(source?.timestamp);
+  const rawTimestamp = pickNumber(normSource?.zheader?.timestamp)
+    ?? pickNumber(normSource?.zheader?.game_settings?.timestamp)
+    ?? pickNumber(normSource?.header?.timestamp)
+    ?? pickNumber(normSource?.header?.game_settings?.timestamp)
+    ?? pickNumber(normSource?.meta?.timestamp)
+    ?? pickNumber(normSource?.timestamp);
 
   const timestamp = rawTimestamp !== undefined && rawTimestamp > 0 ? rawTimestamp : undefined;
 

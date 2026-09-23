@@ -12,6 +12,7 @@ import {
   determineDuration,
   extractPlayerStats,
   extractMatchInfo,
+  normalizeReplay,
   summarizePlayers,
   type ChatEvent,
   type MapResourceType,
@@ -183,7 +184,7 @@ export default function Home() {
       setLoadingStep(1);
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      const parsed = parse_rec(buffer);
+      const parsed = normalizeReplay(parse_rec(buffer));
       const parsedSummary = parse_rec_summary(buffer);
       const postGame = parsed?.operations?.find((op: any) => op.PostGame)?.PostGame;
 

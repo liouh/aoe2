@@ -184,7 +184,7 @@ export function Minimap({
     sizeY: 120,
   });
 
-  const mapInfo = useMemo(() => replay?.zheader?.map_info ?? null, [replay]);
+  const mapInfo = useMemo(() => (replay?.zheader ?? replay?.chapters?.[0]?.zheader)?.map_info ?? null, [replay]);
 
   const [isMobile, setIsMobile] = useState(false);
   const [resizeKey, setResizeKey] = useState(0);
