@@ -488,10 +488,16 @@ export const buildPlayerMapping = (
     }
   });
 
+  const isSharedControl = (() => {
+    const slots = players.map((p) => p.slotId).filter((s): s is number => s !== undefined);
+    return new Set(slots).size < slots.length;
+  })();
+
   const playerMapping = new Map<number, number>();
   for (const eid of rawEventPlayerIds) {
-    const player = players.find(p => (p.slotId ?? p.id) === eid)
-      ?? players.find(p => p.id === eid);
+    const player = isSharedControl
+      ? (players.find((p) => p.id === eid) ?? players.find((p) => (p.slotId ?? p.id) === eid))
+      : (players.find((p) => (p.slotId ?? p.id) === eid) ?? players.find((p) => p.id === eid));
     playerMapping.set(eid, player ? player.id : eid);
   }
 
