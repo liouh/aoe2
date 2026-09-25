@@ -104,7 +104,7 @@ const VIEW_OPTIONS = [
   {
     id: "moves",
     label: "Unit movements view",
-    layers: ["terrain", "landmark_icons", "flares", "moves"],
+    layers: ["terrain", "landmark_icons", "moves"],
   },
   {
     id: "zen",
