@@ -1017,12 +1017,11 @@ export const buildTimeline = (
         // Cliff 08 is a 2x2 corner
         const cx = Math.floor(px);
         const cy = Math.floor(py);
-        // confirmed filled
-        mapCliffs[`${cx},${cy}`] = true;
-        mapCliffs[`${cx - 1},${cy - 1}`] = true;
-        // one of these two is empty
-        // mapCliffs[`${cx - 1},${cy}`] = true;
-        // mapCliffs[`${cx},${cy - 1}`] = true;
+        for (let dy = -1; dy <= 0; dy++) {
+          for (let dx = -1; dx <= 0; dx++) {
+            mapCliffs[`${cx + dx},${cy + dy}`] = true;
+          }
+        }
       };
 
       // Add base area for each cliff object based on its footprint
