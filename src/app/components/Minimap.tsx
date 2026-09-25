@@ -78,7 +78,7 @@ const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "foo
 const VIEW_OPTIONS = [
   {
     id: "all",
-    label: "All layers view",
+    label: "— All layers —",
     layers: ALL_LAYERS,
   },
   {
