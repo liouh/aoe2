@@ -257,8 +257,8 @@ export function Minimap({
 
   const minimapViewOptions: SelectOption<string>[] = [
     { id: "terrain", label: "Terrain" },
-    { id: "resources", label: "▸ Resources" },
-    { id: "relics", label: "▸ Relics" },
+    { id: "resources", label: "Resources" },
+    { id: "relics", label: "Relics" },
     { id: "landmark_icons", label: "TC & castle markers" },
     { id: "footprints", label: "Buildings" },
     { id: "farms", label: "▸ Farms & pastures" },
@@ -285,16 +285,7 @@ export function Minimap({
             const isAdding = !prev.includes(id as string);
             let next = isAdding ? [...prev, id as string] : prev.filter(f => f !== id);
 
-            if (id === "terrain") {
-              if (isAdding) {
-                if (!next.includes("resources")) next.push("resources");
-                if (!next.includes("relics")) next.push("relics");
-              } else {
-                next = next.filter(f => f !== "resources" && f !== "relics");
-              }
-            } else if ((id === "resources" || id === "relics") && isAdding) {
-              if (!next.includes("terrain")) next.push("terrain");
-            } else if (id === "footprints") {
+            if (id === "footprints") {
               if (isAdding) {
                 if (!next.includes("farms")) next.push("farms");
                 if (!next.includes("icons")) next.push("icons");
@@ -751,9 +742,8 @@ export function Minimap({
         terrainContext.fillRect(0, 0, terrainWidth, terrainHeight);
 
         const tiles = mapInfo?.tiles;
-        if (tiles && tiles.length >= sizeX * sizeY) {
-          if (showTerrain) {
-            terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
+        if (showTerrain && tiles && tiles.length >= sizeX * sizeY) {
+          terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
             for (let y = 0; y < sizeY; y += 1) {
               for (let x = 0; x < sizeX; x += 1) {
                 const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number; isCliff?: boolean };
@@ -936,8 +926,9 @@ export function Minimap({
                 terrainContext.stroke();
               }
             }
-          }
+        }
 
+        if (showResources || showRelics) {
           // Draw resources above terrain and contour lines with 3D directional bevel outlines
           terrainContext.globalAlpha = 1.0;
           const resourceShadowLinesByColor: Record<string, number[]> = {};
@@ -1036,7 +1027,7 @@ export function Minimap({
       terrainCacheKeyRef.current = terrainCacheKey;
     }
 
-    if (terrainCanvasRef.current && sizeX && sizeY) {
+    if ((showTerrain || showResources || showRelics) && terrainCanvasRef.current && sizeX && sizeY) {
       try {
         const offOriginX = sizeX * BASE_TERRAIN_SCALE * 0.5;
         const offOriginY = 0;
