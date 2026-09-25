@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Header } from "./components/Header";
 import { Minimap } from "./components/Minimap";
 import { GameTab } from "./components/GameTab";
@@ -73,6 +73,11 @@ const formatClock = (seconds: number) => {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
+const waitForPaint = () =>
+  new Promise<void>(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  });
+
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [replay, setReplay] = useState<any>(null);
@@ -95,6 +100,11 @@ export default function Home() {
   const [pendingJump, setPendingJump] = useState(false);
   const [replayUrl, setReplayUrl] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const handleCachedCanvasesReady = useCallback(async () => {
+    setLoadingStep(3);
+    await waitForPaint();
+    setLoading(false);
+  }, []);
 
   const unloadReplay = () => {
     setReplay(null);
@@ -174,6 +184,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setLoadingStep(0);
+    await waitForPaint();
 
     if (!isDefault) {
       sendGAEvent("event", "upload_replay", {
@@ -184,7 +195,7 @@ export default function Home() {
 
     try {
       setLoadingStep(1);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await waitForPaint();
 
       const parsed = normalizeReplay(parse_rec(buffer));
       const parsedSummary = parse_rec_summary(buffer);
@@ -196,14 +207,12 @@ export default function Home() {
         (window as any).__aoe2postgame = postGame;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 50));
-
       const timeline = buildTimeline(parsed, parsedSummary);
       const gameDuration = determineDuration(parsedSummary, timeline.events);
       const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
 
       setLoadingStep(2);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await waitForPaint();
 
       setReplay(parsed);
       setSummary(parsedSummary);
@@ -217,7 +226,6 @@ export default function Home() {
       resetGameState();
     } catch (err) {
       setError(filename);
-    } finally {
       setLoading(false);
     }
   };
@@ -292,7 +300,6 @@ export default function Home() {
       await loadReplayData(buffer, replayUrlOrName, trimmedUrl);
     } catch (err: any) {
       setError(`${err.message}: ${replayUrlOrName}`);
-    } finally {
       setLoading(false);
     }
   };
@@ -415,6 +422,7 @@ export default function Home() {
               setShowUrlInput(true);
               setReplayUrl("");
             }}
+            onCachedCanvasesReady={handleCachedCanvasesReady}
           />
 
           {replay && (

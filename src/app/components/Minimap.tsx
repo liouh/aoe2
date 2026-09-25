@@ -10,7 +10,8 @@ import { getBuildingName } from "@/lib/entityMappings";
 const LOADING_STEPS = [
   "Loading replay...",
   "Loading timeline...",
-  "Loading viewer..."
+  "Loading viewer...",
+  "Loading viewer...",
 ];
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
@@ -139,6 +140,7 @@ interface MinimapProps {
   setPendingJump: (pending: boolean) => void;
   onOpenFile: (file: File) => void;
   onShowUrlInput: () => void;
+  onCachedCanvasesReady: () => void | Promise<void>;
 }
 
 function shadeColor(hex: string, percent: number) {
@@ -189,6 +191,7 @@ export function Minimap({
   setPendingJump,
   onOpenFile,
   onShowUrlInput,
+  onCachedCanvasesReady,
 }: MinimapProps) {
   const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(DEFAULT_LAYERS);
   const [mapZoom, setMapZoom] = useState(1);
@@ -207,6 +210,7 @@ export function Minimap({
   const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const resourceCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const relicCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const readyReplayRef = useRef<any>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
@@ -342,6 +346,7 @@ export function Minimap({
     terrainCanvasRef.current = null;
     resourceCanvasRef.current = null;
     relicCanvasRef.current = null;
+    readyReplayRef.current = null;
   }, [replay]);
 
 
@@ -1052,6 +1057,17 @@ export function Minimap({
       drawResourceLayer(relicCanvasRef.current, true);
     }
 
+    if (
+      replay &&
+      terrainCanvasRef.current &&
+      resourceCanvasRef.current &&
+      relicCanvasRef.current &&
+      readyReplayRef.current !== replay
+    ) {
+      readyReplayRef.current = replay;
+      void onCachedCanvasesReady();
+    }
+
     const drawCachedCanvas = (
       cachedCanvas: HTMLCanvasElement | null,
       visible: boolean
@@ -1540,6 +1556,7 @@ export function Minimap({
     isFullscreen,
     isMobile,
     resizeKey,
+    onCachedCanvasesReady,
   ]);
 
   return (
@@ -1675,7 +1692,7 @@ export function Minimap({
           setHoveredEntity(null);
         }}
       >
-        <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "" : "rounded-2xl"}`}>
+        <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "" : "rounded-2xl"} ${loading ? "invisible" : ""}`}>
           <canvas ref={canvasRef} className="h-full w-full" />
         </div>
 
@@ -1827,13 +1844,10 @@ export function Minimap({
 
         {loading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl">
-            <div className="w-full max-w-md px-10 flex flex-col gap-6">
-              <div className="flex items-center justify-between text-sm font-semibold tracking-wide">
+            <div className="flex w-full max-w-md flex-col gap-6 px-10">
+              <div className="text-sm font-semibold tracking-wide">
                 <span className="text-[color:var(--accent)] uppercase">
                   {LOADING_STEPS[loadingStep]}
-                </span>
-                <span className="tabular-nums text-[color:var(--muted-foreground)]">
-                  {Math.round(((loadingStep + 1) / LOADING_STEPS.length) * 100)}%
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5 ring-1 ring-white/5">
