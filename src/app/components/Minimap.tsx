@@ -96,6 +96,11 @@ const VIEW_OPTIONS = [
     layers: ["terrain", "resources", "relics", "footprints", "icons", "flares"],
   },
   {
+    id: "high_contrast",
+    label: "High contrast view",
+    layers: ["resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"],
+  },
+  {
     id: "map_only",
     label: "Map only view",
     layers: ["terrain", "resources", "relics"],
