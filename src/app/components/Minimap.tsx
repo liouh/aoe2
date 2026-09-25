@@ -77,14 +77,14 @@ const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "foo
 
 const VIEW_OPTIONS = [
   {
-    id: "activity",
-    label: "Activity view",
-    layers: ["footprints", "farms", "icons", "gatherpoints", "flares", "moves"],
-  },
-  {
     id: "all",
     label: "All layers view",
     layers: ALL_LAYERS,
+  },
+  {
+    id: "activity",
+    label: "Activity view",
+    layers: ["footprints", "farms", "icons", "gatherpoints", "flares", "moves"],
   },
   {
     id: "classic",
