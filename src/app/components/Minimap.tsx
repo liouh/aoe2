@@ -7,12 +7,7 @@ import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainMappings";
 import { getBuildingFootprint, isFarmId, getBuildingIcon } from "@/lib/buildingMappings";
 import { getBuildingName } from "@/lib/entityMappings";
 
-const LOADING_STEPS = [
-  "Loading replay...",
-  "Loading timeline...",
-  "Loading viewer...",
-  "Loading viewer...",
-];
+const LOADING_STEP_COUNT = 4;
 
 const MINIMAP_ZOOM_FACTOR = 1.5;
 const MINIMAP_MOUSE_ZOOM_FACTOR = 1.1;
@@ -1845,15 +1840,18 @@ export function Minimap({
         {loading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl">
             <div className="flex w-full max-w-md flex-col gap-6 px-10">
-              <div className="text-sm font-semibold tracking-wide">
+              <div className="flex items-center justify-between text-sm font-semibold tracking-wide">
                 <span className="text-[color:var(--accent)] uppercase">
-                  {LOADING_STEPS[loadingStep]}
+                  Loading replay...
+                </span>
+                <span className="tabular-nums text-[color:var(--muted-foreground)]">
+                  {Math.round(((loadingStep + 1) / LOADING_STEP_COUNT) * 100)}%
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5 ring-1 ring-white/5">
                 <div
                   className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-400"
-                  style={{ width: `${((loadingStep + 1) / LOADING_STEPS.length) * 100}%` }}
+                  style={{ width: `${((loadingStep + 1) / LOADING_STEP_COUNT) * 100}%` }}
                 />
               </div>
             </div>
