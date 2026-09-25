@@ -76,14 +76,14 @@ const MINIMAP_RESOURCE_COLORS = {
   wood: "#195e2b",
 } as const;
 
-const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
 const ALL_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
+const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
 
 const VIEW_OPTIONS = [
   {
-    id: "default",
-    label: "Default view",
-    layers: DEFAULT_LAYERS,
+    id: "activity",
+    label: "Activity view",
+    layers: ["footprints", "farms", "icons", "gatherpoints", "flares", "moves"],
   },
   {
     id: "all",
@@ -93,12 +93,12 @@ const VIEW_OPTIONS = [
   {
     id: "classic",
     label: "Classic view",
-    layers: ["terrain", "resources", "relics", "footprints", "icons", "flares"],
+    layers: ["terrain", "footprints", "icons", "gatherpoints", "flares"],
   },
   {
-    id: "high_contrast",
-    label: "High contrast view",
-    layers: ["resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"],
+    id: "default",
+    label: "Default view",
+    layers: DEFAULT_LAYERS,
   },
   {
     id: "map_only",
@@ -108,7 +108,7 @@ const VIEW_OPTIONS = [
   {
     id: "moves",
     label: "Unit movements view",
-    layers: ["terrain", "resources", "relics", "landmark_icons", "gatherpoints", "flares", "moves"],
+    layers: ["terrain", "landmark_icons", "flares", "moves"],
   },
   {
     id: "zen",
@@ -205,7 +205,8 @@ export function Minimap({
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const terrainCacheKeyRef = useRef<string | null>(null);
+  const resourceCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const relicCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
@@ -338,7 +339,11 @@ export function Minimap({
     setMinimapViewFilters(DEFAULT_LAYERS);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
+    terrainCanvasRef.current = null;
+    resourceCanvasRef.current = null;
+    relicCanvasRef.current = null;
   }, [replay]);
+
 
   // Handle Escape key to exit fullscreen
   useEffect(() => {
@@ -715,9 +720,7 @@ export function Minimap({
     };
 
     // High-resolution terrain cache
-    const terrainCacheKey = `${sizeX},${sizeY},${mapInfo?.tiles?.length},${MINIMAP_TERRAIN_ALPHA},${MINIMAP_TERRAIN_CONTOUR_WIDTH},${MINIMAP_TERRAIN_ELEVATION_STEP},${MINIMAP_TERRAIN_ELEVATION_TAPER},${MINIMAP_TERRAIN_HIGHLIGHT_PERCENT},${MINIMAP_TERRAIN_SHADOW_PERCENT},${MINIMAP_RESOURCE_BORDER_WIDTH},${MINIMAP_RESOURCE_HIGHLIGHT_PERCENT},${MINIMAP_RESOURCE_SHADOW_PERCENT},${Object.keys(mapResources).length},${Object.keys(mapCliffs ?? {}).length},${showResources},${showRelics},${showTerrain}`;
-
-    if (terrainCacheKeyRef.current !== terrainCacheKey || !terrainCanvasRef.current) {
+    if (!terrainCanvasRef.current) {
       if (!terrainCanvasRef.current) {
         terrainCanvasRef.current = document.createElement("canvas");
       }
@@ -747,7 +750,7 @@ export function Minimap({
         terrainContext.fillRect(0, 0, terrainWidth, terrainHeight);
 
         const tiles = mapInfo?.tiles;
-        if (showTerrain && tiles && tiles.length >= sizeX * sizeY) {
+        if (tiles && tiles.length >= sizeX * sizeY) {
           terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
@@ -932,120 +935,144 @@ export function Minimap({
             }
           }
         }
+      }
+    }
 
-        if (showResources || showRelics) {
-          // Draw resources above terrain and contour lines with 3D directional bevel outlines
-          terrainContext.globalAlpha = 1.0;
-          const resourceShadowLinesByColor: Record<string, number[]> = {};
-          const resourceHighlightLinesByColor: Record<string, number[]> = {};
+    const resourceWidth = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.5;
+    const resourceHeight = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.25;
+    const resourceOriginX = sizeX! * BASE_TERRAIN_SCALE * 0.5;
+    const toOffscreen = (x: number, y: number) => {
+      const rx = y;
+      const ry = sizeX! - x;
+      return { x: (rx - ry) * BASE_TERRAIN_SCALE * 0.5 + resourceOriginX, y: (rx + ry) * BASE_TERRAIN_SCALE * 0.25 };
+    };
+    const drawResourceLayer = (target: HTMLCanvasElement, relicLayer: boolean) => {
+      target.width = resourceWidth;
+      target.height = resourceHeight;
+      const resourceContext = target.getContext("2d");
+      if (!resourceContext) return;
+      // Draw resources above terrain and contour lines with 3D directional bevel outlines
+      resourceContext.globalAlpha = 1.0;
+      const resourceShadowLinesByColor: Record<string, number[]> = {};
+      const resourceHighlightLinesByColor: Record<string, number[]> = {};
 
-          for (const [resourceKey, resource] of Object.entries(mapResources)) {
-            const isVisible =
-              (resource === "relic" && showRelics) ||
-              (resource !== "relic" && showResources);
-            if (!isVisible) continue;
+      for (const [resourceKey, resource] of Object.entries(mapResources)) {
+        const isVisible = (resource === "relic") === relicLayer;
+        if (!isVisible) continue;
 
-            const commaIdx = resourceKey.indexOf(",");
-            if (commaIdx === -1) continue;
-            const x = Number(resourceKey.slice(0, commaIdx));
-            const y = Number(resourceKey.slice(commaIdx + 1));
+        const commaIdx = resourceKey.indexOf(",");
+        if (commaIdx === -1) continue;
+        const x = Number(resourceKey.slice(0, commaIdx));
+        const y = Number(resourceKey.slice(commaIdx + 1));
 
-            const p1 = toOffscreen(x, y);
-            const p2 = toOffscreen(x + 1, y);
-            const p3 = toOffscreen(x + 1, y + 1);
-            const p4 = toOffscreen(x, y + 1);
-            const baseColor = MINIMAP_RESOURCE_COLORS[resource];
+        const p1 = toOffscreen(x, y);
+        const p2 = toOffscreen(x + 1, y);
+        const p3 = toOffscreen(x + 1, y + 1);
+        const p4 = toOffscreen(x, y + 1);
+        const baseColor = MINIMAP_RESOURCE_COLORS[resource];
 
-            // Fill resource diamond
-            terrainContext.fillStyle = baseColor;
-            terrainContext.beginPath();
-            terrainContext.moveTo(p1.x, p1.y);
-            terrainContext.lineTo(p2.x, p2.y);
-            terrainContext.lineTo(p3.x, p3.y);
-            terrainContext.lineTo(p4.x, p4.y);
-            terrainContext.closePath();
-            terrainContext.fill();
+        // Fill resource diamond
+        resourceContext.fillStyle = baseColor;
+        resourceContext.beginPath();
+        resourceContext.moveTo(p1.x, p1.y);
+        resourceContext.lineTo(p2.x, p2.y);
+        resourceContext.lineTo(p3.x, p3.y);
+        resourceContext.lineTo(p4.x, p4.y);
+        resourceContext.closePath();
+        resourceContext.fill();
 
-            // Collect 3D directional outline edges
-            const isSameVisible = (nx: number, ny: number) => {
-              const nRes = mapResources[`${nx},${ny}`];
-              if (nRes !== resource) return false;
-              return (nRes === "relic" && showRelics) || (nRes !== "relic" && showResources);
-            };
+        // Collect 3D directional outline edges
+        const isSameVisible = (nx: number, ny: number) => {
+          const nRes = mapResources[`${nx},${ny}`];
+          if (nRes !== resource) return false;
+          return (nRes === "relic") === relicLayer;
+        };
 
-            const highlightColor = shadeColor(baseColor, MINIMAP_RESOURCE_HIGHLIGHT_PERCENT);
-            const shadowColor = shadeColor(baseColor, MINIMAP_RESOURCE_SHADOW_PERCENT);
+        const highlightColor = shadeColor(baseColor, MINIMAP_RESOURCE_HIGHLIGHT_PERCENT);
+        const shadowColor = shadeColor(baseColor, MINIMAP_RESOURCE_SHADOW_PERCENT);
 
-            // NW edge (p1 -> p2): faces North-West sunward -> Highlight
-            if (!isSameVisible(x, y - 1)) {
-              if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
-              resourceHighlightLinesByColor[highlightColor].push(p1.x, p1.y, p2.x, p2.y);
-            }
+        // NW edge (p1 -> p2): faces North-West sunward -> Highlight
+        if (!isSameVisible(x, y - 1)) {
+          if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
+          resourceHighlightLinesByColor[highlightColor].push(p1.x, p1.y, p2.x, p2.y);
+        }
 
-            // NE edge (p2 -> p3): faces North-East sunward -> Highlight
-            if (!isSameVisible(x + 1, y)) {
-              if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
-              resourceHighlightLinesByColor[highlightColor].push(p2.x, p2.y, p3.x, p3.y);
-            }
+        // NE edge (p2 -> p3): faces North-East sunward -> Highlight
+        if (!isSameVisible(x + 1, y)) {
+          if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
+          resourceHighlightLinesByColor[highlightColor].push(p2.x, p2.y, p3.x, p3.y);
+        }
 
-            // SE edge (p3 -> p4): faces South-East leeward -> Shadow
-            if (!isSameVisible(x, y + 1)) {
-              if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
-              resourceShadowLinesByColor[shadowColor].push(p3.x, p3.y, p4.x, p4.y);
-            }
+        // SE edge (p3 -> p4): faces South-East leeward -> Shadow
+        if (!isSameVisible(x, y + 1)) {
+          if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
+          resourceShadowLinesByColor[shadowColor].push(p3.x, p3.y, p4.x, p4.y);
+        }
 
-            // SW edge (p4 -> p1): faces South-West leeward -> Shadow
-            if (!isSameVisible(x - 1, y)) {
-              if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
-              resourceShadowLinesByColor[shadowColor].push(p4.x, p4.y, p1.x, p1.y);
-            }
-          }
-
-          // Stroke 3D resource outline edges: darker lines first, bright highlights on top
-          terrainContext.lineWidth = MINIMAP_RESOURCE_BORDER_WIDTH;
-          terrainContext.lineCap = "round";
-          terrainContext.lineJoin = "round";
-
-          // 1. Shadow lines first
-          for (const [lineColor, coords] of Object.entries(resourceShadowLinesByColor)) {
-            terrainContext.strokeStyle = lineColor;
-            terrainContext.beginPath();
-            for (let i = 0; i < coords.length; i += 4) {
-              terrainContext.moveTo(coords[i], coords[i + 1]);
-              terrainContext.lineTo(coords[i + 2], coords[i + 3]);
-            }
-            terrainContext.stroke();
-          }
-
-          // 2. Bright highlight lines on top
-          for (const [lineColor, coords] of Object.entries(resourceHighlightLinesByColor)) {
-            terrainContext.strokeStyle = lineColor;
-            terrainContext.beginPath();
-            for (let i = 0; i < coords.length; i += 4) {
-              terrainContext.moveTo(coords[i], coords[i + 1]);
-              terrainContext.lineTo(coords[i + 2], coords[i + 3]);
-            }
-            terrainContext.stroke();
-          }
+        // SW edge (p4 -> p1): faces South-West leeward -> Shadow
+        if (!isSameVisible(x - 1, y)) {
+          if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
+          resourceShadowLinesByColor[shadowColor].push(p4.x, p4.y, p1.x, p1.y);
         }
       }
-      terrainCacheKeyRef.current = terrainCacheKey;
+
+      // Stroke 3D resource outline edges: darker lines first, bright highlights on top
+      resourceContext.lineWidth = MINIMAP_RESOURCE_BORDER_WIDTH;
+      resourceContext.lineCap = "round";
+      resourceContext.lineJoin = "round";
+
+      // 1. Shadow lines first
+      for (const [lineColor, coords] of Object.entries(resourceShadowLinesByColor)) {
+        resourceContext.strokeStyle = lineColor;
+        resourceContext.beginPath();
+        for (let i = 0; i < coords.length; i += 4) {
+          resourceContext.moveTo(coords[i], coords[i + 1]);
+          resourceContext.lineTo(coords[i + 2], coords[i + 3]);
+        }
+        resourceContext.stroke();
+      }
+
+      // 2. Bright highlight lines on top
+      for (const [lineColor, coords] of Object.entries(resourceHighlightLinesByColor)) {
+        resourceContext.strokeStyle = lineColor;
+        resourceContext.beginPath();
+        for (let i = 0; i < coords.length; i += 4) {
+          resourceContext.moveTo(coords[i], coords[i + 1]);
+          resourceContext.lineTo(coords[i + 2], coords[i + 3]);
+        }
+        resourceContext.stroke();
+      }
+    };
+    if (!resourceCanvasRef.current) {
+      resourceCanvasRef.current = document.createElement("canvas");
+      drawResourceLayer(resourceCanvasRef.current, false);
+    }
+    if (!relicCanvasRef.current) {
+      relicCanvasRef.current = document.createElement("canvas");
+      drawResourceLayer(relicCanvasRef.current, true);
     }
 
-    if ((showTerrain || showResources || showRelics) && terrainCanvasRef.current && sizeX && sizeY) {
+    const drawCachedCanvas = (
+      cachedCanvas: HTMLCanvasElement | null,
+      visible: boolean
+    ) => {
+      if (!visible || !cachedCanvas || !sizeX || !sizeY) return;
       try {
         const offOriginX = sizeX * BASE_TERRAIN_SCALE * 0.5;
-        const offOriginY = 0;
         const dx = isoOriginX - (offOriginX * isoScale / BASE_TERRAIN_SCALE);
-        const dy = isoOriginY - (offOriginY * isoScale / BASE_TERRAIN_SCALE);
-        const dw = terrainCanvasRef.current.width * isoScale / BASE_TERRAIN_SCALE;
-        const dh = terrainCanvasRef.current.height * isoScale / BASE_TERRAIN_SCALE;
+        const dy = isoOriginY;
+        const dw = cachedCanvas.width * isoScale / BASE_TERRAIN_SCALE;
+        const dh = cachedCanvas.height * isoScale / BASE_TERRAIN_SCALE;
 
-        context.drawImage(terrainCanvasRef.current, dx, dy, dw, dh);
+        context.drawImage(cachedCanvas, dx, dy, dw, dh);
       } catch (e) {
-        console.error("Minimap drawImage failed:", e);
+        console.error("Minimap cached canvas drawImage failed:", e);
       }
-    }
+    };
+
+    drawCachedCanvas(terrainCanvasRef.current, showTerrain);
+    drawCachedCanvas(resourceCanvasRef.current, showResources);
+    drawCachedCanvas(relicCanvasRef.current, showRelics);
 
     const townCenterPath = new Path2D(
       "M35,80 V50 H10 V80 H25 V68 H35 V80 H65 V68 H75 V80 H90 V50 H65 V38 L50,23 L35,38 V50"

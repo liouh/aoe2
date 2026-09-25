@@ -105,8 +105,6 @@ export function Select<T extends string | number | undefined>({
     if (selectedOptions.length === 1) {
       return `1 ${singleLabel || (multiLabel.endsWith("s") ? multiLabel.slice(0, -1) : multiLabel)}`;
     }
-    if (selectedOptions.length === options.length) return "All " + multiLabel;
-    if (selectedOptions.length === options.length - 1 && options.some(o => o.id === undefined)) return "All " + multiLabel;
     return `${selectedOptions.length} ${multiLabel}`;
   };
 
