@@ -962,6 +962,8 @@ export const buildTimeline = (
       const isCliff02 = (name: string) => /cliff.?02|cliff 2$/i.test(name);
       const isCliff03 = (name: string) => /cliff.?03|cliff 3$/i.test(name);
       const isCliff04 = (name: string) => /cliff.?04|cliff 4$/i.test(name);
+      const isCliff06 = (name: string) => /cliff.?06|cliff 6$/i.test(name);
+      const isCliff08 = (name: string) => /cliff.?08|cliff 8$/i.test(name);
 
       const markCliff3x3 = (px: number, py: number) => {
         const cx = Math.floor(px);
@@ -1001,6 +1003,28 @@ export const buildTimeline = (
         }
       };
 
+      const markCliff06 = (px: number, py: number) => {
+        // Cliff 06 is a 3x2 corner block [cx-1, cx+1] x [cy-1, cy]
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        for (let dx = -1; dx <= 1; dx++) {
+          mapCliffs[`${cx + dx},${cy}`] = true;
+          mapCliffs[`${cx + dx},${cy - 1}`] = true;
+        }
+      };
+
+      const markCliff08 = (px: number, py: number) => {
+        // Cliff 08 is a 2x2 corner
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        // confirmed filled
+        mapCliffs[`${cx},${cy}`] = true;
+        mapCliffs[`${cx - 1},${cy - 1}`] = true;
+        // one of these two is empty
+        // mapCliffs[`${cx - 1},${cy}`] = true;
+        // mapCliffs[`${cx},${cy - 1}`] = true;
+      };
+
       // Add base area for each cliff object based on its footprint
       cliffObjects.forEach((obj) => {
         if (isCliff02(obj.typeName)) {
@@ -1009,84 +1033,14 @@ export const buildTimeline = (
           markCliff03(obj.x, obj.y);
         } else if (isCliff04(obj.typeName)) {
           markCliff04(obj.x, obj.y);
+        } else if (isCliff06(obj.typeName)) {
+          markCliff06(obj.x, obj.y);
+        } else if (isCliff08(obj.typeName)) {
+          markCliff08(obj.x, obj.y);
         } else {
           markCliff3x3(obj.x, obj.y);
         }
       });
-
-      // Interpolate between connected cliff segments in sequence
-      for (let i = 0; i < cliffObjects.length - 1; i++) {
-        const o1 = cliffObjects[i];
-        const o2 = cliffObjects[i + 1];
-        const dist = Math.hypot(o1.x - o2.x, o1.y - o2.y);
-        if (dist <= 3.6) {
-          if (isCliff02(o1.typeName) || isCliff02(o2.typeName)) {
-            // Any segment leading to/from Cliff 02 is 1-wide along that vertical stretch
-            const c2 = isCliff02(o1.typeName) ? o1 : o2;
-            const other = isCliff02(o1.typeName) ? o2 : o1;
-            const c2x = Math.floor(c2.x);
-            const minY = Math.min(Math.floor(c2.y), Math.floor(other.y));
-            const maxY = Math.max(Math.floor(c2.y), Math.floor(other.y));
-            for (let y = minY; y <= maxY; y++) {
-              mapCliffs[`${c2x},${y}`] = true;
-            }
-          } else if (isCliff03(o1.typeName) || isCliff03(o2.typeName)) {
-            // Any segment leading to/from Cliff 03 is 1-wide along that horizontal stretch
-            const c3 = isCliff03(o1.typeName) ? o1 : o2;
-            const other = isCliff03(o1.typeName) ? o2 : o1;
-            const c3y = Math.floor(c3.y);
-            const minX = Math.min(Math.floor(c3.x), Math.floor(other.x));
-            const maxX = Math.max(Math.floor(c3.x), Math.floor(other.x));
-            for (let x = minX; x <= maxX; x++) {
-              mapCliffs[`${x},${c3y}`] = true;
-            }
-          } else if (isCliff04(o1.typeName) || isCliff04(o2.typeName)) {
-            const steps = Math.ceil(dist * 2);
-            for (let s = 0; s <= steps; s++) {
-              const t = s / steps;
-              const x = o1.x + (o2.x - o1.x) * t;
-              const y = o1.y + (o2.y - o1.y) * t;
-              const cx = Math.floor(x);
-              const cy = Math.floor(y);
-              for (let dy = -1; dy <= 1; dy++) {
-                mapCliffs[`${cx},${cy + dy}`] = true;
-                if (o1.x < o2.x) {
-                  if (cx < Math.floor(o2.x)) mapCliffs[`${cx + 1},${cy + dy}`] = true;
-                  mapCliffs[`${cx - 1},${cy + dy}`] = true;
-                } else {
-                  if (cx > Math.floor(o2.x)) mapCliffs[`${cx - 1},${cy + dy}`] = true;
-                  mapCliffs[`${cx + 1},${cy + dy}`] = true;
-                }
-              }
-            }
-          } else {
-            const steps = Math.ceil(dist * 2);
-            for (let s = 0; s <= steps; s++) {
-              const t = s / steps;
-              const x = o1.x + (o2.x - o1.x) * t;
-              const y = o1.y + (o2.y - o1.y) * t;
-              markCliff3x3(x, y);
-            }
-          }
-        }
-      }
-
-      // Tag tiles directly on map_info if available
-      const tiles = zheader?.map_info?.tiles as any[];
-      const sizeX = (zheader?.map_info?.size_x ?? 120) as number;
-      if (tiles) {
-        for (const key of Object.keys(mapCliffs)) {
-          const commaIdx = key.indexOf(",");
-          if (commaIdx !== -1) {
-            const kx = Number(key.slice(0, commaIdx));
-            const ky = Number(key.slice(commaIdx + 1));
-            const tileIdx = ky * sizeX + kx;
-            if (tiles[tileIdx]) {
-              tiles[tileIdx].isCliff = true;
-            }
-          }
-        }
-      }
     }
 
     if (DEBUG) {
