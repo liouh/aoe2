@@ -155,55 +155,53 @@ export function Select<T extends string | number | undefined>({
           className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}
           role="listbox"
         >
-          <div className="max-h-80 overflow-y-auto">
-            {options.map((option, idx) => {
-              const selected = isSelected(option.id);
-              const highlighted = idx === highlightedIndex;
-              return (
-                <button
-                  key={`${option.id}-${idx}`}
-                  type="button"
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
-                  onClick={() => {
-                    onSelect(option.id);
-                    if (!multi) setIsOpen(false);
-                  }}
-                  onMouseEnter={() => setHighlightedIndex(idx)}
-                  role="option"
-                  aria-selected={selected}
-                  tabIndex={-1}
-                  ref={(el) => {
-                    if (highlighted && el) {
-                      el.scrollIntoView({ block: "nearest" });
-                    }
-                  }}
-                >
-                  {option.color && (
-                    <span
-                      className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
-                      style={{ background: option.color }}
-                    ></span>
-                  )}
-                  {option.icon && (
-                    <span className="shrink-0">{option.icon}</span>
-                  )}
-                  <span className={`font-medium ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
-                    {option.label}
+          {options.map((option, idx) => {
+            const selected = isSelected(option.id);
+            const highlighted = idx === highlightedIndex;
+            return (
+              <button
+                key={`${option.id}-${idx}`}
+                type="button"
+                className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
+                onClick={() => {
+                  onSelect(option.id);
+                  if (!multi) setIsOpen(false);
+                }}
+                onMouseEnter={() => setHighlightedIndex(idx)}
+                role="option"
+                aria-selected={selected}
+                tabIndex={-1}
+                ref={(el) => {
+                  if (highlighted && el) {
+                    el.scrollIntoView({ block: "nearest" });
+                  }
+                }}
+              >
+                {option.color && (
+                  <span
+                    className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
+                    style={{ background: option.color }}
+                  ></span>
+                )}
+                {option.icon && (
+                  <span className="shrink-0">{option.icon}</span>
+                )}
+                <span className={`font-medium ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
+                  {option.label}
+                </span>
+                {option.isAi && (
+                  <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
+                    AI
                   </span>
-                  {option.isAi && (
-                    <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
-                      AI
-                    </span>
-                  )}
-                  {selected && (
-                    <svg className="ml-auto h-3 w-3 text-[color:var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                )}
+                {selected && (
+                  <svg className="ml-auto h-3 w-3 text-[color:var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
