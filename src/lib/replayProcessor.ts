@@ -808,15 +808,18 @@ export const extractChatEvents = (
   return chatEvents.sort((a, b) => a.time - b.time);
 };
 
+export type TimelineResult = {
+  events: TimelineEvent[];
+  mapResources: Record<string, MapResourceType>;
+  mapCliffs: Record<string, boolean>;
+  chatEvents: ChatEvent[];
+};
+
 export const buildTimeline = (
   replay: unknown,
   summary?: any
-): {
-  events: TimelineEvent[];
-  mapResources: Record<string, MapResourceType>;
-  chatEvents: ChatEvent[];
-} => {
-  if (!replay) return { events: [], mapResources: {}, chatEvents: [] };
+): TimelineResult => {
+  if (!replay) return { events: [], mapResources: {}, mapCliffs: {}, chatEvents: [] };
   const replayRecord = normalizeReplay(replay) as Record<string, unknown>;
   const operations = Array.isArray(replayRecord.operations)
     ? (replayRecord.operations as Record<string, unknown>[])
@@ -834,6 +837,8 @@ export const buildTimeline = (
     : (initialMap as any)?.initial_object_instances) as any[];
 
   const mapResources: Record<string, MapResourceType> = {};
+  const mapCliffs: Record<string, boolean> = {};
+  const cliffObjects: { x: number; y: number; typeName: string }[] = [];
 
   if (initialInstances) {
     const gaiaCombinations: Record<string, number> = {};
@@ -881,8 +886,15 @@ export const buildTimeline = (
           typeName.includes("Papaya Tree")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
-        } else if (typeName.toLowerCase().includes("tree") || typeName.toLowerCase().includes("bush")) {
+        } else if (
+          typeName.toLowerCase().includes("tree") ||
+          typeName.toLowerCase().includes("bush")
+        ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "wood";
+        } else if (typeName.toLowerCase().includes("cliff")) {
+          if (obj.x !== undefined && obj.y !== undefined) {
+            cliffObjects.push({ x: obj.x, y: obj.y, typeName });
+          }
         }
         return;
       }
@@ -945,6 +957,137 @@ export const buildTimeline = (
         raw: { ...obj, isInitial: true },
       });
     });
+
+    if (cliffObjects.length > 0) {
+      const isCliff02 = (name: string) => /cliff.?02|cliff 2$/i.test(name);
+      const isCliff03 = (name: string) => /cliff.?03|cliff 3$/i.test(name);
+      const isCliff04 = (name: string) => /cliff.?04|cliff 4$/i.test(name);
+
+      const markCliff3x3 = (px: number, py: number) => {
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            mapCliffs[`${cx + dx},${cy + dy}`] = true;
+          }
+        }
+      };
+
+      const markCliff02 = (px: number, py: number) => {
+        // Cliff 02 is 1-tile wide in X, 3-tiles long in Y (vertical)
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        for (let dy = -1; dy <= 1; dy++) {
+          mapCliffs[`${cx},${cy + dy}`] = true;
+        }
+      };
+
+      const markCliff03 = (px: number, py: number) => {
+        // Cliff 03 is 3-tiles long in X, 1-tile wide in Y (horizontal)
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        for (let dx = -1; dx <= 1; dx++) {
+          mapCliffs[`${cx + dx},${cy}`] = true;
+        }
+      };
+
+      const markCliff04 = (px: number, py: number) => {
+        // Cliff 04 is a 2x3 corner block [cx-1, cx] x [cy-1, cy+1]
+        const cx = Math.floor(px);
+        const cy = Math.floor(py);
+        for (let dy = -1; dy <= 1; dy++) {
+          mapCliffs[`${cx},${cy + dy}`] = true;
+          mapCliffs[`${cx - 1},${cy + dy}`] = true;
+        }
+      };
+
+      // Add base area for each cliff object based on its footprint
+      cliffObjects.forEach((obj) => {
+        if (isCliff02(obj.typeName)) {
+          markCliff02(obj.x, obj.y);
+        } else if (isCliff03(obj.typeName)) {
+          markCliff03(obj.x, obj.y);
+        } else if (isCliff04(obj.typeName)) {
+          markCliff04(obj.x, obj.y);
+        } else {
+          markCliff3x3(obj.x, obj.y);
+        }
+      });
+
+      // Interpolate between connected cliff segments in sequence
+      for (let i = 0; i < cliffObjects.length - 1; i++) {
+        const o1 = cliffObjects[i];
+        const o2 = cliffObjects[i + 1];
+        const dist = Math.hypot(o1.x - o2.x, o1.y - o2.y);
+        if (dist <= 3.6) {
+          if (isCliff02(o1.typeName) || isCliff02(o2.typeName)) {
+            // Any segment leading to/from Cliff 02 is 1-wide along that vertical stretch
+            const c2 = isCliff02(o1.typeName) ? o1 : o2;
+            const other = isCliff02(o1.typeName) ? o2 : o1;
+            const c2x = Math.floor(c2.x);
+            const minY = Math.min(Math.floor(c2.y), Math.floor(other.y));
+            const maxY = Math.max(Math.floor(c2.y), Math.floor(other.y));
+            for (let y = minY; y <= maxY; y++) {
+              mapCliffs[`${c2x},${y}`] = true;
+            }
+          } else if (isCliff03(o1.typeName) || isCliff03(o2.typeName)) {
+            // Any segment leading to/from Cliff 03 is 1-wide along that horizontal stretch
+            const c3 = isCliff03(o1.typeName) ? o1 : o2;
+            const other = isCliff03(o1.typeName) ? o2 : o1;
+            const c3y = Math.floor(c3.y);
+            const minX = Math.min(Math.floor(c3.x), Math.floor(other.x));
+            const maxX = Math.max(Math.floor(c3.x), Math.floor(other.x));
+            for (let x = minX; x <= maxX; x++) {
+              mapCliffs[`${x},${c3y}`] = true;
+            }
+          } else if (isCliff04(o1.typeName) || isCliff04(o2.typeName)) {
+            const steps = Math.ceil(dist * 2);
+            for (let s = 0; s <= steps; s++) {
+              const t = s / steps;
+              const x = o1.x + (o2.x - o1.x) * t;
+              const y = o1.y + (o2.y - o1.y) * t;
+              const cx = Math.floor(x);
+              const cy = Math.floor(y);
+              for (let dy = -1; dy <= 1; dy++) {
+                mapCliffs[`${cx},${cy + dy}`] = true;
+                if (o1.x < o2.x) {
+                  if (cx < Math.floor(o2.x)) mapCliffs[`${cx + 1},${cy + dy}`] = true;
+                  mapCliffs[`${cx - 1},${cy + dy}`] = true;
+                } else {
+                  if (cx > Math.floor(o2.x)) mapCliffs[`${cx - 1},${cy + dy}`] = true;
+                  mapCliffs[`${cx + 1},${cy + dy}`] = true;
+                }
+              }
+            }
+          } else {
+            const steps = Math.ceil(dist * 2);
+            for (let s = 0; s <= steps; s++) {
+              const t = s / steps;
+              const x = o1.x + (o2.x - o1.x) * t;
+              const y = o1.y + (o2.y - o1.y) * t;
+              markCliff3x3(x, y);
+            }
+          }
+        }
+      }
+
+      // Tag tiles directly on map_info if available
+      const tiles = zheader?.map_info?.tiles as any[];
+      const sizeX = (zheader?.map_info?.size_x ?? 120) as number;
+      if (tiles) {
+        for (const key of Object.keys(mapCliffs)) {
+          const commaIdx = key.indexOf(",");
+          if (commaIdx !== -1) {
+            const kx = Number(key.slice(0, commaIdx));
+            const ky = Number(key.slice(commaIdx + 1));
+            const tileIdx = ky * sizeX + kx;
+            if (tiles[tileIdx]) {
+              tiles[tileIdx].isCliff = true;
+            }
+          }
+        }
+      }
+    }
 
     if (DEBUG) {
       console.log("Gaia resources:", gaiaCombinations);
@@ -1151,6 +1294,7 @@ export const buildTimeline = (
   return {
     events: events.sort((a, b) => a.time - b.time),
     mapResources,
+    mapCliffs,
     chatEvents,
   };
 };

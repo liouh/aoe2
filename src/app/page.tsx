@@ -81,6 +81,7 @@ export default function Home() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [chatEvents, setChatEvents] = useState<ChatEvent[]>([]);
   const [mapResources, setMapResources] = useState<Record<string, MapResourceType>>({});
+  const [mapCliffs, setMapCliffs] = useState<Record<string, boolean>>({});
   const [duration, setDuration] = useState(0);
   const [selectedTime, setSelectedTime] = useState(0);
   const selectedTimeRef = useRef(selectedTime);
@@ -102,6 +103,7 @@ export default function Home() {
     setEvents([]);
     setChatEvents([]);
     setMapResources({});
+    setMapCliffs({});
     setDuration(0);
     resetGameState();
   };
@@ -209,6 +211,7 @@ export default function Home() {
       setEvents(timeline.events);
       setChatEvents(timeline.chatEvents);
       setMapResources(timeline.mapResources);
+      setMapCliffs(timeline.mapCliffs);
       setDuration(gameDuration);
 
       resetGameState();
@@ -391,6 +394,7 @@ export default function Home() {
             matchInfo={matchInfo}
             events={events}
             mapResources={mapResources}
+            mapCliffs={mapCliffs}
             duration={duration}
             selectedTime={selectedTime}
             setSelectedTime={setSelectedTime}
