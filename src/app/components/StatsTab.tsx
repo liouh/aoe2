@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { APMChart } from "./APMChart";
+import { useMemo } from "react";
 import { TiltCard } from "./TiltCard";
-import { Toggle } from "./Toggle";
 import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
-import { getUnitName } from "@/lib/entityMappings";
+import { getBuildingName, getUnitName } from "@/lib/entityMappings";
 import { type TimelineEvent } from "@/lib/replayProcessor";
 
 export const isEconomic = (name: string) => {
@@ -26,8 +24,6 @@ interface StatsTabProps {
   timelineStats: any[];
   events: TimelineEvent[];
   getPlayerColor: (playerId?: number) => string;
-  getPlayerOutline: (playerId?: number) => string;
-  selectedTime: number;
 }
 
 export function StatsTab({
@@ -35,66 +31,51 @@ export function StatsTab({
   timelineStats,
   events,
   getPlayerColor,
-  getPlayerOutline,
-  selectedTime,
 }: StatsTabProps) {
-  const [showAiApm, setShowAiApm] = useState(true);
-  const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleHoverPlayer = useCallback((id: number | null) => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
-    }
-
-    if (id !== null) {
-      setHoveredApmPlayerId(id);
-    } else {
-      hoverTimeoutRef.current = setTimeout(() => {
-        setHoveredApmPlayerId(null);
-      }, 120);
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
-  }, []);
-
   const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
   const unitStats = useMemo(() => {
     const statsMap = new Map<number, Map<number, { name: string; count: number }>>();
+    const startingStatsMap = new Map<number, Map<string, { name: string; count: number }>>();
     const trainEvents = events.filter((e) => e.category === "train");
 
     trainEvents.forEach((event) => {
       if (event.playerId === undefined || event.unitTypeId === undefined) return;
+      const isStartingUnit = (event.raw as any)?.isInitial === true;
       const amount = typeof (event.raw as any)?.amount === "number" && (event.raw as any).amount > 0
         ? (event.raw as any).amount
         : 1;
+      const name = getUnitName(event.unitTypeId);
+      if (isStartingUnit) {
+        let playerMap = startingStatsMap.get(event.playerId);
+        if (!playerMap) {
+          playerMap = new Map();
+          startingStatsMap.set(event.playerId, playerMap);
+        }
+        const existing = playerMap.get(name);
+        if (existing) existing.count += amount;
+        else playerMap.set(name, { name, count: amount });
+        return;
+      }
+
       let playerMap = statsMap.get(event.playerId);
       if (!playerMap) {
         playerMap = new Map();
         statsMap.set(event.playerId, playerMap);
       }
-
       const existing = playerMap.get(event.unitTypeId);
-      if (existing) {
-        existing.count += amount;
-      } else {
-        playerMap.set(event.unitTypeId, {
-          name: getUnitName(event.unitTypeId),
-          count: amount,
-        });
-      }
+      if (existing) existing.count += amount;
+      else playerMap.set(event.unitTypeId, { name, count: amount });
     });
 
-    const result = new Map<number, { military: { name: string; count: number }[], economic: { name: string; count: number }[] }>();
-    statsMap.forEach((playerMap, playerId) => {
+    const result = new Map<number, {
+      military: { name: string; count: number }[];
+      economic: { name: string; count: number }[];
+      starting: { name: string; count: number }[];
+    }>();
+    const allPlayerIds = new Set([...statsMap.keys(), ...startingStatsMap.keys()]);
+    allPlayerIds.forEach((playerId) => {
+      const playerMap = statsMap.get(playerId) ?? new Map();
       const allUnits = Array.from(playerMap.values());
       const economic = allUnits
         .filter((u) => isEconomic(u.name))
@@ -102,8 +83,51 @@ export function StatsTab({
       const military = allUnits
         .filter((u) => !isEconomic(u.name))
         .sort((a, b) => b.count - a.count);
-      result.set(playerId, { military, economic });
+      const starting = Array.from(startingStatsMap.get(playerId)?.values() ?? [])
+        .sort((a, b) => b.count - a.count);
+      result.set(playerId, { military, economic, starting });
     });
+    return result;
+  }, [events]);
+
+  const buildingStats = useMemo(() => {
+    const statsMap = new Map<number, {
+      built: Map<string, { name: string; count: number }>;
+      starting: Map<string, { name: string; count: number }>;
+    }>();
+
+    events.forEach(event => {
+      if (event.category !== "build" || event.playerId === undefined || event.buildingTypeId === undefined) return;
+
+      const name = getBuildingName(event.buildingTypeId);
+      if (name === "Unknown Building") return;
+
+      let playerStats = statsMap.get(event.playerId);
+      if (!playerStats) {
+        playerStats = { built: new Map(), starting: new Map() };
+        statsMap.set(event.playerId, playerStats);
+      }
+
+      const buildingMap = (event.raw as any)?.isInitial ? playerStats.starting : playerStats.built;
+      const existing = buildingMap.get(name);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        buildingMap.set(name, { name, count: 1 });
+      }
+    });
+
+    const result = new Map<number, {
+      built: { name: string; count: number }[];
+      starting: { name: string; count: number }[];
+    }>();
+    statsMap.forEach((playerStats, playerId) => {
+      result.set(playerId, {
+        built: Array.from(playerStats.built.values()).sort((a, b) => b.count - a.count),
+        starting: Array.from(playerStats.starting.values()).sort((a, b) => b.count - a.count),
+      });
+    });
+
     return result;
   }, [events]);
 
@@ -111,6 +135,7 @@ export function StatsTab({
     const statsMap = new Map<number, Map<string, number>>();
     events.forEach(event => {
       if (event.playerId === undefined) return;
+      if ((event.raw as any)?.isInitial) return;
       if (event.type.toLowerCase().includes("unknown")) return;
 
       let playerMap = statsMap.get(event.playerId);
@@ -134,100 +159,19 @@ export function StatsTab({
     return result;
   }, [events]);
 
-  const chartPlayers = useMemo(() => {
-    const seen = new Set<number>();
-    return players.filter((p) => {
-      if (!showAiApm && p.ai) return false;
-      if (seen.has(p.id)) return false;
-      seen.add(p.id);
-      return true;
-    });
-  }, [players, showAiApm]);
-
   return (
     <div className="flex flex-col gap-6">
-      <section className="panel rounded-3xl p-6 flex flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
-          {players.some(p => p.ai) && (
-            <Toggle
-              label="Graph AI APM"
-              checked={showAiApm}
-              onChange={setShowAiApm}
-            />
-          )}
-        </div>
-
-        <APMChart
-          data={chartPlayers.map(p => ({
-            playerId: p.id,
-            history: timelineStats.find(s => s.playerId === p.id)?.apmHistory || []
-          }))}
-          players={chartPlayers}
-          getPlayerColor={getPlayerColor}
-          selectedTime={selectedTime}
-          ageTimings={chartPlayers
-            .map(p => ({
-              playerId: p.id,
-              timings: timelineStats.find(s => s.playerId === p.id)?.ageTimings ?? {},
-              textColor: getPlayerOutline(p.id),
-            }))
-            .filter(a => Object.keys(a.timings).length > 0)
-          }
-          hoveredPlayerId={hoveredApmPlayerId}
-          isLogScale={showAiApm && players.some((p) => p.ai)}
-        />
-
-        <div
-          className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-          onMouseLeave={() => handleHoverPlayer(null)}
-        >
-          {players.map((player, index) => {
-            const stats = timelineStats.find((s) => s.playerId === player.id);
-            return (
-              <TiltCard
-                key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
-                onMouseEnter={() => handleHoverPlayer(player.id)}
-                onMouseLeave={() => handleHoverPlayer(null)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && <AiBadge />}
-                    </h3>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  ></span>
-                </div>
-                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
-                  <div>
-                    <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
-                    <p className="text-xl tabular-nums font-medium">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                    <p className="text-xl tabular-nums font-medium">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
-                  </div>
-                </div>
-              </TiltCard>
-            );
-          })}
-        </div>
-      </section>
-
       <section className="panel rounded-3xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Unit production</h2>
+          <h2 className="headline text-2xl font-semibold">Units</h2>
         </div>
+        <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled units</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
-            const stats = unitStats.get(player.id) || { military: [], economic: [] };
+            const stats = unitStats.get(player.id) || { military: [], economic: [], starting: [] };
             const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
             const ecoCount = stats.economic.reduce((acc, u) => acc + u.count, 0);
+            const startingCount = stats.starting.reduce((acc, u) => acc + u.count, 0);
 
             return (
               <TiltCard
@@ -255,10 +199,27 @@ export function StatsTab({
                 </div>
 
                 <div className="space-y-4">
+                  {/* Starting Units Section */}
+                  <div>
+                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                      <span className="text-xs uppercase tracking-wider text-white/30">Starting units</span>
+                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{startingCount}</span>
+                    </div>
+                    <div className="flex flex-col gap-1.5 min-h-[20px]">
+                      {stats.starting.length > 0 ? stats.starting.map((unit) => (
+                        <div key={unit.name} className="flex items-center justify-between text-sm">
+                          <span className="text-[color:var(--muted)] truncate pr-2">{unit.name}</span>
+                          <span className="tabular-nums shrink-0">{unit.count}</span>
+                        </div>
+                      )) : (
+                        <p className="text-[10px] text-white/20 italic">No starting units</p>
+                      )}
+                    </div>
+                  </div>
                   {/* Military Section */}
                   <div>
                     <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Military</span>
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
                       <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
@@ -278,7 +239,7 @@ export function StatsTab({
                   {/* Economic Section */}
                   <div>
                     <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-green-400/70">Economic</span>
+                      <span className="text-xs uppercase tracking-wider text-green-400/70">Trained eco units</span>
                       <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
@@ -293,6 +254,81 @@ export function StatsTab({
                         <p className="text-[10px] text-white/20 italic">No eco units trained</p>
                       )}
                     </div>
+                  </div>
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="panel rounded-3xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Buildings</h2>
+        </div>
+        <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {players.map((player, index) => {
+            const stats = buildingStats.get(player.id) || { built: [], starting: [] };
+            const buildingCount = stats.built.reduce((total, building) => total + building.count, 0);
+            const startingBuildingCount = stats.starting.reduce((total, building) => total + building.count, 0);
+
+            return (
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
+                      {player.name}
+                      {player.ai && (
+                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
+                          AI
+                        </span>
+                      )}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-white/40">
+                      <span>{getCivName(player.civId)}</span>
+                    </div>
+                  </div>
+                  <span
+                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
+                    style={{ background: getPlayerColor(player.id) }}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <span className="text-xs uppercase tracking-wider text-white/30">Starting buildings</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(startingBuildingCount)}</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    {stats.starting.length > 0 ? stats.starting.map((building) => (
+                      <div key={building.name} className="flex items-center justify-between text-sm">
+                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
+                        <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
+                      </div>
+                    )) : (
+                      <p className="text-[10px] text-white/20 italic">No starting buildings</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <span className="text-xs uppercase tracking-wider text-blue-400">Built in-game</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    {stats.built.length > 0 ? stats.built.map((building) => (
+                      <div key={building.name} className="flex items-center justify-between text-sm">
+                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
+                        <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
+                      </div>
+                    )) : (
+                      <p className="text-[10px] text-white/20 italic">No buildings built</p>
+                    )}
                   </div>
                 </div>
               </TiltCard>

@@ -143,7 +143,7 @@ export function TimelineTab({
       return {
         research: consolidateEvents(pe.filter((e) => e.category === "research" && timelineShowResearch)),
         builds: consolidateEvents(pe.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial)),
-        trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits)),
+        trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits && !e.raw?.isInitial)),
       };
     };
     return [getData(leftPlayerId), getData(rightPlayerId)];

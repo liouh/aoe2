@@ -43,6 +43,8 @@ export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
 
+const NON_UNIT_STARTING_OBJECT = /placeholder|annex|trophy|flare|projectile|dead|resources|invisible spawner|beta berserk|\bbuilding\d*\b/i;
+
 export const normalizeReplay = (rec: any): any => {
   if (!rec || typeof rec !== "object") return rec;
   const chapters = Array.isArray(rec.chapters) ? rec.chapters : undefined;
@@ -900,7 +902,26 @@ export const buildTimeline = (
       }
 
       const isBuilding = isBuildingId(obj.object_type_id);
-      if (!isBuilding) return;
+      if (!isBuilding) {
+        const initialPlayer = players.find((p) => (p.slotId ?? p.id) === obj.player_id);
+        const unitName = getEntityName(obj.object_type_id) ?? "";
+        if (
+          initialPlayer &&
+          unitName &&
+          !NON_UNIT_STARTING_OBJECT.test(unitName)
+        ) {
+          events.push({
+            id: `initial-unit-${obj.object_id ?? idx}`,
+            time: 0,
+            playerId: initialPlayer.id,
+            type: "Train",
+            category: "train",
+            unitTypeId: obj.object_type_id,
+            raw: { ...obj, isInitial: true },
+          });
+        }
+        return;
+      }
 
       // Deduplicate: There are 4 pieces for the starting Town Center.
       // If we already added an event for this specific Town Center, skip the duplicates.
@@ -909,6 +930,7 @@ export const buildTimeline = (
 
       // At game start, if there is a mule cart overlapping a town center, do not put the mule cart on the map
       const isMuleCart = obj.object_type_id === 1808 || getBuildingName(obj.object_type_id).includes("Mule Cart");
+      let hideOnMinimap = false;
       if (isMuleCart && obj.x !== undefined && obj.y !== undefined) {
         const mcFootprint = getBuildingFootprint(obj.object_type_id);
         const mcAnchorX = Math.floor(obj.x);
@@ -940,7 +962,7 @@ export const buildTimeline = (
         });
 
         if (overlapsTC) {
-          return;
+          hideOnMinimap = true;
         }
       }
 
@@ -954,7 +976,7 @@ export const buildTimeline = (
         x: obj.x,
         y: obj.y,
         buildingTypeId: obj.object_type_id,
-        raw: { ...obj, isInitial: true },
+        raw: { ...obj, isInitial: true, hideOnMinimap },
       });
     });
 

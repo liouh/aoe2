@@ -555,6 +555,7 @@ export function Minimap({
           event.category === "build" &&
           event.x !== undefined &&
           event.y !== undefined &&
+          event.raw?.hideOnMinimap !== true &&
           event.x >= 0 &&
           event.y >= 0 &&
           event.x <= sizeX &&

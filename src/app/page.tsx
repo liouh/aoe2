@@ -464,6 +464,8 @@ export default function Home() {
                   matchInfo={matchInfo}
                   chatEvents={chatEvents}
                   getPlayerColor={getPlayerColor}
+                  getPlayerOutline={getPlayerOutline}
+                  selectedTime={selectedTime}
                   formatClock={formatClock}
                   onSeek={(seconds) => {
                     setIsPlaying(false);
@@ -479,8 +481,6 @@ export default function Home() {
                   timelineStats={timelineStats}
                   events={events}
                   getPlayerColor={getPlayerColor}
-                  getPlayerOutline={getPlayerOutline}
-                  selectedTime={selectedTime}
                 />
               </div>
 

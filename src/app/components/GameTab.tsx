@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
 import { AiBadge } from "./AiBadge";
+import { APMChart } from "./APMChart";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
 import { type MatchInfo, type ChatEvent } from "@/lib/replayProcessor";
@@ -14,6 +15,8 @@ interface GameTabProps {
   matchInfo: MatchInfo | null;
   chatEvents?: ChatEvent[];
   getPlayerColor: (playerId?: number) => string;
+  getPlayerOutline: (playerId?: number) => string;
+  selectedTime: number;
   formatClock: (seconds: number) => string;
   onSeek?: (seconds: number) => void;
 }
@@ -24,16 +27,47 @@ export function GameTab({
   matchInfo,
   chatEvents = [],
   getPlayerColor,
+  getPlayerOutline,
+  selectedTime,
   formatClock,
   onSeek,
 }: GameTabProps) {
   const allPlayersWon = useMemo(() => players.length > 0 && players.every((p) => p.won), [players]);
+  const formatNum = (value: number) => new Intl.NumberFormat().format(value);
 
   const [chatShowSystem, setChatShowSystem] = useState(true);
   const [chatShowChat, setChatShowChat] = useState(true);
   const [chatShowAiTeamChat, setChatShowAiTeamChat] = useState(false);
+  const [showAiApm, setShowAiApm] = useState(true);
+  const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleHoverPlayer = useCallback((id: number | null) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
+    if (id !== null) setHoveredApmPlayerId(id);
+    else {
+      hoverTimeoutRef.current = setTimeout(() => setHoveredApmPlayerId(null), 120);
+    }
+  }, []);
+
+  useEffect(() => () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+  }, []);
 
   const hasAi = useMemo(() => players.some((p) => p.ai), [players]);
+  const chartPlayers = useMemo(() => {
+    const seen = new Set<number>();
+    return players.filter(player => {
+      if (!showAiApm && player.ai) return false;
+      if (seen.has(player.id)) return false;
+      seen.add(player.id);
+      return true;
+    });
+  }, [players, showAiApm]);
   const isTeamGame = useMemo(() => {
     if (players.length > 2) return true;
     const teamCounts = new Map<number, number>();
@@ -204,7 +238,7 @@ export function GameTab({
                   )}
                   <div className={showRatingInfo ? "pt-2" : ""}>
                     <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-white/30">Age up time</span>
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Age up time</span>
                     </div>
                     {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
                       <div className="space-y-1.5">
@@ -238,6 +272,77 @@ export function GameTab({
                       )}
                     </div>
                   )}
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="panel flex flex-col gap-6 rounded-3xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
+          {hasAi && (
+            <Toggle
+              label="Graph AI APM"
+              checked={showAiApm}
+              onChange={setShowAiApm}
+            />
+          )}
+        </div>
+
+        <APMChart
+          data={chartPlayers.map(player => ({
+            playerId: player.id,
+            history: timelineStats.find(stats => stats.playerId === player.id)?.apmHistory || [],
+          }))}
+          players={chartPlayers}
+          getPlayerColor={getPlayerColor}
+          selectedTime={selectedTime}
+          ageTimings={chartPlayers
+            .map(player => ({
+              playerId: player.id,
+              timings: timelineStats.find(stats => stats.playerId === player.id)?.ageTimings ?? {},
+              textColor: getPlayerOutline(player.id),
+            }))
+            .filter(player => Object.keys(player.timings).length > 0)
+          }
+          hoveredPlayerId={hoveredApmPlayerId}
+          isLogScale={showAiApm && hasAi}
+        />
+
+        <div
+          className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+          onMouseLeave={() => handleHoverPlayer(null)}
+        >
+          {players.map((player, index) => {
+            const stats = timelineStats.find(item => item.playerId === player.id);
+            return (
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
+                onMouseEnter={() => handleHoverPlayer(player.id)}
+                onMouseLeave={() => handleHoverPlayer(null)}
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
+                    {player.name}
+                    {player.ai && <AiBadge />}
+                  </h3>
+                  <span
+                    className="ml-2 h-3 w-3 shrink-0 rounded-full ring-1 ring-white"
+                    style={{ background: getPlayerColor(player.id) }}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-2">
+                  <div>
+                    <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
+                    <p className="text-xl font-medium tabular-nums">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
+                    <p className="text-xl font-medium tabular-nums">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
+                  </div>
                 </div>
               </TiltCard>
             );
@@ -341,11 +446,6 @@ export function GameTab({
                             </span>
                           )}
 
-                          {item.tauntNumber && (
-                            <span className="inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30">
-                              Taunt {item.tauntNumber}
-                            </span>
-                          )}
                         </div>
                       )}
 
@@ -355,6 +455,11 @@ export function GameTab({
                             className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
                             style={{ background: pColor }}
                           />
+                        )}
+                        {item.tauntNumber && (
+                          <span className="mr-2 inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30 align-middle">
+                            Taunt {item.tauntNumber}
+                          </span>
                         )}
                         {item.message}
                       </p>
