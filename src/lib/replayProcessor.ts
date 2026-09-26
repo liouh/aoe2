@@ -43,7 +43,7 @@ export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
 
-const NON_UNIT_STARTING_OBJECT = /town center|placeholder|reveal|annex|trophy|flare|projectile|dead|resources|invisible spawner|beta berserk|\bbuilding\d*\b/i;
+const NON_UNIT_STARTING_OBJECT = /town center|placeholder|reveal|annex|trophy|flare|projectile|dead|resources|invisible|beta berserk|\bbuilding\d*\b/i;
 
 export const normalizeReplay = (rec: any): any => {
   if (!rec || typeof rec !== "object") return rec;
@@ -981,85 +981,34 @@ export const buildTimeline = (
     });
 
     if (cliffObjects.length > 0) {
-      const isCliff02 = (name: string) => /cliff.?02|cliff 2$/i.test(name);
-      const isCliff03 = (name: string) => /cliff.?03|cliff 3$/i.test(name);
-      const isCliff04 = (name: string) => /cliff.?04|cliff 4$/i.test(name);
-      const isCliff06 = (name: string) => /cliff.?06|cliff 6$/i.test(name);
-      const isCliff08 = (name: string) => /cliff.?08|cliff 8$/i.test(name);
-
-      const markCliff3x3 = (px: number, py: number) => {
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dx = -1; dx <= 1; dx++) {
-            mapCliffs[`${cx + dx},${cy + dy}`] = true;
-          }
-        }
+      // Footprint dimensions are [width, height]; tiles extend from -1 on each
+      // axis to keep the existing cliff anchor offsets.
+      const cliffFootprints: Record<number, [number, number]> = {
+        1: [3, 3],
+        2: [1, 3],
+        3: [3, 1],
+        4: [2, 3],
+        5: [2, 3],
+        6: [3, 2],
+        7: [3, 2],
+        8: [2, 2],
+        9: [2, 2],
       };
 
-      const markCliff02 = (px: number, py: number) => {
-        // Cliff 02 is 1-tile wide in X, 3-tiles long in Y (vertical)
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dy = -1; dy <= 1; dy++) {
-          mapCliffs[`${cx},${cy + dy}`] = true;
-        }
-      };
-
-      const markCliff03 = (px: number, py: number) => {
-        // Cliff 03 is 3-tiles long in X, 1-tile wide in Y (horizontal)
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dx = -1; dx <= 1; dx++) {
-          mapCliffs[`${cx + dx},${cy}`] = true;
-        }
-      };
-
-      const markCliff04 = (px: number, py: number) => {
-        // Cliff 04 is a 2x3 corner block [cx-1, cx] x [cy-1, cy+1]
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dy = -1; dy <= 1; dy++) {
-          mapCliffs[`${cx},${cy + dy}`] = true;
-          mapCliffs[`${cx - 1},${cy + dy}`] = true;
-        }
-      };
-
-      const markCliff06 = (px: number, py: number) => {
-        // Cliff 06 is a 3x2 corner block [cx-1, cx+1] x [cy-1, cy]
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dx = -1; dx <= 1; dx++) {
-          mapCliffs[`${cx + dx},${cy}`] = true;
-          mapCliffs[`${cx + dx},${cy - 1}`] = true;
-        }
-      };
-
-      const markCliff08 = (px: number, py: number) => {
-        // Cliff 08 is a 2x2 corner
-        const cx = Math.floor(px);
-        const cy = Math.floor(py);
-        for (let dy = -1; dy <= 0; dy++) {
-          for (let dx = -1; dx <= 0; dx++) {
-            mapCliffs[`${cx + dx},${cy + dy}`] = true;
-          }
-        }
-      };
-
-      // Add base area for each cliff object based on its footprint
       cliffObjects.forEach((obj) => {
-        if (isCliff02(obj.typeName)) {
-          markCliff02(obj.x, obj.y);
-        } else if (isCliff03(obj.typeName)) {
-          markCliff03(obj.x, obj.y);
-        } else if (isCliff04(obj.typeName)) {
-          markCliff04(obj.x, obj.y);
-        } else if (isCliff06(obj.typeName)) {
-          markCliff06(obj.x, obj.y);
-        } else if (isCliff08(obj.typeName)) {
-          markCliff08(obj.x, obj.y);
-        } else {
-          markCliff3x3(obj.x, obj.y);
+        const cliffNumber = obj.typeName.match(/cliff.?0?([1-9])(?:$|\D)/i)?.[1];
+        const [width, height] = cliffNumber
+          ? cliffFootprints[Number(cliffNumber)] ?? [1, 1]
+          : [1, 1];
+        const cx = Math.floor(obj.x);
+        const cy = Math.floor(obj.y);
+
+        const minX = width === 1 ? 0 : -1;
+        const minY = height === 1 ? 0 : -1;
+        for (let dy = minY; dy < minY + height; dy++) {
+          for (let dx = minX; dx < minX + width; dx++) {
+            mapCliffs[`${cx + dx},${cy + dy}`] = true;
+          }
         }
       });
     }
