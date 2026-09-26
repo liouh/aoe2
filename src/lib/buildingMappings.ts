@@ -130,6 +130,14 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   689: { w: 4, h: 4 }, // Pyramid
   690: { w: 4, h: 4 }, // Dome of the Rock
   696: { w: 4, h: 4 }, // Great Pyramid
+  712: { w: 3, h: 3 }, // Yurt A
+  713: { w: 2, h: 2 }, // Yurt B
+  714: { w: 2, h: 2 }, // Yurt C
+  715: { w: 2, h: 2 }, // Yurt D
+  716: { w: 2, h: 2 }, // Yurt E
+  717: { w: 2, h: 2 }, // Yurt F
+  718: { w: 2, h: 2 }, // Yurt G
+  719: { w: 3, h: 3 }, // Yurt H
   785: { w: 1, h: 1 }, // Sea Tower
   788: { w: 1, h: 1 }, // Sea Wall
   789: { w: 2, h: 1 }, // Palisade Gate, Ascending Closed
@@ -167,22 +175,22 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1368: { w: 4, h: 4 }, // Tower of London
   1369: { w: 4, h: 4 }, // Dormition Cathedral
   1378: { w: 3, h: 3 }, // Rock Church
-  1379: { w: 1, h: 1 }, // Sea Gate
-  1380: { w: 1, h: 1 }, // Sea Gate
-  1381: { w: 1, h: 1 }, // Sea Gate
-  1382: { w: 1, h: 1 }, // Sea Gate
-  1383: { w: 1, h: 1 }, // Sea Gate
-  1384: { w: 1, h: 1 }, // Sea Gate
-  1385: { w: 1, h: 1 }, // Sea Gate
-  1386: { w: 1, h: 1 }, // Sea Gate
-  1387: { w: 1, h: 1 }, // Sea Gate
-  1388: { w: 1, h: 1 }, // Sea Gate
-  1389: { w: 1, h: 1 }, // Sea Gate
-  1390: { w: 1, h: 1 }, // Sea Gate
-  1391: { w: 1, h: 1 }, // Sea Gate
-  1392: { w: 1, h: 1 }, // Sea Gate
-  1393: { w: 1, h: 1 }, // Sea Gate
-  1394: { w: 1, h: 1 }, // Sea Gate
+  1379: { w: 2, h: 1 }, // Sea Gate, Ascending Closed
+  1380: { w: 2, h: 1 }, // Sea Gate, Ascending Open
+  1381: { w: 1, h: 1 }, // Sea Gate, Ascending Endpieces
+  1382: { w: 4, h: 1 }, // Sea Gate, Ascending Foundation
+  1383: { w: 1, h: 2 }, // Sea Gate, Descending Closed
+  1384: { w: 1, h: 2 }, // Sea Gate, Descending Open
+  1385: { w: 1, h: 1 }, // Sea Gate, Descending Endpieces
+  1386: { w: 1, h: 4 }, // Sea Gate, Descending Foundation
+  1387: { w: 2, h: 2 }, // Sea Gate, Horizontal Closed
+  1388: { w: 2, h: 2 }, // Sea Gate, Horizontal Open
+  1389: { w: 1, h: 1 }, // Sea Gate, Horizontal Endpieces
+  1390: { w: 1, h: 1 }, // Sea Gate, Horizontal Foundation
+  1391: { w: 2, h: 2 }, // Sea Gate, Vertical Closed
+  1392: { w: 2, h: 2 }, // Sea Gate, Vertical Open
+  1393: { w: 1, h: 1 }, // Sea Gate, Vertical Endpieces
+  1394: { w: 1, h: 1 }, // Sea Gate, Vertical Foundation
   1579: { w: 1, h: 1 }, // City Gate
   1580: { w: 1, h: 1 }, // City Gate
   1581: { w: 1, h: 1 }, // City Gate
@@ -210,10 +218,16 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1806: { w: 3, h: 3 }, // Fortified Church
   1807: { w: 1, h: 1 }, // Svan Tower
   1808: { w: 1, h: 1 }, // Mule Cart
+  1832: { w: 2, h: 2 }, // Yurt I
+  1833: { w: 2, h: 2 }, // Yurt J
+  1834: { w: 2, h: 2 }, // Yurt K
+  1835: { w: 3, h: 3 }, // Yurt L
   1836: { w: 3, h: 3 }, // Chapel
+  1870: { w: 4, h: 4 }, // Chief's Yurt
   1889: { w: 4, h: 4 }, // Pasture
   1893: { w: 4, h: 4 }, // Pasture, Mangrove
   1897: { w: 4, h: 4 }, // Pasture, Land
+  2033: { w: 2, h: 2 }, // Yurt M
   2119: { w: 4, h: 4 }, // Shipyard
   2120: { w: 3, h: 3 }, // Dock
   2121: { w: 3, h: 3 }, // Dock
@@ -235,9 +249,9 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   2441: { w: 3, h: 3 }, // Camp Blacksmith
   2556: { w: 3, h: 3 }, // Settlement, Dark Age
   2558: { w: 3, h: 3 }, // Settlement, Feudal Age
-  2559: { w: 2, h: 2 }, // Longhouse A
+  2559: { w: 3, h: 2 }, // Longhouse A
   2560: { w: 3, h: 3 }, // Settlement, Castle Age
-  2561: { w: 2, h: 2 }, // Longhouse B
+  2561: { w: 2, h: 3 }, // Longhouse B
   2600: { w: 4, h: 4 }, // Wooden Fort
   2678: { w: 1, h: 1 }, // Fort Wall
   2679: { w: 2, h: 1 }, // Fort Gate, Ascending Closed
