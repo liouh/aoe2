@@ -6,6 +6,7 @@ import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainMappings";
 import { getBuildingFootprint, isFarmId, getBuildingIcon } from "@/lib/buildingMappings";
 import { getBuildingName } from "@/lib/entityMappings";
+import { DEBUG } from "@/lib/debug";
 
 const LOADING_STEP_COUNT = 4;
 
@@ -189,6 +190,8 @@ export function Minimap({
   onCachedCanvasesReady,
 }: MinimapProps) {
   const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(DEFAULT_LAYERS);
+  const iconCheckReplayRef = useRef<any>(null);
+  const checkedMissingBuildingIconsRef = useRef<Set<number>>(new Set());
   const [mapZoom, setMapZoom] = useState(1);
   const [mapPan, setMapPan] = useState({ x: 0, y: 0 });
   const [hoveredEntity, setHoveredEntity] = useState<{
@@ -564,6 +567,29 @@ export function Minimap({
     },
     [events, mapInfo]
   );
+
+  useEffect(() => {
+    if (!DEBUG) return;
+
+    if (iconCheckReplayRef.current !== replay) {
+      iconCheckReplayRef.current = replay;
+      checkedMissingBuildingIconsRef.current.clear();
+    }
+
+    for (const event of events) {
+      if (event.category !== "build") continue;
+      const buildingTypeId = event.buildingTypeId;
+      if (buildingTypeId === undefined || checkedMissingBuildingIconsRef.current.has(buildingTypeId)) {
+        continue;
+      }
+
+      const name = getBuildingName(buildingTypeId);
+      if (getBuildingIcon(name) === "❓") {
+        checkedMissingBuildingIconsRef.current.add(buildingTypeId);
+        console.log(`No building icon mapping for ${buildingTypeId}: "${name}"`);
+      }
+    }
+  }, [events, replay]);
 
   const moveEvents = useMemo(
     () => {

@@ -212,7 +212,7 @@ export function StatsTab({
                           <span className="tabular-nums shrink-0">{unit.count}</span>
                         </div>
                       )) : (
-                        <p className="text-[10px] text-white/20 italic">No starting units</p>
+                        <p className="text-sm text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export function StatsTab({
                           </div>
                         ))
                       ) : (
-                        <p className="text-[10px] text-white/20 italic">No military trained</p>
+                        <p className="text-sm text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export function StatsTab({
                           </div>
                         ))
                       ) : (
-                        <p className="text-[10px] text-white/20 italic">No eco units trained</p>
+                        <p className="text-sm text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
@@ -310,7 +310,7 @@ export function StatsTab({
                         <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
                       </div>
                     )) : (
-                      <p className="text-[10px] text-white/20 italic">No starting buildings</p>
+                      <p className="text-sm text-white/20 italic">—</p>
                     )}
                   </div>
                 </div>
@@ -327,7 +327,7 @@ export function StatsTab({
                         <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
                       </div>
                     )) : (
-                      <p className="text-[10px] text-white/20 italic">No buildings built</p>
+                      <p className="text-sm text-white/20 italic">—</p>
                     )}
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export function StatsTab({
                         </div>
                       ))
                     ) : (
-                      <p className="text-[10px] text-white/20 italic">No actions recorded</p>
+                      <p className="text-sm text-white/20 italic">—</p>
                     )}
                   </div>
                 </div>
