@@ -43,7 +43,7 @@ export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
 
-const NON_UNIT_STARTING_OBJECT = /placeholder|annex|trophy|flare|projectile|dead|resources|invisible spawner|beta berserk|\bbuilding\d*\b/i;
+const NON_UNIT_STARTING_OBJECT = /town center|placeholder|annex|trophy|flare|projectile|dead|resources|invisible spawner|beta berserk|\bbuilding\d*\b/i;
 
 export const normalizeReplay = (rec: any): any => {
   if (!rec || typeof rec !== "object") return rec;
