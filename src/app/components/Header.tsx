@@ -113,7 +113,7 @@ export function Header({
                     </div>
                     <div className="mt-1 pt-2 border-t border-white/10">
                       <p className="text-[11px] text-white/70 leading-snug">
-                        <strong>How to find:</strong> Find your match on <a href="https://www.ageofempires.com/stats/ageiide/" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline" tabIndex={-1}>AgeOfEmpires.com</a> or <a href="https://www.aoe2insights.com/" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline" tabIndex={-1}>AoE2Insights.com</a>, right-click the replay's download button, and select <strong>Copy Link Address</strong>.
+                        Find your match on <a href="https://www.ageofempires.com/stats/ageiide/" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline" tabIndex={-1}>AgeOfEmpires.com</a> or <a href="https://www.aoe2insights.com/" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline" tabIndex={-1}>AoE2Insights.com</a>, right-click the replay's download button, and select <strong>Copy Link Address</strong>.
                       </p>
                     </div>
                   </div>
