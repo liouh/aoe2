@@ -531,6 +531,7 @@ export const getBuildingIcon = (name: string): string | null => {
   else if (name.includes("Castle")) icon = "🏰";
   else if (name.includes("Dock") || name.includes("Harbor") || name.includes("Shipyard") || name.includes("Port")) icon = "⚓";
   else if (name.includes("Feitoria") || name.includes("Caravanserai")) icon = "🏛️";
+  else if (name.includes("Fish")) icon = "🐟";
   else if (name.includes("Gate")) icon = "⛩️";
   else if (name.includes("House") || name.includes("Tent")) icon = "";
   else if (name.includes("Lumber Camp")) icon = "🌲\uFE0E";
