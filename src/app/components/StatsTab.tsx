@@ -341,6 +341,7 @@ export function StatsTab({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Market usage</h2>
         </div>
+        <p className="mt-1 text-xs text-[color:var(--muted)]">+ Bought / - Sold</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {

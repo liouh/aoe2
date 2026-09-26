@@ -24,17 +24,9 @@ export function Header({
       <div className="flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-4">
         <div className="space-y-1">
           <h1 className="headline text-2xl md:text-3xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
-            <a
-              href="https://liouh.com/home/"
-              className="inline-flex items-center justify-center transition-all group mr-3 align-middle -mt-1"
-              tabIndex={-1}
-            >
-              <img
-                src="icon.png"
-                alt="Home"
-                className="w-5 h-5 lg:w-8 lg:h-8 transition-all duration-150 group-hover:rotate-180 group-hover:grayscale"
-              />
-            </a>
+            <span className="inline-flex items-center justify-center mr-3 align-middle -mt-1">
+              <img src="icon.png" className="w-5 h-5 lg:w-8 lg:h-8" />
+            </span>
             <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
           </h1>
           <p className="max-w-2xl text-sm md:text-base text-[color:var(--muted)] lg:text-lg">

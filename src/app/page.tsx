@@ -500,6 +500,18 @@ export default function Home() {
             </div>
           )}
         </main>
+        <footer className="flex items-center justify-center gap-2 text-center text-xs text-[color:var(--muted)]">
+          <span className="inline-flex items-center gap-1">
+            Designed by
+            <a href="https://liouh.com/home/" className="hover:underline">
+              Henry Liou
+            </a>
+          </span>
+          <span>·</span>
+          <a href="https://github.com/liouh/aoe2/issues" target="_blank" className="hover:underline">
+            Report a bug
+          </a>
+        </footer>
       </div>
     </div>
   );
