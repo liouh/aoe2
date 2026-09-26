@@ -504,8 +504,11 @@ export function GameTab({
               <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
                 <span className="font-semibold text-[color:var(--foreground)]">
-                  {getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
+                  {matchInfo.customMapName ?? getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
                 </span>
+                {matchInfo.customMapPackName && (
+                  <span className="text-xs text-[color:var(--muted)]">{matchInfo.customMapPackName}</span>
+                )}
               </div>
             )}
             {matchInfo.mapSizeId !== undefined && (

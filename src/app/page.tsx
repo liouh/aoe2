@@ -209,7 +209,7 @@ export default function Home() {
 
       const timeline = buildTimeline(parsed, parsedSummary);
       const gameDuration = determineDuration(parsedSummary, timeline.events);
-      const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
+      const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl, parsedSummary);
 
       setLoadingStep(2);
       await waitForPaint();

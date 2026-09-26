@@ -1411,6 +1411,8 @@ export const determineDuration = (
 
 export type MatchInfo = {
   mapTypeId?: number;
+  customMapName?: string;
+  customMapPackName?: string;
   mapSizeId?: number;
   gameTypeId?: number;
   difficultyId?: number;
@@ -1423,10 +1425,26 @@ export type MatchInfo = {
   timestamp?: number;
 };
 
-export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string): MatchInfo => {
+export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string, summary?: any): MatchInfo => {
   const normSource = normalizeReplay(source);
   const settings = normSource?.zheader?.game_settings || normSource?.header?.game_settings || normSource?.game_settings;
+  const summarySettings = summary?.header?.game_settings;
   const replayData = normSource?.header?.replay || normSource?.replay;
+  const mapTypeId = pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id);
+  const rmsStrings = summarySettings?.rms_strings ?? settings?.rms_strings;
+  const customMapMetadata = mapTypeId === 59 && Array.isArray(rmsStrings)
+    ? rmsStrings
+      .map((entry: unknown) => {
+        if (typeof entry !== "string") return undefined;
+        const match = entry.match(/([^:]+)\.rms(?::([^:]*))?/i);
+        if (!match) return undefined;
+        return {
+          name: match[1].trim(),
+          packName: match[2]?.replace(/^\d+_/, "").trim() || undefined,
+        };
+      })
+      .find((metadata: { name: string; packName?: string } | undefined) => Boolean(metadata?.name))
+    : undefined;
 
   const difficultyId = pickNumber(settings?.difficulty);
   const difficultyName = typeof settings?.difficulty === "string" ? settings.difficulty : undefined;
@@ -1441,7 +1459,9 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
   const timestamp = rawTimestamp !== undefined && rawTimestamp > 0 ? rawTimestamp : undefined;
 
   return {
-    mapTypeId: pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id),
+    mapTypeId,
+    customMapName: customMapMetadata?.name,
+    customMapPackName: customMapMetadata?.packName,
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
     gameTypeId: pickNumber(settings?.game_type),
     difficultyId,
