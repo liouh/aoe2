@@ -36,7 +36,7 @@ export type ChatEvent = {
   raw: Record<string, unknown>;
 };
 
-import { getEntityName, getBuildingName } from "./entityMappings";
+import { getEntityName, getBuildingName, getUnitName, isEconomic } from "./entityMappings";
 import { getBuildingFootprint, isBuildingId } from "./buildingMappings";
 import { CHEAT_ID_TO_NAME, getCheatName } from "./gameMappings";
 export { CHEAT_ID_TO_NAME, getCheatName };
@@ -88,6 +88,7 @@ export type PlayerStats = {
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
+  opening?: string;
 };
 
 const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
@@ -1223,6 +1224,61 @@ export const buildTimeline = (
   };
 };
 
+/**
+ * Determines the player's opening strategy based on the military unit
+ * they made the most of out of their first 5 trained military units.
+ * Returns undefined if there are no military units built or if there is a tie for the most.
+ */
+export const determineOpening = (events: TimelineEvent[]): string | undefined => {
+  const firstFiveMilitaryUnits: string[] = [];
+
+  for (const event of events) {
+    if (event.category !== "train" || event.raw?.isInitial) continue;
+    if (event.unitTypeId === undefined) continue;
+
+    const unitName = getUnitName(event.unitTypeId);
+    if (!unitName || unitName === "Unknown Unit" || isEconomic(unitName)) continue;
+
+    const rawAmount = event.raw?.amount;
+    const amount = typeof rawAmount === "number" && rawAmount > 0 ? rawAmount : 1;
+
+    for (let i = 0; i < amount && firstFiveMilitaryUnits.length < 5; i++) {
+      firstFiveMilitaryUnits.push(unitName);
+    }
+
+    if (firstFiveMilitaryUnits.length >= 5) break;
+  }
+
+  if (firstFiveMilitaryUnits.length === 0) {
+    return undefined;
+  }
+
+  const counts = new Map<string, number>();
+  for (const unit of firstFiveMilitaryUnits) {
+    counts.set(unit, (counts.get(unit) || 0) + 1);
+  }
+
+  let maxCount = 0;
+  let topUnit: string | undefined;
+  let isTie = false;
+
+  for (const [unit, count] of counts.entries()) {
+    if (count > maxCount) {
+      maxCount = count;
+      topUnit = unit;
+      isTie = false;
+    } else if (count === maxCount) {
+      isTie = true;
+    }
+  }
+
+  if (isTie || !topUnit) {
+    return undefined;
+  }
+
+  return topUnit;
+};
+
 export const extractPlayerStats = (
   events: TimelineEvent[],
   durationSeconds: number | undefined,
@@ -1326,6 +1382,8 @@ export const extractPlayerStats = (
       .map(([minute, count]) => ({ minute, apm: count }))
       .sort((a, b) => a.minute - b.minute);
 
+    const opening = determineOpening(activePlayerEvents);
+
     stats.push({
       playerId,
       apm,
@@ -1334,6 +1392,7 @@ export const extractPlayerStats = (
       ageTimings,
       autoscoutUsage,
       marketUsage,
+      opening,
     });
   });
 

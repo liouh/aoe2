@@ -4,9 +4,8 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Select } from "./Select";
 import { Toggle } from "./Toggle";
 import { AiBadge } from "./AiBadge";
-import { isEconomic } from "./StatsTab";
 import { getCivName } from "@/lib/civMappings";
-import { getUnitName, getBuildingName } from "@/lib/entityMappings";
+import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
 

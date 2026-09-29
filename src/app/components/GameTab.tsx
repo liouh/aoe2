@@ -258,8 +258,13 @@ export function GameTab({
                       <p className="text-sm text-white/20 italic">—</p>
                     )}
                   </div>
-                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage) && (
+                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
                     <div className="mt-auto flex flex-wrap gap-2">
+                      {!!stats?.opening && (
+                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                          {stats.opening} opening
+                        </span>
+                      )}
                       {player.handicap && player.handicap !== 100 && (
                         <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
                           {player.handicap}% handicap
@@ -267,7 +272,7 @@ export function GameTab({
                       )}
                       {!!stats?.autoscoutUsage && (
                         <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                          Auto scouted
+                          Auto scout
                         </span>
                       )}
                     </div>

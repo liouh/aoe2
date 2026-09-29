@@ -4,20 +4,8 @@ import { useMemo } from "react";
 import { TiltCard } from "./TiltCard";
 import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
-import { getBuildingName, getUnitName } from "@/lib/entityMappings";
+import { getBuildingName, getUnitName, isEconomic } from "@/lib/entityMappings";
 import { type TimelineEvent } from "@/lib/replayProcessor";
-
-export const isEconomic = (name: string) => {
-  const lower = name.toLowerCase();
-  return (
-    lower.includes("villager") ||
-    lower.includes("trade cart") ||
-    lower.includes("trade cog") ||
-    lower.includes("fishing ship") ||
-    lower.includes("transport ship") ||
-    lower.includes("mule cart")
-  );
-};
 
 interface StatsTabProps {
   players: any[];

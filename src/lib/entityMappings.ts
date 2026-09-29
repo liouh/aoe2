@@ -2609,3 +2609,15 @@ const ENTITY_NAMES: Record<number, string> = {
 export const getEntityName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined);
 export const getUnitName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined) ?? "Unknown Unit";
 export const getBuildingName = (id?: number) => (id !== undefined ? ENTITY_NAMES[id] : undefined) ?? "Unknown Building";
+
+export const isEconomic = (name: string): boolean => {
+  const lower = name.toLowerCase();
+  return (
+    lower.includes("villager") ||
+    lower.includes("trade cart") ||
+    lower.includes("trade cog") ||
+    lower.includes("fishing ship") ||
+    lower.includes("transport ship") ||
+    lower.includes("mule cart")
+  );
+};
