@@ -78,8 +78,6 @@ interface TimelineTabProps {
   selectedTime: number;
   getPlayerColor: (playerId?: number) => string;
   formatClock: (seconds: number) => string;
-  pendingJump?: boolean;
-  onJumpComplete?: () => void;
 }
 
 export function TimelineTab({
@@ -90,16 +88,12 @@ export function TimelineTab({
   selectedTime,
   getPlayerColor,
   formatClock,
-  pendingJump,
-  onJumpComplete,
 }: TimelineTabProps) {
   const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
   const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
-
-  const timelineRef = useRef<HTMLElement>(null);
 
   // Initialize player selections
   useEffect(() => {
@@ -111,26 +105,6 @@ export function TimelineTab({
       }
     }
   }, [players, leftPlayerId, rightPlayerId]);
-
-  // Handle scrolling (automatic tracking and pending jumps)
-  useEffect(() => {
-    if (pendingJump && timelineRef.current) {
-      // Use double requestAnimationFrame to ensure the layout has stabilized after tab switch
-      const rafId = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!timelineRef.current) return;
-          const targetOffset = selectedTime * TIMELINE_PX_PER_SECOND;
-          const containerTop = timelineRef.current.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({
-            top: containerTop + targetOffset,
-            behavior: "smooth",
-          });
-          onJumpComplete?.();
-        });
-      });
-      return () => cancelAnimationFrame(rafId);
-    }
-  }, [selectedTime, pendingJump, onJumpComplete]);
 
   const timelineHeight = useMemo(() => duration * TIMELINE_PX_PER_SECOND, [duration]);
 
@@ -272,7 +246,7 @@ export function TimelineTab({
   };
 
   return (
-    <section ref={timelineRef} className="w-full">
+    <section className="w-full">
       <div className="panel flex flex-col gap-6 rounded-3xl p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="headline text-2xl font-semibold">Timeline</h2>

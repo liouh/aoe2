@@ -136,8 +136,6 @@ interface MinimapProps {
   getPlayerColor: (playerId?: number) => string;
   getPlayerOutline: (playerId?: number) => string;
   formatClock: (seconds: number) => string;
-  setActiveTab: (tab: "game" | "stats" | "timeline") => void;
-  setPendingJump: (pending: boolean) => void;
   onOpenFile: (file: File) => void;
   onShowUrlInput: () => void;
   onCachedCanvasesReady: () => void | Promise<void>;
@@ -187,8 +185,6 @@ export function Minimap({
   getPlayerColor,
   getPlayerOutline,
   formatClock,
-  setActiveTab,
-  setPendingJump,
   onOpenFile,
   onShowUrlInput,
   onCachedCanvasesReady,
@@ -665,13 +661,6 @@ export function Minimap({
       container.removeEventListener("gesturechange", preventGesture);
     };
   }, []);
-
-
-  const jumpToTimeline = () => {
-    setIsPlaying(false);
-    setActiveTab("timeline");
-    setPendingJump(true);
-  };
 
   const buildEvents = useMemo(
     () => {
@@ -1792,7 +1781,7 @@ export function Minimap({
             event.preventDefault();
             try {
               (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-            } catch {}
+            } catch { }
             isDraggingRef.current = true;
             lastPointerRef.current = { x: event.clientX, y: event.clientY };
           } else if (pointerCount >= 2) {
@@ -1804,7 +1793,7 @@ export function Minimap({
             for (const pid of activePointersRef.current.keys()) {
               try {
                 (event.currentTarget as HTMLElement).setPointerCapture(pid);
-              } catch {}
+              } catch { }
             }
 
             const points = Array.from(activePointersRef.current.values());
@@ -1904,7 +1893,7 @@ export function Minimap({
             if ((event.currentTarget as HTMLElement).hasPointerCapture?.(event.pointerId)) {
               (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
             }
-          } catch {}
+          } catch { }
 
           const remainingCount = activePointersRef.current.size;
           if (remainingCount === 0) {
@@ -1924,7 +1913,7 @@ export function Minimap({
             if ((event.currentTarget as HTMLElement).hasPointerCapture?.(event.pointerId)) {
               (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
             }
-          } catch {}
+          } catch { }
 
           const remainingCount = activePointersRef.current.size;
           if (remainingCount === 0) {
@@ -2042,30 +2031,6 @@ export function Minimap({
         )}
         {!loading && !error && replay && (
           <>
-            <div
-              className="absolute left-1 md:left-2 bottom-2 z-10 flex flex-col gap-2 w-9 md:w-auto"
-              onPointerDown={(e) => e.stopPropagation()}
-              onDoubleClick={(e) => e.stopPropagation()}
-              onPointerMove={(e) => {
-                e.stopPropagation();
-                setHoveredEntity(null);
-              }}
-            >
-              <button
-                type="button"
-                className="flex h-9 items-center justify-center pointer-events-auto w-full px-0 md:px-3 rounded-xl border border-white/10 bg-white/10 text-xl md:text-sm font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm outline-none whitespace-nowrap"
-                tabIndex={-1}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleFullscreen(false);
-                  jumpToTimeline();
-                }}
-                title="Jump to timeline position"
-              >
-                <span className="md:hidden">▾</span>
-                <span className="hidden md:inline">Timeline</span>
-              </button>
-            </div>
             <div
               className="absolute right-1 md:right-2 bottom-2 z-10 flex flex-col gap-2 w-9"
               onPointerDown={(e) => e.stopPropagation()}

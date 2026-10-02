@@ -97,7 +97,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [activeTab, setActiveTab] = useState<"game" | "stats" | "timeline">("game");
-  const [pendingJump, setPendingJump] = useState(false);
   const [replayUrl, setReplayUrl] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
   const handleCachedCanvasesReady = useCallback(async () => {
@@ -420,8 +419,6 @@ export default function Home() {
             getPlayerColor={getPlayerColor}
             getPlayerOutline={getPlayerOutline}
             formatClock={formatClock}
-            setActiveTab={setActiveTab}
-            setPendingJump={setPendingJump}
             onOpenFile={handleFile}
             onShowUrlInput={() => {
               setIsPlaying(false);
@@ -499,8 +496,6 @@ export default function Home() {
                   selectedTime={selectedTime}
                   getPlayerColor={getPlayerColor}
                   formatClock={formatClock}
-                  pendingJump={pendingJump}
-                  onJumpComplete={() => setPendingJump(false)}
                 />
               </div>
             </div>
