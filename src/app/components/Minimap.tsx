@@ -221,6 +221,22 @@ export function Minimap({
   const playButtonRef = useRef<HTMLButtonElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const mapZoomRef = useRef(mapZoom);
+  const mapPanRef = useRef(mapPan);
+  const activePointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchStateRef = useRef<{
+    lastDistance: number;
+    lastCenter: { x: number; y: number };
+  } | null>(null);
+
+  useEffect(() => {
+    mapZoomRef.current = mapZoom;
+  }, [mapZoom]);
+
+  useEffect(() => {
+    mapPanRef.current = mapPan;
+  }, [mapPan]);
+
   const entityLookupRef = useRef<{
     tileToAnchor: Map<string, string>;
     buildings: Map<string, TimelineEvent>;
@@ -286,6 +302,10 @@ export function Minimap({
     setIsFullscreen(next);
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
+    mapZoomRef.current = 1;
+    mapPanRef.current = { x: 0, y: 0 };
+    activePointersRef.current.clear();
+    pinchStateRef.current = null;
   };
 
   const filters = useMemo(() => (
@@ -344,6 +364,10 @@ export function Minimap({
   useEffect(() => {
     setMapZoom(1);
     setMapPan({ x: 0, y: 0 });
+    mapZoomRef.current = 1;
+    mapPanRef.current = { x: 0, y: 0 };
+    activePointersRef.current.clear();
+    pinchStateRef.current = null;
     setMinimapViewFilters(DEFAULT_LAYERS);
     setHoveredEntity(null);
     iconCacheRef.current.clear();
@@ -385,7 +409,7 @@ export function Minimap({
     const rect = container.getBoundingClientRect();
     if (!rect.width || !rect.height) return pan;
 
-    const z = zoom ?? mapZoom;
+    const z = zoom ?? mapZoomRef.current;
     const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
     const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
     const mapSpan = Math.max(sizeX, sizeY);
@@ -424,7 +448,7 @@ export function Minimap({
       x: clamp(pan.x, minPanX, maxPanX),
       y: clamp(pan.y, minPanY, maxPanY),
     };
-  }, [mapZoom, mapInfo, matchInfo]);
+  }, [mapInfo, matchInfo]);
 
   const canPan = useMemo(() => {
     const container = mapContainerRef.current;
@@ -452,7 +476,11 @@ export function Minimap({
       setIsMobile(window.innerWidth < 768);
       setResizeKey((prev) => prev + 1);
       setHoveredEntity(null);
-      setMapPan((prev) => clampPan(prev));
+      setMapPan((prev) => {
+        const next = clampPan(prev);
+        mapPanRef.current = next;
+        return next;
+      });
     };
 
     handleResize();
@@ -477,49 +505,115 @@ export function Minimap({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
 
-    setMapZoom((prev) => {
-      const maxZoom = isMobile ? MINIMAP_ZOOM_MAX_MOBILE : MINIMAP_ZOOM_MAX;
-      const next = clamp(prev * zoomFactor, 1, maxZoom);
-      if (next === prev) return prev;
+    const currentZoom = mapZoomRef.current;
+    const currentPan = mapPanRef.current;
 
-      const mapSpan = Math.max(mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120, mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120);
-      const wScale = (rect.width - 2) / mapSpan;
-      const hScale = rect.height / (mapSpan * 0.5);
-      const baseScale = Math.min(wScale, hScale);
+    const maxZoom = isMobile ? MINIMAP_ZOOM_MAX_MOBILE : MINIMAP_ZOOM_MAX;
+    const nextZoom = clamp(currentZoom * zoomFactor, 1, maxZoom);
+    if (nextZoom === currentZoom) return;
 
-      const prevIsoScale = Math.max(1, baseScale * prev);
-      const nextIsoScale = Math.max(1, baseScale * next);
+    const mapSpan = Math.max(mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120, mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120);
+    const wScale = (rect.width - 2) / mapSpan;
+    const hScale = rect.height / (mapSpan * 0.5);
+    const baseScale = Math.min(wScale, hScale);
 
-      const prevOriginX = rect.width * 0.5 + mapPan.x;
-      const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
-      const prevOriginY = (rect.height - prevDiamondHeight) / 2 + mapPan.y;
+    const prevIsoScale = Math.max(1, baseScale * currentZoom);
+    const nextIsoScale = Math.max(1, baseScale * nextZoom);
 
-      const relX = targetX - prevOriginX;
-      const relY = targetY - prevOriginY;
-      const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
-      const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
+    const prevOriginX = rect.width * 0.5 + currentPan.x;
+    const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
+    const prevOriginY = (rect.height - prevDiamondHeight) / 2 + currentPan.y;
 
-      const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
-      const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
-      const nextOriginX_noPan = rect.width * 0.5;
+    const relX = targetX - prevOriginX;
+    const relY = targetY - prevOriginY;
+    const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
+    const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
 
-      const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
-      const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
+    const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
+    const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
+    const nextOriginX_noPan = rect.width * 0.5;
 
-      setMapPan(() =>
-        clampPan(
-          {
-            x: targetX - nextIsoX_noPan,
-            y: targetY - nextIsoY_noPan,
-          },
-          next
-        )
-      );
+    const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
+    const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
 
-      return next;
-    });
-  }, [isMobile, mapInfo, matchInfo, mapPan, clampPan]);
+    const nextPan = clampPan(
+      {
+        x: targetX - nextIsoX_noPan,
+        y: targetY - nextIsoY_noPan,
+      },
+      nextZoom
+    );
+
+    mapZoomRef.current = nextZoom;
+    mapPanRef.current = nextPan;
+    setMapZoom(nextZoom);
+    setMapPan(nextPan);
+  }, [isMobile, mapInfo, matchInfo, clampPan]);
+
+  const handlePinchZoom = useMemo(() => (
+    prevCenterScreen: { x: number; y: number },
+    newCenterScreen: { x: number; y: number },
+    zoomFactor: number
+  ) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const currentZoom = mapZoomRef.current;
+    const currentPan = mapPanRef.current;
+
+    const maxZoom = isMobile ? MINIMAP_ZOOM_MAX_MOBILE : MINIMAP_ZOOM_MAX;
+    const nextZoom = clamp(currentZoom * zoomFactor, 1, maxZoom);
+
+    const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+    const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
+    const mapSpan = Math.max(sizeX, sizeY);
+
+    const wScale = (rect.width - 2) / mapSpan;
+    const hScale = rect.height / (mapSpan * 0.5);
+    const baseScale = Math.min(wScale, hScale);
+
+    const prevIsoScale = Math.max(1, baseScale * currentZoom);
+    const nextIsoScale = Math.max(1, baseScale * nextZoom);
+
+    const prevCenter = {
+      x: prevCenterScreen.x - rect.left,
+      y: prevCenterScreen.y - rect.top,
+    };
+    const newCenter = {
+      x: newCenterScreen.x - rect.left,
+      y: newCenterScreen.y - rect.top,
+    };
+
+    const prevOriginX = rect.width * 0.5 + currentPan.x;
+    const prevDiamondHeight = mapSpan * prevIsoScale * 0.5;
+    const prevOriginY = (rect.height - prevDiamondHeight) / 2 + currentPan.y;
+
+    const relX = prevCenter.x - prevOriginX;
+    const relY = prevCenter.y - prevOriginY;
+    const rx = relX / prevIsoScale + (2 * relY) / prevIsoScale;
+    const ry = (2 * relY) / prevIsoScale - relX / prevIsoScale;
+
+    const nextDiamondHeight = mapSpan * nextIsoScale * 0.5;
+    const nextOriginY_noPan = (rect.height - nextDiamondHeight) / 2;
+    const nextOriginX_noPan = rect.width * 0.5;
+
+    const nextIsoX_noPan = (rx - ry) * nextIsoScale * 0.5 + nextOriginX_noPan;
+    const nextIsoY_noPan = (rx + ry) * nextIsoScale * 0.25 + nextOriginY_noPan;
+
+    const rawPanX = newCenter.x - nextIsoX_noPan;
+    const rawPanY = newCenter.y - nextIsoY_noPan;
+
+    const nextPan = clampPan({ x: rawPanX, y: rawPanY }, nextZoom);
+
+    mapZoomRef.current = nextZoom;
+    mapPanRef.current = nextPan;
+    setMapZoom(nextZoom);
+    setMapPan(nextPan);
+  }, [isMobile, mapInfo, matchInfo, clampPan]);
 
   // Focus play button when entering fullscreen
   useEffect(() => {
@@ -528,26 +622,49 @@ export function Minimap({
     }
   }, [isFullscreen]);
 
-  // Handle mouse wheel zoom with native listener to avoid "passive event" issues
+  // Handle mouse wheel and trackpad pinch zoom with native listener to avoid "passive event" issues
   useEffect(() => {
     const container = mapContainerRef.current;
     if (!container) return;
 
     const handleWheel = (event: WheelEvent) => {
-      if (!isFullscreen) return;
+      if (!isFullscreen && !event.ctrlKey) return;
       event.preventDefault();
 
       const rect = container.getBoundingClientRect();
       const targetX = event.clientX - rect.left;
       const targetY = event.clientY - rect.top;
 
-      const zoomFactor = event.deltaY < 0 ? MINIMAP_MOUSE_ZOOM_FACTOR : 1 / MINIMAP_MOUSE_ZOOM_FACTOR;
+      let zoomFactor: number;
+      if (event.ctrlKey && Math.abs(event.deltaY) < 40) {
+        zoomFactor = clamp(Math.exp(-event.deltaY * 0.01), 1 / MINIMAP_MOUSE_ZOOM_FACTOR, MINIMAP_MOUSE_ZOOM_FACTOR);
+      } else {
+        zoomFactor = event.deltaY < 0 ? MINIMAP_MOUSE_ZOOM_FACTOR : 1 / MINIMAP_MOUSE_ZOOM_FACTOR;
+      }
       handleZoom(targetX, targetY, zoomFactor);
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
   }, [isFullscreen, handleZoom]);
+
+  // Prevent Safari viewport gestures while pinching on the minimap
+  useEffect(() => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    const preventGesture = (e: Event) => {
+      e.preventDefault();
+    };
+
+    container.addEventListener("gesturestart", preventGesture);
+    container.addEventListener("gesturechange", preventGesture);
+
+    return () => {
+      container.removeEventListener("gesturestart", preventGesture);
+      container.removeEventListener("gesturechange", preventGesture);
+    };
+  }, []);
 
 
   const jumpToTimeline = () => {
@@ -1636,103 +1753,209 @@ export function Minimap({
           }`}
         ref={mapContainerRef}
         style={{
-          touchAction: canPan ? "none" : "pan-y",
+          touchAction: isFullscreen || canPan ? "none" : "pan-y",
         }}
         onPointerDown={(event) => {
-          const now = performance.now();
-          const rect = event.currentTarget.getBoundingClientRect();
-          const cursorX = event.clientX - rect.left;
-          const cursorY = event.clientY - rect.top;
+          activePointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
-          if (lastTapRef.current && now - lastTapRef.current.time < 300) {
-            const dx = cursorX - lastTapRef.current.x;
-            const dy = cursorY - lastTapRef.current.y;
-            if (Math.hypot(dx, dy) < 30) {
-              handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
-              lastTapRef.current = null;
-              event.preventDefault();
-              return;
+          const pointerCount = activePointersRef.current.size;
+
+          if (pointerCount === 1) {
+            const now = performance.now();
+            const rect = event.currentTarget.getBoundingClientRect();
+            const cursorX = event.clientX - rect.left;
+            const cursorY = event.clientY - rect.top;
+
+            if (lastTapRef.current && now - lastTapRef.current.time < 300) {
+              const dx = cursorX - lastTapRef.current.x;
+              const dy = cursorY - lastTapRef.current.y;
+              if (Math.hypot(dx, dy) < 30) {
+                handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
+                lastTapRef.current = null;
+                event.preventDefault();
+                return;
+              }
             }
+            lastTapRef.current = { time: now, x: cursorX, y: cursorY };
+
+            const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
+            const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
+            const mapSpan = Math.max(sizeX, sizeY);
+            const widthScale = (rect.width - 2) / mapSpan;
+            const heightScale = rect.height / (mapSpan * 0.5);
+            const isoScale = Math.max(1, Math.min(widthScale, heightScale) * mapZoomRef.current);
+            const isOverflowing =
+              mapSpan * isoScale > rect.width ||
+              mapSpan * isoScale * 0.5 > rect.height;
+
+            if (!isFullscreen && !isOverflowing && mapPanRef.current.x === 0 && mapPanRef.current.y === 0) return;
+            event.preventDefault();
+            try {
+              (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+            } catch {}
+            isDraggingRef.current = true;
+            lastPointerRef.current = { x: event.clientX, y: event.clientY };
+          } else if (pointerCount >= 2) {
+            lastTapRef.current = null;
+            isDraggingRef.current = false;
+            lastPointerRef.current = null;
+
+            event.preventDefault();
+            for (const pid of activePointersRef.current.keys()) {
+              try {
+                (event.currentTarget as HTMLElement).setPointerCapture(pid);
+              } catch {}
+            }
+
+            const points = Array.from(activePointersRef.current.values());
+            const p1 = points[0];
+            const p2 = points[1];
+            const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const center = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+            pinchStateRef.current = { lastDistance: dist, lastCenter: center };
           }
-          lastTapRef.current = { time: now, x: cursorX, y: cursorY };
-
-          const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
-          const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
-          const mapSpan = Math.max(sizeX, sizeY);
-          const widthScale = (rect.width - 2) / mapSpan;
-          const heightScale = rect.height / (mapSpan * 0.5);
-          const isoScale = Math.max(1, Math.min(widthScale, heightScale) * mapZoom);
-          const isOverflowing =
-            mapSpan * isoScale > rect.width ||
-            mapSpan * isoScale * 0.5 > rect.height;
-
-          if (!isOverflowing && mapPan.x === 0 && mapPan.y === 0) return;
-          event.preventDefault();
-          isDraggingRef.current = true;
-          lastPointerRef.current = { x: event.clientX, y: event.clientY };
-          (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
+          if (activePointersRef.current.has(event.pointerId)) {
+            activePointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          }
+
+          const pointerCount = activePointersRef.current.size;
+
+          if (pointerCount >= 2 && pinchStateRef.current) {
+            event.preventDefault();
+            const points = Array.from(activePointersRef.current.values());
+            const p1 = points[0];
+            const p2 = points[1];
+            const newDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const newCenter = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+
+            if (pinchStateRef.current.lastDistance > 10 && newDist > 10) {
+              const zoomFactor = newDist / pinchStateRef.current.lastDistance;
+              handlePinchZoom(pinchStateRef.current.lastCenter, newCenter, zoomFactor);
+              pinchStateRef.current = {
+                lastDistance: newDist,
+                lastCenter: newCenter,
+              };
+            }
+            setHoveredEntity(null);
+            return;
+          }
+
           if (isDraggingRef.current && lastPointerRef.current) {
             const dx = event.clientX - lastPointerRef.current.x;
             const dy = event.clientY - lastPointerRef.current.y;
             lastPointerRef.current = { x: event.clientX, y: event.clientY };
-            setMapPan((prev) => clampPan({ x: prev.x + dx, y: prev.y + dy }));
+            const nextPan = clampPan({ x: mapPanRef.current.x + dx, y: mapPanRef.current.y + dy }, mapZoomRef.current);
+            mapPanRef.current = nextPan;
+            setMapPan(nextPan);
           }
 
-          const canvas = canvasRef.current;
-          if (canvas) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-            const {
-              tileToAnchor,
-              buildings,
-              isoScale,
-              isoOriginX,
-              isoOriginY,
-              sizeX,
-            } = entityLookupRef.current;
+          if (!isDraggingRef.current && pointerCount <= 1) {
+            const canvas = canvasRef.current;
+            if (canvas) {
+              const rect = canvas.getBoundingClientRect();
+              const mouseX = event.clientX - rect.left;
+              const mouseY = event.clientY - rect.top;
+              const {
+                tileToAnchor,
+                buildings,
+                isoScale,
+                isoOriginX,
+                isoOriginY,
+                sizeX,
+              } = entityLookupRef.current;
 
-            const relX = mouseX - isoOriginX;
-            const relY = mouseY - isoOriginY;
+              const relX = mouseX - isoOriginX;
+              const relY = mouseY - isoOriginY;
 
-            const rx = relX / isoScale + (2 * relY) / isoScale;
-            const ry = (2 * relY) / isoScale - relX / isoScale;
+              const rx = relX / isoScale + (2 * relY) / isoScale;
+              const ry = (2 * relY) / isoScale - relX / isoScale;
 
-            const gameY = rx;
-            const gameX = sizeX - ry;
+              const gameY = rx;
+              const gameX = sizeX - ry;
 
-            const tx = Math.floor(gameX);
-            const ty = Math.floor(gameY);
-            const tileKey = `${tx},${ty}`;
+              const tx = Math.floor(gameX);
+              const ty = Math.floor(gameY);
+              const tileKey = `${tx},${ty}`;
 
-            const anchorKey = tileToAnchor.get(tileKey);
-            const building = anchorKey ? buildings.get(anchorKey) : null;
-            const isVisibleBuilding = building && (
-              isFarmId(building.buildingTypeId) ? showFarms : showBuildingOutlines
-            );
-            if (isVisibleBuilding && building) {
-              setHoveredEntity({
-                name: getBuildingName(building.buildingTypeId),
-                playerId: building.playerId,
-                type: "building",
-                anchorKey,
-              });
-              setTooltipPos({ x: event.clientX, y: event.clientY });
-            } else {
-              setHoveredEntity(null);
+              const anchorKey = tileToAnchor.get(tileKey);
+              const building = anchorKey ? buildings.get(anchorKey) : null;
+              const isVisibleBuilding = building && (
+                isFarmId(building.buildingTypeId) ? showFarms : showBuildingOutlines
+              );
+              if (isVisibleBuilding && building) {
+                setHoveredEntity({
+                  name: getBuildingName(building.buildingTypeId),
+                  playerId: building.playerId,
+                  type: "building",
+                  anchorKey,
+                });
+                setTooltipPos({ x: event.clientX, y: event.clientY });
+              } else {
+                setHoveredEntity(null);
+              }
             }
           }
         }}
         onPointerUp={(event) => {
-          isDraggingRef.current = false;
-          lastPointerRef.current = null;
-          (event.currentTarget as HTMLDivElement).releasePointerCapture(event.pointerId);
+          activePointersRef.current.delete(event.pointerId);
+          try {
+            if ((event.currentTarget as HTMLElement).hasPointerCapture?.(event.pointerId)) {
+              (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+            }
+          } catch {}
+
+          const remainingCount = activePointersRef.current.size;
+          if (remainingCount === 0) {
+            isDraggingRef.current = false;
+            lastPointerRef.current = null;
+            pinchStateRef.current = null;
+          } else if (remainingCount === 1) {
+            pinchStateRef.current = null;
+            const [remainingPointer] = Array.from(activePointersRef.current.values());
+            lastPointerRef.current = { x: remainingPointer.x, y: remainingPointer.y };
+            isDraggingRef.current = true;
+          }
         }}
-        onPointerLeave={() => {
-          isDraggingRef.current = false;
-          lastPointerRef.current = null;
+        onPointerCancel={(event) => {
+          activePointersRef.current.delete(event.pointerId);
+          try {
+            if ((event.currentTarget as HTMLElement).hasPointerCapture?.(event.pointerId)) {
+              (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+            }
+          } catch {}
+
+          const remainingCount = activePointersRef.current.size;
+          if (remainingCount === 0) {
+            isDraggingRef.current = false;
+            lastPointerRef.current = null;
+            pinchStateRef.current = null;
+          } else if (remainingCount === 1) {
+            pinchStateRef.current = null;
+            const [remainingPointer] = Array.from(activePointersRef.current.values());
+            lastPointerRef.current = { x: remainingPointer.x, y: remainingPointer.y };
+            isDraggingRef.current = true;
+          }
+        }}
+        onPointerLeave={(event) => {
+          try {
+            if (!event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+              activePointersRef.current.delete(event.pointerId);
+              if (activePointersRef.current.size === 0) {
+                isDraggingRef.current = false;
+                lastPointerRef.current = null;
+                pinchStateRef.current = null;
+              }
+            }
+          } catch {
+            activePointersRef.current.delete(event.pointerId);
+            if (activePointersRef.current.size === 0) {
+              isDraggingRef.current = false;
+              lastPointerRef.current = null;
+              pinchStateRef.current = null;
+            }
+          }
           setHoveredEntity(null);
         }}
       >
