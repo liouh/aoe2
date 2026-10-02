@@ -872,37 +872,37 @@ export const buildTimeline = (
     initialInstances.forEach((obj, idx) => {
       // Process Gaia (player 0) objects for analysis
       if (obj.player_id === 0) {
-        const typeName = getEntityName(obj.object_type_id) ?? `Unknown (${obj.object_type_id})`;
         const entity = getEntity(obj.object_type_id);
+        const entityName = getEntityName(obj.object_type_id) ?? `Unknown (${obj.object_type_id})`;
 
         if (DEBUG) {
-          const comboKey = `${typeName} (Type ${obj.object_type_id}, Kind ${obj.object_kind})`;
+          const comboKey = `${entityName} (Type ${obj.object_type_id}, Kind ${obj.object_kind})`;
           gaiaCombinations[comboKey] = (gaiaCombinations[comboKey] || 0) + 1;
         }
 
         // Track resource locations
-        if (typeName.includes("Gold Mine")) {
+        if (entityName.includes("Gold Mine")) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "gold";
-        } else if (typeName.includes("Stone Mine")) {
+        } else if (entityName.includes("Stone Mine")) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "stone";
-        } else if (typeName === "Relic") {
+        } else if (entityName === "Relic") {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "relic";
         } else if (
-          typeName.includes("Forage Bush") ||
-          typeName.includes("Fruit Bush") ||
-          typeName.includes("Pineapple Bush") ||
-          typeName.includes("Papaya Tree")
+          entityName.includes("Forage Bush") ||
+          entityName.includes("Fruit Bush") ||
+          entityName.includes("Pineapple Bush") ||
+          entityName.includes("Papaya Tree")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
         } else if (
-          typeName.toLowerCase().includes("tree") ||
-          typeName.toLowerCase().includes("bush")
+          entityName.toLowerCase().includes("tree") ||
+          entityName.toLowerCase().includes("bush")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "wood";
         } else if (
           (entity?.class === 1 || entity?.class === 6) &&
-          obj.x !== undefined &&
-          obj.y !== undefined
+          obj.x !== undefined && obj.y !== undefined &&
+          !entityName.toLowerCase().includes("blocker")
         ) {
           const footprint = getBuildingFootprint(obj.object_type_id);
           const w = footprint.w;

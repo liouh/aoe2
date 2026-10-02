@@ -77,8 +77,8 @@ const MINIMAP_RESOURCE_COLORS = {
   wood: "#195e2b",
 } as const;
 
-const ALL_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
-const DEFAULT_LAYERS = ["terrain", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
+const ALL_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
+const DEFAULT_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
 
 const VIEW_OPTIONS = [
   {
@@ -94,7 +94,7 @@ const VIEW_OPTIONS = [
   {
     id: "classic",
     label: "Classic view",
-    layers: ["terrain", "footprints", "icons", "gatherpoints", "flares"],
+    layers: ["terrain", "obstacles", "footprints", "icons", "gatherpoints", "flares"],
   },
   {
     id: "default",
@@ -104,7 +104,7 @@ const VIEW_OPTIONS = [
   {
     id: "map_only",
     label: "Map only view",
-    layers: ["terrain", "resources", "relics"],
+    layers: ["terrain", "obstacles", "resources", "relics"],
   },
   {
     id: "moves",
@@ -209,6 +209,7 @@ export function Minimap({
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const terrainCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const obstacleCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const resourceCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const relicCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const readyReplayRef = useRef<any>(null);
@@ -268,6 +269,7 @@ export function Minimap({
 
   const minimapViewOptions: SelectOption<string>[] = [
     { id: "terrain", label: "Terrain" },
+    { id: "obstacles", label: "Obstacles" },
     { id: "resources", label: "Resources" },
     { id: "relics", label: "Relics" },
     { id: "landmark_icons", label: "TC & castle markers" },
@@ -288,6 +290,14 @@ export function Minimap({
 
   const filters = useMemo(() => (
     <>
+      <Select
+        options={viewSelectOptions}
+        selectedId={currentViewId}
+        onSelect={(id) => handleViewSelect(id as string)}
+        placeholder="Custom view"
+        align="left"
+        closeOnSelect={false}
+      />
       <Select
         options={minimapViewOptions}
         selectedId={minimapViewFilters}
@@ -315,13 +325,6 @@ export function Minimap({
         placeholder="Select layers"
         align="left"
       />
-      <Select
-        options={viewSelectOptions}
-        selectedId={currentViewId}
-        onSelect={(id) => handleViewSelect(id as string)}
-        placeholder="Custom view"
-        align="left"
-      />
     </>
   ), [minimapViewOptions, minimapViewFilters, viewSelectOptions, currentViewId]);
 
@@ -334,6 +337,7 @@ export function Minimap({
   const showResources = minimapViewFilters.includes("resources");
   const showRelics = minimapViewFilters.includes("relics");
   const showTerrain = minimapViewFilters.includes("terrain");
+  const showObstacles = minimapViewFilters.includes("obstacles");
   const showFlares = minimapViewFilters.includes("flares");
   const showBuildings = showBuildingOutlines || showBuildingIcons || showFarms || showLandmarkIcons;
 
@@ -345,6 +349,7 @@ export function Minimap({
     setHoveredEntity(null);
     iconCacheRef.current.clear();
     terrainCanvasRef.current = null;
+    obstacleCanvasRef.current = null;
     resourceCanvasRef.current = null;
     relicCanvasRef.current = null;
     readyReplayRef.current = null;
@@ -749,30 +754,28 @@ export function Minimap({
       return { x: isoX, y: isoY };
     };
 
+    const terrainWidth = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.5;
+    const terrainHeight = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.25;
+    const offOriginX = sizeX! * BASE_TERRAIN_SCALE * 0.5;
+    const offOriginY = 0;
+
+    const toOffscreen = (x: number, y: number) => {
+      const rx = y;
+      const ry = sizeX! - x;
+      const isoX = (rx - ry) * BASE_TERRAIN_SCALE * 0.5 + offOriginX;
+      const isoY = (rx + ry) * BASE_TERRAIN_SCALE * 0.25 + offOriginY;
+      return { x: isoX, y: isoY };
+    };
+
     // High-resolution terrain cache
     if (!terrainCanvasRef.current) {
-      if (!terrainCanvasRef.current) {
-        terrainCanvasRef.current = document.createElement("canvas");
-      }
+      terrainCanvasRef.current = document.createElement("canvas");
       const terrainCanvas = terrainCanvasRef.current!;
-      const terrainWidth = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.5;
-      const terrainHeight = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.25;
       terrainCanvas.width = terrainWidth;
       terrainCanvas.height = terrainHeight;
 
       const terrainContext = terrainCanvas.getContext("2d");
       if (terrainContext && sizeX && sizeY) {
-        const offOriginX = sizeX * BASE_TERRAIN_SCALE * 0.5;
-        const offOriginY = 0;
-
-        const toOffscreen = (x: number, y: number) => {
-          const rx = y;
-          const ry = sizeX - x;
-          const isoX = (rx - ry) * BASE_TERRAIN_SCALE * 0.5 + offOriginX;
-          const isoY = (rx + ry) * BASE_TERRAIN_SCALE * 0.25 + offOriginY;
-          return { x: isoX, y: isoY };
-        };
-
         const panelColor =
           getComputedStyle(canvas).getPropertyValue("background-color")?.trim() ||
           "#1c1610";
@@ -784,12 +787,11 @@ export function Minimap({
           terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
-              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number; isCliff?: boolean };
-              const isCliff = tile?.isCliff || (mapCliffs && mapCliffs[`${x},${y}`]);
+              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
               const terrainType = tile?.terrain_type ?? 14;
-              let terrainColor = isCliff ? MINIMAP_CLIFF_COLOR : (TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892");
+              let terrainColor = TERRAIN_MINIMAP_COLORS[terrainType] ?? "#cbb892";
 
-              if (!isCliff && tile?.elevation !== undefined) {
+              if (tile?.elevation !== undefined) {
                 terrainColor = shadeColor(terrainColor, getElevationShadePercent(tile.elevation));
               }
 
@@ -813,16 +815,14 @@ export function Minimap({
 
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
-              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number; isCliff?: boolean };
-              const isCliff = tile?.isCliff || (mapCliffs && mapCliffs[`${x},${y}`]);
+              const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
               const e = tile?.elevation ?? 0;
 
               // Check East boundary (shared edge p2 -> p3)
               if (x + 1 < sizeX) {
-                const neighbor = tiles[y * sizeX + (x + 1)] as { terrain_type?: number; elevation?: number; isCliff?: boolean };
-                const isCliffEast = neighbor?.isCliff || (mapCliffs && mapCliffs[`${x + 1},${y}`]);
+                const neighbor = tiles[y * sizeX + (x + 1)] as { terrain_type?: number; elevation?: number };
                 const eEast = neighbor?.elevation ?? e;
-                if (e !== eEast && !isCliff && !isCliffEast) {
+                if (e !== eEast) {
                   const higherTile = e >= eEast ? tile : neighbor;
                   const higherElev = higherTile?.elevation ?? 0;
                   const terType = higherTile?.terrain_type ?? 14;
@@ -843,10 +843,9 @@ export function Minimap({
 
               // Check South boundary (shared edge p4 -> p3)
               if (y + 1 < sizeY) {
-                const neighbor = tiles[(y + 1) * sizeX + x] as { terrain_type?: number; elevation?: number; isCliff?: boolean };
-                const isCliffSouth = neighbor?.isCliff || (mapCliffs && mapCliffs[`${x},${y + 1}`]);
+                const neighbor = tiles[(y + 1) * sizeX + x] as { terrain_type?: number; elevation?: number };
                 const eSouth = neighbor?.elevation ?? e;
-                if (e !== eSouth && !isCliff && !isCliffSouth) {
+                if (e !== eSouth) {
                   const higherTile = e >= eSouth ? tile : neighbor;
                   const higherElev = higherTile?.elevation ?? 0;
                   const terType = higherTile?.terrain_type ?? 14;
@@ -893,92 +892,118 @@ export function Minimap({
             }
             terrainContext.stroke();
           }
-
-          // Draw cliff 3D directional highlight and shadow edges around each cliff set
-          const cliffHighlightLines: number[] = [];
-          const cliffShadowLines: number[] = [];
-          const cliffHighlightColor = shadeColor(MINIMAP_CLIFF_COLOR, MINIMAP_CLIFF_HIGHLIGHT_PERCENT);
-          const cliffShadowColor = shadeColor(MINIMAP_CLIFF_COLOR, MINIMAP_CLIFF_SHADOW_PERCENT);
-
-          const isCliffTile = (cx: number, cy: number) => {
-            if (cx < 0 || cx >= sizeX || cy < 0 || cy >= sizeY) return false;
-            const t = tiles[cy * sizeX + cx] as { isCliff?: boolean } | undefined;
-            return Boolean(t?.isCliff || (mapCliffs && mapCliffs[`${cx},${cy}`]));
-          };
-
-          for (let y = 0; y < sizeY; y += 1) {
-            for (let x = 0; x < sizeX; x += 1) {
-              if (!isCliffTile(x, y)) continue;
-
-              const p1 = toOffscreen(x, y);
-              const p2 = toOffscreen(x + 1, y);
-              const p3 = toOffscreen(x + 1, y + 1);
-              const p4 = toOffscreen(x, y + 1);
-
-              // NW edge (p1 -> p2): faces North-West sunward -> Highlight
-              if (!isCliffTile(x, y - 1)) {
-                cliffHighlightLines.push(p1.x, p1.y, p2.x, p2.y);
-              }
-
-              // NE edge (p2 -> p3): faces North-East sunward -> Highlight
-              if (!isCliffTile(x + 1, y)) {
-                cliffHighlightLines.push(p2.x, p2.y, p3.x, p3.y);
-              }
-
-              // SE edge (p3 -> p4): faces South-East leeward -> Shadow
-              if (!isCliffTile(x, y + 1)) {
-                cliffShadowLines.push(p3.x, p3.y, p4.x, p4.y);
-              }
-
-              // SW edge (p4 -> p1): faces South-West leeward -> Shadow
-              if (!isCliffTile(x - 1, y)) {
-                cliffShadowLines.push(p4.x, p4.y, p1.x, p1.y);
-              }
-            }
-          }
-
-          if (cliffShadowLines.length > 0 || cliffHighlightLines.length > 0) {
-            terrainContext.lineWidth = MINIMAP_TERRAIN_CONTOUR_WIDTH;
-            terrainContext.lineCap = "round";
-            terrainContext.lineJoin = "round";
-
-            // 1. Cliff shadow lines first
-            if (cliffShadowLines.length > 0) {
-              terrainContext.strokeStyle = cliffShadowColor;
-              terrainContext.beginPath();
-              for (let i = 0; i < cliffShadowLines.length; i += 4) {
-                terrainContext.moveTo(cliffShadowLines[i], cliffShadowLines[i + 1]);
-                terrainContext.lineTo(cliffShadowLines[i + 2], cliffShadowLines[i + 3]);
-              }
-              terrainContext.stroke();
-            }
-
-            // 2. Cliff highlight lines on top
-            if (cliffHighlightLines.length > 0) {
-              terrainContext.strokeStyle = cliffHighlightColor;
-              terrainContext.beginPath();
-              for (let i = 0; i < cliffHighlightLines.length; i += 4) {
-                terrainContext.moveTo(cliffHighlightLines[i], cliffHighlightLines[i + 1]);
-                terrainContext.lineTo(cliffHighlightLines[i + 2], cliffHighlightLines[i + 3]);
-              }
-              terrainContext.stroke();
-            }
-          }
         }
       }
     }
 
-    const resourceWidth = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.5;
-    const resourceHeight = (sizeX! + sizeY!) * BASE_TERRAIN_SCALE * 0.25;
-    const resourceOriginX = sizeX! * BASE_TERRAIN_SCALE * 0.5;
-    const toOffscreen = (x: number, y: number) => {
-      const rx = y;
-      const ry = sizeX! - x;
-      return { x: (rx - ry) * BASE_TERRAIN_SCALE * 0.5 + resourceOriginX, y: (rx + ry) * BASE_TERRAIN_SCALE * 0.25 };
+    const drawObstacleLayer = (target: HTMLCanvasElement) => {
+      target.width = terrainWidth;
+      target.height = terrainHeight;
+      const obstacleContext = target.getContext("2d");
+      if (!obstacleContext || !sizeX || !sizeY) return;
+
+      const tiles = mapInfo?.tiles;
+      const isCliffTile = (cx: number, cy: number) => {
+        if (cx < 0 || cx >= sizeX || cy < 0 || cy >= sizeY) return false;
+        const t = tiles?.[cy * sizeX + cx] as { isCliff?: boolean } | undefined;
+        return Boolean(t?.isCliff || (mapCliffs && mapCliffs[`${cx},${cy}`]));
+      };
+
+      // 1. Fill cliff diamonds
+      obstacleContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
+      obstacleContext.fillStyle = MINIMAP_CLIFF_COLOR;
+      for (let y = 0; y < sizeY; y += 1) {
+        for (let x = 0; x < sizeX; x += 1) {
+          if (!isCliffTile(x, y)) continue;
+
+          const p1 = toOffscreen(x, y);
+          const p2 = toOffscreen(x + 1, y);
+          const p3 = toOffscreen(x + 1, y + 1);
+          const p4 = toOffscreen(x, y + 1);
+          obstacleContext.beginPath();
+          obstacleContext.moveTo(p1.x, p1.y);
+          obstacleContext.lineTo(p2.x, p2.y);
+          obstacleContext.lineTo(p3.x, p3.y);
+          obstacleContext.lineTo(p4.x, p4.y);
+          obstacleContext.closePath();
+          obstacleContext.fill();
+        }
+      }
+
+      // 2. Draw cliff 3D directional highlight and shadow edges around each cliff set
+      const cliffHighlightLines: number[] = [];
+      const cliffShadowLines: number[] = [];
+      const cliffHighlightColor = shadeColor(MINIMAP_CLIFF_COLOR, MINIMAP_CLIFF_HIGHLIGHT_PERCENT);
+      const cliffShadowColor = shadeColor(MINIMAP_CLIFF_COLOR, MINIMAP_CLIFF_SHADOW_PERCENT);
+
+      for (let y = 0; y < sizeY; y += 1) {
+        for (let x = 0; x < sizeX; x += 1) {
+          if (!isCliffTile(x, y)) continue;
+
+          const p1 = toOffscreen(x, y);
+          const p2 = toOffscreen(x + 1, y);
+          const p3 = toOffscreen(x + 1, y + 1);
+          const p4 = toOffscreen(x, y + 1);
+
+          // NW edge (p1 -> p2): faces North-West sunward -> Highlight
+          if (!isCliffTile(x, y - 1)) {
+            cliffHighlightLines.push(p1.x, p1.y, p2.x, p2.y);
+          }
+
+          // NE edge (p2 -> p3): faces North-East sunward -> Highlight
+          if (!isCliffTile(x + 1, y)) {
+            cliffHighlightLines.push(p2.x, p2.y, p3.x, p3.y);
+          }
+
+          // SE edge (p3 -> p4): faces South-East leeward -> Shadow
+          if (!isCliffTile(x, y + 1)) {
+            cliffShadowLines.push(p3.x, p3.y, p4.x, p4.y);
+          }
+
+          // SW edge (p4 -> p1): faces South-West leeward -> Shadow
+          if (!isCliffTile(x - 1, y)) {
+            cliffShadowLines.push(p4.x, p4.y, p1.x, p1.y);
+          }
+        }
+      }
+
+      if (cliffShadowLines.length > 0 || cliffHighlightLines.length > 0) {
+        obstacleContext.lineWidth = MINIMAP_TERRAIN_CONTOUR_WIDTH;
+        obstacleContext.lineCap = "round";
+        obstacleContext.lineJoin = "round";
+
+        // 1. Cliff shadow lines first
+        if (cliffShadowLines.length > 0) {
+          obstacleContext.strokeStyle = cliffShadowColor;
+          obstacleContext.beginPath();
+          for (let i = 0; i < cliffShadowLines.length; i += 4) {
+            obstacleContext.moveTo(cliffShadowLines[i], cliffShadowLines[i + 1]);
+            obstacleContext.lineTo(cliffShadowLines[i + 2], cliffShadowLines[i + 3]);
+          }
+          obstacleContext.stroke();
+        }
+
+        // 2. Cliff highlight lines on top
+        if (cliffHighlightLines.length > 0) {
+          obstacleContext.strokeStyle = cliffHighlightColor;
+          obstacleContext.beginPath();
+          for (let i = 0; i < cliffHighlightLines.length; i += 4) {
+            obstacleContext.moveTo(cliffHighlightLines[i], cliffHighlightLines[i + 1]);
+            obstacleContext.lineTo(cliffHighlightLines[i + 2], cliffHighlightLines[i + 3]);
+          }
+          obstacleContext.stroke();
+        }
+      }
     };
+
+    if (!obstacleCanvasRef.current) {
+      obstacleCanvasRef.current = document.createElement("canvas");
+      drawObstacleLayer(obstacleCanvasRef.current);
+    }
+
     const drawResourceLayer = (target: HTMLCanvasElement, relicLayer: boolean) => {
-      target.width = resourceWidth;
-      target.height = resourceHeight;
+      target.width = terrainWidth;
+      target.height = terrainHeight;
       const resourceContext = target.getContext("2d");
       if (!resourceContext) return;
       // Draw resources above terrain and contour lines with 3D directional bevel outlines
@@ -1085,6 +1110,7 @@ export function Minimap({
     if (
       replay &&
       terrainCanvasRef.current &&
+      obstacleCanvasRef.current &&
       resourceCanvasRef.current &&
       relicCanvasRef.current &&
       readyReplayRef.current !== replay
@@ -1112,6 +1138,7 @@ export function Minimap({
     };
 
     drawCachedCanvas(terrainCanvasRef.current, showTerrain);
+    drawCachedCanvas(obstacleCanvasRef.current, showObstacles);
     drawCachedCanvas(resourceCanvasRef.current, showResources);
     drawCachedCanvas(relicCanvasRef.current, showRelics);
 
@@ -1560,6 +1587,8 @@ export function Minimap({
     showResources,
     showRelics,
     showTerrain,
+    showObstacles,
+    mapCliffs,
     showGatherpoints,
     showFlares,
     moveEvents,

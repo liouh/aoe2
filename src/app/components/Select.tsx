@@ -20,6 +20,7 @@ interface SelectProps<T> {
   multiLabel?: string;
   singleLabel?: string;
   placeholder?: string;
+  closeOnSelect?: boolean;
 }
 
 export function Select<T extends string | number | undefined>({
@@ -32,6 +33,7 @@ export function Select<T extends string | number | undefined>({
   multiLabel = "items",
   singleLabel,
   placeholder = "Select...",
+  closeOnSelect = !multi,
 }: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -89,7 +91,7 @@ export function Select<T extends string | number | undefined>({
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < options.length) {
           onSelect(options[highlightedIndex].id);
-          if (!multi) setIsOpen(false);
+          if (closeOnSelect) setIsOpen(false);
         }
         break;
       case "Escape":
@@ -163,7 +165,7 @@ export function Select<T extends string | number | undefined>({
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
                 onClick={() => {
                   onSelect(option.id);
-                  if (!multi) setIsOpen(false);
+                  if (closeOnSelect) setIsOpen(false);
                 }}
                 onMouseEnter={() => setHighlightedIndex(idx)}
                 role="option"
