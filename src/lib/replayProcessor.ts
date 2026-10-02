@@ -1474,12 +1474,30 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
 
   const timestamp = rawTimestamp !== undefined && rawTimestamp > 0 ? rawTimestamp : undefined;
 
+  const isCampaign =
+    (replayData?.campaign ?? 0) > 0 ||
+    (replayData?.king_campaign ?? 0) > 0 ||
+    settings?.resolved_map_id === 4294967293 ||
+    settings?.resolved_map_id === -3;
+
+  const isScenario =
+    replayData?.game_mode === 1 ||
+    settings?.resolved_map_id === 4294967294 ||
+    settings?.resolved_map_id === -2 ||
+    settings?.resolved_map_id === 0;
+
+  const gameTypeId = isCampaign
+    ? 4
+    : isScenario
+    ? 3
+    : pickNumber(settings?.game_type);
+
   return {
     mapTypeId,
     customMapName: customMapMetadata?.name,
     customMapPackName: customMapMetadata?.packName,
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
-    gameTypeId: pickNumber(settings?.game_type),
+    gameTypeId,
     difficultyId,
     difficultyName,
     populationLimit: pickNumber(settings?.population_limit),

@@ -48,6 +48,12 @@ export const getMapSizeName = (id?: number) => (id !== undefined ? MAP_SIZES[id]
 
 export const MAP_TYPES: Record<number, string> = {
   0: "Custom Scenario",
+  [-3]: "Campaign",
+  [-2]: "Custom Scenario",
+  [-1]: "Custom Map",
+  4294967293: "Campaign",
+  4294967294: "Custom Scenario",
+  4294967295: "Custom Map",
   1: "Unassigned",
   2: "Unassigned",
   3: "Unassigned",
