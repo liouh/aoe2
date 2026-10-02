@@ -188,11 +188,15 @@ export default function Home() {
     setLoadingStep(0);
     await waitForPaint();
 
-    if (!isDefault) {
-      sendGAEvent("event", "upload_replay", {
-        replay_name: filename,
-        ...(sourceUrl ? { source_url: sourceUrl } : {})
-      });
+    if (!isDefault && process.env.NEXT_PUBLIC_GA_ID) {
+      try {
+        sendGAEvent("event", "upload_replay", {
+          replay_name: filename,
+          ...(sourceUrl ? { source_url: sourceUrl } : {})
+        });
+      } catch {
+        // Silently ignore GA failures if blocked or uninitialized
+      }
     }
 
     try {

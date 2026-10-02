@@ -4,8 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { type MapResourceType, type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
 import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainMappings";
-import { getBuildingFootprint, isFarmId, getBuildingIcon } from "@/lib/buildingMappings";
-import { getBuildingName } from "@/lib/entityMappings";
+import {
+  getBuildingFootprint,
+  isFarmId,
+  getBuildingName,
+} from "@/lib/entityMappings";
+import { getBuildingIcon } from "@/lib/buildingIcons";
 import { DEBUG } from "@/lib/debug";
 
 const LOADING_STEP_COUNT = 4;
@@ -268,7 +272,7 @@ export function Minimap({
     { id: "relics", label: "Relics" },
     { id: "landmark_icons", label: "TC & castle markers" },
     { id: "footprints", label: "Buildings" },
-    { id: "farms", label: "▸ Farms & pastures" },
+    { id: "farms", label: "▸ Farms & fish traps" },
     { id: "icons", label: "▸ Building icons" },
     { id: "gatherpoints", label: "Gather points" },
     { id: "flares", label: "Flares" },

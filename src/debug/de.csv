@@ -2731,12 +2731,12 @@ ID,CONST,DE ,HD+DLC,AoC,Description
 2729,,Legendary Item,,,can be interacted with; has relic glow
 2730,,Wheeled Ship,,,unit that moves on land
 2731,TREE_SPRUCE,Tree (Spruce),,,100 wood
-2732,TREE_SPRUCE_SNOW,Tree (Spruce Snow),,,101 wood
-2733,BUSH_GORSE,Bush D,,,102 wood
+2732,TREE_SPRUCE_SNOW,Tree (Spruce Snow),,,100 wood
+2733,BUSH_GORSE,Bush D,,,100 wood
 2734,ROCK_SNOW,Rock (Snow),,,
 2735,SEAL,Seal,,,140 food
 2736,LYNX,Lynx,,,predator
-2737,ELK,Elk,,,380 food
+2737,ELK,Elk,,,"380 food; this animal is called ""moose"" in North America"
 2738,,Runestones,,,
 2739,PHEASANT,Pheasant,,,75 food
 2740,,Driftwood (Ground),,,

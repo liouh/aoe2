@@ -1,1 +1,33 @@
-﻿"id","name","DAT clearance size(s)","inferred footprint","mapped footprint","status"
+﻿id,name,DAT clearance size(s),inferred footprint,mapped footprint,status
+278,Fish Trap (Dead),0.5x0.5,1x1,,missing
+357,Farm (Dead),1.5x1.5,3x3,,missing
+482,Town Center,1.5x1.5,3x3,,missing
+483,Town Center,1x1,2x2,,missing
+612,Town Center,1.5x1.5,3x3,,missing
+613,Town Center,1x1,2x2,,missing
+615,Town Center,1.5x1.5,3x3,,missing
+616,Town Center,1x1,2x2,,missing
+619,Town Center,1.5x1.5,3x3,,missing
+620,Town Center,1x1,2x2,,missing
+889,Disable llama building,0.2x0.2,1x1,,missing
+1188,Rice Farm (Dead),1.5x1.5,3x3,,missing
+1639,Monument resources enabler,0x0,1x1,,missing
+1694,Sheep annex1,0.3x0.3,1x1,,missing
+1696,Sheep annex2,0.3x0.3,1x1,,missing
+1894,Dead Pasture,2x2,4x4,,missing
+1898,Dead Pasture,2x2,4x4,,missing
+2078,Pasture Annex Fences,0x0,1x1,,missing
+2079,Pasture Annex AB,0x0,1x1,,missing
+2080,Pasture Annex CD,0x0,1x1,,missing
+2416,Second Empty TC annex,0.3x0.3,1x1,,missing
+2616,Invisible Spawner A,0x0,1x1,,missing
+2617,Invisible Spawner B,0x0,1x1,,missing
+2618,Invisible Spawner C,0x0,1x1,,missing
+2619,Invisible Spawner D,0x0,1x1,,missing
+2620,Invisible Spawner E,0x0,1x1,,missing
+2621,Invisible Spawner F,0x0,1x1,,missing
+2645,Invisible Spawner G,0x0,1x1,,missing
+2646,Invisible Spawner H,0x0,1x1,,missing
+2647,Invisible Spawner I,0x0,1x1,,missing
+2648,Invisible Spawner J,0x0,1x1,,missing
+2718,Empty Castle Annex,0x0,1x1,,missing

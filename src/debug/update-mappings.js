@@ -97,7 +97,7 @@ async function main() {
   // Parse local entityMappings.ts
   const localContent = fs.readFileSync(ENTITY_NAMES_PATH, 'utf-8');
   const localEntities = new Map();
-  for (const match of localContent.matchAll(/^\s*(\d+):\s*"([^"]+)"/gm)) {
+  for (const match of localContent.matchAll(/^\s*(\d+):\s*(?:\{\s*name:\s*)?"([^"]+)"/gm)) {
     localEntities.set(parseInt(match[1], 10), match[2]);
   }
   console.log(`✓ Local entityMappings.ts contains ${localEntities.size} mapped entities.\n`);

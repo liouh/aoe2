@@ -23,7 +23,6 @@ ROOT = Path(__file__).resolve().parents[2]
 DAT_DEFAULT = Path(
     r"C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\dat\empires2_x2_p1.dat"
 )
-MAP_PATH = ROOT / "src/lib/buildingMappings.ts"
 ENTITY_PATH = ROOT / "src/lib/entityMappings.ts"
 CSV_PATH = ROOT / "src/debug/de.csv"
 REPORT_PATH = ROOT / "src/debug/building-footprint-audit.csv"
@@ -46,7 +45,7 @@ def read_names():
     entity_text = ENTITY_PATH.read_text(encoding="utf-8-sig")
     names.update(
         (int(i), value)
-        for i, value in re.findall(r'^\s*(\d+):\s*"([^"]+)"', entity_text, re.M)
+        for i, value in re.findall(r'^\s*(\d+):\s*(?:\{\s*name:\s*)?"([^"]+)"', entity_text, re.M)
     )
     with CSV_PATH.open(encoding="utf-8-sig", newline="") as f:
         for row in csv.reader(f):
@@ -72,21 +71,12 @@ def main():
             if unit is not None and unit.type == 80:
                 records[unit.id].append(unit)
 
-    source = MAP_PATH.read_text(encoding="utf-8-sig")
-    lines = source.splitlines()
-    object_start = next(
-        i for i, line in enumerate(lines)
-        if line == "const FOOTPRINTS: Record<number, BuildingFootprint> = {"
-    )
-    object_end = next(i for i in range(object_start + 1, len(lines)) if lines[i] == "};")
-    type_body = lines[:object_start]
-    if any(re.match(r"\s*\d+: \{", line) for line in type_body):
-        raise ValueError("Building ID entries found outside the FOOTPRINTS object")
+    source = ENTITY_PATH.read_text(encoding="utf-8-sig")
     mapped = {
         int(i): (int(w), int(h))
         for i, w, h in re.findall(
-            r"^\s*(\d+): \{ w: (\d+), h: (\d+) \}",
-            "\n".join(lines[object_start + 1:object_end]), re.M
+            r"^\s*(\d+): \{.*?footprint:\s*\{\s*w:\s*(\d+),\s*h:\s*(\d+)\s*\}",
+            source, re.M
         )
     }
     names = read_names()
@@ -131,21 +121,7 @@ def main():
         )
 
     if args.apply_missing and suggested:
-        insertion = []
-        for building_id, (width, height) in suggested.items():
-            label = names.get(building_id, records[building_id][0].name)
-            label = label.replace("*/", "* /").replace("\n", " ")
-            insertion.append(
-                f"  {building_id}: {{ w: {width}, h: {height} }}, // {label}"
-            )
-        lines[object_end:object_end] = insertion
-        # Keep the dictionary in numeric order, retaining all existing comments.
-        start = object_start + 1
-        end = next(i for i in range(start, len(lines)) if lines[i] == "};")
-        entries = lines[start:end]
-        entries.sort(key=lambda line: int(re.match(r"\s*(\d+):", line).group(1)))
-        lines[start:end] = entries
-        MAP_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"Found {len(suggested)} missing building footprints to add to entityMappings.ts: {suggested}")
 
     mapped_mismatches = sum(
         1 for row in report_rows

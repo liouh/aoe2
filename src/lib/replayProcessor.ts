@@ -36,14 +36,19 @@ export type ChatEvent = {
   raw: Record<string, unknown>;
 };
 
-import { getEntityName, getBuildingName, getUnitName, isEconomic } from "./entityMappings";
-import { getBuildingFootprint, isBuildingId } from "./buildingMappings";
+import {
+  getEntity,
+  getEntityName,
+  getBuildingName,
+  getUnitName,
+  isEconomic,
+  getBuildingFootprint,
+  isBuildingId,
+} from "./entityMappings";
 import { CHEAT_ID_TO_NAME, getCheatName } from "./gameMappings";
 export { CHEAT_ID_TO_NAME, getCheatName };
 
 import { DEBUG } from "./debug";
-
-const NON_UNIT_STARTING_OBJECT = /town center|placeholder|reveal|annex|trophy|flare|projectile|dead|resources|invisible|beta berserk|\bbuilding\d*\b/i;
 
 export const normalizeReplay = (rec: any): any => {
   if (!rec || typeof rec !== "object") return rec;
@@ -841,7 +846,6 @@ export const buildTimeline = (
 
   const mapResources: Record<string, MapResourceType> = {};
   const mapCliffs: Record<string, boolean> = {};
-  const cliffObjects: { x: number; y: number; typeName: string }[] = [];
 
   if (initialInstances) {
     const gaiaCombinations: Record<string, number> = {};
@@ -869,6 +873,7 @@ export const buildTimeline = (
       // Process Gaia (player 0) objects for analysis
       if (obj.player_id === 0) {
         const typeName = getEntityName(obj.object_type_id) ?? `Unknown (${obj.object_type_id})`;
+        const entity = getEntity(obj.object_type_id);
 
         if (DEBUG) {
           const comboKey = `${typeName} (Type ${obj.object_type_id}, Kind ${obj.object_kind})`;
@@ -894,9 +899,20 @@ export const buildTimeline = (
           typeName.toLowerCase().includes("bush")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "wood";
-        } else if (typeName.toLowerCase().includes("cliff")) {
-          if (obj.x !== undefined && obj.y !== undefined) {
-            cliffObjects.push({ x: obj.x, y: obj.y, typeName });
+        } else if (
+          (entity?.class === 1 || entity?.class === 6) &&
+          obj.x !== undefined &&
+          obj.y !== undefined
+        ) {
+          const footprint = getBuildingFootprint(obj.object_type_id);
+          const w = footprint.w;
+          const h = footprint.h;
+          const startX = Math.floor(obj.x - w / 2);
+          const startY = Math.floor(obj.y - h / 2);
+          for (let dy = 0; dy < h; dy++) {
+            for (let dx = 0; dx < w; dx++) {
+              mapCliffs[`${startX + dx},${startY + dy}`] = true;
+            }
           }
         } else if (
           isBuildingId(obj.object_type_id) &&
@@ -929,11 +945,12 @@ export const buildTimeline = (
       const isBuilding = isBuildingId(obj.object_type_id);
       if (!isBuilding) {
         const initialPlayer = players.find((p) => (p.slotId ?? p.id) === obj.player_id);
-        const unitName = getEntityName(obj.object_type_id) ?? "";
+        const entity = getEntity(obj.object_type_id);
         if (
           initialPlayer &&
-          unitName &&
-          !NON_UNIT_STARTING_OBJECT.test(unitName)
+          entity &&
+          entity.type === 5 &&
+          !entity.name.toLowerCase().includes("annex")
         ) {
           events.push({
             id: `initial-unit-${obj.object_id ?? idx}`,
@@ -1004,39 +1021,6 @@ export const buildTimeline = (
         raw: { ...obj, isInitial: true, hideOnMinimap },
       });
     });
-
-    if (cliffObjects.length > 0) {
-      // Footprint dimensions are [width, height]; tiles extend from -1 on each
-      // axis to keep the existing cliff anchor offsets.
-      const cliffFootprints: Record<number, [number, number]> = {
-        1: [3, 3],
-        2: [1, 3],
-        3: [3, 1],
-        4: [2, 3],
-        5: [2, 3],
-        6: [3, 2],
-        7: [3, 2],
-        8: [2, 2],
-        9: [2, 2],
-      };
-
-      cliffObjects.forEach((obj) => {
-        const cliffNumber = obj.typeName.match(/cliff.?0?([1-9])(?:$|\D)/i)?.[1];
-        const [width, height] = cliffNumber
-          ? cliffFootprints[Number(cliffNumber)] ?? [1, 1]
-          : [1, 1];
-        const cx = Math.floor(obj.x);
-        const cy = Math.floor(obj.y);
-
-        const minX = width === 1 ? 0 : -1;
-        const minY = height === 1 ? 0 : -1;
-        for (let dy = minY; dy < minY + height; dy++) {
-          for (let dx = minX; dx < minX + width; dx++) {
-            mapCliffs[`${cx + dx},${cy + dy}`] = true;
-          }
-        }
-      });
-    }
 
     if (DEBUG) {
       console.log("Gaia resources:", gaiaCombinations);

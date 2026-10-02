@@ -93,18 +93,18 @@ Keep these references handy when investigating new DLCs, expansions, or patch ID
    1418: "Gothikon",
    ```
 
-### E. Buildings, Footprints, & Icons (`src/lib/buildingMappings.ts`)
+### E. Buildings, Footprints, & Icons (`src/lib/entityMappings.ts`)
 1. If new constructible buildings, forts, or unique structures are introduced, determine their tile dimensions (`w` and `h`):
    - Typical houses/tents/annexes: `{ w: 2, h: 2 }`
    - Typical military production / monasteries / camps: `{ w: 3, h: 3 }`
    - Castles, wonders, wooden forts, ports, shipyards, town centers: `{ w: 4, h: 4 }` or `{ w: 5, h: 5 }`
    - Walls: `{ w: 1, h: 1 }`
    - Gates: `{ w: 2, h: 1 }` or `{ w: 1, h: 2 }` depending on orientation
-2. Add the building ID to `FOOTPRINTS`:
+2. Add the footprint to the entity record in `ENTITIES` in `src/lib/entityMappings.ts`:
    ```typescript
-   2600: { w: 4, h: 4 }, // Wooden Fort
-   2678: { w: 1, h: 1 }, // Fort Wall
-   2745: { w: 2, h: 2 }, // Army Tent F
+   2600: { name: "Wooden Fort", type: 2, class: 3, footprint: { w: 4, h: 4 } },
+   2678: { name: "Fort Wall", type: 2, class: 4, footprint: { w: 1, h: 1 } },
+   2745: { name: "Army Tent F", type: 2, class: 3, footprint: { w: 1, h: 1 } },
    ```
 3. If the building belongs to a new type or uses a unique naming scheme, add a substring rule to `getBuildingIcon`:
    ```typescript
@@ -147,9 +147,8 @@ After editing the mappings:
    node -e "
    const { getCivName } = require('./src/lib/civMappings.ts');
    const { getMapName } = require('./src/lib/gameMappings.ts');
-   const { getUnitName } = require('./src/lib/entityMappings.ts');
+   const { getUnitName, getBuildingFootprint, getBuildingIcon } = require('./src/lib/entityMappings.ts');
    const { getTechName } = require('./src/lib/techMappings.ts');
-   const { getBuildingFootprint, getBuildingIcon } = require('./src/lib/buildingMappings.ts');
    console.log('Civ 60:', getCivName(60));
    console.log('Map 174:', getMapName(174));
    console.log('Unit 2711:', getUnitName(2711));
