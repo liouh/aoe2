@@ -296,7 +296,6 @@ export function Minimap({
         onSelect={(id) => handleViewSelect(id as string)}
         placeholder="Custom view"
         align="left"
-        closeOnSelect={false}
       />
       <Select
         options={minimapViewOptions}
