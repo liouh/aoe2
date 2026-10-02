@@ -1416,13 +1416,13 @@ export const determineDuration = (
     rawSummaryDuration !== undefined
       ? rawSummaryDuration / 1000
       : undefined;
-  if (!events.length) return 0;
+  if (!events.length) return summaryDuration ?? 0;
   const lastEventTime = events[events.length - 1]?.time ?? 0;
   if (summaryDuration === undefined) return lastEventTime;
   if (summaryDuration > lastEventTime * 1.2) {
     return lastEventTime;
   }
-  return summaryDuration;
+  return Math.max(summaryDuration, lastEventTime);
 };
 
 export type MatchInfo = {
