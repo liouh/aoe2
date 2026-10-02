@@ -324,7 +324,7 @@ const FOOTPRINTS: Record<number, BuildingFootprint> = {
   1593: { w: 1, h: 1 }, // City Gate, Vertical Endpieces
   1594: { w: 1, h: 1 }, // City Gate, Vertical Foundation
   1622: { w: 5, h: 5 }, // Aachen Cathedral
-  1639: { w: 1, h: 1 }, // Monument resources enabler
+  // 1639: { w: 1, h: 1 }, // Monument resources enabler
   // 1640: { w: 1, h: 1 }, // Villager building
   // 1641: { w: 1, h: 1 }, // Villager building
   // 1642: { w: 1, h: 1 }, // Villager annex
@@ -528,6 +528,7 @@ export const getBuildingIcon = (name: string): string | null => {
   else if (name.includes("Archery Range")) icon = "🏹";
   else if (name.includes("Barracks")) icon = "⚔️";
   else if (name.includes("Blacksmith")) icon = "⚒️";
+  else if (name.includes("Bridge")) icon = "";
   else if (name.includes("Castle")) icon = "🏰";
   else if (name.includes("Dock") || name.includes("Harbor") || name.includes("Shipyard") || name.includes("Port")) icon = "⚓";
   else if (name.includes("Feitoria") || name.includes("Caravanserai")) icon = "🏛️";

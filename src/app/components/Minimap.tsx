@@ -201,7 +201,6 @@ export function Minimap({
     anchorKey?: string;
   } | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const selectedPlayerIds = useMemo(() => players.map(p => p.id), [players]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -604,10 +603,10 @@ export function Minimap({
           event.y >= 0 &&
           event.x <= sizeX &&
           event.y <= sizeY &&
-          (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))
+          event.playerId !== undefined
       );
     },
-    [events, selectedPlayerIds, mapInfo]
+    [events, mapInfo]
   );
 
   const gatherpointEvents = useMemo(
@@ -623,10 +622,10 @@ export function Minimap({
           event.y >= 0 &&
           event.x <= sizeX &&
           event.y <= sizeY &&
-          (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))
+          event.playerId !== undefined
       );
     },
-    [events, selectedPlayerIds, mapInfo]
+    [events, mapInfo]
   );
 
   const flareEvents = useMemo(
@@ -642,10 +641,10 @@ export function Minimap({
           event.y >= 0 &&
           event.x <= sizeX &&
           event.y <= sizeY &&
-          (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId))
+          event.playerId !== undefined
       );
     },
-    [events, selectedPlayerIds, mapInfo]
+    [events, mapInfo]
   );
 
   const activeGatherpoints = useMemo(() => {
@@ -1248,9 +1247,7 @@ export function Minimap({
 
     if (showBuildings) {
       anchorToEvent.forEach((event) => {
-        if (event.playerId !== undefined && selectedPlayerIds.includes(event.playerId)) {
-          drawBuilding(event);
-        }
+        drawBuilding(event);
       });
 
       // Stroke 3D building outline edges: darker lines first, bright highlights on top
@@ -1316,9 +1313,6 @@ export function Minimap({
 
       // First pass: Draw non-landmark (emoji) icons
       (isoScale >= MINIMAP_EMOJI_ZOOM_THRESHOLD) && iconBuildings.forEach((event) => {
-        if (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId)) {
-          return;
-        }
         if (event.x === undefined || event.y === undefined) return;
         const name = getBuildingName(event.buildingTypeId);
         const emoji = getBuildingEmoji(event.buildingTypeId);
@@ -1387,9 +1381,6 @@ export function Minimap({
       // Second pass: Draw landmark icons (Town Centers and Castles) on top
       // These show regardless of other building icons as long as their specific filters are enabled
       iconBuildings.forEach((event) => {
-        if (selectedPlayerIds.length > 0 && (event.playerId === undefined || !selectedPlayerIds.includes(event.playerId))) {
-          return;
-        }
         if (event.x === undefined || event.y === undefined) return;
         const name = getBuildingName(event.buildingTypeId);
         const isLandmark = name.includes("Town Center") || name.includes("Castle");
@@ -1572,7 +1563,6 @@ export function Minimap({
     flareEvents,
     activeGatherpoints,
     hoveredEntity,
-    selectedPlayerIds,
     getPlayerColor,
     getPlayerOutline,
     isFullscreen,
@@ -1919,7 +1909,7 @@ export function Minimap({
             </div>
             <div className="mt-0.5 font-medium text-[color:var(--foreground)] opacity-80">
               {hoveredEntity.playerId !== undefined && (
-                <>{players.find((p) => p.id === hoveredEntity.playerId)?.name}</>
+                <>{players.find((p) => p.id === hoveredEntity.playerId)?.name ?? (hoveredEntity.playerId === 0 ? "Gaia" : "")}</>
               )}
             </div>
           </div>

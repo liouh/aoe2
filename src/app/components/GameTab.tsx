@@ -8,6 +8,7 @@ import { APMChart } from "./APMChart";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
 import { type MatchInfo, type ChatEvent } from "@/lib/replayProcessor";
+import { DEBUG } from "@/lib/debug";
 
 interface GameTabProps {
   players: any[];
@@ -38,6 +39,7 @@ export function GameTab({
   const [chatShowSystem, setChatShowSystem] = useState(true);
   const [chatShowChat, setChatShowChat] = useState(true);
   const [chatShowAiTeamChat, setChatShowAiTeamChat] = useState(false);
+  const [chatShowLobby, setChatShowLobby] = useState(false);
   const [showAiApm, setShowAiApm] = useState(true);
   const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -79,13 +81,18 @@ export function GameTab({
     return Array.from(teamCounts.values()).some((count) => count > 1);
   }, [players]);
 
+  const hasLobbyChat = useMemo(() => (chatEvents ?? []).some((item) => item.time === 0), [chatEvents]);
+
   const filteredChat = useMemo(() => {
-    return chatEvents.filter((item) => {
+    return (chatEvents ?? []).filter((item) => {
+      if (item.time === 0) {
+        if (!DEBUG || !chatShowLobby) return false;
+      }
       if (item.isSystem) return chatShowSystem;
       if (isTeamGame && item.isAi && item.scope !== "all") return chatShowAiTeamChat;
       return chatShowChat;
     });
-  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat, isTeamGame]);
+  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat, chatShowLobby, isTeamGame]);
 
   const fastestAges = useMemo(() => {
     const ageMap: Record<string, number> = {};
@@ -380,6 +387,13 @@ export function GameTab({
                 label="AI team chat"
                 checked={chatShowAiTeamChat}
                 onChange={setChatShowAiTeamChat}
+              />
+            )}
+            {DEBUG && hasLobbyChat && (
+              <Toggle
+                label="Lobby"
+                checked={chatShowLobby}
+                onChange={setChatShowLobby}
               />
             )}
           </div>

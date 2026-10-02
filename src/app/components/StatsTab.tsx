@@ -85,7 +85,7 @@ export function StatsTab({
     }>();
 
     events.forEach(event => {
-      if (event.category !== "build" || event.playerId === undefined || event.buildingTypeId === undefined) return;
+      if (event.category !== "build" || event.playerId === undefined || event.playerId === 0 || event.buildingTypeId === undefined) return;
 
       const name = getBuildingName(event.buildingTypeId);
       if (name === "Unknown Building") return;

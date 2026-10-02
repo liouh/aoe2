@@ -898,6 +898,30 @@ export const buildTimeline = (
           if (obj.x !== undefined && obj.y !== undefined) {
             cliffObjects.push({ x: obj.x, y: obj.y, typeName });
           }
+        } else if (
+          isBuildingId(obj.object_type_id) &&
+          obj.x !== undefined &&
+          obj.y !== undefined
+        ) {
+          const footprint = getBuildingFootprint(obj.object_type_id);
+          if (footprint && footprint.w > 0 && footprint.h > 0) {
+            // Deduplicate: There are 4 pieces for the starting Town Center.
+            // If we already added an event for this specific Town Center, skip the duplicates.
+            const isTC = getBuildingName(obj.object_type_id).includes("Town Center");
+            if (isTC && obj.object_type_id !== 109) return;
+
+            events.push({
+              id: `initial-gaia-${obj.object_id ?? idx}`,
+              time: 0,
+              playerId: 0,
+              type: "Build",
+              category: "build",
+              x: obj.x,
+              y: obj.y,
+              buildingTypeId: obj.object_type_id,
+              raw: { ...obj, isInitial: true, hideOnMinimap: false },
+            });
+          }
         }
         return;
       }
@@ -1291,10 +1315,10 @@ export const extractPlayerStats = (
     eventsByPlayer.set(player.id, []);
   });
   events.forEach((event) => {
-    if (event.playerId === undefined) return;
-    const list = eventsByPlayer.get(event.playerId) ?? [];
+    if (event.playerId === undefined || event.playerId === 0) return;
+    const list = eventsByPlayer.get(event.playerId);
+    if (!list) return;
     list.push(event);
-    eventsByPlayer.set(event.playerId, list);
   });
 
   const stats: PlayerStats[] = [];

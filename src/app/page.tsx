@@ -146,6 +146,7 @@ export default function Home() {
 
   const getPlayerColor = (playerId?: number) => {
     if (playerId === undefined) return "#000000";
+    if (playerId === 0) return "#dddddd";
     const colorId = playerIdToColorId.get(playerId);
     if (colorId === undefined || colorId < 0) return "#000000";
     return PLAYER_COLORS[(colorId) % PLAYER_COLORS.length];
@@ -153,6 +154,7 @@ export default function Home() {
 
   const getPlayerOutline = (playerId?: number) => {
     if (playerId === undefined) return "#ffffff";
+    if (playerId === 0) return "#000000";
     const colorId = playerIdToColorId.get(playerId);
     if (colorId === undefined || colorId < 0) return "#ffffff";
     return PLAYER_OUTLINES[(colorId) % PLAYER_OUTLINES.length];
