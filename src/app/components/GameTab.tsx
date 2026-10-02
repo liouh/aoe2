@@ -70,18 +70,14 @@ export function GameTab({
       return true;
     });
   }, [players, showAiApm]);
-  const isTeamGame = useMemo(() => {
-    if (players.length > 2) return true;
-    const teamCounts = new Map<number, number>();
-    players.forEach((p) => {
-      if (p.teamId !== undefined && p.teamId > 0) {
-        teamCounts.set(p.teamId, (teamCounts.get(p.teamId) || 0) + 1);
-      }
-    });
-    return Array.from(teamCounts.values()).some((count) => count > 1);
-  }, [players]);
-
   const hasLobbyChat = useMemo(() => (chatEvents ?? []).some((item) => item.time === 0), [chatEvents]);
+
+  const hasAiTeamChat = useMemo(() => {
+    return (chatEvents ?? []).some((item) => {
+      if (!DEBUG && item.time === 0) return false;
+      return !item.isSystem && item.isAi && item.scope !== "all";
+    });
+  }, [chatEvents]);
 
   const filteredChat = useMemo(() => {
     return (chatEvents ?? []).filter((item) => {
@@ -89,10 +85,10 @@ export function GameTab({
         if (!DEBUG || !chatShowLobby) return false;
       }
       if (item.isSystem) return chatShowSystem;
-      if (isTeamGame && item.isAi && item.scope !== "all") return chatShowAiTeamChat;
+      if (item.isAi && item.scope !== "all") return chatShowAiTeamChat;
       return chatShowChat;
     });
-  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat, chatShowLobby, isTeamGame]);
+  }, [chatEvents, chatShowSystem, chatShowChat, chatShowAiTeamChat, chatShowLobby]);
 
   const fastestAges = useMemo(() => {
     const ageMap: Record<string, number> = {};
@@ -382,7 +378,7 @@ export function GameTab({
               checked={chatShowChat}
               onChange={setChatShowChat}
             />
-            {hasAi && isTeamGame && (
+            {hasAiTeamChat && (
               <Toggle
                 label="AI team chat"
                 checked={chatShowAiTeamChat}
