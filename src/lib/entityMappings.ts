@@ -2062,7 +2062,7 @@ export const ENTITIES: Record<number, Entity> = {
   2029: { name: "Fallen Leaves", type: 0, class: 0 }, // Peach Blossom
   2030: { name: "Fallen Leaves", type: 0, class: 0 }, // Maple
   2031: { name: "Fallen Leaves", type: 0, class: 0 }, // Maple, Autumn
-  2032: { name: "LÃ¼ Bu", type: 5, class: 2 },
+  2032: { name: "Lu Bu", type: 5, class: 2 },
   2033: { name: "Yurt M", type: 2, class: 3, footprint: { w: 2, h: 2 } },
   2034: { name: "Guan Yu", type: 5, class: 2 },
   2035: { name: "Burned Building E", type: 2, class: 1, footprint: { w: 3, h: 3 } },
@@ -2091,7 +2091,7 @@ export const ENTITIES: Record<number, Entity> = {
   2058: { name: "Huabiao Totem", type: 2, class: 1, footprint: { w: 1, h: 1 } },
   2059: { name: "Que Tower", type: 2, class: 1, footprint: { w: 1, h: 1 } },
   2060: { name: "Hall of Heroes", type: 2, class: 3, footprint: { w: 3, h: 3 } },
-  2061: { name: "LÃ¼ Bu", type: 5, class: 2 },
+  2061: { name: "Lu Bu", type: 5, class: 2 },
   2062: { name: "Projectile SUNQUAN", type: 0, class: 0 },
   2063: { name: "Sun Quan", type: 5, class: 2 },
   2064: { name: "Guan Yu", type: 5, class: 2 },
