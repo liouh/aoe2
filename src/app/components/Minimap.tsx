@@ -77,15 +77,9 @@ const MINIMAP_RESOURCE_COLORS = {
   wood: "#195e2b",
 } as const;
 
-const ALL_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
-const DEFAULT_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares"];
+const DEFAULT_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
 
 const VIEW_OPTIONS = [
-  {
-    id: "all",
-    label: "— All layers —",
-    layers: ALL_LAYERS,
-  },
   {
     id: "activity",
     label: "Activity view",
