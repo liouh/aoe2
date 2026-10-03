@@ -572,20 +572,24 @@ export function GameTab({
                   </span>
                 </div>
               )}
-              {matchInfo.filename && (
-                <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
-                  <span className="font-semibold text-[color:var(--foreground)]">
-                    {matchInfo.filename}
-                  </span>
-                </div>
-              )}
-              {matchInfo.sourceUrl && (
-                <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
-                  <span className="font-semibold text-[color:var(--foreground)]">
-                    {matchInfo.sourceUrl}
-                  </span>
+              {(matchInfo.filename || matchInfo.sourceUrl) && (
+                <div className="flex flex-col gap-3 md:col-span-full -mx-4 px-4 border-t border-white/5 pt-4">
+                  {matchInfo.filename && (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
+                      <span className="font-semibold text-[color:var(--foreground)]">
+                        {matchInfo.filename}
+                      </span>
+                    </div>
+                  )}
+                  {matchInfo.sourceUrl && (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
+                      <span className="font-semibold text-[color:var(--foreground)]">
+                        {matchInfo.sourceUrl}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

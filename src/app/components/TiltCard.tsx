@@ -14,7 +14,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = "",
   maxRotation = 5,
-  perspective = 1200,
+  perspective = 1000,
   scale = 1.02,
   onMouseEnter,
   onMouseLeave,
