@@ -6,7 +6,7 @@ import { Minimap } from "./components/Minimap";
 import { GameTab } from "./components/GameTab";
 import { StatsTab } from "./components/StatsTab";
 import { TimelineTab } from "./components/TimelineTab";
-import { parse_rec, parse_rec_summary } from "../aoe2rec-js/aoe2rec_js";
+import { parse_rec } from "../aoe2rec-js/aoe2rec_js";
 import {
   buildTimeline,
   determineDuration,
@@ -82,7 +82,6 @@ const waitForPaint = () =>
 
 interface LoadedReplayData {
   replay: any;
-  summary: any;
   matchInfo: MatchInfo | null;
   events: TimelineEvent[];
   chatEvents: ChatEvent[];
@@ -97,7 +96,6 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [replayData, setReplayData] = useState<LoadedReplayData | null>(null);
   const replay = replayData?.replay ?? null;
-  const summary = replayData?.summary ?? null;
   const matchInfo = replayData?.matchInfo ?? null;
   const events = useMemo(() => replayData?.events ?? [], [replayData?.events]);
   const chatEvents = useMemo(() => replayData?.chatEvents ?? [], [replayData?.chatEvents]);
@@ -212,19 +210,15 @@ export default function Home() {
       await waitForPaint();
 
       const parsed = normalizeReplay(parse_rec(buffer));
-      const parsedSummary = parse_rec_summary(buffer);
-      const postGame = parsed?.operations?.find((op: any) => op.PostGame)?.PostGame;
 
       if (typeof window !== "undefined") {
         (window as any).__aoe2rec = parsed;
-        (window as any).__aoe2summary = parsedSummary;
-        (window as any).__aoe2postgame = postGame;
       }
 
-      const timeline = buildTimeline(parsed, parsedSummary);
-      const players = timeline.players ?? summarizePlayers(parsedSummary, parsed);
-      const gameDuration = determineDuration(parsedSummary, timeline.events);
-      const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl, parsedSummary);
+      const timeline = buildTimeline(parsed);
+      const players = timeline.players ?? summarizePlayers(parsed);
+      const gameDuration = determineDuration(parsed, timeline.events);
+      const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
       const timelineStats = extractPlayerStats(timeline.events, gameDuration, players, timeline.chatEvents);
 
       setLoadingStep(2);
@@ -232,7 +226,6 @@ export default function Home() {
 
       setReplayData({
         replay: parsed,
-        summary: parsedSummary,
         matchInfo: extractedInfo,
         events: timeline.events,
         chatEvents: timeline.chatEvents,

@@ -10,7 +10,7 @@ export async function ensureUnzipped(
   buffer: ArrayBuffer,
   filename: string
 ): Promise<{ buffer: ArrayBuffer; filename: string }> {
-  const uint8 = new Uint8Array(buffer.slice(0, 4));
+  const uint8 = new Uint8Array(buffer, 0, 4);
   // ZIP magic number: PK\x03\x04
   if (
     uint8[0] === 0x50 &&

@@ -56,11 +56,21 @@ export const normalizeReplay = (rec: any): any => {
   const zheader = rec.zheader ?? chapters?.[0]?.zheader;
   const operations = rec.operations ?? chapters?.flatMap((c: any) => c.operations ?? []) ?? [];
   const meta = rec.meta ?? operations.find((op: any) => op && typeof op === "object" && "Pregame" in op)?.Pregame;
+  let postgame = rec.postgame;
+  if (!postgame && operations.length > 0) {
+    for (let i = operations.length - 1; i >= Math.max(0, operations.length - 50); i--) {
+      if (operations[i]?.PostGame) {
+        postgame = operations[i].PostGame;
+        break;
+      }
+    }
+  }
   return {
     ...rec,
     zheader,
     operations,
     meta,
+    postgame,
   };
 };
 
@@ -364,14 +374,26 @@ const parseActionData = (type: string, data: number[] | Uint8Array) => {
 };
 
 export const summarizePlayers = (
-  summary: any,
-  replay?: any
+  replayOrSummary?: any,
+  legacyReplay?: any
 ): PlayerSummary[] => {
-  const normReplay = normalizeReplay(replay);
+  const normReplay = normalizeReplay(
+    replayOrSummary?.operations || replayOrSummary?.chapters || replayOrSummary?.zheader
+      ? replayOrSummary
+      : legacyReplay
+  );
+  const summary = replayOrSummary?.teams ? replayOrSummary : legacyReplay?.teams ? legacyReplay : undefined;
   const players: PlayerSummary[] = [];
 
-  const postGameOp = normReplay?.operations?.find((op: any) => op.PostGame)?.PostGame;
-  const leaderboardsBlock = postGameOp?.blocks?.find((b: any) => b.Leaderboards)?.Leaderboards;
+  const postGameOp = normReplay?.postgame ?? (() => {
+    const ops = normReplay?.operations;
+    if (!ops || !Array.isArray(ops)) return undefined;
+    for (let i = ops.length - 1; i >= Math.max(0, ops.length - 50); i--) {
+      if (ops[i]?.PostGame) return ops[i].PostGame;
+    }
+    return undefined;
+  })();
+  const leaderboardsBlock = postGameOp?.blocks?.find((b: any) => b?.Leaderboards)?.Leaderboards;
   const leaderboards = leaderboardsBlock?.leaderboards || [];
   const rm1v1Lb = leaderboards.find((l: any) => l.id === 3);
   const teamRmLb = leaderboards.find((l: any) => l.id === 4);
@@ -395,6 +417,25 @@ export const summarizePlayers = (
         teamRank: typeof p.rank === "number" && p.rank > 0 ? p.rank : undefined,
       });
     });
+  }
+
+  // Fast scan for resign actions from operations
+  const operations = Array.isArray(normReplay?.operations)
+    ? (normReplay.operations as Record<string, unknown>[])
+    : null;
+  const resignedPids = new Set<number>();
+  if (operations) {
+    const len = operations.length;
+    for (let i = 0; i < len; i++) {
+      const action = (operations[i] as any).Action;
+      if (!action) continue;
+      const ad = action.action_data;
+      if (!ad) continue;
+      const resign = ad.Resign;
+      if (resign && typeof resign.player_id === "number" && resign.player_id > 0) {
+        resignedPids.add(resign.player_id);
+      }
+    }
   }
 
   const summaryTeams = summary?.teams ?? [];
@@ -436,7 +477,7 @@ export const summarizePlayers = (
           slotId: p.player_number,
           colorId: p.color_id ?? basePlayer?.colorId,
           civId: p.civ_id ?? basePlayer?.civId,
-          teamId: p.resolved_team_id ?? p.selected_team_id ?? basePlayer?.teamId,
+          teamId: p.resolved_team_id ?? p.selected_team_id ?? basePlayer?.teamId ?? 1,
           ai: p.player_type === 4,
           name: p.name,
           elo: eloInfo?.elo,
@@ -472,6 +513,27 @@ export const summarizePlayers = (
 
       player.name = displayName;
       player.handicap = p.handicap;
+    });
+  }
+
+  // Derive won flag from resignations if not already populated from summary
+  if (players.length > 0 && players.some((p) => p.won === undefined)) {
+    const teamMembers = new Map<number, PlayerSummary[]>();
+    players.forEach((p) => {
+      const tid = p.teamId ?? 1;
+      const list = teamMembers.get(tid) || [];
+      list.push(p);
+      teamMembers.set(tid, list);
+    });
+
+    const hasAnyResigns = resignedPids.size > 0;
+    players.forEach((p) => {
+      if (p.won === undefined) {
+        const tid = p.teamId ?? 1;
+        const list = teamMembers.get(tid) || [];
+        const teamAllResigned = list.length > 0 && list.every((m) => resignedPids.has(m.slotId ?? m.id));
+        p.won = hasAnyResigns ? !teamAllResigned : true;
+      }
     });
   }
 
@@ -832,7 +894,7 @@ export const buildTimeline = (
     ? (replayRecord.operations as Record<string, unknown>[])
     : null;
   const events: TimelineEvent[] = [];
-  const players = summarizePlayers(summary, replayRecord);
+  const players = summarizePlayers(replayRecord, summary);
   const playerById = new Map<number, PlayerSummary>(players.map((p) => [p.id, p]));
   const playerMapping = buildPlayerMapping(operations ?? [], players);
   const chatEvents = extractChatEvents(replayRecord, summary, players, playerMapping);
@@ -1439,21 +1501,22 @@ export const extractPlayerStats = (
 };
 
 export const determineDuration = (
-  summary: any,
+  source: any,
   events: TimelineEvent[]
 ): number => {
-  const rawSummaryDuration = pickNumber(summary?.duration);
-  const summaryDuration =
-    rawSummaryDuration !== undefined
-      ? rawSummaryDuration / 1000
-      : undefined;
-  if (!events.length) return summaryDuration ?? 0;
+  const normReplay = normalizeReplay(source);
+  const postGameOp = normReplay?.postgame;
+  const worldTimeBlock = postGameOp?.blocks?.find((b: any) => b?.WorldTime)?.WorldTime;
+  const rawDuration = worldTimeBlock?.world_time ?? pickNumber(source?.duration);
+  const calculatedDuration = rawDuration !== undefined ? rawDuration / 1000 : undefined;
+
+  if (!events.length) return calculatedDuration ?? 0;
   const lastEventTime = events[events.length - 1]?.time ?? 0;
-  if (summaryDuration === undefined) return lastEventTime;
-  if (summaryDuration > lastEventTime * 1.2) {
+  if (calculatedDuration === undefined) return lastEventTime;
+  if (calculatedDuration > lastEventTime * 1.2) {
     return lastEventTime;
   }
-  return Math.max(summaryDuration, lastEventTime);
+  return Math.max(calculatedDuration, lastEventTime);
 };
 
 export type MatchInfo = {
