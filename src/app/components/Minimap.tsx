@@ -96,13 +96,13 @@ const VIEW_OPTIONS = [
     layers: DEFAULT_LAYERS,
   },
   {
-    id: "map_only",
+    id: "map",
     label: "Map only view",
     layers: ["terrain", "obstacles", "resources", "relics"],
   },
   {
     id: "moves",
-    label: "Unit movements view",
+    label: "Unit moves view",
     layers: ["terrain", "landmark_icons", "moves"],
   },
   {
@@ -306,6 +306,7 @@ export function Minimap({
         onSelect={(id) => handleViewSelect(id as string)}
         placeholder="Custom view"
         align="left"
+        className="w-[140px]"
       />
       <Select
         options={minimapViewOptions}
@@ -333,6 +334,7 @@ export function Minimap({
         multiLabel="layers"
         placeholder="Select layers"
         align="left"
+        className="w-[100px]"
       />
     </>
   ), [minimapViewOptions, minimapViewFilters, viewSelectOptions, currentViewId]);

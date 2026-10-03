@@ -16,6 +16,7 @@ interface SelectProps<T> {
   onSelect: (id: T) => void;
   align?: "left" | "right";
   className?: string;
+  buttonClassName?: string;
   multi?: boolean;
   multiLabel?: string;
   singleLabel?: string;
@@ -29,6 +30,7 @@ export function Select<T extends string | number | undefined>({
   onSelect,
   align = "right",
   className = "",
+  buttonClassName = "",
   multi = false,
   multiLabel = "items",
   singleLabel,
@@ -118,7 +120,7 @@ export function Select<T extends string | number | undefined>({
     >
       <button
         type="button"
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/20 cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white backdrop-blur-sm"
+        className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/20 cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white backdrop-blur-sm ${className.includes("w-") ? "w-full" : ""} ${buttonClassName}`}
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -132,7 +134,7 @@ export function Select<T extends string | number | undefined>({
         {!multi && primaryOption?.icon && (
           <span className="shrink-0">{primaryOption.icon}</span>
         )}
-        <span className="font-medium truncate max-w-[170px]">
+        <span className="tabular-nums font-medium truncate flex-1 text-left min-w-0 max-w-[170px]">
           {getButtonLabel()}
         </span>
         {!multi && primaryOption?.isAi && (
@@ -141,7 +143,7 @@ export function Select<T extends string | number | undefined>({
           </span>
         )}
         <svg
-          className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`h-3 w-3 shrink-0 ml-auto transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
