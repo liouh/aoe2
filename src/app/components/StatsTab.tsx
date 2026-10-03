@@ -340,7 +340,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+                className="panel-strong pt-4 pb-2 px-4 flex flex-col gap-6 player-card-3d-base"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
