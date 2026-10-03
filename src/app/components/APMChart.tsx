@@ -19,17 +19,30 @@ export function APMChart({
   getPlayerColor,
   selectedTime,
   ageTimings,
-  hoveredPlayerId,
+  hoveredPlayerId: externalHoveredPlayerId,
+  onHoverPlayer,
   isLogScale = false,
 }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[];
-  players: { id: number; name?: string; [key: string]: unknown }[];
+  players: { id: number; name?: string;[key: string]: unknown }[];
   getPlayerColor: (id?: number) => string;
   selectedTime?: number;
   ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
   hoveredPlayerId?: number | null;
+  onHoverPlayer?: (id: number | null) => void;
   isLogScale?: boolean;
 }) {
+  const [internalHoveredPlayerId, setInternalHoveredPlayerId] = React.useState<number | null>(null);
+
+  const setHovered = (id: number | null) => {
+    setInternalHoveredPlayerId(id);
+    onHoverPlayer?.(id);
+  };
+
+  const hoveredPlayerId = externalHoveredPlayerId !== undefined && externalHoveredPlayerId !== null
+    ? externalHoveredPlayerId
+    : internalHoveredPlayerId;
+
   const isHoveredPlayerPlotted =
     hoveredPlayerId !== null &&
     hoveredPlayerId !== undefined &&
@@ -258,31 +271,37 @@ export function APMChart({
 
   return (
     <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h3 className="text-sm uppercase tracking-widest text-white/30 whitespace-nowrap">APM over time</h3>
-        <div className="flex flex-wrap gap-x-4 gap-y-2">
-          {players.map((p, idx) => {
-            const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
-            return (
-              <div
-                key={`${p.id}-${idx}`}
-                className="flex items-center gap-1.5 whitespace-nowrap"
+      <div
+        className="flex flex-wrap gap-x-4 gap-y-2 mb-6"
+        onMouseLeave={() => setHovered(null)}
+      >
+        {players.map((p, idx) => {
+          const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
+          const isHovered = isHoveredPlayerPlotted && hoveredPlayerId === p.id;
+          return (
+            <div
+              key={`${p.id}-${idx}`}
+              className="flex items-center gap-1.5 whitespace-nowrap select-none"
+              style={{
+                opacity: isDimmed ? 0.15 : 1,
+                transition: "opacity 0.1s ease-out",
+              }}
+              onMouseEnter={() => setHovered(p.id)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
                 style={{
-                  opacity: isDimmed ? 0.15 : 1,
-                  transition: "opacity 0.1s ease-out",
+                  background: getPlayerColor(p.id),
+                  boxShadow: isHovered ? `0 0 6px ${getPlayerColor(p.id)}` : "none",
                 }}
-              >
-                <span
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{
-                    background: getPlayerColor(p.id),
-                  }}
-                />
-                <span className="text-[10px] text-white/50">{p.name}</span>
-              </div>
-            );
-          })}
-        </div>
+              />
+              <span className={`text-[10px] transition-colors duration-150 ${isHovered ? "text-white" : "text-white/50"}`}>
+                {p.name}
+              </span>
+            </div>
+          );
+        })}
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible select-none">
         {/* Y Axis Grid & Labels */}

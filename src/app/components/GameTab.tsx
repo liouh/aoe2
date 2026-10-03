@@ -200,7 +200,10 @@ export function GameTab({
             </span>
           )}
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+          onMouseLeave={() => handleHoverPlayer(null)}
+        >
           {players.map((player, index) => {
             const stats = statsByPlayerId.get(player.id);
             const showRatingInfo = (hasRmRatingInfo || hasTeamRatingInfo) && !player.ai;
@@ -208,6 +211,8 @@ export function GameTab({
               <TiltCard
                 key={`${player.id}-${index}`}
                 className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+                onMouseEnter={() => handleHoverPlayer(player.id)}
+                onMouseLeave={() => handleHoverPlayer(null)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
@@ -290,7 +295,7 @@ export function GameTab({
                     )}
                   </div>
                   {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
-                    <div className="mt-auto flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {!!stats?.opening && (
                         <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
                           {stats.opening} opening
@@ -308,6 +313,18 @@ export function GameTab({
                       )}
                     </div>
                   )}
+                  <div className="mt-auto border-t border-white/5 pt-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-[color:var(--muted)]">Average APM</p>
+                        <p className="text-xl font-medium tabular-nums">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
+                        <p className="text-xl font-medium tabular-nums">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </TiltCard>
             );
@@ -334,46 +351,9 @@ export function GameTab({
           selectedTime={selectedTime}
           ageTimings={chartAgeTimings}
           hoveredPlayerId={hoveredApmPlayerId}
+          onHoverPlayer={handleHoverPlayer}
           isLogScale={showAiApm && hasAi}
         />
-
-        <div
-          className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-          onMouseLeave={() => handleHoverPlayer(null)}
-        >
-          {players.map((player, index) => {
-            const stats = statsByPlayerId.get(player.id);
-            return (
-              <TiltCard
-                key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
-                onMouseEnter={() => handleHoverPlayer(player.id)}
-                onMouseLeave={() => handleHoverPlayer(null)}
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                    {player.name}
-                    {player.ai && <AiBadge />}
-                  </h3>
-                  <span
-                    className="ml-2 h-3 w-3 shrink-0 rounded-full ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-2">
-                  <div>
-                    <p className="text-xs text-[color:var(--muted)]">Avg APM</p>
-                    <p className="text-xl font-medium tabular-nums">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                    <p className="text-xl font-medium tabular-nums">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
-                  </div>
-                </div>
-              </TiltCard>
-            );
-          })}
-        </div>
       </section>
 
       <section className="panel flex flex-col gap-4 rounded-3xl p-6">

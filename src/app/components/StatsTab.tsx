@@ -305,7 +305,7 @@ export function StatsTab({
 
                 <div>
                   <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="text-xs uppercase tracking-wider text-blue-400">Built in-game</span>
+                    <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
                     <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
                   </div>
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
