@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
-import { AiBadge } from "./AiBadge";
+import { PlayerHeader } from "./PlayerHeader";
 import { APMChart } from "./APMChart";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
@@ -214,24 +214,15 @@ export function GameTab({
                 onMouseEnter={() => handleHoverPlayer(player.id)}
                 onMouseLeave={() => handleHoverPlayer(null)}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && <AiBadge />}
-                      {player.won && !allPlayersWon && <sup>👑</sup>}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-white/40">
-                      <span>{getCivName(player.civId)}</span>
-                      <span>•</span>
-                      <span>Team {player.teamId}</span>
-                    </div>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  ></span>
-                </div>
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline(player.id)}
+                  ai={player.ai}
+                  won={player.won && !allPlayersWon}
+                  civ={getCivName(player.civId)}
+                  team={player.teamId}
+                />
                 <div className="space-y-4 text-sm flex-1 flex flex-col">
                   {showRatingInfo && (
                     <div>

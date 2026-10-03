@@ -3,7 +3,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Select } from "./Select";
 import { Toggle } from "./Toggle";
-import { AiBadge } from "./AiBadge";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
@@ -133,16 +132,21 @@ export function TimelineTab({
       <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
         <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
           <div className="flex flex-col">
-            <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
+            <h3 className="text-lg font-bold leading-tight">
               {player.name}
-              {player.ai && <AiBadge />}
             </h3>
             <div className="flex items-center gap-2 text-xs text-white/40">
               <span>{getCivName(player.civId)}</span>
+              {player.ai && (
+                <>
+                  <span>•</span>
+                  <span>AI</span>
+                </>
+              )}
             </div>
           </div>
           <Select
-            options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id), isAi: p.ai }))}
+            options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id) }))}
             selectedId={playerId}
             onSelect={(value) => {
               if (index === 0) {

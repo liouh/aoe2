@@ -7,7 +7,6 @@ export interface SelectOption<T> {
   label: string;
   color?: string;
   icon?: string;
-  isAi?: boolean;
 }
 
 interface SelectProps<T> {
@@ -137,11 +136,6 @@ export function Select<T extends string | number | undefined>({
         <span className="tabular-nums font-medium truncate flex-1 text-left min-w-0 max-w-[170px]">
           {getButtonLabel()}
         </span>
-        {!multi && primaryOption?.isAi && (
-          <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
-            AI
-          </span>
-        )}
         <svg
           className={`h-3 w-3 shrink-0 ml-auto transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
@@ -188,16 +182,11 @@ export function Select<T extends string | number | undefined>({
                 {option.icon && (
                   <span className="shrink-0">{option.icon}</span>
                 )}
-                <span className={`font-medium ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
+                <span className={`font-medium truncate ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
                   {option.label}
                 </span>
-                {option.isAi && (
-                  <span className="inline-flex items-center rounded-md bg-white/5 px-1 py-0.5 text-[8px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10 shrink-0">
-                    AI
-                  </span>
-                )}
                 {selected && (
-                  <svg className="ml-auto h-3 w-3 text-[color:var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="h-3 w-3 text-[color:var(--accent)] shrink-0 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}

@@ -270,9 +270,9 @@ export function APMChart({
   };
 
   return (
-    <div className="w-full bg-[color:var(--panel)] px-4 pt-4 pb-2 border border-white/5">
+    <div className="w-full bg-[color:var(--panel)] p-2 pr-4 border border-white/5">
       <div
-        className="flex flex-wrap gap-x-4 gap-y-2 mb-6"
+        className="flex flex-wrap gap-x-1 gap-y-1 mb-2"
         onMouseLeave={() => setHovered(null)}
       >
         {players.map((p, idx) => {
@@ -281,7 +281,7 @@ export function APMChart({
           return (
             <div
               key={`${p.id}-${idx}`}
-              className="flex items-center gap-1.5 whitespace-nowrap select-none"
+              className="flex items-center gap-1.5 whitespace-nowrap select-none px-2.5 py-2 cursor-pointer"
               style={{
                 opacity: isDimmed ? 0.15 : 1,
                 transition: "opacity 0.1s ease-out",
@@ -291,10 +291,7 @@ export function APMChart({
             >
               <span
                 className="w-2 h-2 rounded-full shrink-0"
-                style={{
-                  background: getPlayerColor(p.id),
-                  boxShadow: isHovered ? `0 0 6px ${getPlayerColor(p.id)}` : "none",
-                }}
+                style={{ background: getPlayerColor(p.id) }}
               />
               <span className={`text-[10px] transition-colors duration-150 ${isHovered ? "text-white" : "text-white/50"}`}>
                 {p.name}
@@ -329,7 +326,7 @@ export function APMChart({
 
         {/* Current Time Indicator */}
         {selectedTime !== undefined && selectedTime > 0 && (
-          <g>
+          <g className="pointer-events-none">
             <line
               x1={Math.min(getX(selectedTime / 60), width - padding.right)}
               y1={padding.top}
@@ -374,19 +371,32 @@ export function APMChart({
           }
 
           return (
-            <path
-              key={playerData.playerId}
-              d={d}
-              fill="none"
-              stroke={color}
-              strokeWidth={isLineHovered ? 3 : isLineDimmed ? 1 : 2}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              style={{
-                opacity: isLineDimmed ? 0.15 : 1,
-                transition: "opacity 0.1s ease-out, stroke-width 0.1s ease-out",
-              }}
-            />
+            <g key={playerData.playerId} className="pointer-events-none">
+              {/* White outline highlight when selected */}
+              {isLineHovered && (
+                <path
+                  d={d}
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth={5}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                />
+              )}
+              {/* Main colored line */}
+              <path
+                d={d}
+                fill="none"
+                stroke={color}
+                strokeWidth={isLineHovered ? 3 : isLineDimmed ? 1 : 2}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                style={{
+                  opacity: isLineDimmed ? 0.3 : 1,
+                  transition: "opacity 0.1s ease-out, stroke-width 0.1s ease-out",
+                }}
+              />
+            </g>
           );
         })}
 

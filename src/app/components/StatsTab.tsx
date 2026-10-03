@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { TiltCard } from "./TiltCard";
-import { AiBadge } from "./AiBadge";
+import { PlayerHeader } from "./PlayerHeader";
 import { getCivName } from "@/lib/civMappings";
 import { getBuildingName, getUnitName, isEconomic } from "@/lib/entityMappings";
 import { type TimelineEvent } from "@/lib/replayProcessor";
@@ -12,6 +12,7 @@ interface StatsTabProps {
   timelineStats: any[];
   events: TimelineEvent[];
   getPlayerColor: (playerId?: number) => string;
+  getPlayerOutline?: (playerId?: number) => string;
 }
 
 export function StatsTab({
@@ -19,6 +20,7 @@ export function StatsTab({
   timelineStats,
   events,
   getPlayerColor,
+  getPlayerOutline,
 }: StatsTabProps) {
   const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
@@ -166,32 +168,20 @@ export function StatsTab({
                 key={`${player.id}-${index}`}
                 className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-white/40">
-                      <span>{getCivName(player.civId)}</span>
-                    </div>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  ></span>
-                </div>
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                  civ={getCivName(player.civId)}
+                />
 
                 <div className="space-y-4">
                   {/* Starting Units Section */}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-white/30">Starting units</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{startingCount}</span>
+                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{startingCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.starting.length > 0 ? stats.starting.map((unit) => (
@@ -208,7 +198,7 @@ export function StatsTab({
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{milCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.military.length > 0 ? (
@@ -228,7 +218,7 @@ export function StatsTab({
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-green-400/70">Trained eco units</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
+                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{ecoCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.economic.length > 0 ? (
@@ -266,30 +256,18 @@ export function StatsTab({
                 key={`${player.id}-${index}`}
                 className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-white/40">
-                      <span>{getCivName(player.civId)}</span>
-                    </div>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  />
-                </div>
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                  civ={getCivName(player.civId)}
+                />
 
                 <div>
                   <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-white/30">Starting buildings</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(startingBuildingCount)}</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(startingBuildingCount)}</span>
                   </div>
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
                     {stats.starting.length > 0 ? stats.starting.map((building) => (
@@ -306,7 +284,7 @@ export function StatsTab({
                 <div>
                   <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(buildingCount)}</span>
                   </div>
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
                     {stats.built.length > 0 ? stats.built.map((building) => (
@@ -342,22 +320,12 @@ export function StatsTab({
                 key={`${player.id}-${index}`}
                 className="panel-strong pt-4 pb-2 px-4 flex flex-col gap-6 player-card-3d-base"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
-                    </h3>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  ></span>
-                </div>
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                />
 
                 <div className="flex flex-col gap-2">
                   {(["wood", "food", "stone"] as const).map((res) => {
@@ -395,27 +363,17 @@ export function StatsTab({
                 key={`${player.id}-${index}`}
                 className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
-                      {player.name}
-                      {player.ai && (
-                        <span className="inline-flex items-center rounded-md bg-white/5 px-1.5 py-0.5 font-normal text-[10px] tracking-widest text-white/40 ring-1 ring-inset ring-white/10">
-                          AI
-                        </span>
-                      )}
-                    </h3>
-                  </div>
-                  <span
-                    className="ml-2 h-3 w-3 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: getPlayerColor(player.id) }}
-                  ></span>
-                </div>
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                />
 
                 <div>
                   <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-white/30">Total actions</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(totalActions)}</span>
+                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(totalActions)}</span>
                   </div>
 
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
