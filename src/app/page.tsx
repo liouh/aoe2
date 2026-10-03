@@ -18,6 +18,8 @@ import {
   type MapResourceType,
   type MatchInfo,
   type TimelineEvent,
+  type PlayerSummary,
+  type PlayerStats,
 } from "@/lib/replayProcessor";
 import { SAMPLE_REPLAYS } from "@/lib/sampleReplays";
 import { ensureUnzipped } from "@/lib/zipUtils";
@@ -78,16 +80,34 @@ const waitForPaint = () =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
   });
 
+interface LoadedReplayData {
+  replay: any;
+  summary: any;
+  matchInfo: MatchInfo | null;
+  events: TimelineEvent[];
+  chatEvents: ChatEvent[];
+  mapResources: Record<string, MapResourceType>;
+  mapCliffs: Record<string, boolean>;
+  duration: number;
+  players: PlayerSummary[];
+  timelineStats: PlayerStats[];
+}
+
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [replay, setReplay] = useState<any>(null);
-  const [summary, setSummary] = useState<any>(null);
-  const [matchInfo, setMatchInfo] = useState<MatchInfo | null>(null);
-  const [events, setEvents] = useState<TimelineEvent[]>([]);
-  const [chatEvents, setChatEvents] = useState<ChatEvent[]>([]);
-  const [mapResources, setMapResources] = useState<Record<string, MapResourceType>>({});
-  const [mapCliffs, setMapCliffs] = useState<Record<string, boolean>>({});
-  const [duration, setDuration] = useState(0);
+  const [replayData, setReplayData] = useState<LoadedReplayData | null>(null);
+  const replay = replayData?.replay ?? null;
+  const summary = replayData?.summary ?? null;
+  const matchInfo = replayData?.matchInfo ?? null;
+  const events = useMemo(() => replayData?.events ?? [], [replayData?.events]);
+  const chatEvents = useMemo(() => replayData?.chatEvents ?? [], [replayData?.chatEvents]);
+  const mapResources = useMemo(() => replayData?.mapResources ?? {}, [replayData?.mapResources]);
+  const mapCliffs = useMemo(() => replayData?.mapCliffs ?? {}, [replayData?.mapCliffs]);
+  const duration = replayData?.duration ?? 0;
+  const players = useMemo(() => replayData?.players ?? [], [replayData?.players]);
+  const timelineStats = useMemo(() => replayData?.timelineStats ?? [], [replayData?.timelineStats]);
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set(["game"]));
+
   const [selectedTime, setSelectedTime] = useState(0);
   const selectedTimeRef = useRef(selectedTime);
   useEffect(() => {
@@ -105,15 +125,14 @@ export default function Home() {
     setLoading(false);
   }, []);
 
+  const handleTabChange = (tab: "game" | "stats" | "timeline") => {
+    setActiveTab(tab);
+    setVisitedTabs((prev) => (prev.has(tab) ? prev : new Set(prev).add(tab)));
+  };
+
   const unloadReplay = () => {
-    setReplay(null);
-    setSummary(null);
-    setMatchInfo(null);
-    setEvents([]);
-    setChatEvents([]);
-    setMapResources({});
-    setMapCliffs({});
-    setDuration(0);
+    setReplayData(null);
+    setVisitedTabs(new Set(["game"]));
     resetGameState();
   };
 
@@ -127,11 +146,6 @@ export default function Home() {
   };
 
   const lastKeyTimeRef = useRef(0);
-
-  const players = useMemo(
-    () => summarizePlayers(summary, replay),
-    [replay, summary]
-  );
 
   const playerIdToColorId = useMemo(() => {
     const map = new Map<number, number>();
@@ -159,11 +173,6 @@ export default function Home() {
     return PLAYER_OUTLINES[(colorId) % PLAYER_OUTLINES.length];
   };
 
-  // Sync player selection when player data changes or is loaded
-  const timelineStats = useMemo(
-    () => extractPlayerStats(events, duration, players, chatEvents),
-    [events, duration, players, chatEvents]
-  );
 
   // Manage the playback timer: increments selectedTime when playing
   useEffect(() => {
@@ -213,20 +222,26 @@ export default function Home() {
       }
 
       const timeline = buildTimeline(parsed, parsedSummary);
+      const players = timeline.players ?? summarizePlayers(parsedSummary, parsed);
       const gameDuration = determineDuration(parsedSummary, timeline.events);
       const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl, parsedSummary);
+      const timelineStats = extractPlayerStats(timeline.events, gameDuration, players, timeline.chatEvents);
 
       setLoadingStep(2);
       await waitForPaint();
 
-      setReplay(parsed);
-      setSummary(parsedSummary);
-      setMatchInfo(extractedInfo);
-      setEvents(timeline.events);
-      setChatEvents(timeline.chatEvents);
-      setMapResources(timeline.mapResources);
-      setMapCliffs(timeline.mapCliffs);
-      setDuration(gameDuration);
+      setReplayData({
+        replay: parsed,
+        summary: parsedSummary,
+        matchInfo: extractedInfo,
+        events: timeline.events,
+        chatEvents: timeline.chatEvents,
+        mapResources: timeline.mapResources,
+        mapCliffs: timeline.mapCliffs,
+        duration: gameDuration,
+        players,
+        timelineStats,
+      });
 
       resetGameState();
     } catch (err) {
@@ -436,7 +451,7 @@ export default function Home() {
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
-                  onClick={() => setActiveTab("game")}
+                  onClick={() => handleTabChange("game")}
                 >
                   Game
                 </button>
@@ -445,7 +460,7 @@ export default function Home() {
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
-                  onClick={() => setActiveTab("stats")}
+                  onClick={() => handleTabChange("stats")}
                 >
                   Stats
                 </button>
@@ -454,7 +469,7 @@ export default function Home() {
                     ? "border-b-2 border-[color:var(--accent)] text-white"
                     : "border-b-2 border-transparent text-white/40 hover:text-white/70"
                     }`}
-                  onClick={() => setActiveTab("timeline")}
+                  onClick={() => handleTabChange("timeline")}
                 >
                   Timeline
                 </button>
@@ -478,26 +493,30 @@ export default function Home() {
                 />
               </div>
 
-              <div className={activeTab === "stats" ? "block" : "hidden"}>
-                <StatsTab
-                  players={players}
-                  timelineStats={timelineStats}
-                  events={events}
-                  getPlayerColor={getPlayerColor}
-                />
-              </div>
+              {visitedTabs.has("stats") && (
+                <div className={activeTab === "stats" ? "block" : "hidden"}>
+                  <StatsTab
+                    players={players}
+                    timelineStats={timelineStats}
+                    events={events}
+                    getPlayerColor={getPlayerColor}
+                  />
+                </div>
+              )}
 
-              <div className={activeTab === "timeline" ? "block" : "hidden"}>
-                <TimelineTab
-                  players={players}
-                  events={events}
-                  duration={duration}
-                  timelineStats={timelineStats}
-                  selectedTime={selectedTime}
-                  getPlayerColor={getPlayerColor}
-                  formatClock={formatClock}
-                />
-              </div>
+              {visitedTabs.has("timeline") && (
+                <div className={activeTab === "timeline" ? "block" : "hidden"}>
+                  <TimelineTab
+                    players={players}
+                    events={events}
+                    duration={duration}
+                    timelineStats={timelineStats}
+                    selectedTime={selectedTime}
+                    getPlayerColor={getPlayerColor}
+                    formatClock={formatClock}
+                  />
+                </div>
+              )}
             </div>
           )}
         </main>

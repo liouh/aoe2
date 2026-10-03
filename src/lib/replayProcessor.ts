@@ -133,10 +133,10 @@ const pickNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
 
 // Structs from https://github.com/aoe2ct/aoe2rec/blob/main/patterns/aoe2operations.hexpat
-const parseActionData = (type: string, data: number[]) => {
-  const bytes = Uint8Array.from(data);
+const parseActionData = (type: string, data: number[] | Uint8Array) => {
+  const bytes = data instanceof Uint8Array ? data : Uint8Array.from(data);
   if (bytes.length === 0) return undefined;
-  const view = new DataView(bytes.buffer);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
   const extractUnitIds = (selected: number, minOffset: number) => {
     if (selected <= 0) return undefined;
@@ -479,30 +479,22 @@ export const summarizePlayers = (
 };
 
 export const buildPlayerMapping = (
-  operations: Record<string, unknown>[],
+  _operations: Record<string, unknown>[],
   players: PlayerSummary[]
 ): Map<number, number> => {
-  const rawEventPlayerIds = new Set<number>();
-  operations.forEach((op) => {
-    const action = op.Action as Record<string, unknown> | undefined;
-    const actionData = action?.action_data as Record<string, unknown> | undefined;
-    if (actionData) {
-      const actionType = Object.keys(actionData)[0];
-      const payload = actionData[actionType] as Record<string, unknown>;
-      const pid = pickNumber(payload?.player_id);
-      if (pid !== undefined && pid !== 0) {
-        rawEventPlayerIds.add(pid);
-      }
-    }
-  });
-
   const isSharedControl = (() => {
     const slots = players.map((p) => p.slotId).filter((s): s is number => s !== undefined);
     return new Set(slots).size < slots.length;
   })();
 
+  const potentialIds = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
+  players.forEach((p) => {
+    potentialIds.add(p.id);
+    if (p.slotId !== undefined) potentialIds.add(p.slotId);
+  });
+
   const playerMapping = new Map<number, number>();
-  for (const eid of rawEventPlayerIds) {
+  for (const eid of potentialIds) {
     const player = isSharedControl
       ? (players.find((p) => p.id === eid) ?? players.find((p) => (p.slotId ?? p.id) === eid))
       : (players.find((p) => (p.slotId ?? p.id) === eid) ?? players.find((p) => p.id === eid));
@@ -564,7 +556,8 @@ const NINJALUI_SEQUENCE = Array.from({ length: 40 }, (_, i) => [102, 101, 103, 1
 export const extractChatEvents = (
   replay: unknown,
   summary?: any,
-  providedPlayers?: PlayerSummary[]
+  providedPlayers?: PlayerSummary[],
+  providedPlayerMapping?: Map<number, number>
 ): ChatEvent[] => {
   if (!replay) return [];
   const replayRecord = normalizeReplay(replay) as Record<string, unknown>;
@@ -574,7 +567,12 @@ export const extractChatEvents = (
   if (!operations) return [];
 
   const players = providedPlayers ?? summarizePlayers(summary, replayRecord);
-  const playerMapping = buildPlayerMapping(operations, players);
+  const playerById = new Map<number, PlayerSummary>(players.map((p) => [p.id, p]));
+  const playerBySlotId = new Map<number, PlayerSummary>();
+  players.forEach((p) => {
+    if (p.slotId !== undefined && !playerBySlotId.has(p.slotId)) playerBySlotId.set(p.slotId, p);
+  });
+  const playerMapping = providedPlayerMapping ?? buildPlayerMapping(operations, players);
   const isTeamGame = players.length > 2 || (() => {
     const teamCounts = new Map<number, number>();
     players.forEach((p) => {
@@ -607,7 +605,7 @@ export const extractChatEvents = (
       const pid = rawPid !== undefined ? (playerMapping.get(rawPid) ?? rawPid) : undefined;
       if (pid !== undefined && !resignedPlayerIds.has(pid)) {
         resignedPlayerIds.add(pid);
-        const resignedPlayer = players.find((p) => p.id === pid);
+        const resignedPlayer = playerById.get(pid);
         const playerName = resignedPlayer?.name || `Player ${pid}`;
 
         chatEvents.push({
@@ -635,7 +633,7 @@ export const extractChatEvents = (
         if (cheatId !== undefined) {
           const rawPid = pickNumber(gameData?.player_id);
           const pid = rawPid !== undefined ? (playerMapping.get(rawPid) ?? rawPid) : undefined;
-          const cheatPlayer = pid !== undefined ? players.find((p) => p.id === pid) : undefined;
+          const cheatPlayer = pid !== undefined ? playerById.get(pid) : undefined;
           const playerName = cheatPlayer?.name || (pid !== undefined ? `Player ${pid}` : "Unknown Player");
 
           let cheatName = getCheatName(cheatId);
@@ -701,17 +699,17 @@ export const extractChatEvents = (
 
     const rawPlayerId = pickNumber(payload.player);
     const playerId = rawPlayerId !== undefined ? (playerMapping.get(rawPlayerId) ?? rawPlayerId) : undefined;
-    const player = playerId !== undefined ? players.find((p) => p.id === playerId) : undefined;
+    const player = playerId !== undefined ? playerById.get(playerId) : undefined;
     const rawMessage = typeof payload.message === "string" ? payload.message : (chatOp.text ?? "");
     const tauntNumber = pickNumber(payload.tauntNumber);
     const channel = pickNumber(payload.channel);
     const tagMatch = rawMessage.match(/<player_id,\s*(\d+)[^>]*>/i);
     const tagPlayerId = tagMatch ? pickNumber(parseInt(tagMatch[1], 10)) : undefined;
-    const tagPlayer = tagPlayerId !== undefined ? players.find(p => (p.slotId ?? p.id) === tagPlayerId) : undefined;
+    const tagPlayer = tagPlayerId !== undefined ? (playerBySlotId.get(tagPlayerId) ?? playerById.get(tagPlayerId)) : undefined;
     const resolvedPlayerId = (playerId !== undefined && playerId !== 0)
       ? playerId
       : tagPlayer?.id ?? tagPlayerId;
-    const resolvedPlayer = resolvedPlayerId !== undefined ? players.find((p) => p.id === resolvedPlayerId) : player;
+    const resolvedPlayer = resolvedPlayerId !== undefined ? playerById.get(resolvedPlayerId) : player;
 
     const hasPlayerIdTag = tagMatch !== null;
     const isCandidateSystem = hasPlayerIdTag || playerId === 0 || playerId === undefined;
@@ -821,6 +819,7 @@ export type TimelineResult = {
   mapResources: Record<string, MapResourceType>;
   mapCliffs: Record<string, boolean>;
   chatEvents: ChatEvent[];
+  players?: PlayerSummary[];
 };
 
 export const buildTimeline = (
@@ -834,7 +833,9 @@ export const buildTimeline = (
     : null;
   const events: TimelineEvent[] = [];
   const players = summarizePlayers(summary, replayRecord);
-  const chatEvents = extractChatEvents(replayRecord, summary, players);
+  const playerById = new Map<number, PlayerSummary>(players.map((p) => [p.id, p]));
+  const playerMapping = buildPlayerMapping(operations ?? [], players);
+  const chatEvents = extractChatEvents(replayRecord, summary, players, playerMapping);
 
   // Process initial object instances if available
   const zheader = replayRecord.zheader as any;
@@ -1029,7 +1030,6 @@ export const buildTimeline = (
 
   if (operations) {
     const actionTypeCounts: Record<string, number> = {};
-    const playerMapping = buildPlayerMapping(operations, players);
 
     const lastUnitIds = new Map<number, number[]>();
 
@@ -1055,7 +1055,7 @@ export const buildTimeline = (
       // Adjust player ID based on mapping
       const playerId = playerMapping.get(rawPlayerId) ?? rawPlayerId;
 
-      const player = players.find(p => p.id === playerId);
+      const player = playerById.get(playerId);
       const isAi = player?.ai;
       const civId = player?.civId;
       const category = classifyEvent(actionType, isAi);
@@ -1229,6 +1229,7 @@ export const buildTimeline = (
     mapResources,
     mapCliffs,
     chatEvents,
+    players,
   };
 };
 
@@ -1295,8 +1296,11 @@ export const extractPlayerStats = (
 ): PlayerStats[] => {
   const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
   const eventsByPlayer = new Map<number, TimelineEvent[]>();
+  const playerById = new Map<number, PlayerSummary>(players?.map((p) => [p.id, p]) ?? []);
+  const playerBySlotId = new Map<number, PlayerSummary>();
   players?.forEach((player) => {
     eventsByPlayer.set(player.id, []);
+    if (player.slotId !== undefined) playerBySlotId.set(player.slotId, player);
   });
   events.forEach((event) => {
     if (event.playerId === undefined || event.playerId === 0) return;
@@ -1304,6 +1308,50 @@ export const extractPlayerStats = (
     if (!list) return;
     list.push(event);
   });
+
+  // Pre-calculate age advancements from system chat notifications
+  const ageTimingsByPlayerId = new Map<number, Record<string, number>>();
+  const playersBySlotId = new Map<number, PlayerSummary[]>();
+  players?.forEach((p) => {
+    if (p.slotId !== undefined) {
+      const list = playersBySlotId.get(p.slotId) ?? [];
+      list.push(p);
+      playersBySlotId.set(p.slotId, list);
+    }
+  });
+
+  if (chatEvents && chatEvents.length > 0) {
+    chatEvents.forEach((chat) => {
+      if (chat.time > 0 && chat.isSystem) {
+        const age = detectAgeAdvance(chat.rawMessage, chat.message, chat.playerName);
+        if (age) {
+          const chatPlayer = chat.playerId !== undefined ? playerById.get(chat.playerId) : undefined;
+          const matchedPlayers = new Set<PlayerSummary>();
+          if (chatPlayer) {
+            matchedPlayers.add(chatPlayer);
+          }
+          const slot = chatPlayer?.slotId ?? chat.playerId;
+          if (slot !== undefined) {
+            const slotPlayers = playersBySlotId.get(slot);
+            if (slotPlayers) {
+              slotPlayers.forEach((sp) => matchedPlayers.add(sp));
+            }
+          }
+
+          matchedPlayers.forEach((p) => {
+            let timings = ageTimingsByPlayerId.get(p.id);
+            if (!timings) {
+              timings = {};
+              ageTimingsByPlayerId.set(p.id, timings);
+            }
+            if (!timings[age]) {
+              timings[age] = chat.time;
+            }
+          });
+        }
+      }
+    });
+  }
 
   const stats: PlayerStats[] = [];
   eventsByPlayer.forEach((playerEvents, playerId) => {
@@ -1322,9 +1370,8 @@ export const extractPlayerStats = (
       : playerEvents.filter((e) => !e.raw?.isInitial);
 
     const apm = Math.round(activePlayerEvents.length / playerDurationMinutes);
-    const player = players?.find((p) => p.id === playerId);
-    const civId = player?.civId;
-    const ageTimings: Record<string, number> = {};
+    const player = playerById.get(playerId);
+    const ageTimings: Record<string, number> = { ...(ageTimingsByPlayerId.get(playerId) ?? {}) };
 
     let autoscoutUsage = 0;
     const marketUsage: MarketUsage = {
@@ -1358,22 +1405,6 @@ export const extractPlayerStats = (
         }
       }
     });
-
-    // Extract age-up timings directly from ground-truth chat notifications (supporting all official game languages)
-    if (chatEvents && chatEvents.length > 0) {
-      chatEvents.forEach((chat) => {
-        const chatPlayer = players?.find((p) => p.id === chat.playerId);
-        const matchesPlayer = chat.playerId === playerId || (
-          player?.slotId !== undefined && (chatPlayer?.slotId ?? chat.playerId) === player.slotId
-        );
-        if (matchesPlayer && chat.time > 0 && chat.isSystem) {
-          const age = detectAgeAdvance(chat.rawMessage, chat.message, chat.playerName);
-          if (age && !ageTimings[age]) {
-            ageTimings[age] = chat.time;
-          }
-        }
-      });
-    }
 
     const playerMaxMinute = resignTime !== undefined
       ? Math.floor(playerDurationSeconds / 60)

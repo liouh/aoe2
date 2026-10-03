@@ -60,6 +60,12 @@ export function GameTab({
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
   }, []);
 
+  const statsByPlayerId = useMemo(() => {
+    const map = new Map<number, any>();
+    timelineStats.forEach((s) => map.set(s.playerId, s));
+    return map;
+  }, [timelineStats]);
+
   const hasAi = useMemo(() => players.some((p) => p.ai), [players]);
   const chartPlayers = useMemo(() => {
     const seen = new Set<number>();
@@ -70,6 +76,23 @@ export function GameTab({
       return true;
     });
   }, [players, showAiApm]);
+
+  const chartData = useMemo(() => {
+    return chartPlayers.map((player) => ({
+      playerId: player.id,
+      history: statsByPlayerId.get(player.id)?.apmHistory || [],
+    }));
+  }, [chartPlayers, statsByPlayerId]);
+
+  const chartAgeTimings = useMemo(() => {
+    return chartPlayers
+      .map((player) => ({
+        playerId: player.id,
+        timings: statsByPlayerId.get(player.id)?.ageTimings ?? {},
+        textColor: getPlayerOutline(player.id),
+      }))
+      .filter((player) => Object.keys(player.timings).length > 0);
+  }, [chartPlayers, statsByPlayerId, getPlayerOutline]);
   const hasLobbyChat = useMemo(() => (chatEvents ?? []).some((item) => item.time === 0), [chatEvents]);
 
   const hasAiTeamChat = useMemo(() => {
@@ -172,9 +195,7 @@ export function GameTab({
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
-            const stats = timelineStats.find(
-              (item) => item.playerId === player.id
-            );
+            const stats = statsByPlayerId.get(player.id);
             const showRatingInfo = (hasRmRatingInfo || hasTeamRatingInfo) && !player.ai;
             return (
               <TiltCard
@@ -300,21 +321,11 @@ export function GameTab({
         </div>
 
         <APMChart
-          data={chartPlayers.map(player => ({
-            playerId: player.id,
-            history: timelineStats.find(stats => stats.playerId === player.id)?.apmHistory || [],
-          }))}
+          data={chartData}
           players={chartPlayers}
           getPlayerColor={getPlayerColor}
           selectedTime={selectedTime}
-          ageTimings={chartPlayers
-            .map(player => ({
-              playerId: player.id,
-              timings: timelineStats.find(stats => stats.playerId === player.id)?.ageTimings ?? {},
-              textColor: getPlayerOutline(player.id),
-            }))
-            .filter(player => Object.keys(player.timings).length > 0)
-          }
+          ageTimings={chartAgeTimings}
           hoveredPlayerId={hoveredApmPlayerId}
           isLogScale={showAiApm && hasAi}
         />
@@ -324,7 +335,7 @@ export function GameTab({
           onMouseLeave={() => handleHoverPlayer(null)}
         >
           {players.map((player, index) => {
-            const stats = timelineStats.find(item => item.playerId === player.id);
+            const stats = statsByPlayerId.get(player.id);
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
