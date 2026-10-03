@@ -189,7 +189,7 @@ export function StatsTab({
                 <div className="space-y-4">
                   {/* Starting Units Section */}
                   <div>
-                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-white/30">Starting units</span>
                       <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{startingCount}</span>
                     </div>
@@ -206,7 +206,7 @@ export function StatsTab({
                   </div>
                   {/* Military Section */}
                   <div>
-                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
                       <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
                     </div>
@@ -226,7 +226,7 @@ export function StatsTab({
 
                   {/* Economic Section */}
                   <div>
-                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-green-400/70">Trained eco units</span>
                       <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
                     </div>
@@ -287,7 +287,7 @@ export function StatsTab({
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-white/30">Starting buildings</span>
                     <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(startingBuildingCount)}</span>
                   </div>
@@ -304,7 +304,7 @@ export function StatsTab({
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
                     <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
                   </div>
@@ -364,7 +364,7 @@ export function StatsTab({
                     const bought = usage.bought[res];
                     const sold = usage.sold[res];
                     return (
-                      <div key={res} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                      <div key={res} className="-mx-4 px-4 flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
                         <span className="text-xs uppercase tracking-wider text-white/30">{res}</span>
                         <span className="text-sm tabular-nums font-medium flex items-center gap-1">
                           <span className={bought > 0 ? "text-green-400/70" : "text-white/10"}>+{formatNum(bought)}</span>
@@ -413,7 +413,7 @@ export function StatsTab({
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                     <span className="text-xs uppercase tracking-wider text-white/30">Total actions</span>
                     <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(totalActions)}</span>
                   </div>

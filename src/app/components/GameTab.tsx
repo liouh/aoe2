@@ -235,7 +235,7 @@ export function GameTab({
                 <div className="space-y-4 text-sm flex-1 flex flex-col">
                   {showRatingInfo && (
                     <div>
-                      <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                      <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                         <span className="text-xs uppercase tracking-wider text-white/30">Player rating</span>
                       </div>
                       <div className="flex flex-col gap-1.5">
@@ -273,7 +273,7 @@ export function GameTab({
                     </div>
                   )}
                   <div className={showRatingInfo ? "pt-2" : ""}>
-                    <div className="flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Age up time</span>
                     </div>
                     {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
@@ -313,7 +313,7 @@ export function GameTab({
                       )}
                     </div>
                   )}
-                  <div className="mt-auto border-t border-white/5 pt-3">
+                  <div className="mt-auto -mx-4 px-4 border-t border-white/5 pt-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-xs text-[color:var(--muted)]">Average APM</p>
