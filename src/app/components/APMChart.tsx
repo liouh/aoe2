@@ -214,11 +214,12 @@ export function APMChart({
                 y={lineY}
                 fill={textColor}
                 fontSize="8"
-                fontWeight="bold"
+                fontWeight="900"
+                fontFamily="serif"
                 textAnchor="middle"
                 dominantBaseline="central"
-                className="select-none pointer-events-none"
-                style={{ fontFamily: "inherit", userSelect: "none" }}
+                className="font-serif font-black select-none pointer-events-none"
+                style={{ userSelect: "none" }}
               >
                 {label}
               </text>

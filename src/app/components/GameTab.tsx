@@ -7,8 +7,15 @@ import { AiBadge } from "./AiBadge";
 import { APMChart } from "./APMChart";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
-import { type MatchInfo, type ChatEvent } from "@/lib/replayProcessor";
+import { type MatchInfo, type ChatEvent, detectAgeAdvance } from "@/lib/replayProcessor";
 import { DEBUG } from "@/lib/debug";
+
+const AGE_ROMAN: Record<string, string> = {
+  Dark: "I",
+  Feudal: "II",
+  Castle: "III",
+  Imperial: "IV",
+};
 
 interface GameTabProps {
   players: any[];
@@ -420,7 +427,12 @@ export function GameTab({
               {filteredChat.map((item) => {
                 const timeLabel = item.time === 0 ? "Lobby" : formatClock(item.time);
                 const pColor = item.playerId ? getPlayerColor(item.playerId) : undefined;
+                const pOutline = item.playerId ? getPlayerOutline(item.playerId) : undefined;
                 const senderTeamId = item.teamId ?? (item.playerId ? players.find((p) => p.id === item.playerId)?.teamId : undefined);
+                const detectedAge = item.isSystem ? detectAgeAdvance(item.rawMessage, item.message, item.playerName) : null;
+                const ageRoman = detectedAge ? AGE_ROMAN[detectedAge] : null;
+                const isResign = item.isSystem && ((item.raw as any)?.type === "Resign" || /\bresigned\b/i.test(item.message) || /\bresigned\b/i.test(item.rawMessage ?? ""));
+                const isCheat = item.isSystem && ((item.raw as any)?.type === "Cheat" || /\bused a cheat\b/i.test(item.message) || /\bused a cheat\b/i.test(item.rawMessage ?? ""));
 
                 return (
                   <div
@@ -434,16 +446,16 @@ export function GameTab({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                       title={`Jump to ${timeLabel}`}
-                      className="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-mono tabular-nums font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                      className="shrink-0 rounded-md px-2 h-6 inline-flex items-center justify-center text-[11px] font-mono tabular-nums font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
                     >
                       {timeLabel}
                     </button>
 
                     <div className="flex flex-1 flex-col min-w-0">
                       {!item.isSystem && (
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1 min-h-6">
                           {item.playerName && (
-                            <span className="flex items-center gap-1.5 font-semibold text-sm leading-tight text-white/30">
+                            <span className="flex items-center gap-1.5 text-sm leading-tight text-white/50">
                               <span
                                 className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
                                 style={{ background: pColor || "#FFFFFF" }}
@@ -453,41 +465,51 @@ export function GameTab({
                           )}
 
                           {item.scope === "team" && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
-                              <span className="text-emerald-300/70 font-normal">to</span>
-                              <span>Team {senderTeamId !== undefined ? senderTeamId : ""}</span>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold">
+                              <span className="font-normal opacity-70">to</span>
+                              <span className="text-[color:var(--accent)]">Team {senderTeamId !== undefined ? senderTeamId : ""}</span>
                             </span>
                           )}
 
                           {item.scope === "direct" && item.recipientName && (
-                            <span className="inline-flex items-center gap-1.5 rounded-md bg-purple-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-400/30">
-                              <span className="text-purple-300/70 font-normal">to</span>
+                            <span className="inline-flex items-center text-[10px] text-white/50">
+                              <span className="font-normal">to</span>
                               {item.recipientPlayerId !== undefined && (
                                 <span
-                                  className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
+                                  className="h-1.5 w-1.5 rounded-full shrink-0 ring-1 ring-white/80 ml-1.5"
                                   style={{ background: getPlayerColor(item.recipientPlayerId) }}
                                 />
                               )}
-                              <span>{item.recipientName}</span>
+                              <span className="ml-1">{item.recipientName}</span>
                             </span>
                           )}
 
                         </div>
                       )}
 
-                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 py-0.5" : "mt-0.5 text-white/90"}`}>
-                        {item.isSystem && pColor && (
-                          <span
-                            className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-[1px]"
-                            style={{ background: pColor }}
-                          />
+                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 min-h-6 flex items-center flex-wrap" : "mt-0.5 text-white/90"}`}>
+                        {item.isSystem && (
+                          ageRoman ? (
+                            <span
+                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black not-italic text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm shrink-0"
+                              style={{
+                                backgroundColor: pColor || getPlayerColor(0),
+                                color: pOutline || getPlayerOutline(0),
+                              }}
+                              title={`${detectedAge} Age`}
+                            >
+                              <span className="translate-y-[0.5px]">{ageRoman}</span>
+                            </span>
+                          ) : pColor ? (
+                            <span
+                              className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 shrink-0"
+                              style={{ background: pColor }}
+                            />
+                          ) : null
                         )}
-                        {item.tauntNumber && (
-                          <span className="mr-2 inline-flex items-center rounded-md bg-blue-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300 ring-1 ring-inset ring-blue-400/30 align-middle">
-                            Taunt {item.tauntNumber}
-                          </span>
-                        )}
-                        {item.message}
+                        <span>{item.message}</span>
+                        {isCheat && <span className="ml-1.5 not-italic">👾</span>}
+                        {isResign && <span className="ml-1.5 not-italic">💀</span>}
                       </p>
                     </div>
                   </div>
