@@ -4,8 +4,8 @@
 :root {
   --background: #221e1b;
   --foreground: #f6efe4;
-  --panel: #2d2824;
-  --panel-strong: #38322e;
+  --panel: #29231d;
+  --panel-strong: #352d25;
   --accent: #f59e0b;
   --accent-2: #304f6d;
   --muted: #b0a498;
@@ -15,8 +15,14 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-strong: var(--panel-strong);
   --font-sans: var(--font-body);
   --font-mono: var(--font-body);
+  --blur-sm: 4px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
 }
 
 html {
@@ -36,16 +42,13 @@ body {
   scrollbar-gutter: stable;
 }
 
-
-.panel {
-  background-color: var(--panel);
-  border: 1px solid rgba(28, 22, 16, 0.08);
-  box-shadow: 0 20px 40px rgba(28, 22, 16, 0.08);
+.tab-section {
+  padding: 1rem 1.5rem;
 }
 
 .panel-strong {
-  background-color: var(--panel-strong);
-  border: 1px solid rgba(28, 22, 16, 0.12);
+  background-color: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .panel-dark {
@@ -55,7 +58,6 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-
 .headline {
   font-family: var(--font-display), "Times New Roman", serif;
   letter-spacing: 0.02em;
@@ -63,17 +65,21 @@ body {
 
 /* Base styles for 3D cards, used by TiltCard component */
 .player-card-3d-base {
-  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  background-color: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease, background-color 0.4s ease;
   transform-style: preserve-3d;
   backface-visibility: hidden;
   transform: translateZ(0);
   will-change: transform, box-shadow;
 }
 
-.player-card-3d-base:hover {
-  box-shadow: 
+.player-card-3d-base:hover,
+.player-card-3d-base.is-hovered,
+.tilt-card-wrapper:hover .player-card-3d-base {
+  box-shadow:
     0 30px 60px rgba(0, 0, 0, 0.5),
     0 15px 30px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }

@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       asyncWebAssembly: true,
       topLevelAwait: true,
     };
+    config.output.environment = {
+      ...(config.output.environment ?? {}),
+      asyncFunction: true,
+    };
     return config;
   },
 };

@@ -188,14 +188,14 @@ export function GameTab({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="panel rounded-3xl p-6">
+      <section className="tab-section">
         <div className="flex items-center gap-3">
           <h2 className="headline text-2xl font-semibold">Players</h2>
-          <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+          <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
             {matchFormat || players.length}
           </span>
           {matchInfo && (matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some((p) => p.ai) && (
-            <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+            <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
               {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`} AI
             </span>
           )}
@@ -332,7 +332,7 @@ export function GameTab({
         </div>
       </section>
 
-      <section className="panel flex flex-col gap-6 rounded-3xl p-6">
+      <section className="tab-section flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
           {hasAi && (
@@ -356,11 +356,11 @@ export function GameTab({
         />
       </section>
 
-      <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+      <section className="tab-section flex flex-col gap-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <h2 className="headline text-2xl font-semibold">In-game chat</h2>
-            <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+            <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
               {filteredChat.length}
             </span>
           </div>
@@ -394,15 +394,15 @@ export function GameTab({
         </div>
 
         {chatEvents.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+          <div className="border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
             No in-game chat messages recorded in this replay.
           </div>
         ) : filteredChat.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+          <div className="border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
             No messages match the selected filters.
           </div>
         ) : (
-          <div className="bg-[#1c1610] rounded-2xl px-4 py-3 border border-white/5">
+          <div className="bg-[color:var(--panel)] px-4 py-3 border border-white/5">
             <div className="space-y-1">
               {filteredChat.map((item) => {
                 const timeLabel = item.time === 0 ? "Lobby" : formatClock(item.time);
@@ -501,7 +501,7 @@ export function GameTab({
       </section>
 
       {matchInfo && (
-        <section className="panel flex flex-col gap-4 rounded-3xl p-6">
+        <section className="tab-section flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="headline text-2xl font-semibold">Game info</h2>
             {matchInfo.timestamp !== undefined && (
@@ -519,74 +519,76 @@ export function GameTab({
               </span>
             )}
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {matchInfo?.gameTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.mapTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.customMapName ?? getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
-                </span>
-                {matchInfo.customMapPackName && (
-                  <span className="text-xs text-[color:var(--muted)]">{matchInfo.customMapPackName}</span>
-                )}
-              </div>
-            )}
-            {matchInfo.mapSizeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map size</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
-                </span>
-              </div>
-            )}
-            {matchInfo.populationLimit !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.populationLimit}
-                </span>
-              </div>
-            )}
-            {matchInfo.victoryTypeId !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
-                </span>
-              </div>
-            )}
-            {matchInfo.cheats !== undefined && (
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.cheats ? "Yes" : "No"}
-                </span>
-              </div>
-            )}
-            {matchInfo.filename && (
-              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.filename}
-                </span>
-              </div>
-            )}
-            {matchInfo.sourceUrl && (
-              <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
-                <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
-                <span className="font-semibold text-[color:var(--foreground)]">
-                  {matchInfo.sourceUrl}
-                </span>
-              </div>
-            )}
+          <div className="bg-[color:var(--panel)] p-4 border border-white/5">
+            <div className="grid gap-6 md:grid-cols-3">
+              {matchInfo?.gameTypeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
+                  </span>
+                </div>
+              )}
+              {matchInfo.mapTypeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map name</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {matchInfo.customMapName ?? getMapName(matchInfo.mapTypeId) ?? `Map ${matchInfo.mapTypeId}`}
+                  </span>
+                  {matchInfo.customMapPackName && (
+                    <span className="text-xs text-[color:var(--muted)]">{matchInfo.customMapPackName}</span>
+                  )}
+                </div>
+              )}
+              {matchInfo.mapSizeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Map size</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getMapSizeName(matchInfo.mapSizeId) ?? matchInfo.mapSizeId}
+                  </span>
+                </div>
+              )}
+              {matchInfo.populationLimit !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {matchInfo.populationLimit}
+                  </span>
+                </div>
+              )}
+              {matchInfo.victoryTypeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Victory</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getVictoryTypeName(matchInfo.victoryTypeId) ?? `Type ${matchInfo.victoryTypeId}`}
+                  </span>
+                </div>
+              )}
+              {matchInfo.cheats !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {matchInfo.cheats ? "Yes" : "No"}
+                  </span>
+                </div>
+              )}
+              {matchInfo.filename && (
+                <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Filename</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {matchInfo.filename}
+                  </span>
+                </div>
+              )}
+              {matchInfo.sourceUrl && (
+                <div className="flex flex-col gap-1 md:col-span-full border-t border-white/5 pt-2">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Source URL</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {matchInfo.sourceUrl}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}

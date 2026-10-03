@@ -270,7 +270,7 @@ export function APMChart({
   };
 
   return (
-    <div className="w-full bg-[#1c1610] rounded-2xl px-4 pt-4 pb-2 border border-white/5">
+    <div className="w-full bg-[color:var(--panel)] px-4 pt-4 pb-2 border border-white/5">
       <div
         className="flex flex-wrap gap-x-4 gap-y-2 mb-6"
         onMouseLeave={() => setHovered(null)}

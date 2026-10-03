@@ -38,7 +38,7 @@ export function Header({
             {!showUrlInput ? (
               <>
                 <label
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
                   onClick={() => setIsPlaying(false)}
                   onMouseEnter={(e) => {
                     const active = document.activeElement;
@@ -83,7 +83,7 @@ export function Header({
                 </label>
                 <button
                   type="button"
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
                   onClick={() => {
                     setIsPlaying(false);
                     setShowUrlInput(true);
@@ -128,7 +128,7 @@ export function Header({
                     name="replay-url"
                     type="url"
                     placeholder="Paste replay URL..."
-                    className="flex-1 rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[color:var(--accent)] transition-colors h-10 lg:h-12"
+                    className="flex-1 rounded-lg bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[color:var(--accent)] transition-colors h-10 lg:h-12"
                     value={replayUrl}
                     onChange={(e) => setReplayUrl(e.target.value)}
                     onKeyDown={(e) => {
@@ -141,13 +141,13 @@ export function Header({
                     }}
                   />
                   <button
-                    className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--accent)] border border-white/20 hover:border-[color:var(--accent)] text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                    className="px-4 py-2 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--accent)] border border-white/20 hover:border-[color:var(--accent)] text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
                     onClick={handleUrlLoad}
                   >
                     Load
                   </button>
                   <button
-                    className="px-4 py-2 rounded-xl bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
+                    className="px-4 py-2 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 text-xs lg:text-sm font-bold text-white transition-all active:scale-95 cursor-pointer h-10 lg:h-12"
                     onClick={() => setShowUrlInput(false)}
                   >
                     Back

@@ -130,8 +130,8 @@ export function TimelineTab({
     const { research, builds, trains } = columnData[index];
 
     return (
-      <div key={`column-${index}`} className={`panel-strong rounded-2xl ${index === 1 ? 'hidden md:block' : ''}`}>
-        <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel-strong)]/50 backdrop-blur-sm border-b border-white/10">
+      <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
+        <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
           <div className="flex flex-col">
             <h3 className="text-lg font-bold leading-tight flex items-center gap-2">
               {player.name}
@@ -160,7 +160,7 @@ export function TimelineTab({
           />
         </div>
         <div
-          className="relative w-full bg-[#1c1610] rounded-b-xl"
+          className="relative w-full"
           style={{ height: timelineHeight }}
         >
           {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
@@ -168,7 +168,7 @@ export function TimelineTab({
             return (
               <div
                 key={`marker-${markerTime}`}
-                className="absolute left-0 w-full border-t border-[color:var(--panel)] pointer-events-none"
+                className="absolute left-0 w-full border-t border-white/5 pointer-events-none"
                 style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
               >
                 {i !== 0 && (
@@ -179,7 +179,7 @@ export function TimelineTab({
               </div>
             );
           })}
-          <div className="absolute left-8 top-0 h-full w-[2px] bg-[color:var(--panel)] pointer-events-none"></div>
+          <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
 
           {research.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
@@ -247,7 +247,7 @@ export function TimelineTab({
 
   return (
     <section className="w-full">
-      <div className="panel flex flex-col gap-6 rounded-3xl p-6">
+      <div className="tab-section flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="headline text-2xl font-semibold">Timeline</h2>
           <div className="flex flex-wrap items-center gap-4">

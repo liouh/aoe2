@@ -149,7 +149,7 @@ export function StatsTab({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="panel rounded-3xl p-6">
+      <section className="tab-section">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Units</h2>
         </div>
@@ -250,7 +250,7 @@ export function StatsTab({
         </div>
       </section>
 
-      <section className="panel rounded-3xl p-6">
+      <section className="tab-section">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Buildings</h2>
         </div>
@@ -325,7 +325,7 @@ export function StatsTab({
         </div>
       </section>
 
-      <section className="panel rounded-3xl p-6">
+      <section className="tab-section">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Market usage</h2>
         </div>
@@ -381,7 +381,7 @@ export function StatsTab({
         </div>
       </section>
 
-      <section className="panel rounded-3xl p-6">
+      <section className="tab-section">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Action breakdown</h2>
         </div>
