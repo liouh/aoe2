@@ -467,11 +467,11 @@ export function GameTab({
                         </div>
                       )}
 
-                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 min-h-6 flex items-center flex-wrap" : "mt-0.5 text-white/90"}`}>
+                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 min-h-6 py-0.5 leading-5" : "mt-0.5 text-white/90"}`}>
                         {item.isSystem && (
                           ageRoman ? (
                             <span
-                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black not-italic text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm shrink-0"
+                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black not-italic text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm align-middle -translate-y-px"
                               style={{
                                 backgroundColor: pColor || getPlayerColor(0),
                                 color: pOutline || getPlayerOutline(0),
@@ -482,7 +482,7 @@ export function GameTab({
                             </span>
                           ) : pColor ? (
                             <span
-                              className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 shrink-0"
+                              className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-white mr-2 align-middle -translate-y-px"
                               style={{ background: pColor }}
                             />
                           ) : null
