@@ -373,6 +373,32 @@ const parseActionData = (type: string, data: number[] | Uint8Array) => {
   return undefined;
 };
 
+export const buildPlayerMapping = (
+  _operations: Record<string, unknown>[],
+  players: PlayerSummary[]
+): Map<number, number> => {
+  const isSharedControl = (() => {
+    const slots = players.map((p) => p.slotId).filter((s): s is number => s !== undefined);
+    return new Set(slots).size < slots.length;
+  })();
+
+  const potentialIds = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
+  players.forEach((p) => {
+    potentialIds.add(p.id);
+    if (p.slotId !== undefined) potentialIds.add(p.slotId);
+  });
+
+  const playerMapping = new Map<number, number>();
+  for (const eid of potentialIds) {
+    const player = isSharedControl
+      ? (players.find((p) => p.id === eid) ?? players.find((p) => (p.slotId ?? p.id) === eid))
+      : (players.find((p) => (p.slotId ?? p.id) === eid) ?? players.find((p) => p.id === eid));
+    playerMapping.set(eid, player ? player.id : eid);
+  }
+
+  return playerMapping;
+};
+
 export const summarizePlayers = (
   replayOrSummary?: any,
   legacyReplay?: any
@@ -419,24 +445,9 @@ export const summarizePlayers = (
     });
   }
 
-  // Fast scan for resign actions from operations
   const operations = Array.isArray(normReplay?.operations)
     ? (normReplay.operations as Record<string, unknown>[])
     : null;
-  const resignedPids = new Set<number>();
-  if (operations) {
-    const len = operations.length;
-    for (let i = 0; i < len; i++) {
-      const action = (operations[i] as any).Action;
-      if (!action) continue;
-      const ad = action.action_data;
-      if (!ad) continue;
-      const resign = ad.Resign;
-      if (resign && typeof resign.player_id === "number" && resign.player_id > 0) {
-        resignedPids.add(resign.player_id);
-      }
-    }
-  }
 
   const summaryTeams = summary?.teams ?? [];
   let playerCounter = 1;
@@ -463,11 +474,39 @@ export const summarizePlayers = (
   const source = normReplay || summary;
   const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
 
+  const gsTeamMap = new Map<string, number>();
+  if (gameSettings?.players) {
+    const rawKeys: string[] = [];
+    gameSettings.players.forEach((p: any, idx: number) => {
+      let key: string;
+      if (typeof p.resolved_team_id === "number" && p.resolved_team_id > 1) {
+        key = `team_${p.resolved_team_id}`;
+      } else if (typeof p.selected_team_id === "number" && p.selected_team_id >= 1 && p.selected_team_id <= 4) {
+        key = `team_${p.selected_team_id}`;
+      } else {
+        key = `solo_${p.player_number ?? idx + 1}`;
+      }
+      if (!rawKeys.includes(key)) {
+        rawKeys.push(key);
+      }
+    });
+    rawKeys.forEach((key, i) => {
+      gsTeamMap.set(key, i + 1);
+    });
+  }
+
   if (gameSettings?.players) {
     const matchedPlayers = new Set<PlayerSummary>();
-    gameSettings.players.forEach((p: any) => {
+    gameSettings.players.forEach((p: any, idx: number) => {
       let player = players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number && (sp.name === p.name || !sp.name))
         ?? players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number);
+
+      const gsPlayerKey = typeof p.resolved_team_id === "number" && p.resolved_team_id > 1
+        ? `team_${p.resolved_team_id}`
+        : (typeof p.selected_team_id === "number" && p.selected_team_id >= 1 && p.selected_team_id <= 4)
+        ? `team_${p.selected_team_id}`
+        : `solo_${p.player_number ?? idx + 1}`;
+      const defaultTeamId = gsTeamMap.get(gsPlayerKey) ?? 1;
 
       const eloInfo = eloMap.get(p.player_number - 1);
       if (!player) {
@@ -477,7 +516,7 @@ export const summarizePlayers = (
           slotId: p.player_number,
           colorId: p.color_id ?? basePlayer?.colorId,
           civId: p.civ_id ?? basePlayer?.civId,
-          teamId: p.resolved_team_id ?? p.selected_team_id ?? basePlayer?.teamId ?? 1,
+          teamId: basePlayer?.teamId ?? defaultTeamId,
           ai: p.player_type === 4,
           name: p.name,
           elo: eloInfo?.elo,
@@ -486,6 +525,8 @@ export const summarizePlayers = (
           teamRank: eloInfo?.teamRank,
         };
         players.push(player);
+      } else if (player.teamId === undefined) {
+        player.teamId = defaultTeamId;
       }
       matchedPlayers.add(player);
 
@@ -516,8 +557,28 @@ export const summarizePlayers = (
     });
   }
 
-  // Derive won flag from resignations if not already populated from summary
-  if (players.length > 0 && players.some((p) => p.won === undefined)) {
+  // Fast scan for resign actions from operations with their earliest timestamp
+  const resignTimeByPlayerId = new Map<number, number>();
+  if (operations && players.length > 0) {
+    const playerMapping = buildPlayerMapping(operations, players);
+    const len = operations.length;
+    for (let i = 0; i < len; i++) {
+      const action = (operations[i] as any).Action;
+      if (!action) continue;
+      const ad = action.action_data;
+      if (!ad) continue;
+      const resign = ad.Resign;
+      if (resign && typeof resign.player_id === "number" && resign.player_id > 0) {
+        const mappedPid = playerMapping.get(resign.player_id) ?? resign.player_id;
+        if (!resignTimeByPlayerId.has(mappedPid)) {
+          resignTimeByPlayerId.set(mappedPid, action.world_time ?? 0);
+        }
+      }
+    }
+  }
+
+  // Derive won flag from resignations if not already populated or if all teams were marked defeated
+  if (players.length > 0 && (players.some((p) => p.won === undefined) || players.every((p) => !p.won))) {
     const teamMembers = new Map<number, PlayerSummary[]>();
     players.forEach((p) => {
       const tid = p.teamId ?? 1;
@@ -526,44 +587,58 @@ export const summarizePlayers = (
       teamMembers.set(tid, list);
     });
 
-    const hasAnyResigns = resignedPids.size > 0;
-    players.forEach((p) => {
-      if (p.won === undefined) {
+    const hasAnyResigns = resignTimeByPlayerId.size > 0;
+    if (!hasAnyResigns) {
+      players.forEach((p) => {
+        if (p.won === undefined) p.won = true;
+      });
+    } else {
+      // Calculate each team's resignation time (when all members of that team resigned)
+      // Surviving teams get Infinity.
+      const teamResignTime = new Map<number, number>();
+      let maxResignTime = -1;
+      let winningTeamId: number | null = null;
+      let hasSurvivingTeam = false;
+
+      teamMembers.forEach((members, tid) => {
+        const allResigned = members.length > 0 && members.every((m) => resignTimeByPlayerId.has(m.id));
+        if (allResigned) {
+          const teamTime = Math.max(...members.map((m) => resignTimeByPlayerId.get(m.id) ?? 0));
+          teamResignTime.set(tid, teamTime);
+          if (teamTime > maxResignTime) {
+            maxResignTime = teamTime;
+            winningTeamId = tid;
+          }
+        } else {
+          hasSurvivingTeam = true;
+          teamResignTime.set(tid, Infinity);
+        }
+      });
+
+      players.forEach((p) => {
         const tid = p.teamId ?? 1;
-        const list = teamMembers.get(tid) || [];
-        const teamAllResigned = list.length > 0 && list.every((m) => resignedPids.has(m.slotId ?? m.id));
-        p.won = hasAnyResigns ? !teamAllResigned : true;
-      }
-    });
+        const time = teamResignTime.get(tid) ?? Infinity;
+        if (hasSurvivingTeam) {
+          p.won = time === Infinity;
+        } else {
+          p.won = tid === winningTeamId;
+        }
+      });
+    }
   }
 
-  return players;
-};
+  players.sort((a, b) => {
+    const teamA = a.teamId ?? 1;
+    const teamB = b.teamId ?? 1;
+    if (teamA !== teamB) return teamA - teamB;
 
-export const buildPlayerMapping = (
-  _operations: Record<string, unknown>[],
-  players: PlayerSummary[]
-): Map<number, number> => {
-  const isSharedControl = (() => {
-    const slots = players.map((p) => p.slotId).filter((s): s is number => s !== undefined);
-    return new Set(slots).size < slots.length;
-  })();
-
-  const potentialIds = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
-  players.forEach((p) => {
-    potentialIds.add(p.id);
-    if (p.slotId !== undefined) potentialIds.add(p.slotId);
+    const slotA = a.slotId ?? a.id;
+    const slotB = b.slotId ?? b.id;
+    if (slotA !== slotB) return slotA - slotB;
+    return a.id - b.id;
   });
 
-  const playerMapping = new Map<number, number>();
-  for (const eid of potentialIds) {
-    const player = isSharedControl
-      ? (players.find((p) => p.id === eid) ?? players.find((p) => (p.slotId ?? p.id) === eid))
-      : (players.find((p) => (p.slotId ?? p.id) === eid) ?? players.find((p) => p.id === eid));
-    playerMapping.set(eid, player ? player.id : eid);
-  }
-
-  return playerMapping;
+  return players;
 };
 
 export const AGE_PATTERNS: Array<{
