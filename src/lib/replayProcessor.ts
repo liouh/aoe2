@@ -474,18 +474,20 @@ export const summarizePlayers = (
   const source = normReplay || summary;
   const gameSettings = source?.zheader?.game_settings || source?.header?.game_settings || source?.game_settings;
 
+  // In AoE2 DE, resolved_team_id > 1 denotes an actual team (2 = Team 1, 3 = Team 2, etc.)
+  // Value 1 (or unset) denotes No Team / FFA / Solo.
+  const getPlayerTeamKey = (p: any, idx: number): string => {
+    if (typeof p.resolved_team_id === "number" && p.resolved_team_id > 1) {
+      return `team_${p.resolved_team_id - 1}`;
+    }
+    return `solo_${p.player_number ?? idx + 1}`;
+  };
+
   const gsTeamMap = new Map<string, number>();
   if (gameSettings?.players) {
     const rawKeys: string[] = [];
     gameSettings.players.forEach((p: any, idx: number) => {
-      let key: string;
-      if (typeof p.resolved_team_id === "number" && p.resolved_team_id > 1) {
-        key = `team_${p.resolved_team_id}`;
-      } else if (typeof p.selected_team_id === "number" && p.selected_team_id >= 1 && p.selected_team_id <= 4) {
-        key = `team_${p.selected_team_id}`;
-      } else {
-        key = `solo_${p.player_number ?? idx + 1}`;
-      }
+      const key = getPlayerTeamKey(p, idx);
       if (!rawKeys.includes(key)) {
         rawKeys.push(key);
       }
@@ -501,11 +503,7 @@ export const summarizePlayers = (
       let player = players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number && (sp.name === p.name || !sp.name))
         ?? players.find(sp => !matchedPlayers.has(sp) && (sp.slotId ?? sp.id) === p.player_number);
 
-      const gsPlayerKey = typeof p.resolved_team_id === "number" && p.resolved_team_id > 1
-        ? `team_${p.resolved_team_id}`
-        : (typeof p.selected_team_id === "number" && p.selected_team_id >= 1 && p.selected_team_id <= 4)
-        ? `team_${p.selected_team_id}`
-        : `solo_${p.player_number ?? idx + 1}`;
+      const gsPlayerKey = getPlayerTeamKey(p, idx);
       const defaultTeamId = gsTeamMap.get(gsPlayerKey) ?? 1;
 
       const eloInfo = eloMap.get(p.player_number - 1);
