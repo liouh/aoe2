@@ -168,6 +168,16 @@ export function GameTab({
     );
   }, [players]);
 
+  const showTeamLabels = useMemo(() => {
+    const counts = new Map<number, number>();
+    players.forEach((p) => {
+      if (p.teamId !== undefined && p.teamId > 0) {
+        counts.set(p.teamId, (counts.get(p.teamId) || 0) + 1);
+      }
+    });
+    return Array.from(counts.values()).some((count) => count > 1);
+  }, [players]);
+
   return (
     <div className="flex flex-col gap-4">
       <section className="tab-section flex flex-col gap-4">
@@ -198,7 +208,7 @@ export function GameTab({
                   ai={player.ai}
                   won={player.won && !allPlayersWon}
                   civ={getCivName(player.civId)}
-                  team={player.teamId}
+                  team={showTeamLabels ? player.teamId : undefined}
                 />
                 <div className="space-y-4 text-sm flex-1 flex flex-col">
                   {showRatingInfo && (

@@ -135,7 +135,6 @@ export function TimelineTab({
           <PlayerHeader
             name={player.name}
             color={getPlayerColor(player.id)}
-            ai={player.ai}
             civ={getCivName(player.civId)}
             action={
               <Select

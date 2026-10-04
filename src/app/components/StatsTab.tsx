@@ -259,7 +259,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong pt-4 pb-2 px-4 flex flex-col gap-4 player-card-3d-base text-xs"
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -273,13 +273,16 @@ export function StatsTab({
                     const bought = usage.bought[res];
                     const sold = usage.sold[res];
                     return (
-                      <div key={res} className="-mx-4 px-4 flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                      <div key={res} className="flex items-center justify-between">
                         <span className="uppercase tracking-wider text-white/30">{res}</span>
-                        <span className="text-sm tabular-nums font-medium flex items-center gap-2">
-                          <span className={bought > 0 ? "text-green-400/70" : "text-white/30"}>+ {formatNum(bought)}</span>
-                          <span className="text-white/30">|</span>
-                          <span className={sold > 0 ? "text-[color:var(--accent)]" : "text-white/30"}>− {formatNum(sold)}</span>
-                        </span>
+                        <div className="flex items-center gap-1.5 text-xs tabular-nums font-medium">
+                          <span className={`bg-white/5 px-1.5 py-0.5 rounded ${bought > 0 ? "text-green-400/70" : "text-white/30"}`}>
+                            + {formatNum(bought)}
+                          </span>
+                          <span className={`bg-white/5 px-1.5 py-0.5 rounded ${sold > 0 ? "text-[color:var(--accent)]" : "text-white/30"}`}>
+                            − {formatNum(sold)}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
