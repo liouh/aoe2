@@ -35,7 +35,7 @@ export function Header({
             {!showUrlInput ? (
               <>
                 <label
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center text-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
                   onClick={() => setIsPlaying(false)}
                   onMouseEnter={(e) => {
                     const active = document.activeElement;
@@ -80,7 +80,7 @@ export function Header({
                 </label>
                 <button
                   type="button"
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center text-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
                   onClick={() => {
                     setIsPlaying(false);
                     setShowUrlInput(true);
