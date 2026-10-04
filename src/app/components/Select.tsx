@@ -148,7 +148,7 @@ export function Select<T extends string | number | undefined>({
 
       {isOpen && (
         <div
-          className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 w-48 overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}
+          className={`absolute ${align === "left" ? "left-0" : "right-0"} z-50 mt-1 min-w-full w-max max-w-xs overflow-hidden rounded-xl border border-white/10 bg-[color:var(--panel-strong)] shadow-xl animate-in fade-in zoom-in duration-100`}
           role="listbox"
         >
           {options.map((option, idx) => {
@@ -182,7 +182,7 @@ export function Select<T extends string | number | undefined>({
                 {option.icon && (
                   <span className="shrink-0">{option.icon}</span>
                 )}
-                <span className={`font-medium truncate ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
+                <span className={`font-medium whitespace-nowrap ${selected ? "text-[color:var(--accent)]" : "text-[color:var(--foreground)]"}`}>
                   {option.label}
                 </span>
                 {selected && (

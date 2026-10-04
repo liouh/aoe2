@@ -19,8 +19,7 @@ export function APMChart({
   getPlayerColor,
   selectedTime,
   ageTimings,
-  hoveredPlayerId: externalHoveredPlayerId,
-  onHoverPlayer,
+
   isLogScale = false,
 }: {
   data: { playerId: number; history: { minute: number; apm: number }[] }[];
@@ -28,20 +27,9 @@ export function APMChart({
   getPlayerColor: (id?: number) => string;
   selectedTime?: number;
   ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
-  hoveredPlayerId?: number | null;
-  onHoverPlayer?: (id: number | null) => void;
   isLogScale?: boolean;
 }) {
-  const [internalHoveredPlayerId, setInternalHoveredPlayerId] = React.useState<number | null>(null);
-
-  const setHovered = (id: number | null) => {
-    setInternalHoveredPlayerId(id);
-    onHoverPlayer?.(id);
-  };
-
-  const hoveredPlayerId = externalHoveredPlayerId !== undefined && externalHoveredPlayerId !== null
-    ? externalHoveredPlayerId
-    : internalHoveredPlayerId;
+  const [hoveredPlayerId, setHoveredPlayerId] = React.useState<number | null>(null);
 
   const isHoveredPlayerPlotted =
     hoveredPlayerId !== null &&
@@ -273,30 +261,31 @@ export function APMChart({
     <div className="w-full bg-[color:var(--panel)] p-2 pr-4 border border-white/5">
       <div
         className="flex flex-wrap gap-x-1 gap-y-1 mb-2"
-        onMouseLeave={() => setHovered(null)}
+        onMouseLeave={() => setHoveredPlayerId(null)}
       >
         {players.map((p, idx) => {
           const isDimmed = isHoveredPlayerPlotted && hoveredPlayerId !== p.id;
           const isHovered = isHoveredPlayerPlotted && hoveredPlayerId === p.id;
           return (
-            <div
+            <button
+              type="button"
               key={`${p.id}-${idx}`}
-              className="flex items-center gap-1.5 whitespace-nowrap select-none px-2.5 py-2 cursor-pointer"
+              className="flex items-center gap-1.5 whitespace-nowrap select-none px-2.5 py-2 cursor-pointer touch-manipulation appearance-none bg-transparent border-0 text-left font-inherit outline-none"
               style={{
                 opacity: isDimmed ? 0.15 : 1,
                 transition: "opacity 0.1s ease-out",
               }}
-              onMouseEnter={() => setHovered(p.id)}
-              onMouseLeave={() => setHovered(null)}
+              onMouseEnter={() => setHoveredPlayerId(p.id)}
+              onMouseLeave={() => setHoveredPlayerId(null)}
             >
               <span
                 className="w-2 h-2 rounded-full shrink-0"
                 style={{ background: getPlayerColor(p.id) }}
               />
-              <span className={`text-[10px] transition-colors duration-150 ${isHovered ? "text-white" : "text-white/50"}`}>
+              <span className={`text-xs transition-colors duration-150 ${isHovered ? "text-white" : "text-white/50"}`}>
                 {p.name}
               </span>
-            </div>
+            </button>
           );
         })}
       </div>

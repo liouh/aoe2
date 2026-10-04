@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Select } from "./Select";
 import { Toggle } from "./Toggle";
+import { PlayerHeader } from "./PlayerHeader";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
@@ -130,37 +131,31 @@ export function TimelineTab({
 
     return (
       <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
-        <div className="sticky top-0 z-30 flex items-center justify-between gap-2 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold leading-tight">
-              {player.name}
-            </h3>
-            <div className="flex items-center gap-2 text-xs text-white/40">
-              <span>{getCivName(player.civId)}</span>
-              {player.ai && (
-                <>
-                  <span>•</span>
-                  <span>AI</span>
-                </>
-              )}
-            </div>
-          </div>
-          <Select
-            options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id) }))}
-            selectedId={playerId}
-            onSelect={(value) => {
-              if (index === 0) {
-                setLeftPlayerId(value);
-                if (value === rightPlayerId && players.length > 1) {
-                  setRightPlayerId(players.find(p => p.id !== value)?.id ?? value);
-                }
-              } else {
-                setRightPlayerId(value);
-                if (value === leftPlayerId && players.length > 1) {
-                  setLeftPlayerId(players.find(p => p.id !== value)?.id ?? value);
-                }
-              }
-            }}
+        <div className="sticky top-0 z-30 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
+          <PlayerHeader
+            name={player.name}
+            color={getPlayerColor(player.id)}
+            ai={player.ai}
+            civ={getCivName(player.civId)}
+            action={
+              <Select
+                options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id) }))}
+                selectedId={playerId}
+                onSelect={(value) => {
+                  if (index === 0) {
+                    setLeftPlayerId(value);
+                    if (value === rightPlayerId && players.length > 1) {
+                      setRightPlayerId(players.find(p => p.id !== value)?.id ?? value);
+                    }
+                  } else {
+                    setRightPlayerId(value);
+                    if (value === leftPlayerId && players.length > 1) {
+                      setLeftPlayerId(players.find(p => p.id !== value)?.id ?? value);
+                    }
+                  }
+                }}
+              />
+            }
           />
         </div>
         <div
@@ -238,7 +233,7 @@ export function TimelineTab({
           >
             {index === 0 && (
               <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2 z-10">
-                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-bold tabular-nums text-[color:var(--panel)] shadow-sm">
+                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-semibold tabular-nums text-[color:var(--panel)] shadow-sm">
                   {formatClock(selectedTime)}
                 </span>
               </div>

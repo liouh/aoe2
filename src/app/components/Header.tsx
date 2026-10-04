@@ -23,11 +23,8 @@ export function Header({
     <header className="flex flex-col gap-4">
       <div className="flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="headline text-2xl md:text-3xl font-semibold text-[color:var(--foreground)] lg:text-4xl">
-            <span className="inline-flex items-center justify-center mr-3 align-middle -mt-1">
-              <img src="icon.png" className="w-5 h-5 lg:w-8 lg:h-8" />
-            </span>
-            <span className="text-[color:var(--muted)] font-black">AoE2</span> replay viewer
+          <h1 className="headline text-2xl md:text-3xl lg:text-4xl font-semibold">
+            Age of Empires II replay viewer
           </h1>
           <p className="max-w-2xl text-sm md:text-base text-[color:var(--muted)] lg:text-lg">
             In-browser minimap playback + key stats + build timelines
@@ -38,7 +35,7 @@ export function Header({
             {!showUrlInput ? (
               <>
                 <label
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus-within:ring-1 focus-within:ring-white transition-all select-none"
                   onClick={() => setIsPlaying(false)}
                   onMouseEnter={(e) => {
                     const active = document.activeElement;
@@ -83,7 +80,7 @@ export function Header({
                 </label>
                 <button
                   type="button"
-                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-6 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
+                  className="group flex flex-row lg:flex-col items-center justify-center gap-2 px-3 py-2 lg:px-5 rounded-lg bg-[color:var(--panel)] hover:bg-[color:var(--panel-strong)] border border-white/20 hover:border-white/40 shadow-2xl cursor-pointer text-xs lg:text-sm font-semibold text-[color:var(--foreground)] outline-none focus:ring-1 focus:ring-white transition-all select-none"
                   onClick={() => {
                     setIsPlaying(false);
                     setShowUrlInput(true);
@@ -158,6 +155,6 @@ export function Header({
           </div>
         </div>
       </div>
-    </header>
+    </header >
   );
 }

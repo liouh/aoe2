@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
 import { PlayerHeader } from "./PlayerHeader";
@@ -48,24 +48,6 @@ export function GameTab({
   const [chatShowAiTeamChat, setChatShowAiTeamChat] = useState(false);
   const [chatShowLobby, setChatShowLobby] = useState(false);
   const [showAiApm, setShowAiApm] = useState(true);
-  const [hoveredApmPlayerId, setHoveredApmPlayerId] = useState<number | null>(null);
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleHoverPlayer = useCallback((id: number | null) => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
-    }
-
-    if (id !== null) setHoveredApmPlayerId(id);
-    else {
-      hoverTimeoutRef.current = setTimeout(() => setHoveredApmPlayerId(null), 120);
-    }
-  }, []);
-
-  useEffect(() => () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-  }, []);
 
   const statsByPlayerId = useMemo(() => {
     const map = new Map<number, any>();
@@ -200,10 +182,7 @@ export function GameTab({
             </span>
           )}
         </div>
-        <div
-          className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-          onMouseLeave={() => handleHoverPlayer(null)}
-        >
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const stats = statsByPlayerId.get(player.id);
             const showRatingInfo = (hasRmRatingInfo || hasTeamRatingInfo) && !player.ai;
@@ -211,8 +190,6 @@ export function GameTab({
               <TiltCard
                 key={`${player.id}-${index}`}
                 className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
-                onMouseEnter={() => handleHoverPlayer(player.id)}
-                onMouseLeave={() => handleHoverPlayer(null)}
               >
                 <PlayerHeader
                   name={player.name}
@@ -231,8 +208,8 @@ export function GameTab({
                       </div>
                       <div className="flex flex-col gap-1.5">
                         {hasRmRatingInfo && (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs text-[color:var(--muted)] w-14 shrink-0" title="Random Map 1v1">RM 1v1</span>
+                          <div className="flex items-center justify-between gap-1.5">
+                            <span className="text-xs text-[color:var(--muted)] shrink-0" title="Random Map 1v1">RM 1v1</span>
                             <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
                               <span className="text-white/80">
                                 {player.elo !== undefined ? player.elo : "—"}
@@ -246,8 +223,8 @@ export function GameTab({
                           </div>
                         )}
                         {hasTeamRatingInfo && (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs text-[color:var(--muted)] w-14 shrink-0" title="Team Random Map">Team RM</span>
+                          <div className="flex items-center justify-between gap-1.5">
+                            <span className="text-xs text-[color:var(--muted)] shrink-0" title="Team Random Map">Team RM</span>
                             <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
                               <span className="text-white/80">
                                 {player.teamElo !== undefined ? player.teamElo : "—"}
@@ -263,21 +240,48 @@ export function GameTab({
                       </div>
                     </div>
                   )}
-                  <div className={showRatingInfo ? "pt-2" : ""}>
+                  <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Age up time</span>
+                      <span className="text-xs uppercase tracking-wider text-white/30">Effective APM</span>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="text-xs text-[color:var(--muted)] shrink-0" title="Average APM">Average APM</span>
+                        <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
+                          <span className="text-white/80">
+                            {stats?.apm !== undefined ? formatNum(stats.apm) : "—"}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="text-xs text-[color:var(--muted)] shrink-0" title="Peak APM">Peak APM</span>
+                        <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
+                          <span className="text-white/80">
+                            {stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                      <span className="text-xs uppercase tracking-wider text-white/30">Age up time</span>
                     </div>
                     {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
-                      <div className="space-y-1.5">
+                      <div className="flex flex-col gap-1.5">
                         {Object.entries(stats.ageTimings).map(([age, time]) => (
-                          <div key={age} className="flex justify-between items-center group/age">
+                          <div key={age} className="flex items-center justify-between gap-1.5 group/age">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[color:var(--muted)]">{age}</span>
+                              <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
                               {time === (fastestAges as any)[age] && (
                                 <span title="Fastest" className="text-[10px] select-none">🥇</span>
                               )}
                             </div>
-                            <span className="text-white tabular-nums pl-2 font-medium">{formatClock(time as number)}</span>
+                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
+                              <span className="text-white/80">
+                                {formatClock(time as number)}
+                              </span>
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -304,18 +308,6 @@ export function GameTab({
                       )}
                     </div>
                   )}
-                  <div className="mt-auto -mx-4 px-4 border-t border-white/5 pt-3">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs text-[color:var(--muted)]">Average APM</p>
-                        <p className="text-xl font-medium tabular-nums">{stats?.apm !== undefined ? formatNum(stats.apm) : "—"}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-[color:var(--muted)]">Peak APM</p>
-                        <p className="text-xl font-medium tabular-nums">{stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </TiltCard>
             );
@@ -341,8 +333,6 @@ export function GameTab({
           getPlayerColor={getPlayerColor}
           selectedTime={selectedTime}
           ageTimings={chartAgeTimings}
-          hoveredPlayerId={hoveredApmPlayerId}
-          onHoverPlayer={handleHoverPlayer}
           isLogScale={showAiApm && hasAi}
         />
       </section>
@@ -350,7 +340,7 @@ export function GameTab({
       <section className="tab-section flex flex-col gap-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="headline text-2xl font-semibold">In-game chat</h2>
+            <h2 className="headline text-2xl font-semibold">Game chat</h2>
             <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
               {filteredChat.length}
             </span>
