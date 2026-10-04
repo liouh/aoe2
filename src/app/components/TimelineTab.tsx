@@ -246,7 +246,7 @@ export function TimelineTab({
 
   return (
     <section className="w-full">
-      <div className="tab-section flex flex-col gap-6">
+      <div className="tab-section flex flex-col gap-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="headline text-2xl font-semibold">Timeline</h2>
           <div className="flex flex-wrap items-center gap-4">

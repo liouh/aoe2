@@ -169,8 +169,8 @@ export function GameTab({
   }, [players]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <section className="tab-section">
+    <div className="flex flex-col gap-4">
+      <section className="tab-section flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <h2 className="headline text-2xl font-semibold">Players</h2>
           <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
@@ -182,14 +182,14 @@ export function GameTab({
             </span>
           )}
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const stats = statsByPlayerId.get(player.id);
             const showRatingInfo = (hasRmRatingInfo || hasTeamRatingInfo) && !player.ai;
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
               >
                 <PlayerHeader
                   name={player.name}
@@ -315,7 +315,7 @@ export function GameTab({
         </div>
       </section>
 
-      <section className="tab-section flex flex-col gap-6">
+      <section className="tab-section flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="headline text-2xl font-semibold">Actions per minute</h2>
           {hasAi && (
@@ -501,7 +501,7 @@ export function GameTab({
             )}
           </div>
           <div className="bg-[color:var(--panel)] p-4 border border-white/5">
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
               {matchInfo?.gameTypeId !== undefined && (
                 <div className="flex flex-col gap-1">
                   <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>

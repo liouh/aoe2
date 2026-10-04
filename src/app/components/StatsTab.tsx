@@ -150,13 +150,15 @@ export function StatsTab({
   }, [events]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <section className="tab-section">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Units</h2>
+    <div className="flex flex-col gap-4">
+      <section className="tab-section flex flex-col gap-4">
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="headline text-2xl font-semibold">Units</h2>
+          </div>
+          <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled units</p>
         </div>
-        <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled units</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const stats = unitStats.get(player.id) || { military: [], economic: [], starting: [] };
             const milCount = stats.military.reduce((acc, u) => acc + u.count, 0);
@@ -166,7 +168,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -180,36 +182,36 @@ export function StatsTab({
                   {/* Starting Units Section */}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-white/30">Starting units</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{startingCount}</span>
+                      <span className="uppercase tracking-wider text-white/30">Starting units</span>
+                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{startingCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.starting.length > 0 ? stats.starting.map((unit) => (
-                        <div key={unit.name} className="flex items-center justify-between text-sm">
+                        <div key={unit.name} className="flex items-center justify-between">
                           <span className="text-[color:var(--muted)] truncate pr-2">{unit.name}</span>
-                          <span className="tabular-nums shrink-0">{unit.count}</span>
+                          <span className="tabular-nums shrink-0 pr-1.5">{unit.count}</span>
                         </div>
                       )) : (
-                        <p className="text-sm text-white/20 italic">—</p>
+                        <p className="text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
                   {/* Military Section */}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{milCount}</span>
+                      <span className="uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
+                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.military.length > 0 ? (
                         stats.military.map((u, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-sm">
+                          <div key={idx} className="flex items-center justify-between">
                             <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                            <span className="tabular-nums shrink-0">{u.count}</span>
+                            <span className="tabular-nums shrink-0 pr-1.5">{u.count}</span>
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-white/20 italic">—</p>
+                        <p className="text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
@@ -217,19 +219,19 @@ export function StatsTab({
                   {/* Economic Section */}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-green-400/70">Trained eco units</span>
-                      <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{ecoCount}</span>
+                      <span className="uppercase tracking-wider text-green-400/70">Trained eco units</span>
+                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.economic.length > 0 ? (
                         stats.economic.map((u, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-sm">
+                          <div key={idx} className="flex items-center justify-between">
                             <span className="text-[color:var(--muted)] truncate pr-2">{u.name}</span>
-                            <span className="tabular-nums shrink-0">{u.count}</span>
+                            <span className="tabular-nums shrink-0 pr-1.5">{u.count}</span>
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-white/20 italic">—</p>
+                        <p className="text-white/20 italic">—</p>
                       )}
                     </div>
                   </div>
@@ -240,75 +242,14 @@ export function StatsTab({
         </div>
       </section>
 
-      <section className="tab-section">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Buildings</h2>
+      <section className="tab-section flex flex-col gap-4">
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="headline text-2xl font-semibold">Market usage</h2>
+          </div>
+          <p className="mt-1 text-xs text-[color:var(--muted)]">+ Bought / − Sold</p>
         </div>
-        <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {players.map((player, index) => {
-            const stats = buildingStats.get(player.id) || { built: [], starting: [] };
-            const buildingCount = stats.built.reduce((total, building) => total + building.count, 0);
-            const startingBuildingCount = stats.starting.reduce((total, building) => total + building.count, 0);
-
-            return (
-              <TiltCard
-                key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
-              >
-                <PlayerHeader
-                  name={player.name}
-                  color={getPlayerColor(player.id)}
-                  outlineColor={getPlayerOutline?.(player.id)}
-                  ai={player.ai}
-                  civ={getCivName(player.civId)}
-                />
-
-                <div>
-                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="text-xs uppercase tracking-wider text-white/30">Starting buildings</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(startingBuildingCount)}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 min-h-[20px]">
-                    {stats.starting.length > 0 ? stats.starting.map((building) => (
-                      <div key={building.name} className="flex items-center justify-between text-sm">
-                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
-                        <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
-                      </div>
-                    )) : (
-                      <p className="text-sm text-white/20 italic">—</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(buildingCount)}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 min-h-[20px]">
-                    {stats.built.length > 0 ? stats.built.map((building) => (
-                      <div key={building.name} className="flex items-center justify-between text-sm">
-                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
-                        <span className="tabular-nums shrink-0">{formatNum(building.count)}</span>
-                      </div>
-                    )) : (
-                      <p className="text-sm text-white/20 italic">—</p>
-                    )}
-                  </div>
-                </div>
-              </TiltCard>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="tab-section">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Market usage</h2>
-        </div>
-        <p className="mt-1 text-xs text-[color:var(--muted)]">+ Bought / - Sold</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const usage = timelineStats.find((s) => s.playerId === player.id)?.marketUsage || {
               bought: { food: 0, wood: 0, stone: 0 },
@@ -318,7 +259,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong pt-4 pb-2 px-4 flex flex-col gap-6 player-card-3d-base"
+                className="panel-strong pt-4 pb-2 px-4 flex flex-col gap-4 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -333,11 +274,11 @@ export function StatsTab({
                     const sold = usage.sold[res];
                     return (
                       <div key={res} className="-mx-4 px-4 flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                        <span className="text-xs uppercase tracking-wider text-white/30">{res}</span>
-                        <span className="text-sm tabular-nums font-medium flex items-center gap-1">
-                          <span className={bought > 0 ? "text-green-400/70" : "text-white/10"}>+{formatNum(bought)}</span>
-                          <span className="text-white/5 mx-0.5">/</span>
-                          <span className={sold > 0 ? "text-[color:var(--accent)]" : "text-white/10"}>-{formatNum(sold)}</span>
+                        <span className="uppercase tracking-wider text-white/30">{res}</span>
+                        <span className="text-sm tabular-nums font-medium flex items-center gap-2">
+                          <span className={bought > 0 ? "text-green-400/70" : "text-white/30"}>+ {formatNum(bought)}</span>
+                          <span className="text-white/30">|</span>
+                          <span className={sold > 0 ? "text-[color:var(--accent)]" : "text-white/30"}>− {formatNum(sold)}</span>
                         </span>
                       </div>
                     );
@@ -349,12 +290,79 @@ export function StatsTab({
         </div>
       </section>
 
-      <section className="tab-section">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="headline text-2xl font-semibold">Actions</h2>
+      <section className="tab-section flex flex-col gap-4">
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="headline text-2xl font-semibold">Buildings</h2>
+          </div>
+          <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
         </div>
-        <p className="mt-1 text-xs text-[color:var(--muted)]">Game actions issued by each player in the replay</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {players.map((player, index) => {
+            const stats = buildingStats.get(player.id) || { built: [], starting: [] };
+            const buildingCount = stats.built.reduce((total, building) => total + building.count, 0);
+            const startingBuildingCount = stats.starting.reduce((total, building) => total + building.count, 0);
+
+            return (
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
+              >
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                  civ={getCivName(player.civId)}
+                />
+
+                <div>
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <span className="uppercase tracking-wider text-white/30">Starting buildings</span>
+                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(startingBuildingCount)}</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    {stats.starting.length > 0 ? stats.starting.map((building) => (
+                      <div key={building.name} className="flex items-center justify-between">
+                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
+                        <span className="tabular-nums shrink-0 pr-1.5">{formatNum(building.count)}</span>
+                      </div>
+                    )) : (
+                      <p className="text-white/20 italic">—</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <span className="uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
+                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    {stats.built.length > 0 ? stats.built.map((building) => (
+                      <div key={building.name} className="flex items-center justify-between">
+                        <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
+                        <span className="tabular-nums shrink-0 pr-1.5">{formatNum(building.count)}</span>
+                      </div>
+                    )) : (
+                      <p className="text-white/20 italic">—</p>
+                    )}
+                  </div>
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="tab-section flex flex-col gap-4">
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="headline text-2xl font-semibold">Actions</h2>
+          </div>
+          <p className="mt-1 text-xs text-[color:var(--muted)]">Game actions issued by each player in the replay</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
             const actions = actionStats.get(player.id) || [];
             const totalActions = actions.reduce((acc, a) => acc + a.count, 0);
@@ -362,7 +370,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-6 player-card-3d-base"
+                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -373,20 +381,20 @@ export function StatsTab({
 
                 <div>
                   <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="text-xs uppercase tracking-wider text-white/30">Total actions</span>
-                    <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 -mr-1.5">{formatNum(totalActions)}</span>
+                    <span className="uppercase tracking-wider text-white/30">Total actions</span>
+                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(totalActions)}</span>
                   </div>
 
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
                     {actions.length > 0 ? (
                       actions.map((action, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-sm">
+                        <div key={idx} className="flex items-center justify-between">
                           <span className="text-[color:var(--muted)] truncate pr-2">{action.name}</span>
-                          <span className="tabular-nums shrink-0">{formatNum(action.count)}</span>
+                          <span className="tabular-nums shrink-0 pr-1.5">{formatNum(action.count)}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm text-white/20 italic">—</p>
+                      <p className="text-white/20 italic">—</p>
                     )}
                   </div>
                 </div>

@@ -437,7 +437,7 @@ export default function Home() {
           />
 
           {replay && (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               <div className="flex border-b border-white/10">
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "game"
@@ -514,7 +514,7 @@ export default function Home() {
             </div>
           )}
         </main>
-        <footer className="flex items-center justify-center gap-2 px-6 py-4 text-center text-xs text-[color:var(--muted)] md:justify-end">
+        <footer className="flex items-center justify-center gap-2 px-6 pb-4 text-center text-xs text-[color:var(--muted)] justify-start">
           <span className="inline-flex items-center gap-1">
             Designed by
             <a href="https://liouh.com/home/" className="hover:text-white/80 hover:underline">
