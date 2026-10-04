@@ -152,11 +152,8 @@ export function StatsTab({
   return (
     <div className="flex flex-col gap-4">
       <section className="tab-section flex flex-col gap-4">
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="headline text-2xl font-semibold">Units</h2>
-          </div>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled units</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Units</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
@@ -168,7 +165,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -240,14 +237,12 @@ export function StatsTab({
             );
           })}
         </div>
+        <p className="text-xs text-[color:var(--muted)]">Counts include cancelled units</p>
       </section>
 
       <section className="tab-section flex flex-col gap-4">
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="headline text-2xl font-semibold">Market usage</h2>
-          </div>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">+ Bought / − Sold</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Market usage</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
@@ -259,7 +254,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -294,11 +289,8 @@ export function StatsTab({
       </section>
 
       <section className="tab-section flex flex-col gap-4">
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="headline text-2xl font-semibold">Buildings</h2>
-          </div>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Buildings</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
@@ -309,7 +301,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}
@@ -356,14 +348,12 @@ export function StatsTab({
             );
           })}
         </div>
+        <p className="text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
       </section>
 
       <section className="tab-section flex flex-col gap-4">
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="headline text-2xl font-semibold">Actions</h2>
-          </div>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">Game actions issued by each player in the replay</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Actions</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {players.map((player, index) => {
@@ -373,7 +363,7 @@ export function StatsTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base text-xs"
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base text-xs"
               >
                 <PlayerHeader
                   name={player.name}

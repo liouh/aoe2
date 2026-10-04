@@ -23,22 +23,24 @@ export function PlayerHeader({
   return (
     <div className="flex items-start justify-between gap-2">
       <div className="flex flex-col">
-        <h3 className="text-lg font-semibold leading-tight">{name}</h3>
-        {(civ || team !== undefined || won) && (
+        <h3 className="text-lg font-semibold leading-tight">
+          {name}
+          {won && (
+            <span className="inline-block ml-1.5 -translate-y-1 text-sm font-normal text-[color:var(--accent)] select-none leading-none" title="Winner">🜲</span>
+          )}
+        </h3>
+        {(civ || team !== undefined) && (
           <div className="flex items-center gap-2 text-xs text-white/40">
             {civ && <span>{civ}</span>}
             {civ && team !== undefined && <span>•</span>}
             {team !== undefined && <span>Team {team}</span>}
-            {won && (
-              <span className="inline-block -translate-y-0.5 select-none leading-none text-white" title="Winner">👑</span>
-            )}
           </div>
         )}
       </div>
       <div className="flex items-center shrink-0">
         {action ?? (
           <span
-            className="h-5 w-5 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs leading-none tracking-wider select-none"
+            className="mt-1 h-4 w-4 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs leading-none tracking-wider select-none"
             style={{ background: color, color: outlineColor }}
           >
             {ai ? "AI" : null}

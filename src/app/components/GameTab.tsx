@@ -199,7 +199,7 @@ export function GameTab({
             return (
               <TiltCard
                 key={`${player.id}-${index}`}
-                className="panel-strong p-4 flex flex-col gap-4 player-card-3d-base"
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base"
               >
                 <PlayerHeader
                   name={player.name}
