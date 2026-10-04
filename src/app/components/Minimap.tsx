@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type MapResourceType, type MatchInfo, type TimelineEvent } from "@/lib/replayProcessor";
 import { Select, type SelectOption } from "./Select";
 import { TERRAIN_MINIMAP_COLORS } from "@/lib/terrainMappings";
@@ -206,10 +206,10 @@ export function Minimap({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef(false);
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null);
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const iconCacheRef = useRef<Map<string, HTMLCanvasElement>>(new Map());
   const playButtonRef = useRef<HTMLButtonElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const mapZoomRef = useRef(mapZoom);
   const mapPanRef = useRef(mapPan);
@@ -342,14 +342,23 @@ export function Minimap({
   const fullscreenButton = (extraClass = "") => (
     <button
       type="button"
-      className={`flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none ${extraClass}`}
+      className={`flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none ${extraClass}`}
       onClick={(e) => {
         e.stopPropagation();
         toggleFullscreen();
       }}
       title={isFullscreen ? "Exit full screen" : "Full screen"}
     >
-      {isFullscreen ? "×" : "⛶"}
+      {isFullscreen ? (
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <line x1="3" y1="3" x2="13" y2="13" />
+          <line x1="13" y1="3" x2="3" y2="13" />
+        </svg>
+      ) : (
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2.5 5.5V3a.5.5 0 0 1 .5-.5h2.5m5 0H13a.5.5 0 0 1 .5.5v2.5m0 5V13a.5.5 0 0 1-.5.5h-2.5m-5 0H3a.5.5 0 0 1-.5-.5v-2.5" />
+        </svg>
+      )}
     </button>
   );
 
@@ -365,6 +374,65 @@ export function Minimap({
   const showObstacles = minimapViewFilters.includes("obstacles");
   const showFlares = minimapViewFilters.includes("flares");
   const showBuildings = showBuildingOutlines || showBuildingIcons || showFarms || showLandmarkIcons;
+
+  const updateHoveredEntity = useCallback((clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+    const {
+      tileToAnchor,
+      buildings,
+      isoScale,
+      isoOriginX,
+      isoOriginY,
+      sizeX,
+    } = entityLookupRef.current;
+
+    const relX = mouseX - isoOriginX;
+    const relY = mouseY - isoOriginY;
+
+    const rx = relX / isoScale + (2 * relY) / isoScale;
+    const ry = (2 * relY) / isoScale - relX / isoScale;
+
+    const gameY = rx;
+    const gameX = sizeX - ry;
+
+    const tx = Math.floor(gameX);
+    const ty = Math.floor(gameY);
+    const tileKey = `${tx},${ty}`;
+
+    const anchorKey = tileToAnchor.get(tileKey);
+    const building = anchorKey ? buildings.get(anchorKey) : null;
+    const isVisibleBuilding = building && (
+      isFarmId(building.buildingTypeId) ? showFarms : showBuildingOutlines
+    );
+    if (isVisibleBuilding && building) {
+      setHoveredEntity({
+        name: getBuildingName(building.buildingTypeId),
+        playerId: building.playerId,
+        type: "building",
+        anchorKey,
+      });
+      setTooltipPos({ x: clientX, y: clientY });
+    } else {
+      setHoveredEntity(null);
+    }
+  }, [showFarms, showBuildingOutlines]);
+
+  useEffect(() => {
+    if (!hoveredEntity) return;
+    const handleDocumentPointerDown = (e: PointerEvent) => {
+      if (mapContainerRef.current && !mapContainerRef.current.contains(e.target as Node)) {
+        setHoveredEntity(null);
+      }
+    };
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+    };
+  }, [hoveredEntity]);
 
   // Reset internal state when a new replay is loaded
   useEffect(() => {
@@ -1721,14 +1789,14 @@ export function Minimap({
 
   return (
     <section
-      className={`panel-dark flex flex-col p-4 pb-6 gap-4 justify-center ${isFullscreen
+      className={`panel-dark flex flex-col p-4 pb-6 gap-2 justify-center ${isFullscreen
         ? `fixed inset-0 z-[100] rounded-none`
         : "rounded-3xl"
         }`}
       style={isFullscreen ? { border: "none", outline: "none", boxShadow: "none" } : {}}
     >
       {(isFullscreen || (!loading && !error)) && (
-        <div className="flex md:hidden items-center justify-between gap-2 px-1">
+        <div className="flex md:hidden items-center justify-between gap-2">
           {!error && (
             <div className="flex items-center gap-2">
               {filters}
@@ -1761,33 +1829,30 @@ export function Minimap({
               if (Math.hypot(dx, dy) < 30) {
                 handleZoom(cursorX, cursorY, MINIMAP_ZOOM_FACTOR);
                 lastTapRef.current = null;
+                setHoveredEntity(null);
                 event.preventDefault();
                 return;
               }
             }
             lastTapRef.current = { time: now, x: cursorX, y: cursorY };
 
-            const sizeX = mapInfo?.size_x ?? matchInfo?.mapSizeId ?? 120;
-            const sizeY = mapInfo?.size_y ?? matchInfo?.mapSizeId ?? 120;
-            const mapSpan = Math.max(sizeX, sizeY);
-            const widthScale = (rect.width - 2) / mapSpan;
-            const heightScale = rect.height / (mapSpan * 0.5);
-            const isoScale = Math.max(1, Math.min(widthScale, heightScale) * mapZoomRef.current);
-            const isOverflowing =
-              mapSpan * isoScale > rect.width ||
-              mapSpan * isoScale * 0.5 > rect.height;
+            // Check building at pointer location immediately on tap/touch down
+            updateHoveredEntity(event.clientX, event.clientY);
 
-            if (!isFullscreen && !isOverflowing && mapPanRef.current.x === 0 && mapPanRef.current.y === 0) return;
-            event.preventDefault();
-            try {
-              (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-            } catch { }
-            isDraggingRef.current = true;
+            if (isFullscreen || canPan) {
+              try {
+                (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+              } catch { }
+            }
+            isDraggingRef.current = false;
+            dragStartPosRef.current = { x: event.clientX, y: event.clientY };
             lastPointerRef.current = { x: event.clientX, y: event.clientY };
           } else if (pointerCount >= 2) {
             lastTapRef.current = null;
             isDraggingRef.current = false;
             lastPointerRef.current = null;
+            dragStartPosRef.current = null;
+            setHoveredEntity(null);
 
             event.preventDefault();
             for (const pid of activePointersRef.current.keys()) {
@@ -1831,6 +1896,17 @@ export function Minimap({
             return;
           }
 
+          if ((isFullscreen || canPan) && dragStartPosRef.current && !isDraggingRef.current) {
+            const totalDist = Math.hypot(
+              event.clientX - dragStartPosRef.current.x,
+              event.clientY - dragStartPosRef.current.y
+            );
+            if (totalDist > 6) {
+              isDraggingRef.current = true;
+              setHoveredEntity(null);
+            }
+          }
+
           if (isDraggingRef.current && lastPointerRef.current) {
             const dx = event.clientX - lastPointerRef.current.x;
             const dy = event.clientY - lastPointerRef.current.y;
@@ -1841,50 +1917,7 @@ export function Minimap({
           }
 
           if (!isDraggingRef.current && pointerCount <= 1) {
-            const canvas = canvasRef.current;
-            if (canvas) {
-              const rect = canvas.getBoundingClientRect();
-              const mouseX = event.clientX - rect.left;
-              const mouseY = event.clientY - rect.top;
-              const {
-                tileToAnchor,
-                buildings,
-                isoScale,
-                isoOriginX,
-                isoOriginY,
-                sizeX,
-              } = entityLookupRef.current;
-
-              const relX = mouseX - isoOriginX;
-              const relY = mouseY - isoOriginY;
-
-              const rx = relX / isoScale + (2 * relY) / isoScale;
-              const ry = (2 * relY) / isoScale - relX / isoScale;
-
-              const gameY = rx;
-              const gameX = sizeX - ry;
-
-              const tx = Math.floor(gameX);
-              const ty = Math.floor(gameY);
-              const tileKey = `${tx},${ty}`;
-
-              const anchorKey = tileToAnchor.get(tileKey);
-              const building = anchorKey ? buildings.get(anchorKey) : null;
-              const isVisibleBuilding = building && (
-                isFarmId(building.buildingTypeId) ? showFarms : showBuildingOutlines
-              );
-              if (isVisibleBuilding && building) {
-                setHoveredEntity({
-                  name: getBuildingName(building.buildingTypeId),
-                  playerId: building.playerId,
-                  type: "building",
-                  anchorKey,
-                });
-                setTooltipPos({ x: event.clientX, y: event.clientY });
-              } else {
-                setHoveredEntity(null);
-              }
-            }
+            updateHoveredEntity(event.clientX, event.clientY);
           }
         }}
         onPointerUp={(event) => {
@@ -1897,13 +1930,24 @@ export function Minimap({
 
           const remainingCount = activePointersRef.current.size;
           if (remainingCount === 0) {
+            if (!isDraggingRef.current && dragStartPosRef.current) {
+              const totalDist = Math.hypot(
+                event.clientX - dragStartPosRef.current.x,
+                event.clientY - dragStartPosRef.current.y
+              );
+              if (totalDist <= 10) {
+                updateHoveredEntity(event.clientX, event.clientY);
+              }
+            }
             isDraggingRef.current = false;
             lastPointerRef.current = null;
+            dragStartPosRef.current = null;
             pinchStateRef.current = null;
           } else if (remainingCount === 1) {
             pinchStateRef.current = null;
             const [remainingPointer] = Array.from(activePointersRef.current.values());
             lastPointerRef.current = { x: remainingPointer.x, y: remainingPointer.y };
+            dragStartPosRef.current = { x: remainingPointer.x, y: remainingPointer.y };
             isDraggingRef.current = true;
           }
         }}
@@ -1919,11 +1963,13 @@ export function Minimap({
           if (remainingCount === 0) {
             isDraggingRef.current = false;
             lastPointerRef.current = null;
+            dragStartPosRef.current = null;
             pinchStateRef.current = null;
           } else if (remainingCount === 1) {
             pinchStateRef.current = null;
             const [remainingPointer] = Array.from(activePointersRef.current.values());
             lastPointerRef.current = { x: remainingPointer.x, y: remainingPointer.y };
+            dragStartPosRef.current = { x: remainingPointer.x, y: remainingPointer.y };
             isDraggingRef.current = true;
           }
         }}
@@ -1934,6 +1980,7 @@ export function Minimap({
               if (activePointersRef.current.size === 0) {
                 isDraggingRef.current = false;
                 lastPointerRef.current = null;
+                dragStartPosRef.current = null;
                 pinchStateRef.current = null;
               }
             }
@@ -1942,10 +1989,13 @@ export function Minimap({
             if (activePointersRef.current.size === 0) {
               isDraggingRef.current = false;
               lastPointerRef.current = null;
+              dragStartPosRef.current = null;
               pinchStateRef.current = null;
             }
           }
-          setHoveredEntity(null);
+          if (event.pointerType !== "touch") {
+            setHoveredEntity(null);
+          }
         }}
       >
         <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "rounded-xl" : "rounded-2xl"} ${loading ? "invisible" : ""}`}>
@@ -1974,46 +2024,6 @@ export function Minimap({
               setHoveredEntity(null);
             }}
           >
-            {isFullscreen && (
-              <>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".aoe2record,.zip"
-                  className="sr-only"
-                  tabIndex={-1}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      onOpenFile(file);
-                    }
-                    e.target.value = "";
-                  }}
-                />
-                <button
-                  type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
-                  onClick={() => {
-                    setIsPlaying(false);
-                    fileInputRef.current?.click();
-                  }}
-                  title="Open .aoe2record file"
-                >
-                  📁
-                </button>
-                <button
-                  type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-xl font-semibold text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
-                  onClick={() => {
-                    toggleFullscreen(false);
-                    onShowUrlInput();
-                  }}
-                  title="Load replay from URL"
-                >
-                  🔗
-                </button>
-              </>
-            )}
             {!error && fullscreenButton()}
           </div>
         )}
@@ -2028,7 +2038,7 @@ export function Minimap({
                 setHoveredEntity(null);
               }}
             >
-              <div className="pointer-events-auto w-full font-semibold text-xl text-white select-none flex flex-col">
+              <div className="pointer-events-auto w-full text-white select-none flex flex-col">
                 <button
                   type="button"
                   className="flex h-9 items-center justify-center rounded-t-lg transition bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
@@ -2040,8 +2050,12 @@ export function Minimap({
                     const rect = canvas.getBoundingClientRect();
                     handleZoom(rect.width / 2, rect.height / 2, MINIMAP_ZOOM_FACTOR);
                   }}
+                  title="Zoom in"
                 >
-                  +
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round">
+                    <line x1="8" y1="2.5" x2="8" y2="13.5" />
+                    <line x1="2.5" y1="8" x2="13.5" y2="8" />
+                  </svg>
                 </button>
                 <button
                   type="button"
@@ -2054,8 +2068,11 @@ export function Minimap({
                     const rect = canvas.getBoundingClientRect();
                     handleZoom(rect.width / 2, rect.height / 2, 1 / MINIMAP_ZOOM_FACTOR);
                   }}
+                  title="Zoom out"
                 >
-                  -
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round">
+                    <line x1="2.5" y1="8" x2="13.5" y2="8" />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -2075,7 +2092,7 @@ export function Minimap({
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5 ring-1 ring-white/5">
                 <div
-                  className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-400"
+                  className="h-full bg-gradient-to-r from-[color:var(--accent)] to-amber-200"
                   style={{ width: `${((loadingStep + 1) / LOADING_STEP_COUNT) * 100}%` }}
                 />
               </div>
@@ -2123,7 +2140,7 @@ export function Minimap({
           </div>
         )}
       </div>
-      <div className={`flex items-center gap-4 px-0.5 md:px-1.5 ${isFullscreen ? "w-full max-w-6xl mx-auto" : ""}`}>
+      <div className={`flex items-center gap-4 ${isFullscreen ? "w-full max-w-6xl mx-auto" : ""}`}>
         <button
           ref={playButtonRef}
           type="button"

@@ -28,7 +28,7 @@
 }
 
 html {
-  min-width: 460px;
+  min-width: 420px;
   background-color: #13110f;
   background:
     radial-gradient(circle at 10% 20%, rgba(178, 74, 42, 0.12), transparent 55%),
@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  min-width: 460px;
+  min-width: 420px;
   color: var(--foreground);
   font-family: var(--font-body);
   scrollbar-gutter: stable;

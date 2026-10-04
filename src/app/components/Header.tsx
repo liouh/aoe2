@@ -23,11 +23,11 @@ export function Header({
     <header className="flex flex-col gap-4">
       <div className="flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="headline text-2xl md:text-3xl lg:text-4xl font-semibold">
-            Age of Empires II replay viewer
+          <h1 className="headline text-2xl md:text-3xl lg:text-4xl font-semibold text-[color:var(--accent)]">
+            Age of Empires II <span className="text-white">replay viewer</span>
           </h1>
           <p className="max-w-2xl text-sm md:text-base text-[color:var(--muted)] lg:text-lg">
-            In-browser minimap playback + key stats + build timelines
+            In-browser minimap playback + key stats + build timeline
           </p>
         </div>
         <div className="flex flex-col items-start lg:items-end gap-2">
@@ -60,7 +60,7 @@ export function Header({
                     }}
                   />
                   <div
-                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[400px] lg:w-[480px] rounded-xl bg-black/95 px-4 py-3 text-left text-white shadow-xl border border-white/20 flex flex-col gap-1.5 backdrop-blur-sm cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
+                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[390px] lg:w-[450px] rounded-xl bg-black/95 px-4 py-3 text-left text-white shadow-xl border border-white/20 flex flex-col gap-1.5 backdrop-blur-sm cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                   >
                     <p className="font-semibold text-sm mb-0.5">Local replays are usually in:</p>
@@ -96,7 +96,7 @@ export function Header({
                   <span className="text-xl lg:text-2xl">🔗</span>
                   <span className="lg:inline">Load replay from URL</span>
                   <div
-                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[400px] lg:w-[480px] rounded-xl bg-black/95 px-4 py-3 text-left text-white shadow-xl border border-white/20 flex flex-col gap-1.5 backdrop-blur-sm cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
+                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[390px] lg:w-[450px] rounded-xl bg-black/95 px-4 py-3 text-left text-white shadow-xl border border-white/20 flex flex-col gap-1.5 backdrop-blur-sm cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <p className="font-semibold text-sm mb-0.5">Supported URL formats:</p>
@@ -125,7 +125,7 @@ export function Header({
                     name="replay-url"
                     type="url"
                     placeholder="Paste replay URL..."
-                    className="flex-1 rounded-lg bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[color:var(--accent)] transition-colors h-10 lg:h-12"
+                    className="flex-1 rounded-lg bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[color:var(--accent)] transition-colors h-10 lg:h-12 min-w-[230px]"
                     value={replayUrl}
                     onChange={(e) => setReplayUrl(e.target.value)}
                     onKeyDown={(e) => {

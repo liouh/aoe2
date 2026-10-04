@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Age of Empires 2 replay viewer",
   description:
-    "Age of Empires 2 replay viewer with minimap playback, key stats, and build timelines.",
+    "Age of Empires 2 replay viewer with minimap playback, key stats, and build timeline.",
 };
 
 export default function RootLayout({
