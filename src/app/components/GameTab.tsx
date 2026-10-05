@@ -462,7 +462,7 @@ export function GameTab({
                         {item.isSystem && (
                           ageRoman ? (
                             <span
-                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm align-middle -translate-y-px"
+                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black text-[10px] leading-none mr-2 select-none ring-1 ring-white shadow-sm align-middle -translate-y-px"
                               style={{
                                 backgroundColor: pColor || getPlayerColor(0),
                                 color: pOutline || getPlayerOutline(0),

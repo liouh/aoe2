@@ -362,12 +362,12 @@ export function APMChart({
 
           return (
             <g key={playerData.playerId} className="pointer-events-none">
-              {/* White outline highlight when selected */}
+              {/* Outline highlight when selected */}
               {isLineHovered && (
                 <path
                   d={d}
                   fill="none"
-                  stroke="#ffffff"
+                  stroke="var(--chart-line-highlight)"
                   strokeWidth={5}
                   strokeLinejoin="round"
                   strokeLinecap="round"

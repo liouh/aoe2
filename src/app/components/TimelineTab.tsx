@@ -227,12 +227,13 @@ export function TimelineTab({
           })}
 
           <div
-            className="absolute left-0 h-[2px] w-full bg-[color:var(--foreground)] pointer-events-none"
+            className="absolute left-0 w-full pointer-events-none z-20"
             style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
           >
+            <div className="absolute left-0 top-0 w-full h-[2px] -translate-y-1/2 bg-[color:var(--foreground)]" />
             {index === 0 && (
-              <div className="absolute left-0 -translate-y-1/2 -translate-x-full pl-2 z-10">
-                <span className="rounded bg-[color:var(--foreground)] px-1 py-0.5 text-[11px] font-semibold tabular-nums text-[color:var(--panel)] shadow-sm">
+              <div className="absolute left-0 top-0 -translate-y-1/2 -translate-x-full z-10 flex">
+                <span className="inline-flex items-center justify-center rounded bg-[color:var(--foreground)] p-1 text-[11px] font-bold tabular-nums leading-none text-[color:var(--panel)] shadow-sm">
                   {formatClock(selectedTime)}
                 </span>
               </div>
