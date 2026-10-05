@@ -119,7 +119,7 @@ export function Select<T extends string | number | undefined>({
     >
       <button
         type="button"
-        className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:border-white/20 hover:bg-white/20 cursor-pointer h-8 outline-none focus-visible:ring-1 focus-visible:ring-white backdrop-blur-sm ${className.includes("w-") ? "w-full" : ""} ${buttonClassName}`}
+        className={`flex items-center gap-2 rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--panel)]/90 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:bg-[color:var(--panel-strong)] cursor-pointer h-8 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--focus-ring)] backdrop-blur-sm ${className.includes("w-") ? "w-full" : ""} ${buttonClassName}`}
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}

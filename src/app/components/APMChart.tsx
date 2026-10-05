@@ -270,6 +270,7 @@ export function APMChart({
             <button
               type="button"
               key={`${p.id}-${idx}`}
+              tabIndex={-1}
               className="flex items-center gap-1.5 whitespace-nowrap select-none px-2.5 py-2 cursor-pointer touch-manipulation appearance-none bg-transparent border-0 text-left font-inherit outline-none"
               style={{
                 opacity: isDimmed ? 0.15 : 1,
@@ -282,7 +283,7 @@ export function APMChart({
                 className="w-2 h-2 rounded-full shrink-0"
                 style={{ background: getPlayerColor(p.id) }}
               />
-              <span className={`text-xs transition-colors duration-150 ${isHovered ? "text-white" : "text-white/50"}`}>
+              <span className={`text-xs transition-colors duration-150 ${isHovered ? "text-[color:var(--foreground)]" : "text-[color:var(--muted)]"}`}>
                 {p.name}
               </span>
             </button>
@@ -294,9 +295,9 @@ export function APMChart({
         {yTicks.map((val) => {
           const y = getY(val);
           return (
-            <g key={val} className="text-white/20">
-              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="currentColor" strokeDasharray="4 4" />
-              <text x={padding.left - 12} y={y} fill="currentColor" fontSize="10" textAnchor="end" alignmentBaseline="middle">{formatApmTick(val)}</text>
+            <g key={val}>
+              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="currentColor" strokeDasharray="4 4" className="text-[color:var(--chart-grid)]" />
+              <text x={padding.left - 12} y={y} fill="currentColor" fontSize="10" textAnchor="end" alignmentBaseline="middle" className="text-[color:var(--muted)]">{formatApmTick(val)}</text>
             </g>
           );
         })}
@@ -306,9 +307,9 @@ export function APMChart({
           const val = Math.round(p * maxMinute);
           const x = getX(val);
           return (
-            <g key={p} className="text-white/20">
-              <line x1={x} y1={padding.top} x2={x} y2={height - padding.bottom} stroke="currentColor" strokeDasharray="4 4" />
-              <text x={x} y={height - 15} fill="currentColor" fontSize="10" textAnchor="middle">{val}m</text>
+            <g key={p}>
+              <line x1={x} y1={padding.top} x2={x} y2={height - padding.bottom} stroke="currentColor" strokeDasharray="4 4" className="text-[color:var(--chart-grid)]" />
+              <text x={x} y={height - 15} fill="currentColor" fontSize="10" textAnchor="middle" className="text-[color:var(--muted)]">{val}m</text>
             </g>
           );
         })}

@@ -133,6 +133,7 @@ interface MinimapProps {
   onOpenFile: (file: File) => void;
   onShowUrlInput: () => void;
   onCachedCanvasesReady: () => void | Promise<void>;
+  theme?: "dark" | "light";
 }
 
 function shadeColor(hex: string, percent: number) {
@@ -182,6 +183,7 @@ export function Minimap({
   onOpenFile,
   onShowUrlInput,
   onCachedCanvasesReady,
+  theme = "dark",
 }: MinimapProps) {
   const [minimapViewFilters, setMinimapViewFilters] = useState<string[]>(DEFAULT_LAYERS);
   const iconCheckReplayRef = useRef<any>(null);
@@ -342,7 +344,7 @@ export function Minimap({
   const fullscreenButton = (extraClass = "") => (
     <button
       type="button"
-      className={`flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-white shadow-lg transition hover:border-white/20 hover:bg-white/20 select-none cursor-pointer backdrop-blur-sm focus-visible:ring-2 focus-visible:ring-white/50 outline-none ${extraClass}`}
+      className={`flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--btn-border)] bg-[color:var(--panel)]/90 text-[color:var(--foreground)] transition hover:bg-[color:var(--panel-strong)] select-none cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[color:var(--focus-ring)] outline-none ${extraClass}`}
       onClick={(e) => {
         e.stopPropagation();
         toggleFullscreen();
@@ -956,15 +958,8 @@ export function Minimap({
       const terrainCanvas = terrainCanvasRef.current!;
       terrainCanvas.width = terrainWidth;
       terrainCanvas.height = terrainHeight;
-
       const terrainContext = terrainCanvas.getContext("2d");
       if (terrainContext && sizeX && sizeY) {
-        const panelColor =
-          getComputedStyle(canvas).getPropertyValue("background-color")?.trim() ||
-          "#1c1610";
-        terrainContext.fillStyle = panelColor;
-        terrainContext.fillRect(0, 0, terrainWidth, terrainHeight);
-
         const tiles = mapInfo?.tiles;
         if (tiles && tiles.length >= sizeX * sizeY) {
           terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
@@ -1806,7 +1801,7 @@ export function Minimap({
         </div>
       )}
       <div
-        className={`relative w-full ${isFullscreen ? "flex-1 min-h-0 mx-auto" : "aspect-[2/1]"
+        className={`minimap-canvas-viewport relative w-full ${isFullscreen ? "flex-1 min-h-0 mx-auto" : "aspect-[2/1]"
           }`}
         ref={mapContainerRef}
         style={{
@@ -2038,10 +2033,10 @@ export function Minimap({
                 setHoveredEntity(null);
               }}
             >
-              <div className="pointer-events-auto w-full text-white select-none flex flex-col">
+              <div className="pointer-events-auto w-full select-none flex flex-col">
                 <button
                   type="button"
-                  className="flex h-9 items-center justify-center rounded-t-lg transition bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                  className="flex h-9 items-center justify-center rounded-t-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
                   tabIndex={-1}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -2059,7 +2054,7 @@ export function Minimap({
                 </button>
                 <button
                   type="button"
-                  className="flex h-9 items-center justify-center rounded-b-lg transition bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 backdrop-blur-sm shadow-lg cursor-pointer outline-none"
+                  className="flex h-9 items-center justify-center rounded-b-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
                   tabIndex={-1}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -2086,7 +2081,7 @@ export function Minimap({
                 <span className="text-[color:var(--accent)] uppercase">
                   Loading replay...
                 </span>
-                <span className="tabular-nums text-[color:var(--muted-foreground)]">
+                <span className="tabular-nums text-[color:var(--muted)]">
                   {Math.round(((loadingStep + 1) / LOADING_STEP_COUNT) * 100)}%
                 </span>
               </div>
@@ -2144,7 +2139,7 @@ export function Minimap({
         <button
           ref={playButtonRef}
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/30 hover:border-white/20 hover:scale-105 active:scale-95 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--btn-subtle-bg)] text-[color:var(--foreground)] transition hover:bg-[color:var(--btn-subtle-bg-hover)] hover:scale-105 active:scale-95 cursor-pointer"
           onClick={() => {
             if (selectedTime >= duration - 1) {
               setSelectedTime(0);
@@ -2174,11 +2169,14 @@ export function Minimap({
             min={0}
             max={duration}
             value={selectedTime}
-            className="w-full accent-[color:var(--accent)] cursor-pointer outline-none"
+            className="w-full cursor-pointer outline-none"
+            style={{
+              ["--progress" as string]: `${duration > 0 ? (selectedTime / duration) * 100 : 0}%`,
+            }}
             tabIndex={-1}
             onChange={(event) => setSelectedTime(Number(event.target.value))}
           />
-          <div className="absolute bottom-0 left-0 text-[10px] font-medium tabular-nums text-[color:var(--muted-foreground)] pointer-events-none translate-y-1.5">
+          <div className="absolute bottom-0 left-0 text-[10px] font-medium tabular-nums text-[color:var(--muted)] pointer-events-none translate-y-1.5">
             {formatClock(selectedTime)} / {formatClock(duration)}
           </div>
         </div>

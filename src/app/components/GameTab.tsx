@@ -183,11 +183,11 @@ export function GameTab({
       <section className="tab-section flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <h2 className="headline text-2xl font-semibold">Players</h2>
-          <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
+          <span className="inline-flex items-center rounded-full bg-[color:var(--badge-bg)] px-3 py-1 text-xs font-medium text-[color:var(--muted)] ring-1 ring-inset ring-[color:var(--border-subtle)]">
             {matchFormat || players.length}
           </span>
           {matchInfo && (matchInfo.difficultyName || matchInfo.difficultyId !== undefined) && players.some((p) => p.ai) && (
-            <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
+            <span className="inline-flex items-center rounded-full bg-[color:var(--badge-bg)] px-3 py-1 text-xs font-medium text-[color:var(--muted)] ring-1 ring-inset ring-[color:var(--border-subtle)]">
               {matchInfo.difficultyName || `Difficulty ${matchInfo.difficultyId}`} AI
             </span>
           )}
@@ -213,15 +213,15 @@ export function GameTab({
                 <div className="space-y-4 text-sm flex-1 flex flex-col">
                   {showRatingInfo && (
                     <div>
-                      <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                        <span className="text-xs uppercase tracking-wider text-white/30">Player rating</span>
+                      <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                        <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Player rating</span>
                       </div>
                       <div className="flex flex-col gap-1.5">
                         {hasRmRatingInfo && (
                           <div className="flex items-center justify-between gap-1.5">
                             <span className="text-xs text-[color:var(--muted)] shrink-0" title="Random Map 1v1">RM 1v1</span>
-                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
-                              <span className="text-white/80">
+                            <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                              <span className="text-[color:var(--foreground)]">
                                 {player.elo !== undefined ? player.elo : "—"}
                               </span>
                               {player.rank !== undefined && player.rank > 0 ? (
@@ -235,8 +235,8 @@ export function GameTab({
                         {hasTeamRatingInfo && (
                           <div className="flex items-center justify-between gap-1.5">
                             <span className="text-xs text-[color:var(--muted)] shrink-0" title="Team Random Map">Team RM</span>
-                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
-                              <span className="text-white/80">
+                            <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                              <span className="text-[color:var(--foreground)]">
                                 {player.teamElo !== undefined ? player.teamElo : "—"}
                               </span>
                               {player.teamRank !== undefined && player.teamRank > 0 ? (
@@ -251,22 +251,22 @@ export function GameTab({
                     </div>
                   )}
                   <div>
-                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-white/30">Effective APM</span>
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Effective APM</span>
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center justify-between gap-1.5">
                         <span className="text-xs text-[color:var(--muted)] shrink-0" title="Average APM">Average APM</span>
-                        <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
-                          <span className="text-white/80">
+                        <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                          <span className="text-[color:var(--foreground)]">
                             {stats?.apm !== undefined ? formatNum(stats.apm) : "—"}
                           </span>
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-1.5">
                         <span className="text-xs text-[color:var(--muted)] shrink-0" title="Peak APM">Peak APM</span>
-                        <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
-                          <span className="text-white/80">
+                        <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                          <span className="text-[color:var(--foreground)]">
                             {stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}
                           </span>
                         </span>
@@ -274,8 +274,8 @@ export function GameTab({
                     </div>
                   </div>
                   <div>
-                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="text-xs uppercase tracking-wider text-white/30">Age up time</span>
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                      <span className="text-xs uppercase tracking-wider text-[color:var(--color-eco)]">Age up time</span>
                     </div>
                     {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
                       <div className="flex flex-col gap-1.5">
@@ -287,8 +287,8 @@ export function GameTab({
                                 <span title="Fastest" className="text-[10px] select-none">🥇</span>
                               )}
                             </div>
-                            <span className="text-xs tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50 inline-flex items-center">
-                              <span className="text-white/80">
+                            <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                              <span className="text-[color:var(--foreground)]">
                                 {formatClock(time as number)}
                               </span>
                             </span>
@@ -296,7 +296,7 @@ export function GameTab({
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-white/20 italic">—</p>
+                      <p className="text-sm text-[color:var(--muted)]">—</p>
                     )}
                   </div>
                   {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
@@ -351,7 +351,7 @@ export function GameTab({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <h2 className="headline text-2xl font-semibold">Game chat</h2>
-            <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10">
+            <span className="inline-flex items-center rounded-full bg-[color:var(--badge-bg)] px-3 py-1 text-xs font-medium text-[color:var(--muted)] ring-1 ring-inset ring-[color:var(--border-subtle)]">
               {filteredChat.length}
             </span>
           </div>
@@ -385,15 +385,15 @@ export function GameTab({
         </div>
 
         {chatEvents.length === 0 ? (
-          <div className="border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+          <div className="border border-dashed border-[color:var(--border-subtle)] p-8 text-center text-sm text-[color:var(--muted)]">
             No in-game chat messages recorded in this replay.
           </div>
         ) : filteredChat.length === 0 ? (
-          <div className="border border-dashed border-white/10 p-8 text-center text-sm text-white/40">
+          <div className="border border-dashed border-[color:var(--border-subtle)] p-8 text-center text-sm text-[color:var(--muted)]">
             No messages match the selected filters.
           </div>
         ) : (
-          <div className="bg-[color:var(--panel)] px-4 py-3 border border-white/5">
+          <div className="bg-[color:var(--panel)] px-4 py-3 border border-[color:var(--divider)]">
             <div className="space-y-1">
               {filteredChat.map((item) => {
                 const timeLabel = item.time === 0 ? "Lobby" : formatClock(item.time);
@@ -417,7 +417,7 @@ export function GameTab({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                       title={`Jump to ${timeLabel}`}
-                      className="shrink-0 rounded-md px-2 h-6 inline-flex items-center justify-center text-[11px] font-mono tabular-nums font-medium transition cursor-pointer select-none bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
+                      className="w-11 shrink-0 rounded-md px-2 h-6 inline-flex items-center justify-center text-center text-[11px] font-mono tabular-nums transition cursor-pointer select-none bg-[color:var(--btn-subtle-bg)] text-[color:var(--foreground)]/70 hover:bg-[color:var(--btn-subtle-bg-hover)] hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)]"
                     >
                       {timeLabel}
                     </button>
@@ -426,7 +426,7 @@ export function GameTab({
                       {!item.isSystem && (
                         <div className="flex flex-wrap items-center gap-1 min-h-6">
                           {item.playerName && (
-                            <span className="flex items-center gap-1.5 text-sm leading-tight text-white/50">
+                            <span className="flex items-center gap-1.5 text-sm leading-tight text-[color:var(--muted)]">
                               <span
                                 className="h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white"
                                 style={{ background: pColor || "#FFFFFF" }}
@@ -443,7 +443,7 @@ export function GameTab({
                           )}
 
                           {item.scope === "direct" && item.recipientName && (
-                            <span className="inline-flex items-center text-[10px] text-white/50">
+                            <span className="inline-flex items-center text-[10px] text-[color:var(--foreground)]/60">
                               <span className="font-normal">to</span>
                               {item.recipientPlayerId !== undefined && (
                                 <span
@@ -458,11 +458,11 @@ export function GameTab({
                         </div>
                       )}
 
-                      <p className={`text-sm break-words ${item.isSystem ? "italic text-white/30 min-h-6 py-0.5 leading-5" : "mt-0.5 text-white/90"}`}>
+                      <p className={`text-sm break-words ${item.isSystem ? "text-[color:var(--muted)] min-h-6 py-0.5 leading-5" : "mt-0.5 text-[color:var(--foreground)]"}`}>
                         {item.isSystem && (
                           ageRoman ? (
                             <span
-                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black not-italic text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm align-middle -translate-y-px"
+                              className="inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-sm font-serif font-black text-[10px] leading-none mr-2 select-none ring-1 ring-white/20 shadow-sm align-middle -translate-y-px"
                               style={{
                                 backgroundColor: pColor || getPlayerColor(0),
                                 color: pOutline || getPlayerOutline(0),
@@ -479,8 +479,8 @@ export function GameTab({
                           ) : null
                         )}
                         <span>{item.message}</span>
-                        {isCheat && <span className="ml-1.5 not-italic">👾</span>}
-                        {isResign && <span className="ml-1.5 not-italic">💀</span>}
+                        {isCheat && <span className="ml-1.5">👾</span>}
+                        {isResign && <span className="ml-1.5">💀</span>}
                       </p>
                     </div>
                   </div>
@@ -497,7 +497,7 @@ export function GameTab({
             <h2 className="headline text-2xl font-semibold">Game info</h2>
             {matchInfo.timestamp !== undefined && (
               <span
-                className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-inset ring-white/10"
+                className="inline-flex items-center rounded-full bg-[color:var(--badge-bg)] px-3 py-1 text-xs font-medium text-[color:var(--muted)] ring-1 ring-inset ring-[color:var(--border-subtle)]"
                 title={new Date(matchInfo.timestamp * 1000).toISOString()}
               >
                 {new Date(matchInfo.timestamp * 1000).toLocaleString(undefined, {
@@ -510,7 +510,7 @@ export function GameTab({
               </span>
             )}
           </div>
-          <div className="bg-[color:var(--panel)] p-4 border border-white/5">
+          <div className="bg-[color:var(--panel)] p-4 border border-[color:var(--divider)]">
             <div className="grid gap-4 md:grid-cols-3">
               {matchInfo?.gameTypeId !== undefined && (
                 <div className="flex flex-col gap-1">

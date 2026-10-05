@@ -6,6 +6,7 @@ import { Minimap } from "./components/Minimap";
 import { GameTab } from "./components/GameTab";
 import { StatsTab } from "./components/StatsTab";
 import { TimelineTab } from "./components/TimelineTab";
+import { Toggle } from "./components/Toggle";
 import { parse_rec } from "../aoe2rec-js/aoe2rec_js";
 import {
   buildTimeline,
@@ -93,6 +94,40 @@ interface LoadedReplayData {
 }
 
 export default function Home() {
+  const [theme, setTheme] = useState<"dark" | "light">("light");
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const isLight =
+        document.documentElement.classList.contains("light") ||
+        (!document.documentElement.classList.contains("dark") &&
+          window.matchMedia("(prefers-color-scheme: light)").matches);
+      if (isLight) {
+        setTheme("light");
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+      } else {
+        setTheme("dark");
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      }
+    }
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      if (next === "light") {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.remove("light");
+        document.documentElement.classList.add("dark");
+      }
+      return next;
+    });
+  }, []);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [replayData, setReplayData] = useState<LoadedReplayData | null>(null);
   const replay = replayData?.replay ?? null;
@@ -434,15 +469,16 @@ export default function Home() {
               setReplayUrl("");
             }}
             onCachedCanvasesReady={handleCachedCanvasesReady}
+            theme={theme}
           />
 
           {replay && (
             <div className="flex flex-col gap-5">
-              <div className="flex border-b border-white/10">
+              <div className="flex border-b border-[color:var(--border-subtle)]">
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "game"
-                    ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
+                    ? "border-b-2 border-[color:var(--accent)] text-[color:var(--foreground)]"
+                    : "border-b-2 border-transparent text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
                     }`}
                   onClick={() => handleTabChange("game")}
                 >
@@ -450,8 +486,8 @@ export default function Home() {
                 </button>
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "stats"
-                    ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
+                    ? "border-b-2 border-[color:var(--accent)] text-[color:var(--foreground)]"
+                    : "border-b-2 border-transparent text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
                     }`}
                   onClick={() => handleTabChange("stats")}
                 >
@@ -459,8 +495,8 @@ export default function Home() {
                 </button>
                 <button
                   className={`px-6 py-3 text-sm font-bold uppercase tracking-widest transition-all cursor-pointer ${activeTab === "timeline"
-                    ? "border-b-2 border-[color:var(--accent)] text-white"
-                    : "border-b-2 border-transparent text-white/40 hover:text-white/70"
+                    ? "border-b-2 border-[color:var(--accent)] text-[color:var(--foreground)]"
+                    : "border-b-2 border-transparent text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
                     }`}
                   onClick={() => handleTabChange("timeline")}
                 >
@@ -514,17 +550,24 @@ export default function Home() {
             </div>
           )}
         </main>
-        <footer className="flex items-center justify-center gap-2 px-6 pb-4 text-center text-xs text-[color:var(--muted)] justify-start">
-          <span className="inline-flex items-center gap-1">
-            Designed by
-            <a href="https://liouh.com/home/" className="hover:text-white/80 hover:underline">
-              Henry Liou
+        <footer className="flex flex-wrap items-center justify-between gap-4 px-6 pb-6 text-xs text-[color:var(--muted)]">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1">
+              Designed by
+              <a href="https://liouh.com/home/" className="hover:text-[color:var(--foreground)] hover:underline">
+                Henry Liou
+              </a>
+            </span>
+            <span>·</span>
+            <a href="https://github.com/liouh/aoe2/issues" target="_blank" className="hover:text-[color:var(--foreground)] hover:underline">
+              Report a bug
             </a>
-          </span>
-          <span>·</span>
-          <a href="https://github.com/liouh/aoe2/issues" target="_blank" className="hover:text-white/80 hover:underline">
-            Report a bug
-          </a>
+          </div>
+          <Toggle
+            label="Dark mode"
+            checked={theme === "dark"}
+            onChange={toggleTheme}
+          />
         </footer>
       </div>
     </div>

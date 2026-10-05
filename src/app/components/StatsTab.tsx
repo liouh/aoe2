@@ -178,9 +178,9 @@ export function StatsTab({
                 <div className="space-y-4">
                   {/* Starting Units Section */}
                   <div>
-                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="uppercase tracking-wider text-white/30">Starting units</span>
-                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{startingCount}</span>
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                      <span className="uppercase tracking-wider text-[color:var(--muted)]">Starting units</span>
+                      <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{startingCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.starting.length > 0 ? stats.starting.map((unit) => (
@@ -189,15 +189,15 @@ export function StatsTab({
                           <span className="tabular-nums shrink-0 pr-1.5">{unit.count}</span>
                         </div>
                       )) : (
-                        <p className="text-white/20 italic">—</p>
+                        <p className="text-[color:var(--muted)]">—</p>
                       )}
                     </div>
                   </div>
                   {/* Military Section */}
                   <div>
-                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                       <span className="uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
-                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{milCount}</span>
+                      <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{milCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.military.length > 0 ? (
@@ -208,16 +208,16 @@ export function StatsTab({
                           </div>
                         ))
                       ) : (
-                        <p className="text-white/20 italic">—</p>
+                        <p className="text-[color:var(--muted)]">—</p>
                       )}
                     </div>
                   </div>
 
                   {/* Economic Section */}
                   <div>
-                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                      <span className="uppercase tracking-wider text-green-400/70">Trained eco units</span>
-                      <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{ecoCount}</span>
+                    <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                      <span className="uppercase tracking-wider text-[color:var(--color-eco)]">Trained eco units</span>
+                      <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{ecoCount}</span>
                     </div>
                     <div className="flex flex-col gap-1.5 min-h-[20px]">
                       {stats.economic.length > 0 ? (
@@ -228,7 +228,7 @@ export function StatsTab({
                           </div>
                         ))
                       ) : (
-                        <p className="text-white/20 italic">—</p>
+                        <p className="text-[color:var(--muted)]">—</p>
                       )}
                     </div>
                   </div>
@@ -269,12 +269,12 @@ export function StatsTab({
                     const sold = usage.sold[res];
                     return (
                       <div key={res} className="flex items-center justify-between">
-                        <span className="uppercase tracking-wider text-white/30">{res}</span>
+                        <span className="uppercase tracking-wider text-[color:var(--muted)]">{res}</span>
                         <div className="flex items-center gap-1.5 text-xs tabular-nums font-medium">
-                          <span className={`bg-white/5 px-1.5 py-0.5 rounded ${bought > 0 ? "text-green-400/70" : "text-white/30"}`}>
+                          <span className={`bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded ${bought > 0 ? "text-[color:var(--color-eco)] font-semibold" : "text-[color:var(--muted)]"}`}>
                             + {formatNum(bought)}
                           </span>
-                          <span className={`bg-white/5 px-1.5 py-0.5 rounded ${sold > 0 ? "text-[color:var(--accent)]" : "text-white/30"}`}>
+                          <span className={`bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded ${sold > 0 ? "text-[color:var(--accent)] font-semibold" : "text-[color:var(--muted)]"}`}>
                             − {formatNum(sold)}
                           </span>
                         </div>
@@ -312,9 +312,9 @@ export function StatsTab({
                 />
 
                 <div>
-                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="uppercase tracking-wider text-white/30">Starting buildings</span>
-                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(startingBuildingCount)}</span>
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                    <span className="uppercase tracking-wider text-[color:var(--muted)]">Starting buildings</span>
+                    <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(startingBuildingCount)}</span>
                   </div>
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
                     {stats.starting.length > 0 ? stats.starting.map((building) => (
@@ -323,15 +323,15 @@ export function StatsTab({
                         <span className="tabular-nums shrink-0 pr-1.5">{formatNum(building.count)}</span>
                       </div>
                     )) : (
-                      <p className="text-white/20 italic">—</p>
+                      <p className="text-[color:var(--muted)]">—</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                     <span className="uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
-                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(buildingCount)}</span>
+                    <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(buildingCount)}</span>
                   </div>
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
                     {stats.built.length > 0 ? stats.built.map((building) => (
@@ -340,7 +340,7 @@ export function StatsTab({
                         <span className="tabular-nums shrink-0 pr-1.5">{formatNum(building.count)}</span>
                       </div>
                     )) : (
-                      <p className="text-white/20 italic">—</p>
+                      <p className="text-[color:var(--muted)]">—</p>
                     )}
                   </div>
                 </div>
@@ -373,9 +373,9 @@ export function StatsTab({
                 />
 
                 <div>
-                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-white/5 pb-1 mb-2">
-                    <span className="uppercase tracking-wider text-white/30">Total actions</span>
-                    <span className="tabular-nums bg-white/5 px-1.5 py-0.5 rounded text-white/50">{formatNum(totalActions)}</span>
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                    <span className="uppercase tracking-wider text-[color:var(--muted)]">Total actions</span>
+                    <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(totalActions)}</span>
                   </div>
 
                   <div className="flex flex-col gap-1.5 min-h-[20px]">
@@ -387,7 +387,7 @@ export function StatsTab({
                         </div>
                       ))
                     ) : (
-                      <p className="text-white/20 italic">—</p>
+                      <p className="text-[color:var(--muted)]">—</p>
                     )}
                   </div>
                 </div>

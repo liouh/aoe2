@@ -17,10 +17,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        {process.env.NEXT_PUBLIC_GA_ID ? (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        ) : null}
       </body>
-      {process.env.NEXT_PUBLIC_GA_ID ? (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      ) : null}
     </html>
   );
 }
