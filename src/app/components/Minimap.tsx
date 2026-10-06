@@ -38,7 +38,7 @@ const MINIMAP_BUILDING_SHADOW_PERCENT = -20;
 const MINIMAP_BUILDING_FADE_IN_SECONDS = 30;
 const MINIMAP_FARMS_ALPHA = 0.7;
 const MINIMAP_FARMS_OUTLINE_WIDTH = 0.5;
-const MINIMAP_FARMS_OUTLINE_ALPHA = 0.3;
+const MINIMAP_FARMS_OUTLINE_ALPHA = 0.2;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
 
 const MINIMAP_UNIT_ALPHA = 0.8;
@@ -61,6 +61,10 @@ const MINIMAP_TERRAIN_CONTOUR_WIDTH = 2.5;
 const MINIMAP_TERRAIN_HIGHLIGHT_PERCENT = 15;
 const MINIMAP_TERRAIN_SHADOW_PERCENT = -20;
 const BASE_TERRAIN_SCALE = 34;
+
+const MINIMAP_GRID_WIDTH = 0.5;
+const MINIMAP_GRID_COLOR = "rgba(255, 255, 255, 0.15)";
+const MINIMAP_DIAMOND_BG_COLOR = "#aaaaaa";
 
 const MINIMAP_CLIFF_COLOR = "#713600";
 const MINIMAP_CLIFF_HIGHLIGHT_PERCENT = 15;
@@ -960,9 +964,24 @@ export function Minimap({
       terrainCanvas.height = terrainHeight;
       const terrainContext = terrainCanvas.getContext("2d");
       if (terrainContext && sizeX && sizeY) {
+        const top = toOffscreen(sizeX, 0);
+        const right = toOffscreen(sizeX, sizeY);
+        const bottom = toOffscreen(0, sizeY);
+        const left = toOffscreen(0, 0);
+        terrainContext.beginPath();
+        terrainContext.moveTo(top.x, top.y);
+        terrainContext.lineTo(right.x, right.y);
+        terrainContext.lineTo(bottom.x, bottom.y);
+        terrainContext.lineTo(left.x, left.y);
+        terrainContext.closePath();
+        terrainContext.fillStyle = MINIMAP_DIAMOND_BG_COLOR;
+        terrainContext.fill();
+
         const tiles = mapInfo?.tiles;
         if (tiles && tiles.length >= sizeX * sizeY) {
           terrainContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
+          terrainContext.strokeStyle = MINIMAP_GRID_COLOR;
+          terrainContext.lineWidth = MINIMAP_GRID_WIDTH;
           for (let y = 0; y < sizeY; y += 1) {
             for (let x = 0; x < sizeX; x += 1) {
               const tile = tiles[y * sizeX + x] as { terrain_type?: number; elevation?: number };
@@ -985,6 +1004,7 @@ export function Minimap({
               terrainContext.lineTo(p4.x, p4.y);
               terrainContext.closePath();
               terrainContext.fill();
+              terrainContext.stroke();
             }
           }
 
@@ -1090,6 +1110,8 @@ export function Minimap({
       // 1. Fill cliff diamonds
       obstacleContext.globalAlpha = MINIMAP_TERRAIN_ALPHA;
       obstacleContext.fillStyle = MINIMAP_CLIFF_COLOR;
+      obstacleContext.strokeStyle = shadeColor(MINIMAP_CLIFF_COLOR, MINIMAP_CLIFF_HIGHLIGHT_PERCENT);
+      obstacleContext.lineWidth = MINIMAP_GRID_WIDTH;
       for (let y = 0; y < sizeY; y += 1) {
         for (let x = 0; x < sizeX; x += 1) {
           if (!isCliffTile(x, y)) continue;
@@ -1105,6 +1127,7 @@ export function Minimap({
           obstacleContext.lineTo(p4.x, p4.y);
           obstacleContext.closePath();
           obstacleContext.fill();
+          obstacleContext.stroke();
         }
       }
 
@@ -1186,6 +1209,7 @@ export function Minimap({
       if (!resourceContext) return;
       // Draw resources above terrain and contour lines with 3D directional bevel outlines
       resourceContext.globalAlpha = 1.0;
+      resourceContext.lineWidth = MINIMAP_GRID_WIDTH;
       const resourceShadowLinesByColor: Record<string, number[]> = {};
       const resourceHighlightLinesByColor: Record<string, number[]> = {};
 
@@ -1206,6 +1230,7 @@ export function Minimap({
 
         // Fill resource diamond
         resourceContext.fillStyle = baseColor;
+        resourceContext.strokeStyle = shadeColor(baseColor, MINIMAP_RESOURCE_HIGHLIGHT_PERCENT);
         resourceContext.beginPath();
         resourceContext.moveTo(p1.x, p1.y);
         resourceContext.lineTo(p2.x, p2.y);
@@ -1213,6 +1238,7 @@ export function Minimap({
         resourceContext.lineTo(p4.x, p4.y);
         resourceContext.closePath();
         resourceContext.fill();
+        resourceContext.stroke();
 
         // Collect 3D directional outline edges
         const isSameVisible = (nx: number, ny: number) => {
