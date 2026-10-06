@@ -11,7 +11,7 @@ import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/
 
 const TIMELINE_MARKER_INTERVAL = 300;
 const TIMELINE_PX_PER_SECOND = 2;
-const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 5;
+const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 6;
 
 function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIMELINE_CONSOLIDATION_WINDOW_SECONDS) {
   if (events.length === 0) return [];
@@ -99,9 +99,13 @@ export function TimelineTab({
   useEffect(() => {
     if (players.length > 0) {
       if (leftPlayerId === null) setLeftPlayerId(players[0].id);
-      if (rightPlayerId === null) {
-        const next = players.find((p) => p.id !== players[0].id)?.id ?? players[0].id;
-        setRightPlayerId(next);
+      if (players.length > 1) {
+        if (rightPlayerId === null) {
+          const next = players.find((p) => p.id !== players[0].id)?.id ?? null;
+          setRightPlayerId(next);
+        }
+      } else {
+        setRightPlayerId(null);
       }
     }
   }, [players, leftPlayerId, rightPlayerId]);
@@ -128,6 +132,37 @@ export function TimelineTab({
     if (!player) return null;
 
     const { research, builds, trains } = columnData[index];
+
+    const renderRow = (
+      event: TimelineEvent & { label?: string; isMilitary?: boolean },
+      zIndex: string,
+      lineWidthClass: string,
+      icon: React.ReactNode
+    ) => {
+      const tooltip = `${event.label} @ ${formatClock(event.time)}`;
+      return (
+        <div
+          key={event.id}
+          className={`group absolute left-8 right-1 -translate-y-1/2 flex items-center hover:z-30 pointer-events-none ${zIndex}`}
+          style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+          title={tooltip}
+        >
+          <span
+            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[12px] transition-transform group-hover:scale-200 select-none pointer-events-auto cursor-help"
+            title={tooltip}
+          >
+            {icon}
+          </span>
+          <div className={`h-[1px] bg-white/10 shrink-0 ${lineWidthClass}`} />
+          <span
+            className="truncate min-w-0 px-1.5 py-0.5 rounded text-[10px] text-[color:var(--muted)] pointer-events-auto cursor-help transition-colors border border-transparent group-hover:bg-[color:var(--panel-strong)] group-hover:border-[color:var(--border-subtle)] group-hover:text-[color:var(--foreground)]"
+            title={tooltip}
+          >
+            {event.label}
+          </span>
+        </div>
+      );
+    };
 
     return (
       <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
@@ -157,87 +192,65 @@ export function TimelineTab({
             }
           />
         </div>
-        <div
-          className="relative w-full"
-          style={{ height: timelineHeight }}
-        >
-          {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
-            const markerTime = i * TIMELINE_MARKER_INTERVAL;
-            return (
-              <div
-                key={`marker-${markerTime}`}
-                className="absolute left-0 w-full border-t border-white/5 pointer-events-none"
-                style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
-              >
-                {i !== 0 && (
+        <div className="py-3">
+          <div
+            className="relative w-full"
+            style={{ height: timelineHeight }}
+          >
+            {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
+              const markerTime = i * TIMELINE_MARKER_INTERVAL;
+              return (
+                <div
+                  key={`marker-${markerTime}`}
+                  className="absolute left-0 w-full border-t border-white/5 pointer-events-none"
+                  style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
+                >
                   <span className="absolute left-[3px] text-[10px] tabular-nums text-[color:var(--muted-foreground)] opacity-30">
                     {markerTime / 60 + "'"}
                   </span>
-                )}
-              </div>
-            );
-          })}
-          <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
-
-          {research.map((event) => (
-            <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">🧪</span>
-              <div className="h-[1px] w-4 bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
-            </div>
-          ))}
-
-          {builds.map((event) => (
-            <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">🏛️</span>
-              <div className="h-[1px] w-[6rem] bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
-            </div>
-          ))}
-
-          {trains.map((event) => (
-            <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">
-                {event.isMilitary ? "⚔️" : "🙂"}
-              </span>
-              <div className="h-[1px] w-[12rem] bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
-            </div>
-          ))}
-
-          {/* Age Up Markers */}
-          {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
-            const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
-            if (!ageNumeral) return null;
-            return (
-              <div
-                key={`age-${player.id}-${ageName}`}
-                className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
-                style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
-              >
-                <div className="absolute left-0 top-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
-                <div
-                  className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
-                  title={`${ageName} Age reached @ ${formatClock(time)}`}
-                >
-                  {ageNumeral}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+            <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
 
-          <div
-            className="absolute left-0 w-full pointer-events-none z-20"
-            style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
-          >
-            <div className="absolute left-0 top-0 w-full h-[2px] -translate-y-1/2 bg-[color:var(--foreground)]" />
-            {index === 0 && (
-              <div className="absolute left-0 top-0 -translate-y-1/2 -translate-x-full z-10 flex">
-                <span className="inline-flex items-center justify-center rounded bg-[color:var(--foreground)] p-1 text-[11px] font-bold tabular-nums leading-none text-[color:var(--panel)] shadow-sm">
-                  {formatClock(selectedTime)}
-                </span>
-              </div>
-            )}
+            {research.map((event) => renderRow(event, "z-22", "w-4", "🧪"))}
+            {builds.map((event) => renderRow(event, "z-21", "w-[25%]", "🏛️"))}
+            {trains.map((event) => renderRow(event, "z-20", "w-[50%]", event.isMilitary ? "🫡" : "😐"))}
+
+            {/* Age Up Markers */}
+            {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
+              const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
+              if (!ageNumeral) return null;
+              return (
+                <div
+                  key={`age-${player.id}-${ageName}`}
+                  className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
+                  style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
+                >
+                  <div className="absolute left-0 top-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
+                  <div
+                    className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
+                    title={`${ageName} Age reached @ ${formatClock(time)}`}
+                  >
+                    {ageNumeral}
+                  </div>
+                </div>
+              );
+            })}
+
+            <div
+              className="absolute left-0 w-full pointer-events-none z-20"
+              style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
+            >
+              <div className="absolute left-0 top-0 w-full h-[2px] -translate-y-1/2 bg-[color:var(--foreground)]" />
+              {index === 0 && (
+                <div className="absolute left-0 top-0 -translate-y-1/2 -translate-x-full z-10 flex">
+                  <span className="inline-flex items-center justify-center rounded bg-[color:var(--foreground)] p-1 text-[11px] font-bold tabular-nums leading-none text-[color:var(--panel)] shadow-sm">
+                    {formatClock(selectedTime)}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -269,7 +282,7 @@ export function TimelineTab({
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {renderColumn(leftPlayerId, 0)}
-          {renderColumn(rightPlayerId, 1)}
+          {players.length > 1 && renderColumn(rightPlayerId, 1)}
         </div>
       </div>
     </section>
