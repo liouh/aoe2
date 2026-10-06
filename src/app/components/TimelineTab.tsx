@@ -231,9 +231,9 @@ export function TimelineTab({
             ))}
             <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
 
-            {research.map((event) => renderRow(event, "z-22", "w-4", "🧪"))}
-            {builds.map((event) => renderRow(event, "z-21", "w-[25%]", "🏛️"))}
-            {trains.map((event) => renderRow(event, "z-20", "w-[50%]", event.isMilitary ? "🫡" : "😐"))}
+            {research.map((event) => renderRow(event, "z-23", "w-4", "🧪"))}
+            {builds.map((event) => renderRow(event, "z-22", "w-[25%]", "🏛️"))}
+            {trains.map((event) => renderRow(event, "z-21", "w-[50%]", event.isMilitary ? "🫡" : "😐"))}
 
             {/* Age Up Markers */}
             {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
