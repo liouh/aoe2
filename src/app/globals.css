@@ -237,6 +237,14 @@ html.light .tilt-card-wrapper:hover .player-card-3d-base {
   height: 20px;
 }
 
+#time-scrubber:focus,
+#time-scrubber:focus-visible,
+.minimap-zoom-btn:focus,
+.minimap-zoom-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 #time-scrubber::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 9999px;

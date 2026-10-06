@@ -170,7 +170,7 @@ export function TimelineTab({
                 style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
               >
                 {i !== 0 && (
-                  <span className="absolute left-[2px] text-[9px] font-medium tabular-nums text-[color:var(--muted-foreground)] opacity-30">
+                  <span className="absolute left-[3px] text-[10px] tabular-nums text-[color:var(--muted-foreground)] opacity-30">
                     {markerTime / 60 + "'"}
                   </span>
                 )}
@@ -181,27 +181,27 @@ export function TimelineTab({
 
           {research.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-22 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🧪</span>
+              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">🧪</span>
               <div className="h-[1px] w-4 bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
             </div>
           ))}
 
           {builds.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-21 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">🏛️</span>
+              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">🏛️</span>
               <div className="h-[1px] w-[6rem] bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
             </div>
           ))}
 
           {trains.map((event) => (
             <div key={event.id} className="group absolute left-8 flex items-center z-20 cursor-help" style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }} title={`${event.label} @ ${formatClock(event.time)}`}>
-              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-5 select-none">
+              <span className="absolute left-0 -translate-x-1/2 text-[12px] transition-transform group-hover:-translate-x-4 select-none">
                 {event.isMilitary ? "⚔️" : "🙂"}
               </span>
               <div className="h-[1px] w-[12rem] bg-white/10" />
-              <span className="whitespace-nowrap pl-1 text-[9px] text-[color:var(--muted)]">{event.label}</span>
+              <span className="whitespace-nowrap pl-1 text-[10px] text-[color:var(--muted)]">{event.label}</span>
             </div>
           ))}
 

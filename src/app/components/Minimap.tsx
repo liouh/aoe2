@@ -38,7 +38,7 @@ const MINIMAP_BUILDING_SHADOW_PERCENT = -20;
 const MINIMAP_BUILDING_FADE_IN_SECONDS = 30;
 const MINIMAP_FARMS_ALPHA = 0.7;
 const MINIMAP_FARMS_OUTLINE_WIDTH = 0.5;
-const MINIMAP_FARMS_OUTLINE_ALPHA = 0.2;
+const MINIMAP_FARMS_OUTLINE_ALPHA = 0.3;
 const MINIMAP_BUILDING_HOVER_WIDTH = 3;
 
 const MINIMAP_UNIT_ALPHA = 0.8;
@@ -458,7 +458,6 @@ export function Minimap({
     readyReplayRef.current = null;
   }, [replay]);
 
-
   // Handle Escape key to exit fullscreen
   useEffect(() => {
     if (!isFullscreen) return;
@@ -755,7 +754,6 @@ export function Minimap({
           event.category === "build" &&
           event.x !== undefined &&
           event.y !== undefined &&
-          event.raw?.hideOnMinimap !== true &&
           event.x >= 0 &&
           event.y >= 0 &&
           event.x <= sizeX &&
@@ -2062,7 +2060,7 @@ export function Minimap({
               <div className="pointer-events-auto w-full select-none flex flex-col">
                 <button
                   type="button"
-                  className="flex h-9 items-center justify-center rounded-t-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
+                  className="minimap-zoom-btn flex h-9 items-center justify-center rounded-t-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
                   tabIndex={-1}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -2080,7 +2078,7 @@ export function Minimap({
                 </button>
                 <button
                   type="button"
-                  className="flex h-9 items-center justify-center rounded-b-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
+                  className="minimap-zoom-btn flex h-9 items-center justify-center rounded-b-lg transition bg-[color:var(--panel)]/90 hover:bg-[color:var(--panel-strong)] text-[color:var(--foreground)] border border-[color:var(--btn-border)] backdrop-blur-md cursor-pointer outline-none"
                   tabIndex={-1}
                   onClick={(e) => {
                     e.stopPropagation();
