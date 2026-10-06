@@ -7,7 +7,7 @@ import { PlayerHeader } from "./PlayerHeader";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
-import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
+import { type TimelineEvent, type TimelineEventCategory, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
 
 const EARLY_MARKER_INTERVAL = 60;
 const EARLY_MARKER_COUNT = 20;
@@ -20,15 +20,19 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
 
   const consolidated: (TimelineEvent & {
     count: number;
-    isMilitary?: boolean;
-    items: Map<string, number>;
+    hasMilitary?: boolean;
+    hasMarket?: boolean;
+    items: Map<string, { count: number; category: TimelineEventCategory }>;
     label?: string;
   })[] = [];
 
-  const activeGroups = new Map<string, any>();
+  const activeGroups = new Map<string, (typeof consolidated)[number]>();
 
   for (const event of events) {
-    const identity = event.category;
+    const identity =
+      event.category === "market" || event.category === "research"
+        ? "tech-market"
+        : event.category;
     const current = activeGroups.get(identity);
 
     const amount = typeof event.raw?.amount === "number" && event.raw.amount > 0
@@ -42,20 +46,42 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
       itemLabel = getUnitName(event.unitTypeId);
     } else if (event.category === "research") {
       itemLabel = getTechName(event.techId);
+    } else if (event.category === "market") {
+      const resourceMap: Record<number, string> = {
+        0: "Food",
+        1: "Wood",
+        2: "Stone",
+      };
+      const resourceId = typeof event.raw?.resourceId === "number" ? event.raw.resourceId : undefined;
+      const resourceName = resourceId !== undefined ? (resourceMap[resourceId] ?? `Resource ${resourceId}`) : "Resource";
+      const actionName =
+        event.type?.toLowerCase() === "buy"
+          ? "Buy"
+          : event.type?.toLowerCase() === "sell"
+            ? "Sell"
+            : (event.type || "Market");
+      itemLabel = `${actionName} ${resourceName}`;
     }
 
     const isMil = event.category === "train" && !isEconomic(itemLabel);
 
     if (current && event.time - current.time <= windowSeconds) {
       current.count += amount;
-      current.items.set(itemLabel, (current.items.get(itemLabel) || 0) + amount);
-      if (isMil) current.isMilitary = true;
+      const existing = current.items.get(itemLabel);
+      if (existing) {
+        existing.count += amount;
+      } else {
+        current.items.set(itemLabel, { count: amount, category: event.category });
+      }
+      if (isMil) current.hasMilitary = true;
+      if (event.category === "market") current.hasMarket = true;
     } else {
       const newGroup = {
         ...event,
         count: amount,
-        isMilitary: isMil,
-        items: new Map([[itemLabel, amount]])
+        hasMilitary: isMil,
+        hasMarket: event.category === "market",
+        items: new Map([[itemLabel, { count: amount, category: event.category }]]),
       };
       consolidated.push(newGroup);
       activeGroups.set(identity, newGroup);
@@ -63,9 +89,19 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
   }
 
   for (const group of consolidated) {
-    const parts = Array.from(group.items.entries()).map(([name, count]) =>
-      (count > 1 && group.category !== "research") ? `${name} x${count}` : name
-    );
+    const parts = Array.from(group.items.entries()).map(([name, item]) => {
+      if (item.category === "market") {
+        const spaceIdx = name.indexOf(" ");
+        const totalAmount = item.count >= 100 ? item.count : item.count * 100;
+        if (spaceIdx !== -1) {
+          const action = name.slice(0, spaceIdx);
+          const resource = name.slice(spaceIdx + 1);
+          return `${action} ${totalAmount} ${resource}`;
+        }
+        return `${name} ${totalAmount}`;
+      }
+      return (item.count > 1 && item.category !== "research") ? `${name} x${item.count}` : name;
+    });
     group.label = parts.join(" + ");
   }
 
@@ -139,7 +175,7 @@ export function TimelineTab({
       if (playerId === null) return { research: [], builds: [], trains: [] };
       const pe = events.filter((e) => e.playerId === playerId);
       return {
-        research: consolidateEvents(pe.filter((e) => e.category === "research" && timelineShowResearch)),
+        research: consolidateEvents(pe.filter((e) => (e.category === "research" || e.category === "market") && timelineShowResearch)),
         builds: consolidateEvents(pe.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial)),
         trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits && !e.raw?.isInitial)),
       };
@@ -155,7 +191,7 @@ export function TimelineTab({
     const { research, builds, trains } = columnData[index];
 
     const renderRow = (
-      event: TimelineEvent & { label?: string; isMilitary?: boolean },
+      event: TimelineEvent & { label?: string; hasMilitary?: boolean; hasMarket?: boolean },
       zIndex: string,
       lineWidthClass: string,
       icon: React.ReactNode
@@ -231,9 +267,9 @@ export function TimelineTab({
             ))}
             <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
 
-            {research.map((event) => renderRow(event, "z-23", "w-4", "🧪"))}
+            {research.map((event) => renderRow(event, "z-23", "w-4", event.hasMarket ? "⚖️" : "🧪"))}
             {builds.map((event) => renderRow(event, "z-22", "w-[25%]", "🏛️"))}
-            {trains.map((event) => renderRow(event, "z-21", "w-[50%]", event.isMilitary ? "🫡" : "😐"))}
+            {trains.map((event) => renderRow(event, "z-21", "w-[50%]", event.hasMilitary ? "🫡" : "😐"))}
 
             {/* Age Up Markers */}
             {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
@@ -282,7 +318,7 @@ export function TimelineTab({
           <h2 className="headline text-2xl font-semibold">Timeline</h2>
           <div className="flex flex-wrap items-center gap-4">
             <Toggle
-              label="Research"
+              label="Tech + Market"
               checked={timelineShowResearch}
               onChange={setTimelineShowResearch}
             />
