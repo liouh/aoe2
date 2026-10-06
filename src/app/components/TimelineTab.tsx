@@ -9,6 +9,8 @@ import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
 
+const EARLY_MARKER_INTERVAL = 60;
+const EARLY_MARKER_COUNT = 20;
 const TIMELINE_MARKER_INTERVAL = 300;
 const TIMELINE_PX_PER_SECOND = 2;
 const TIMELINE_CONSOLIDATION_WINDOW_SECONDS = 6;
@@ -112,6 +114,25 @@ export function TimelineTab({
 
   const timelineHeight = useMemo(() => duration * TIMELINE_PX_PER_SECOND, [duration]);
 
+  const timelineMarkers = useMemo(() => {
+    const markers: number[] = [];
+    const earlyDurationSeconds = EARLY_MARKER_INTERVAL * EARLY_MARKER_COUNT;
+    const earlyLimit = Math.min(duration, earlyDurationSeconds);
+
+    for (let t = EARLY_MARKER_INTERVAL; t <= earlyLimit; t += EARLY_MARKER_INTERVAL) {
+      markers.push(t);
+    }
+
+    const startLater =
+      Math.floor(earlyDurationSeconds / TIMELINE_MARKER_INTERVAL) * TIMELINE_MARKER_INTERVAL +
+      TIMELINE_MARKER_INTERVAL;
+    for (let t = startLater; t <= duration; t += TIMELINE_MARKER_INTERVAL) {
+      markers.push(t);
+    }
+
+    return markers;
+  }, [duration]);
+
   // Memoize event filtering and consolidation for both columns
   const columnData = useMemo(() => {
     const getData = (playerId: number | null) => {
@@ -192,25 +213,22 @@ export function TimelineTab({
             }
           />
         </div>
-        <div className="py-3">
+        <div className="pt-4">
           <div
             className="relative w-full"
             style={{ height: timelineHeight }}
           >
-            {Array.from({ length: Math.floor(duration / TIMELINE_MARKER_INTERVAL) + 1 }).map((_, i) => {
-              const markerTime = i * TIMELINE_MARKER_INTERVAL;
-              return (
-                <div
-                  key={`marker-${markerTime}`}
-                  className="absolute left-0 w-full border-t border-white/5 pointer-events-none"
-                  style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
-                >
-                  <span className="absolute left-[3px] text-[10px] tabular-nums text-[color:var(--muted-foreground)] opacity-30">
-                    {markerTime / 60 + "'"}
-                  </span>
-                </div>
-              );
-            })}
+            {timelineMarkers.map((markerTime) => (
+              <div
+                key={`marker-${markerTime}`}
+                className="absolute left-0 w-full border-t border-dotted border-white/10 pointer-events-none"
+                style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
+              >
+                <span className="absolute left-[3px] text-[10px] tabular-nums text-[color:var(--muted-foreground)] opacity-30">
+                  {markerTime / 60 + "'"}
+                </span>
+              </div>
+            ))}
             <div className="absolute left-8 top-0 h-full w-[2px] bg-white/10 pointer-events-none"></div>
 
             {research.map((event) => renderRow(event, "z-22", "w-4", "🧪"))}
@@ -227,7 +245,7 @@ export function TimelineTab({
                   className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
                   style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
                 >
-                  <div className="absolute left-0 top-1/2 w-full border-t border-dotted border-[color:var(--accent)]" />
+                  <div className="absolute left-0 top-1/2 w-full border-t border-dashed border-[color:var(--accent)]" />
                   <div
                     className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
                     title={`${ageName} Age reached @ ${formatClock(time)}`}
