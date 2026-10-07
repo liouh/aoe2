@@ -70,9 +70,6 @@ const MINIMAP_CLIFF_COLOR = "#713600";
 const MINIMAP_CLIFF_HIGHLIGHT_PERCENT = 15;
 const MINIMAP_CLIFF_SHADOW_PERCENT = -30;
 
-const MINIMAP_RESOURCE_BORDER_WIDTH = 5;
-const MINIMAP_RESOURCE_HIGHLIGHT_PERCENT = 15;
-const MINIMAP_RESOURCE_SHADOW_PERCENT = -30;
 const MINIMAP_RESOURCE_COLORS = {
   gold: "#ffd700",
   stone: "#91a1ad",
@@ -80,6 +77,8 @@ const MINIMAP_RESOURCE_COLORS = {
   relic: "#ffffff",
   wood: "#195e2b",
 } as const;
+const MINIMAP_RESOURCE_HIGHLIGHT_PERCENT = 15;
+const MINIMAP_RESOURCE_SHADOW_PERCENT = -30;
 
 const DEFAULT_LAYERS = ["terrain", "obstacles", "resources", "relics", "landmark_icons", "footprints", "farms", "icons", "gatherpoints", "flares", "moves"];
 
@@ -1238,10 +1237,10 @@ export function Minimap({
         resourceContext.fill();
         resourceContext.stroke();
 
-        // Collect 3D directional outline edges
-        const isSameVisible = (nx: number, ny: number) => {
+        // Collect 3D directional outline edges on the outside of all resources
+        const isResourceTile = (nx: number, ny: number) => {
           const nRes = mapResources[`${nx},${ny}`];
-          if (nRes !== resource) return false;
+          if (!nRes) return false;
           return (nRes === "relic") === relicLayer;
         };
 
@@ -1249,32 +1248,32 @@ export function Minimap({
         const shadowColor = shadeColor(baseColor, MINIMAP_RESOURCE_SHADOW_PERCENT);
 
         // NW edge (p1 -> p2): faces North-West sunward -> Highlight
-        if (!isSameVisible(x, y - 1)) {
+        if (!isResourceTile(x, y - 1)) {
           if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
           resourceHighlightLinesByColor[highlightColor].push(p1.x, p1.y, p2.x, p2.y);
         }
 
         // NE edge (p2 -> p3): faces North-East sunward -> Highlight
-        if (!isSameVisible(x + 1, y)) {
+        if (!isResourceTile(x + 1, y)) {
           if (!resourceHighlightLinesByColor[highlightColor]) resourceHighlightLinesByColor[highlightColor] = [];
           resourceHighlightLinesByColor[highlightColor].push(p2.x, p2.y, p3.x, p3.y);
         }
 
         // SE edge (p3 -> p4): faces South-East leeward -> Shadow
-        if (!isSameVisible(x, y + 1)) {
+        if (!isResourceTile(x, y + 1)) {
           if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
           resourceShadowLinesByColor[shadowColor].push(p3.x, p3.y, p4.x, p4.y);
         }
 
         // SW edge (p4 -> p1): faces South-West leeward -> Shadow
-        if (!isSameVisible(x - 1, y)) {
+        if (!isResourceTile(x - 1, y)) {
           if (!resourceShadowLinesByColor[shadowColor]) resourceShadowLinesByColor[shadowColor] = [];
           resourceShadowLinesByColor[shadowColor].push(p4.x, p4.y, p1.x, p1.y);
         }
       }
 
       // Stroke 3D resource outline edges: darker lines first, bright highlights on top
-      resourceContext.lineWidth = MINIMAP_RESOURCE_BORDER_WIDTH;
+      resourceContext.lineWidth = MINIMAP_TERRAIN_CONTOUR_WIDTH;
       resourceContext.lineCap = "round";
       resourceContext.lineJoin = "round";
 
