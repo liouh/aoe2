@@ -205,14 +205,14 @@ export function TimelineTab({
           title={tooltip}
         >
           <span
-            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[12px] transition-transform group-hover:scale-200 select-none pointer-events-auto cursor-help"
+            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[12px] transition-transform group-hover:scale-200 select-none pointer-events-auto"
             title={tooltip}
           >
             {icon}
           </span>
           <div className={`h-[1px] bg-white/10 shrink-0 ${lineWidthClass}`} />
           <span
-            className="truncate min-w-0 px-1.5 py-0.5 rounded text-[10px] text-[color:var(--muted)] pointer-events-auto cursor-help transition-colors border border-transparent group-hover:bg-[color:var(--panel-strong)] group-hover:border-[color:var(--border-subtle)] group-hover:text-[color:var(--foreground)]"
+            className="truncate min-w-0 px-1.5 py-0.5 rounded text-[10px] text-[color:var(--muted)] pointer-events-auto transition-colors border border-transparent group-hover:bg-[color:var(--panel-strong)] group-hover:border-[color:var(--border-subtle)] group-hover:text-[color:var(--foreground)]"
             title={tooltip}
           >
             {event.label}
@@ -283,7 +283,7 @@ export function TimelineTab({
                 >
                   <div className="absolute left-0 top-1/2 w-full border-t border-dashed border-[color:var(--accent)]" />
                   <div
-                    className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto cursor-help"
+                    className="relative -translate-x-full bg-[color:var(--accent)] text-[color:var(--panel)] w-6 h-6 flex items-center justify-center rounded-sm font-serif font-black text-xs shadow-sm ring-2 ring-[color:var(--panel)] pointer-events-auto"
                     title={`${ageName} Age reached @ ${formatClock(time)}`}
                   >
                     {ageNumeral}
