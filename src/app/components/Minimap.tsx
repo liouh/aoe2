@@ -1803,6 +1803,7 @@ export function Minimap({
     isMobile,
     resizeKey,
     onCachedCanvasesReady,
+    error,
   ]);
 
   return (
@@ -2016,9 +2017,11 @@ export function Minimap({
           }
         }}
       >
-        <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "rounded-xl" : "rounded-2xl"} ${loading ? "invisible" : ""}`}>
-          <canvas ref={canvasRef} className="h-full w-full" />
-        </div>
+        {!error && (
+          <div className={`absolute inset-0 overflow-hidden ${isFullscreen ? "rounded-xl" : "rounded-2xl"} ${loading ? "invisible" : ""}`}>
+            <canvas ref={canvasRef} className="h-full w-full" />
+          </div>
+        )}
 
         {!loading && !error && (
           <div
