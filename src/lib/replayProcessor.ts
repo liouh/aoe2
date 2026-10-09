@@ -575,53 +575,68 @@ export const summarizePlayers = (
     }
   }
 
-  // Derive won flag from resignations if not already populated or if all teams were marked defeated
-  if (players.length > 0 && (players.some((p) => p.won === undefined) || players.every((p) => !p.won))) {
-    const teamMembers = new Map<number, PlayerSummary[]>();
-    players.forEach((p) => {
-      const tid = p.teamId ?? 1;
-      const list = teamMembers.get(tid) || [];
-      list.push(p);
-      teamMembers.set(tid, list);
-    });
-
-    const hasAnyResigns = resignTimeByPlayerId.size > 0;
-    if (!hasAnyResigns) {
+  // Derive won flag from resignations if not already populated by summary or if all teams were marked defeated
+  if (players.length > 0) {
+    const hasKnownWinner = players.some((p) => p.won === true);
+    if (hasKnownWinner) {
       players.forEach((p) => {
-        if (p.won === undefined) p.won = true;
+        if (p.won === undefined) p.won = false;
       });
     } else {
-      // Calculate each team's resignation time (when all members of that team resigned)
-      // Surviving teams get Infinity.
-      const teamResignTime = new Map<number, number>();
-      let maxResignTime = -1;
-      let winningTeamId: number | null = null;
-      let hasSurvivingTeam = false;
-
-      teamMembers.forEach((members, tid) => {
-        const allResigned = members.length > 0 && members.every((m) => resignTimeByPlayerId.has(m.id));
-        if (allResigned) {
-          const teamTime = Math.max(...members.map((m) => resignTimeByPlayerId.get(m.id) ?? 0));
-          teamResignTime.set(tid, teamTime);
-          if (teamTime > maxResignTime) {
-            maxResignTime = teamTime;
-            winningTeamId = tid;
-          }
-        } else {
-          hasSurvivingTeam = true;
-          teamResignTime.set(tid, Infinity);
-        }
-      });
-
+      const teamMembers = new Map<number, PlayerSummary[]>();
       players.forEach((p) => {
         const tid = p.teamId ?? 1;
-        const time = teamResignTime.get(tid) ?? Infinity;
-        if (hasSurvivingTeam) {
-          p.won = time === Infinity;
-        } else {
-          p.won = tid === winningTeamId;
-        }
+        const list = teamMembers.get(tid) || [];
+        list.push(p);
+        teamMembers.set(tid, list);
       });
+
+      const hasAnyResigns = resignTimeByPlayerId.size > 0;
+      if (!hasAnyResigns) {
+        players.forEach((p) => {
+          if (p.won === undefined) p.won = true;
+        });
+      } else {
+        // Calculate each team's resignation time (when all members of that team resigned)
+        const survivingTeamIds: number[] = [];
+        const teamResignTime = new Map<number, number>();
+        let maxResignTime = -1;
+        let latestResigningTeamId: number | null = null;
+
+        teamMembers.forEach((members, tid) => {
+          const allResigned = members.length > 0 && members.every((m) => resignTimeByPlayerId.has(m.id));
+          if (allResigned) {
+            const teamTime = Math.max(...members.map((m) => resignTimeByPlayerId.get(m.id) ?? 0));
+            teamResignTime.set(tid, teamTime);
+            if (teamTime > maxResignTime) {
+              maxResignTime = teamTime;
+              latestResigningTeamId = tid;
+            }
+          } else {
+            survivingTeamIds.push(tid);
+            teamResignTime.set(tid, Infinity);
+          }
+        });
+
+        if (survivingTeamIds.length === 1) {
+          // Exactly one team survived while all other teams resigned -> that team won!
+          const winningTeamId = survivingTeamIds[0];
+          players.forEach((p) => {
+            p.won = (p.teamId ?? 1) === winningTeamId;
+          });
+        } else if (survivingTeamIds.length === 0) {
+          // Every team resigned -> the last team to resign won
+          players.forEach((p) => {
+            p.won = (p.teamId ?? 1) === latestResigningTeamId;
+          });
+        } else {
+          // Multiple teams survived (e.g. FFA or multi-team game where only some players resigned):
+          // Resigned players lost, but surviving players cannot be determined as winners yet.
+          players.forEach((p) => {
+            p.won = false;
+          });
+        }
+      }
     }
   }
 
