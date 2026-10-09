@@ -269,6 +269,7 @@ const RAW_PRESET_BUILD_ORDERS: RawPresetBuildOrder[] = [
       { time: "11:20", category: "market", label: "Sell 100 Wood" },
       { time: "11:20", category: "market", label: "Sell 100 Stone" },
       { time: "11:20", category: "research", label: "Castle Age" },
+      { time: "14:00", category: "build", label: "Castle" },
     ],
   },
   {
