@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
-import { Select } from "./Select";
+import { useState, useMemo } from "react";
+import { Select, type SelectOption } from "./Select";
 import { Toggle } from "./Toggle";
 import { PlayerHeader } from "./PlayerHeader";
 import { getCivName } from "@/lib/civMappings";
 import { getUnitName, getBuildingName, isEconomic } from "@/lib/entityMappings";
 import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent, type TimelineEventCategory, type PlayerSummary, type PlayerStats } from "@/lib/replayProcessor";
+import {
+  PRESET_BUILD_ORDERS,
+  findPresetById,
+} from "@/lib/presetBuildOrders";
 
 const EARLY_MARKER_INTERVAL = 60;
 const EARLY_MARKER_COUNT = 20;
@@ -39,28 +43,32 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
       ? event.raw.amount
       : 1;
 
-    let itemLabel = "Unknown Event";
-    if (event.category === "build") {
+    let itemLabel = (event.raw?.label as string) || event.type || "Unknown Event";
+    if (event.category === "build" && event.buildingTypeId !== undefined) {
       itemLabel = getBuildingName(event.buildingTypeId);
-    } else if (event.category === "train") {
+    } else if (event.category === "train" && event.unitTypeId !== undefined) {
       itemLabel = getUnitName(event.unitTypeId);
-    } else if (event.category === "research") {
+    } else if (event.category === "research" && event.techId !== undefined) {
       itemLabel = getTechName(event.techId);
     } else if (event.category === "market") {
-      const resourceMap: Record<number, string> = {
-        0: "Food",
-        1: "Wood",
-        2: "Stone",
-      };
-      const resourceId = typeof event.raw?.resourceId === "number" ? event.raw.resourceId : undefined;
-      const resourceName = resourceId !== undefined ? (resourceMap[resourceId] ?? `Resource ${resourceId}`) : "Resource";
-      const actionName =
-        event.type?.toLowerCase() === "buy"
-          ? "Buy"
-          : event.type?.toLowerCase() === "sell"
-            ? "Sell"
-            : (event.type || "Market");
-      itemLabel = `${actionName} ${resourceName}`;
+      if (event.raw?.label && typeof event.raw.label === "string") {
+        itemLabel = event.raw.label;
+      } else {
+        const resourceMap: Record<number, string> = {
+          0: "Food",
+          1: "Wood",
+          2: "Stone",
+        };
+        const resourceId = typeof event.raw?.resourceId === "number" ? event.raw.resourceId : undefined;
+        const resourceName = resourceId !== undefined ? (resourceMap[resourceId] ?? `Resource ${resourceId}`) : "Resource";
+        const actionName =
+          event.type?.toLowerCase() === "buy"
+            ? "Buy"
+            : event.type?.toLowerCase() === "sell"
+              ? "Sell"
+              : (event.type || "Market");
+        itemLabel = `${actionName} ${resourceName}`;
+      }
     }
 
     const isMil = event.category === "train" && !isEconomic(itemLabel);
@@ -91,6 +99,10 @@ function consolidateEvents(events: TimelineEvent[], windowSeconds: number = TIME
   for (const group of consolidated) {
     const parts = Array.from(group.items.entries()).map(([name, item]) => {
       if (item.category === "market") {
+        // If the preset label already has an amount (e.g. "Sell 100 Wood"), use it as is
+        if (/\d+/.test(name)) {
+          return item.count > 1 ? `${name} x${item.count}` : name;
+        }
         const spaceIdx = name.indexOf(" ");
         const totalAmount = item.count >= 100 ? item.count : item.count * 100;
         if (spaceIdx !== -1) {
@@ -127,33 +139,87 @@ export function TimelineTab({
   getPlayerColor,
   formatClock,
 }: TimelineTabProps) {
-  const [leftPlayerId, setLeftPlayerId] = useState<number | null>(null);
-  const [rightPlayerId, setRightPlayerId] = useState<number | null>(null);
+  const defaultLeft = useMemo(() => {
+    if (players.length > 0) return `player-${players[0].id}`;
+    return null;
+  }, [players]);
+
+  const defaultRight = useMemo(() => {
+    if (players.length > 1) return `player-${players[1].id}`;
+    if (PRESET_BUILD_ORDERS.length > 0) return PRESET_BUILD_ORDERS[0].id;
+    return null;
+  }, [players]);
+
+  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+  const [selectedRight, setSelectedRight] = useState<string | null>(null);
   const [timelineShowBuildings, setTimelineShowBuildings] = useState(true);
   const [timelineShowUnits, setTimelineShowUnits] = useState(true);
   const [timelineShowResearch, setTimelineShowResearch] = useState(true);
 
-  // Initialize player selections
-  useEffect(() => {
-    if (players.length > 0) {
-      if (leftPlayerId === null) setLeftPlayerId(players[0].id);
-      if (players.length > 1) {
-        if (rightPlayerId === null) {
-          const next = players.find((p) => p.id !== players[0].id)?.id ?? null;
-          setRightPlayerId(next);
-        }
+  // Validate or fall back to default if selection is not explicitly set or no longer valid
+  const leftSelection = useMemo(() => {
+    if (selectedLeft) {
+      if (selectedLeft.startsWith("preset-")) {
+        if (findPresetById(selectedLeft)) return selectedLeft;
       } else {
-        setRightPlayerId(null);
+        const pId = Number(selectedLeft.replace("player-", ""));
+        if (players.some((p) => p.id === pId)) return selectedLeft;
       }
     }
-  }, [players, leftPlayerId, rightPlayerId]);
+    return defaultLeft;
+  }, [selectedLeft, defaultLeft, players]);
 
-  const timelineHeight = useMemo(() => duration * TIMELINE_PX_PER_SECOND, [duration]);
+  const rightSelection = useMemo(() => {
+    if (selectedRight) {
+      if (selectedRight.startsWith("preset-")) {
+        if (findPresetById(selectedRight)) return selectedRight;
+      } else {
+        const pId = Number(selectedRight.replace("player-", ""));
+        if (players.some((p) => p.id === pId)) return selectedRight;
+      }
+    }
+    return defaultRight;
+  }, [selectedRight, defaultRight, players]);
+
+  // Unified select options: players from replay + preset build orders
+  const selectOptions: SelectOption<string>[] = useMemo(() => {
+    const playerOptions: SelectOption<string>[] = players.map((p) => ({
+      id: `player-${p.id}`,
+      label: p.name,
+      color: getPlayerColor(p.id),
+    }));
+
+    const presetOptions: SelectOption<string>[] = PRESET_BUILD_ORDERS.map((preset) => ({
+      id: preset.id,
+      label: preset.name,
+      icon: "📋",
+    }));
+
+    return [...playerOptions, ...presetOptions];
+  }, [players, getPlayerColor]);
+
+  // Compute maximum timestamp for currently selected presets and duration so timeline scales seamlessly
+  const timelineDuration = useMemo(() => {
+    let maxTime = duration;
+    const selectedPresetIds = [leftSelection, rightSelection].filter(
+      (id): id is string => typeof id === "string" && id.startsWith("preset-")
+    );
+
+    for (const presetId of selectedPresetIds) {
+      const preset = findPresetById(presetId);
+      if (preset && preset.maxTime > maxTime) {
+        maxTime = preset.maxTime;
+      }
+    }
+    return maxTime;
+  }, [duration, leftSelection, rightSelection]);
+
+  const timelineHeight = useMemo(() => timelineDuration * TIMELINE_PX_PER_SECOND, [timelineDuration]);
 
   const timelineMarkers = useMemo(() => {
     const markers: number[] = [];
     const earlyDurationSeconds = EARLY_MARKER_INTERVAL * EARLY_MARKER_COUNT;
-    const earlyLimit = Math.min(duration, earlyDurationSeconds);
+    const earlyLimit = Math.min(timelineDuration, earlyDurationSeconds);
 
     for (let t = EARLY_MARKER_INTERVAL; t <= earlyLimit; t += EARLY_MARKER_INTERVAL) {
       markers.push(t);
@@ -162,33 +228,74 @@ export function TimelineTab({
     const startLater =
       Math.floor(earlyDurationSeconds / TIMELINE_MARKER_INTERVAL) * TIMELINE_MARKER_INTERVAL +
       TIMELINE_MARKER_INTERVAL;
-    for (let t = startLater; t <= duration; t += TIMELINE_MARKER_INTERVAL) {
+    for (let t = startLater; t <= timelineDuration; t += TIMELINE_MARKER_INTERVAL) {
       markers.push(t);
     }
 
     return markers;
-  }, [duration]);
+  }, [timelineDuration]);
 
   // Memoize event filtering and consolidation for both columns
   const columnData = useMemo(() => {
-    const getData = (playerId: number | null) => {
-      if (playerId === null) return { research: [], builds: [], trains: [] };
+    const filterAndConsolidate = (pe: TimelineEvent[]) => ({
+      research: consolidateEvents(pe.filter((e) => (e.category === "research" || e.category === "market") && timelineShowResearch)),
+      builds: consolidateEvents(pe.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial)),
+      trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits && !e.raw?.isInitial)),
+    });
+
+    const getData = (selectionId: string | null) => {
+      if (!selectionId) return null;
+
+      // Preset Build Order
+      if (selectionId.startsWith("preset-")) {
+        const preset = findPresetById(selectionId);
+        if (!preset) return null;
+
+        return {
+          name: preset.name,
+          color: undefined,
+          civ: preset.civ,
+          ageTimings: preset.ageTimings,
+          ...filterAndConsolidate(preset.events),
+        };
+      }
+
+      // Replay Player
+      const playerId = Number(selectionId.replace("player-", ""));
+      const player = players.find((p) => p.id === playerId);
+      if (!player) return null;
+
       const pe = events.filter((e) => e.playerId === playerId);
+      const stats = timelineStats.find((s) => s.playerId === playerId);
+
       return {
-        research: consolidateEvents(pe.filter((e) => (e.category === "research" || e.category === "market") && timelineShowResearch)),
-        builds: consolidateEvents(pe.filter((e) => e.category === "build" && timelineShowBuildings && !e.raw?.isInitial)),
-        trains: consolidateEvents(pe.filter((e) => e.category === "train" && timelineShowUnits && !e.raw?.isInitial)),
+        name: player.name,
+        color: getPlayerColor(player.id),
+        civ: getCivName(player.civId),
+        ageTimings: stats?.ageTimings ?? {},
+        ...filterAndConsolidate(pe),
       };
     };
-    return [getData(leftPlayerId), getData(rightPlayerId)];
-  }, [events, leftPlayerId, rightPlayerId, timelineShowResearch, timelineShowBuildings, timelineShowUnits]);
 
-  const renderColumn = (playerId: number | null, index: number) => {
-    if (playerId === null) return null;
-    const player = players.find((p) => p.id === playerId);
-    if (!player) return null;
+    return [getData(leftSelection), getData(rightSelection)];
+  }, [
+    events,
+    players,
+    leftSelection,
+    rightSelection,
+    timelineStats,
+    getPlayerColor,
+    timelineShowResearch,
+    timelineShowBuildings,
+    timelineShowUnits,
+  ]);
 
-    const { research, builds, trains } = columnData[index];
+  const renderColumn = (selectionId: string | null, index: number) => {
+    if (!selectionId) return null;
+    const col = columnData[index];
+    if (!col) return null;
+
+    const { research, builds, trains, name, color, civ, ageTimings } = col;
 
     const renderRow = (
       event: TimelineEvent & { label?: string; hasMilitary?: boolean; hasMarket?: boolean },
@@ -201,7 +308,7 @@ export function TimelineTab({
         <div
           key={event.id}
           className={`group absolute left-8 right-1 -translate-y-1/2 flex items-center hover:z-30 pointer-events-none ${zIndex}`}
-          style={{ top: `${(event.time / Math.max(duration, 1)) * 100}%` }}
+          style={{ top: `${(event.time / Math.max(timelineDuration, 1)) * 100}%` }}
           title={tooltip}
         >
           <span
@@ -225,23 +332,25 @@ export function TimelineTab({
       <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
         <div className="sticky top-0 z-30 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
           <PlayerHeader
-            name={player.name}
-            color={getPlayerColor(player.id)}
-            civ={getCivName(player.civId)}
+            name={name}
+            color={color}
+            civ={civ}
             action={
               <Select
-                options={players.map(p => ({ id: p.id, label: p.name, color: getPlayerColor(p.id) }))}
-                selectedId={playerId}
+                options={selectOptions}
+                selectedId={selectionId}
                 onSelect={(value) => {
                   if (index === 0) {
-                    setLeftPlayerId(value);
-                    if (value === rightPlayerId && players.length > 1) {
-                      setRightPlayerId(players.find(p => p.id !== value)?.id ?? value);
+                    setSelectedLeft(value);
+                    if (value === rightSelection && selectOptions.length > 1) {
+                      const alternate = selectOptions.find((o) => o.id !== value)?.id ?? value;
+                      setSelectedRight(alternate);
                     }
                   } else {
-                    setRightPlayerId(value);
-                    if (value === leftPlayerId && players.length > 1) {
-                      setLeftPlayerId(players.find(p => p.id !== value)?.id ?? value);
+                    setSelectedRight(value);
+                    if (value === leftSelection && selectOptions.length > 1) {
+                      const alternate = selectOptions.find((o) => o.id !== value)?.id ?? value;
+                      setSelectedLeft(alternate);
                     }
                   }
                 }}
@@ -258,7 +367,7 @@ export function TimelineTab({
               <div
                 key={`marker-${markerTime}`}
                 className="absolute left-0 w-full border-t border-dotted border-white/10 pointer-events-none"
-                style={{ top: `${(markerTime / Math.max(duration, 1)) * 100}%` }}
+                style={{ top: `${(markerTime / Math.max(timelineDuration, 1)) * 100}%` }}
               >
                 <span className="absolute left-[3px] text-[10px] tabular-nums text-[color:var(--muted-foreground)] opacity-30">
                   {markerTime / 60 + "'"}
@@ -272,14 +381,14 @@ export function TimelineTab({
             {trains.map((event) => renderRow(event, "z-21", "w-[50%]", event.hasMilitary ? "🫡" : "😐"))}
 
             {/* Age Up Markers */}
-            {Object.entries(timelineStats.find((s) => s.playerId === player.id)?.ageTimings ?? {}).map(([ageName, time]) => {
+            {Object.entries(ageTimings).map(([ageName, time]) => {
               const ageNumeral = ageName === "Feudal" ? "II" : ageName === "Castle" ? "III" : ageName === "Imperial" ? "IV" : "";
               if (!ageNumeral) return null;
               return (
                 <div
-                  key={`age-${player.id}-${ageName}`}
+                  key={`age-${selectionId}-${ageName}`}
                   className="absolute left-0 w-full flex items-center -translate-y-1/2 pointer-events-none z-10"
-                  style={{ top: `${(time / Math.max(duration, 1)) * 100}%` }}
+                  style={{ top: `${(time / Math.max(timelineDuration, 1)) * 100}%` }}
                 >
                   <div className="absolute left-0 top-1/2 w-full border-t border-dashed border-[color:var(--accent)]" />
                   <div
@@ -294,7 +403,7 @@ export function TimelineTab({
 
             <div
               className="absolute left-0 w-full pointer-events-none z-20"
-              style={{ top: `${(selectedTime / Math.max(duration, 1)) * 100}%` }}
+              style={{ top: `${(selectedTime / Math.max(timelineDuration, 1)) * 100}%` }}
             >
               <div className="absolute left-0 top-0 w-full h-[2px] -translate-y-1/2 bg-[color:var(--foreground)]" />
               {index === 0 && (
@@ -335,8 +444,8 @@ export function TimelineTab({
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
-          {renderColumn(leftPlayerId, 0)}
-          {players.length > 1 && renderColumn(rightPlayerId, 1)}
+          {renderColumn(leftSelection, 0)}
+          {(players.length > 1 || PRESET_BUILD_ORDERS.length > 0) && renderColumn(rightSelection, 1)}
         </div>
       </div>
     </section>

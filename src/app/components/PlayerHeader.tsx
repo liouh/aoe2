@@ -1,6 +1,6 @@
 interface PlayerHeaderProps {
   name?: string;
-  color: string;
+  color?: string;
   outlineColor?: string;
   ai?: boolean;
   won?: boolean;

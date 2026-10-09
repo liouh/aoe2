@@ -50,30 +50,32 @@ export function Select<T extends string | number | undefined>({
   const selectedOptions = options.filter((o) => isSelected(o.id));
   const primaryOption = multi ? selectedOptions[0] : options.find((o) => o.id === selectedId);
 
+  const openSelect = () => {
+    const currentIndex = options.findIndex((o) => isSelected(o.id));
+    setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
+    setIsOpen(true);
+  };
+
+  const closeSelect = () => {
+    setHighlightedIndex(-1);
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        closeSelect();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      const currentIndex = options.findIndex(o => isSelected(o.id));
-      setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
-    } else {
-      setHighlightedIndex(-1);
-    }
-  }, [isOpen]);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
-        setIsOpen(true);
+        openSelect();
       }
       return;
     }
@@ -81,23 +83,23 @@ export function Select<T extends string | number | undefined>({
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setHighlightedIndex(prev => (prev + 1) % options.length);
+        setHighlightedIndex((prev) => (prev + 1) % options.length);
         break;
       case "ArrowUp":
         e.preventDefault();
-        setHighlightedIndex(prev => (prev - 1 + options.length) % options.length);
+        setHighlightedIndex((prev) => (prev - 1 + options.length) % options.length);
         break;
       case "Enter":
       case " ":
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < options.length) {
           onSelect(options[highlightedIndex].id);
-          if (closeOnSelect) setIsOpen(false);
+          if (closeOnSelect) closeSelect();
         }
         break;
       case "Escape":
       case "Tab":
-        setIsOpen(false);
+        closeSelect();
         break;
     }
   };
@@ -111,6 +113,8 @@ export function Select<T extends string | number | undefined>({
     return `${selectedOptions.length} ${multiLabel}`;
   };
 
+  const hasAnyLeading = options.some((o) => o.color || o.icon);
+
   return (
     <div
       className={`relative ${className}`}
@@ -120,18 +124,21 @@ export function Select<T extends string | number | undefined>({
       <button
         type="button"
         className={`flex items-center gap-2 rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--panel)]/90 px-3 py-1.5 text-xs text-[color:var(--foreground)] transition hover:bg-[color:var(--panel-strong)] cursor-pointer h-8 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--focus-ring)] backdrop-blur-sm ${className.includes("w-") ? "w-full" : ""} ${buttonClassName}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => (isOpen ? closeSelect() : openSelect())}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        {!multi && primaryOption?.color && (
-          <span
-            className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
-            style={{ background: primaryOption.color }}
-          ></span>
-        )}
-        {!multi && primaryOption?.icon && (
-          <span className="shrink-0">{primaryOption.icon}</span>
+        {!multi && (primaryOption?.color || primaryOption?.icon) && (
+          <span className="flex h-4 w-4 shrink-0 items-center justify-center leading-none">
+            {primaryOption.color ? (
+              <span
+                className="h-2 w-2 rounded-full ring-1 ring-white"
+                style={{ background: primaryOption.color }}
+              ></span>
+            ) : (
+              <span className="text-[12px] leading-none select-none">{primaryOption.icon}</span>
+            )}
+          </span>
         )}
         <span className="tabular-nums font-medium truncate flex-1 text-left min-w-0 max-w-[170px]">
           {getButtonLabel()}
@@ -158,10 +165,10 @@ export function Select<T extends string | number | undefined>({
               <button
                 key={`${option.id}-${idx}`}
                 type="button"
-                className={`flex w-full items-center gap-3 px-4 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
+                className={`flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-xs transition cursor-pointer ${highlighted ? "bg-white/10" : ""}`}
                 onClick={() => {
                   onSelect(option.id);
-                  if (closeOnSelect) setIsOpen(false);
+                  if (closeOnSelect) closeSelect();
                 }}
                 onMouseEnter={() => setHighlightedIndex(idx)}
                 role="option"
@@ -173,14 +180,17 @@ export function Select<T extends string | number | undefined>({
                   }
                 }}
               >
-                {option.color && (
-                  <span
-                    className="h-2 w-2 rounded-full shrink-0 ring-1 ring-white"
-                    style={{ background: option.color }}
-                  ></span>
-                )}
-                {option.icon && (
-                  <span className="shrink-0">{option.icon}</span>
+                {hasAnyLeading && (
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center leading-none">
+                    {option.color ? (
+                      <span
+                        className="h-2 w-2 rounded-full ring-1 ring-white"
+                        style={{ background: option.color }}
+                      ></span>
+                    ) : option.icon ? (
+                      <span className="text-[12px] leading-none select-none">{option.icon}</span>
+                    ) : null}
+                  </span>
                 )}
                 <span className="font-medium whitespace-nowrap text-[color:var(--foreground)]">
                   {option.label}
