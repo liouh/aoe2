@@ -183,16 +183,19 @@ export function TimelineTab({
 
   // Unified select options: players from replay + preset build orders
   const selectOptions: SelectOption<string>[] = useMemo(() => {
-    const playerOptions: SelectOption<string>[] = players.map((p) => ({
+    const playerOptions: SelectOption<string>[] = players.map((p, index) => ({
       id: `player-${p.id}`,
       label: p.name,
       color: getPlayerColor(p.id),
+      dividerLabel: index === 0 ? "PLAYERS" : undefined,
     }));
 
-    const presetOptions: SelectOption<string>[] = PRESET_BUILD_ORDERS.map((preset) => ({
+    const presetOptions: SelectOption<string>[] = PRESET_BUILD_ORDERS.map((preset, index) => ({
       id: preset.id,
       label: preset.name,
       icon: "📋",
+      dividerAbove: index === 0 && playerOptions.length > 0,
+      dividerLabel: index === 0 && playerOptions.length > 0 ? "PRESET BUILD ORDERS" : undefined,
     }));
 
     return [...playerOptions, ...presetOptions];
@@ -254,7 +257,7 @@ export function TimelineTab({
         return {
           name: preset.name,
           color: undefined,
-          civ: preset.civ,
+          civ: preset.description,
           ageTimings: preset.ageTimings,
           ...filterAndConsolidate(preset.events),
         };
@@ -329,8 +332,8 @@ export function TimelineTab({
     };
 
     return (
-      <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-white/5 ${index === 1 ? 'hidden md:block' : ''}`}>
-        <div className="sticky top-0 z-30 p-4 bg-[color:var(--panel)]/80 backdrop-blur-sm border-b border-white/10">
+      <div key={`column-${index}`} className={`bg-[color:var(--panel)] border border-[color:var(--border-subtle)] ${index === 1 ? 'hidden md:block' : ''}`}>
+        <div className="sticky top-0 z-30 p-4 bg-[color:var(--panel-dark)] border-b border-[color:var(--border-subtle)]">
           <PlayerHeader
             name={name}
             color={color}
@@ -339,6 +342,7 @@ export function TimelineTab({
               <Select
                 options={selectOptions}
                 selectedId={selectionId}
+                iconOnly
                 onSelect={(value) => {
                   if (index === 0) {
                     setSelectedLeft(value);

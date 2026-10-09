@@ -6,6 +6,7 @@
   --foreground: #f6efe4;
   --panel: #29231d;
   --panel-strong: #352d25;
+  --panel-dark: #1c1610;
   --accent: #f59e0b;
   --accent-2: #304f6d;
   --muted: #b0a498;
@@ -31,6 +32,7 @@ html.light {
   --foreground: #0f172a;
   --panel: #ffffff;
   --panel-strong: #f1f5f9;
+  --panel-dark: #ffffff;
   --accent: #d97706;
   --accent-2: #2563eb;
   --muted: #64748b;
@@ -63,6 +65,7 @@ html.light {
     --foreground: #0f172a;
     --panel: #ffffff;
     --panel-strong: #f1f5f9;
+    --panel-dark: #ffffff;
     --accent: #d97706;
     --accent-2: #2563eb;
     --muted: #64748b;
@@ -95,7 +98,7 @@ html.light {
   }
 
   html:not(.dark) .panel-dark {
-    background: #ffffff;
+    background: var(--panel-dark);
     color: #0f172a;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
@@ -127,6 +130,7 @@ html.light {
   --color-foreground: var(--foreground);
   --color-panel: var(--panel);
   --color-panel-strong: var(--panel-strong);
+  --color-panel-dark: var(--panel-dark);
   --color-focus-ring: var(--focus-ring);
   --font-sans: var(--font-body);
   --font-mono: var(--font-body);
@@ -163,7 +167,7 @@ body {
 }
 
 .panel-dark {
-  background: #1c1610;
+  background: var(--panel-dark);
   color: #f6efe4;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -175,7 +179,7 @@ html.light .panel-strong {
 }
 
 html.light .panel-dark {
-  background: #ffffff;
+  background: var(--panel-dark);
   color: #0f172a;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
