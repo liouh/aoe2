@@ -1013,7 +1013,8 @@ export const buildTimeline = (
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "forage";
         } else if (
           entityName.toLowerCase().includes("tree") ||
-          entityName.toLowerCase().includes("bush")
+          entityName.toLowerCase().includes("bush") ||
+          entityName.toLowerCase().includes("reeds")
         ) {
           mapResources[`${Math.floor(obj.x)},${Math.floor(obj.y)}`] = "wood";
         } else if (
@@ -1599,8 +1600,8 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
   const gameTypeId = isCampaign
     ? 4
     : isScenario
-    ? 3
-    : pickNumber(settings?.game_type);
+      ? 3
+      : pickNumber(settings?.game_type);
 
   return {
     mapTypeId,
