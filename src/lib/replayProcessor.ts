@@ -867,6 +867,14 @@ export const extractChatEvents = (
     const isAgeAdvance = detectedAge !== null;
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
+    // Filter out internal AI diagnostic noise / engine triggers:
+    // Authentic player messages always have destinationMap defined.
+    // System notifications (like age advancement) do not have destinationMap, but have isSystem = true.
+    const isPlayerChat = payload.destinationMap !== undefined;
+    if (!isPlayerChat && !isSystem) {
+      return;
+    }
+
     // In DE replays, empty messageAGP indicates internal engine triggers or pre-game lobby packets
     if (payload.messageAGP === "" && isSystem) {
       return;
