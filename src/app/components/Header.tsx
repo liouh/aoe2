@@ -61,7 +61,7 @@ export function Header({
                     }}
                   />
                   <div
-                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[390px] lg:w-[450px] rounded-xl bg-[color:var(--panel)] px-4 py-3 text-left text-[color:var(--foreground)] shadow-2xl border border-[color:var(--btn-border)] flex flex-col gap-1.5 backdrop-blur-md cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
+                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[380px] lg:w-[450px] rounded-xl bg-[color:var(--panel)] px-4 py-3 text-left text-[color:var(--foreground)] shadow-2xl border border-[color:var(--btn-border)] flex flex-col gap-1.5 backdrop-blur-md cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                   >
                     <p className="font-semibold text-sm mb-0.5 text-[color:var(--foreground)]">Local replays are usually in:</p>
@@ -97,7 +97,7 @@ export function Header({
                   <span className="text-xl lg:text-2xl">🔗</span>
                   <span className="lg:inline">Load replay from URL</span>
                   <div
-                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[390px] lg:w-[450px] rounded-xl bg-[color:var(--panel)] px-4 py-3 text-left text-[color:var(--foreground)] shadow-2xl border border-[color:var(--btn-border)] flex flex-col gap-1.5 backdrop-blur-md cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
+                    className="pointer-events-none group-hover:pointer-events-auto group-focus:pointer-events-auto group-focus-within:pointer-events-auto absolute top-full left-0 lg:right-0 lg:left-auto mt-2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 transition-opacity z-50 w-[380px] lg:w-[450px] rounded-xl bg-[color:var(--panel)] px-4 py-3 text-left text-[color:var(--foreground)] shadow-2xl border border-[color:var(--btn-border)] flex flex-col gap-1.5 backdrop-blur-md cursor-default before:absolute before:inset-x-0 before:bottom-full before:h-2"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <p className="font-semibold text-sm mb-0.5 text-[color:var(--foreground)]">Supported URL formats:</p>
