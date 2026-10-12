@@ -1591,10 +1591,32 @@ export const extractPlayerStats = (
       }
     }
 
-    const peakApm = minuteBuckets.size > 0 ? Math.max(...Array.from(minuteBuckets.values())) : 0;
+    let peakApm = minuteBuckets.size > 0 ? Math.max(...Array.from(minuteBuckets.values())) : 0;
     const apmHistory = Array.from(minuteBuckets.entries())
       .map(([minute, count]) => ({ minute, apm: count }))
       .sort((a, b) => a.minute - b.minute);
+
+    if (apmHistory.length === 1) {
+      const normalizedApm = apm;
+      apmHistory[0].apm = normalizedApm;
+      const endMinute = Math.max(Math.round((playerDurationSeconds / 60) * 100) / 100, 0.05);
+      apmHistory.push({ minute: endMinute, apm: normalizedApm });
+      peakApm = Math.max(peakApm, normalizedApm);
+    } else if (apmHistory.length > 1) {
+      let lastApmPt = apmHistory[apmHistory.length - 1];
+      const elapsedInLastBucket = playerDurationSeconds - lastApmPt.minute * 60;
+      if (elapsedInLastBucket <= 0 && lastApmPt.apm === 0) {
+        apmHistory.pop();
+        lastApmPt = apmHistory[apmHistory.length - 1];
+      } else if (elapsedInLastBucket > 0 && elapsedInLastBucket < 60) {
+        lastApmPt.apm = Math.round((lastApmPt.apm * 60) / Math.max(elapsedInLastBucket, 5));
+      }
+      const endMinute = Math.round((playerDurationSeconds / 60) * 100) / 100;
+      if (endMinute > lastApmPt.minute) {
+        apmHistory.push({ minute: endMinute, apm: lastApmPt.apm });
+      }
+      peakApm = Math.max(...apmHistory.map((p) => p.apm), 0);
+    }
 
     const opening = determineOpening(activePlayerEvents);
 

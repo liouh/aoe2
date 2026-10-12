@@ -26,6 +26,7 @@ interface GameTabProps {
   getPlayerOutline: (playerId?: number) => string;
   selectedTime: number;
   formatClock: (seconds: number) => string;
+  duration?: number;
   onSeek?: (seconds: number) => void;
 }
 
@@ -38,6 +39,7 @@ export function GameTab({
   getPlayerOutline,
   selectedTime,
   formatClock,
+  duration,
   onSeek,
 }: GameTabProps) {
   const allPlayersWon = useMemo(() => players.length > 0 && players.every((p) => p.won), [players]);
@@ -125,6 +127,21 @@ export function GameTab({
   const hasObjectsData = useMemo(() => {
     return objectsChartData.some((d) => d.history.length > 0);
   }, [objectsChartData]);
+
+  const sharedMaxMinute = useMemo(() => {
+    let max = duration && duration > 0 ? duration / 60 : 0;
+    const scan = (chartData: { history: { minute: number }[] }[]) => {
+      chartData.forEach((d) => {
+        d.history.forEach((pt) => {
+          if (pt.minute > max) max = pt.minute;
+        });
+      });
+    };
+    scan(apmChartData);
+    scan(resourcesChartData);
+    scan(objectsChartData);
+    return Math.max(max, 1);
+  }, [duration, apmChartData, resourcesChartData, objectsChartData]);
 
   const chartAgeTimings = useMemo(() => {
     return allChartPlayers
@@ -407,6 +424,7 @@ export function GameTab({
           selectedTime={selectedTime}
           ageTimings={chartAgeTimings}
           isLogScale={showAiApm && hasAi}
+          maxMinute={sharedMaxMinute}
         />
       </section>
 
@@ -426,6 +444,7 @@ export function GameTab({
             selectedTime={selectedTime}
             ageTimings={civAgeTimings}
             minYMax={200}
+            maxMinute={sharedMaxMinute}
           />
         </section>
       )}
@@ -446,6 +465,7 @@ export function GameTab({
             selectedTime={selectedTime}
             ageTimings={civAgeTimings}
             minYMax={50}
+            maxMinute={sharedMaxMinute}
           />
         </section>
       )}

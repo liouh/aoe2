@@ -28,6 +28,7 @@ export interface TimeSeriesChartProps {
   isLogScale?: boolean;
   formatYTick?: (val: number) => string;
   minYMax?: number;
+  maxMinute?: number;
 }
 
 const getPointVal = (p: TimeSeriesPointData): number => {
@@ -45,6 +46,7 @@ export function TimeSeriesChart({
   isLogScale = false,
   formatYTick,
   minYMax = 50,
+  maxMinute: maxMinuteProp,
 }: TimeSeriesChartProps) {
   const [hoveredPlayerId, setHoveredPlayerId] = React.useState<number | null>(null);
 
@@ -55,7 +57,10 @@ export function TimeSeriesChart({
   const allPoints = data.flatMap((d) => d.history);
   if (allPoints.length === 0) return null;
 
-  const maxMinute = Math.max(...allPoints.map((p) => p.minute), 1);
+  const maxMinute =
+    maxMinuteProp !== undefined && maxMinuteProp > 0
+      ? maxMinuteProp
+      : Math.max(...allPoints.map((p) => p.minute), 1);
   const rawMaxVal = Math.max(...allPoints.map((p) => getPointVal(p)), minYMax);
 
   const width = 800;
@@ -163,6 +168,7 @@ export function TimeSeriesChart({
       const prev = history[i],
         curr = history[i + 1];
       if (targetMinute >= prev.minute && targetMinute <= curr.minute) {
+        if (curr.minute === prev.minute) return getY(getPointVal(curr));
         const u = (targetMinute - prev.minute) / (curr.minute - prev.minute);
         let lo = 0,
           hi = 1;
@@ -347,8 +353,9 @@ export function TimeSeriesChart({
 
         {/* X Axis Grid & Labels */}
         {[0, 0.25, 0.5, 0.75, 1].map((p) => {
-          const val = Math.round(p * maxMinute);
-          const x = getX(val);
+          const minuteVal = p * maxMinute;
+          const x = getX(minuteVal);
+          const label = maxMinute <= 1 ? `${Math.round(minuteVal * 60)}s` : `${Math.round(minuteVal)}m`;
           return (
             <g key={p}>
               <line
@@ -368,7 +375,7 @@ export function TimeSeriesChart({
                 textAnchor="middle"
                 className="text-[color:var(--muted)]"
               >
-                {val}m
+                {label}
               </text>
             </g>
           );

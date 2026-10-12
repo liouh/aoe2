@@ -514,6 +514,7 @@ export default function Home() {
                   getPlayerOutline={getPlayerOutline}
                   selectedTime={selectedTime}
                   formatClock={formatClock}
+                  duration={duration}
                   onSeek={(seconds) => {
                     setIsPlaying(false);
                     setSelectedTime(clamp(seconds, 0, duration));
