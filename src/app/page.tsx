@@ -254,7 +254,7 @@ export default function Home() {
       const players = timeline.players ?? summarizePlayers(parsed);
       const gameDuration = determineDuration(parsed, timeline.events);
       const extractedInfo = extractMatchInfo(parsed, filename, sourceUrl);
-      const timelineStats = extractPlayerStats(timeline.events, gameDuration, players, timeline.chatEvents);
+      const timelineStats = extractPlayerStats(timeline.events, gameDuration, players, timeline.chatEvents, parsed);
 
       setLoadingStep(2);
       await waitForPaint();

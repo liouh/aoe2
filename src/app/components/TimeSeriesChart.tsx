@@ -13,33 +13,50 @@ const AGE_LABELS: Record<string, string> = {
   Imperial: "IV",
 };
 
-export function APMChart({
+export interface TimeSeriesPointData {
+  minute: number;
+  value?: number;
+  apm?: number;
+}
+
+export interface TimeSeriesChartProps {
+  data: { playerId: number; history: TimeSeriesPointData[] }[];
+  players: { id: number; name?: string; [key: string]: unknown }[];
+  getPlayerColor: (id?: number) => string;
+  selectedTime?: number;
+  ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
+  isLogScale?: boolean;
+  formatYTick?: (val: number) => string;
+  minYMax?: number;
+}
+
+const getPointVal = (p: TimeSeriesPointData): number => {
+  if (typeof p.value === "number") return p.value;
+  if (typeof p.apm === "number") return p.apm;
+  return 0;
+};
+
+export function TimeSeriesChart({
   data,
   players,
   getPlayerColor,
   selectedTime,
   ageTimings,
-
   isLogScale = false,
-}: {
-  data: { playerId: number; history: { minute: number; apm: number }[] }[];
-  players: { id: number; name?: string;[key: string]: unknown }[];
-  getPlayerColor: (id?: number) => string;
-  selectedTime?: number;
-  ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
-  isLogScale?: boolean;
-}) {
+  formatYTick,
+  minYMax = 50,
+}: TimeSeriesChartProps) {
   const [hoveredPlayerId, setHoveredPlayerId] = React.useState<number | null>(null);
 
   const isHoveredPlayerPlotted =
     hoveredPlayerId !== null &&
     hoveredPlayerId !== undefined &&
     data.some((d) => d.playerId === hoveredPlayerId);
-  const allPoints = data.flatMap(d => d.history);
+  const allPoints = data.flatMap((d) => d.history);
   if (allPoints.length === 0) return null;
 
-  const maxMinute = Math.max(...allPoints.map(p => p.minute), 1);
-  const rawMaxApm = Math.max(...allPoints.map(p => p.apm), 50);
+  const maxMinute = Math.max(...allPoints.map((p) => p.minute), 1);
+  const rawMaxVal = Math.max(...allPoints.map((p) => getPointVal(p)), minYMax);
 
   const width = 800;
   const height = 240;
@@ -47,17 +64,19 @@ export function APMChart({
 
   const { yAxisMax, yTicks } = React.useMemo(() => {
     if (!isLogScale) {
-      const steps = [5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000];
+      const steps = [
+        5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000,
+      ];
       let chosenStep = steps[steps.length - 1];
       for (const s of steps) {
-        const intervals = Math.ceil(rawMaxApm / s);
+        const intervals = Math.ceil(rawMaxVal / s);
         if (intervals <= 5 && intervals >= 3) {
           chosenStep = s;
           break;
         }
       }
 
-      const ceiling = Math.max(Math.ceil(rawMaxApm / chosenStep) * chosenStep, chosenStep * 3);
+      const ceiling = Math.max(Math.ceil(rawMaxVal / chosenStep) * chosenStep, chosenStep * 3);
       const ticks: number[] = [];
       for (let v = 0; v <= ceiling; v += chosenStep) {
         ticks.push(v);
@@ -67,9 +86,9 @@ export function APMChart({
 
     // Log scale nice ceiling (10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000...)
     let ceiling = 10;
-    const exp = Math.floor(Math.log10(rawMaxApm));
+    const exp = Math.floor(Math.log10(rawMaxVal));
     const base = Math.pow(10, exp);
-    const frac = rawMaxApm / base;
+    const frac = rawMaxVal / base;
     if (frac <= 1) {
       ceiling = base;
     } else if (frac <= 2) {
@@ -101,7 +120,7 @@ export function APMChart({
         const prev = result[result.length - 1];
         const gap = getYForVal(prev) - getYForVal(curr);
         if (gap > 55) {
-          const mid = (prev === 0 ? 5 : 5 * prev);
+          const mid = prev === 0 ? 5 : 5 * prev;
           if (mid < curr && getYForVal(prev) - getYForVal(mid) >= 22 && getYForVal(mid) - getYForVal(curr) >= 20) {
             result.push(mid);
           }
@@ -113,7 +132,7 @@ export function APMChart({
     }
     if (!result.includes(ceiling)) result.push(ceiling);
     return { yAxisMax: ceiling, yTicks: result };
-  }, [isLogScale, rawMaxApm]);
+  }, [isLogScale, rawMaxVal]);
 
   const getX = (m: number) => padding.left + (m / maxMinute) * (width - padding.left - padding.right);
   const getY = (a: number) => {
@@ -128,39 +147,39 @@ export function APMChart({
     return height - padding.bottom - (clampedA / yAxisMax) * plotHeight;
   };
 
+  // Build a lookup: playerId -> sorted history for interpolation
+  const historyByPlayer = new Map(data.map((d) => [d.playerId, d.history]));
 
-  // Build a lookup: playerId -> sorted history for APM interpolation
-  const apmHistoryByPlayer = new Map(data.map(d => [d.playerId, d.history]));
-
-  // The SVG line uses cubic Bézier segments with cp1y=prev.apm and cp2y=curr.apm,
+  // The SVG line uses cubic Bézier segments with cp1y=prev.val and cp2y=curr.val,
   // so y(t) = sy*(1-t)²*(1+2t) + ey*t²*(3-2t)  (cubic Hermite basis).
   // cp1x=cp2x=midX, so x(t) normalises to the monotone cubic: f(t) = t³ - 1.5t² + 1.5t.
   // We binary-search t so that f(t) = u (the linear fraction within the segment),
   // then evaluate the true y on the curve — keeping the dot exactly on the line.
   const getLineYAtMinute = (playerId: number, targetMinute: number): number => {
-    const history = apmHistoryByPlayer.get(playerId);
+    const history = historyByPlayer.get(playerId);
     if (!history || history.length === 0) return getY(0);
 
     for (let i = 0; i < history.length - 1; i++) {
-      const prev = history[i], curr = history[i + 1];
+      const prev = history[i],
+        curr = history[i + 1];
       if (targetMinute >= prev.minute && targetMinute <= curr.minute) {
-        // u is the linear fraction within this segment
         const u = (targetMinute - prev.minute) / (curr.minute - prev.minute);
-        // Binary-search t ∈ [0,1] where t³ - 1.5t² + 1.5t = u
-        let lo = 0, hi = 1;
+        let lo = 0,
+          hi = 1;
         for (let iter = 0; iter < 32; iter++) {
           const t = (lo + hi) / 2;
-          if (t * t * t - 1.5 * t * t + 1.5 * t < u) lo = t; else hi = t;
+          if (t * t * t - 1.5 * t * t + 1.5 * t < u) lo = t;
+          else hi = t;
         }
         const t = (lo + hi) / 2;
-        const sy = getY(prev.apm), ey = getY(curr.apm);
+        const sy = getY(getPointVal(prev)),
+          ey = getY(getPointVal(curr));
         return sy * (1 - t) * (1 - t) * (1 + 2 * t) + ey * t * t * (3 - 2 * t);
       }
     }
-    if (targetMinute <= history[0].minute) return getY(history[0].apm);
-    return getY(history[history.length - 1].apm);
+    if (targetMinute <= history[0].minute) return getY(getPointVal(history[0]));
+    return getY(getPointVal(history[history.length - 1]));
   };
-
 
   const renderedAgeIndicators = (() => {
     if (!ageTimings) return [];
@@ -243,19 +262,21 @@ export function APMChart({
 
   const sortedData = isHoveredPlayerPlotted
     ? [...data].sort((a, b) => {
-      if (a.playerId === hoveredPlayerId) return 1;
-      if (b.playerId === hoveredPlayerId) return -1;
-      return 0;
-    })
+        if (a.playerId === hoveredPlayerId) return 1;
+        if (b.playerId === hoveredPlayerId) return -1;
+        return 0;
+      })
     : data;
 
-  const formatApmTick = (val: number) => {
+  const defaultFormatTick = (val: number) => {
     if (val >= 1000) {
       const k = val / 1000;
       return `${Number(k.toFixed(1))}k`;
     }
     return `${val}`;
   };
+
+  const renderYTick = formatYTick ?? defaultFormatTick;
 
   return (
     <div className="w-full bg-[color:var(--panel)] p-2 pr-4 border border-white/5">
@@ -283,7 +304,11 @@ export function APMChart({
                 className="w-2 h-2 rounded-full shrink-0"
                 style={{ background: getPlayerColor(p.id) }}
               />
-              <span className={`text-xs transition-colors duration-150 ${isHovered ? "text-[color:var(--foreground)]" : "text-[color:var(--muted)]"}`}>
+              <span
+                className={`text-xs transition-colors duration-150 ${
+                  isHovered ? "text-[color:var(--foreground)]" : "text-[color:var(--muted)]"
+                }`}
+              >
                 {p.name}
               </span>
             </button>
@@ -296,8 +321,26 @@ export function APMChart({
           const y = getY(val);
           return (
             <g key={val}>
-              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="currentColor" strokeDasharray="4 4" className="text-[color:var(--chart-grid)]" />
-              <text x={padding.left - 12} y={y} fill="currentColor" fontSize="10" textAnchor="end" alignmentBaseline="middle" className="text-[color:var(--muted)]">{formatApmTick(val)}</text>
+              <line
+                x1={padding.left}
+                y1={y}
+                x2={width - padding.right}
+                y2={y}
+                stroke="currentColor"
+                strokeDasharray="4 4"
+                className="text-[color:var(--chart-grid)]"
+              />
+              <text
+                x={padding.left - 12}
+                y={y}
+                fill="currentColor"
+                fontSize="10"
+                textAnchor="end"
+                alignmentBaseline="middle"
+                className="text-[color:var(--muted)]"
+              >
+                {renderYTick(val)}
+              </text>
             </g>
           );
         })}
@@ -308,8 +351,25 @@ export function APMChart({
           const x = getX(val);
           return (
             <g key={p}>
-              <line x1={x} y1={padding.top} x2={x} y2={height - padding.bottom} stroke="currentColor" strokeDasharray="4 4" className="text-[color:var(--chart-grid)]" />
-              <text x={x} y={height - 15} fill="currentColor" fontSize="10" textAnchor="middle" className="text-[color:var(--muted)]">{val}m</text>
+              <line
+                x1={x}
+                y1={padding.top}
+                x2={x}
+                y2={height - padding.bottom}
+                stroke="currentColor"
+                strokeDasharray="4 4"
+                className="text-[color:var(--chart-grid)]"
+              />
+              <text
+                x={x}
+                y={height - 15}
+                fill="currentColor"
+                fontSize="10"
+                textAnchor="middle"
+                className="text-[color:var(--muted)]"
+              >
+                {val}m
+              </text>
             </g>
           );
         })}
@@ -349,15 +409,15 @@ export function APMChart({
           const isLineDimmed = isHoveredPlayerPlotted && !isLineHovered;
 
           // Use a smooth path
-          let d = `M ${getX(playerData.history[0].minute)} ${getY(playerData.history[0].apm)}`;
+          let d = `M ${getX(playerData.history[0].minute)} ${getY(getPointVal(playerData.history[0]))}`;
           for (let i = 1; i < playerData.history.length; i++) {
             const p = playerData.history[i];
             const prev = playerData.history[i - 1];
             const cp1x = getX(prev.minute + (p.minute - prev.minute) / 2);
-            const cp1y = getY(prev.apm);
+            const cp1y = getY(getPointVal(prev));
             const cp2x = getX(prev.minute + (p.minute - prev.minute) / 2);
-            const cp2y = getY(p.apm);
-            d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${getX(p.minute)} ${getY(p.apm)}`;
+            const cp2y = getY(getPointVal(p));
+            d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${getX(p.minute)} ${getY(getPointVal(p))}`;
           }
 
           return (
@@ -395,4 +455,8 @@ export function APMChart({
       </svg>
     </div>
   );
+}
+
+export function APMChart(props: TimeSeriesChartProps) {
+  return <TimeSeriesChart {...props} />;
 }

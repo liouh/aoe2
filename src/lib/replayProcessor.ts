@@ -95,11 +95,18 @@ export type MarketUsage = {
   sold: { food: number; wood: number; stone: number };
 };
 
+export type TimeSeriesPoint = {
+  minute: number;
+  value: number;
+};
+
 export type PlayerStats = {
   playerId: number;
   apm: number;
   peakApm: number;
   apmHistory: { minute: number; apm: number }[];
+  resourcesHistory?: TimeSeriesPoint[];
+  objectsHistory?: TimeSeriesPoint[];
   ageTimings?: Record<string, number>;
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
@@ -1394,8 +1401,50 @@ export const extractPlayerStats = (
   events: TimelineEvent[],
   durationSeconds: number | undefined,
   players?: PlayerSummary[],
-  chatEvents?: ChatEvent[]
+  chatEvents?: ChatEvent[],
+  rawReplayOrOps?: any
 ): PlayerStats[] => {
+  const ops: Record<string, unknown>[] = Array.isArray(rawReplayOrOps)
+    ? rawReplayOrOps
+    : Array.isArray(rawReplayOrOps?.operations)
+      ? rawReplayOrOps.operations
+      : Array.isArray(rawReplayOrOps?.chapters?.[0]?.operations)
+        ? rawReplayOrOps.chapters[0].operations
+        : [];
+
+  const playerMapping = buildPlayerMapping(ops, players ?? []);
+
+  // Pre-collect sync checksum player stats across the match
+  const rawResourcesByPlayer = new Map<number, TimeSeriesPoint[]>();
+  const rawObjectsByPlayer = new Map<number, TimeSeriesPoint[]>();
+
+  if (ops.length > 0) {
+    for (let i = 0; i < ops.length; i++) {
+      const syncChecksum = (ops[i] as any)?.Sync?.checksum;
+      if (
+        syncChecksum &&
+        Array.isArray(syncChecksum.player_stats) &&
+        typeof syncChecksum.current_time_ms === "number"
+      ) {
+        const minute = Math.round((syncChecksum.current_time_ms / 60000) * 100) / 100;
+        for (const stat of syncChecksum.player_stats) {
+          if (typeof stat.player_id === "number" && stat.player_id > 0) {
+            const pid = playerMapping.get(stat.player_id) ?? stat.player_id;
+            if (!rawResourcesByPlayer.has(pid)) rawResourcesByPlayer.set(pid, []);
+            if (!rawObjectsByPlayer.has(pid)) rawObjectsByPlayer.set(pid, []);
+
+            if (typeof stat.total_resources === "number") {
+              rawResourcesByPlayer.get(pid)!.push({ minute, value: stat.total_resources });
+            }
+            if (typeof stat.total_objects === "number") {
+              rawObjectsByPlayer.get(pid)!.push({ minute, value: stat.total_objects });
+            }
+          }
+        }
+      }
+    }
+  }
+
   const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
   const eventsByPlayer = new Map<number, TimelineEvent[]>();
   const playerById = new Map<number, PlayerSummary>(players?.map((p) => [p.id, p]) ?? []);
@@ -1525,11 +1574,43 @@ export const extractPlayerStats = (
 
     const opening = determineOpening(activePlayerEvents);
 
+    const rawRes = rawResourcesByPlayer.get(playerId) || [];
+    let resourcesHistory: TimeSeriesPoint[] | undefined = undefined;
+    if (rawRes.length > 0) {
+      const filtered = resignTime !== undefined
+        ? rawRes.filter((p) => p.minute <= playerDurationMinutes)
+        : rawRes;
+      if (filtered.length > 0) {
+        if (filtered[0].minute > 0 && filtered[0].minute <= 1) {
+          resourcesHistory = [{ minute: 0, value: filtered[0].value }, ...filtered];
+        } else {
+          resourcesHistory = [...filtered];
+        }
+      }
+    }
+
+    const rawObj = rawObjectsByPlayer.get(playerId) || [];
+    let objectsHistory: TimeSeriesPoint[] | undefined = undefined;
+    if (rawObj.length > 0) {
+      const filtered = resignTime !== undefined
+        ? rawObj.filter((p) => p.minute <= playerDurationMinutes)
+        : rawObj;
+      if (filtered.length > 0) {
+        if (filtered[0].minute > 0 && filtered[0].minute <= 1) {
+          objectsHistory = [{ minute: 0, value: filtered[0].value }, ...filtered];
+        } else {
+          objectsHistory = [...filtered];
+        }
+      }
+    }
+
     stats.push({
       playerId,
       apm,
       peakApm,
       apmHistory,
+      resourcesHistory,
+      objectsHistory,
       ageTimings,
       autoscoutUsage,
       marketUsage,

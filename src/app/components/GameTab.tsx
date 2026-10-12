@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { TiltCard } from "./TiltCard";
 import { Toggle } from "./Toggle";
 import { PlayerHeader } from "./PlayerHeader";
-import { APMChart } from "./APMChart";
+import { APMChart, TimeSeriesChart } from "./TimeSeriesChart";
 import { getCivName } from "@/lib/civMappings";
 import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
 import { type MatchInfo, type ChatEvent, detectAgeAdvance } from "@/lib/replayProcessor";
@@ -56,32 +56,60 @@ export function GameTab({
   }, [timelineStats]);
 
   const hasAi = useMemo(() => players.some((p) => p.ai), [players]);
-  const chartPlayers = useMemo(() => {
+  const allChartPlayers = useMemo(() => {
     const seen = new Set<number>();
-    return players.filter(player => {
-      if (!showAiApm && player.ai) return false;
+    return players.filter((player) => {
       if (seen.has(player.id)) return false;
       seen.add(player.id);
       return true;
     });
-  }, [players, showAiApm]);
+  }, [players]);
 
-  const chartData = useMemo(() => {
-    return chartPlayers.map((player) => ({
+  const apmChartPlayers = useMemo(() => {
+    return allChartPlayers.filter((player) => {
+      if (!showAiApm && player.ai) return false;
+      return true;
+    });
+  }, [allChartPlayers, showAiApm]);
+
+  const apmChartData = useMemo(() => {
+    return apmChartPlayers.map((player) => ({
       playerId: player.id,
       history: statsByPlayerId.get(player.id)?.apmHistory || [],
     }));
-  }, [chartPlayers, statsByPlayerId]);
+  }, [apmChartPlayers, statsByPlayerId]);
+
+  const resourcesChartData = useMemo(() => {
+    return allChartPlayers.map((player) => ({
+      playerId: player.id,
+      history: statsByPlayerId.get(player.id)?.resourcesHistory || [],
+    }));
+  }, [allChartPlayers, statsByPlayerId]);
+
+  const objectsChartData = useMemo(() => {
+    return allChartPlayers.map((player) => ({
+      playerId: player.id,
+      history: statsByPlayerId.get(player.id)?.objectsHistory || [],
+    }));
+  }, [allChartPlayers, statsByPlayerId]);
+
+  const hasResourcesData = useMemo(() => {
+    return resourcesChartData.some((d) => d.history.length > 0);
+  }, [resourcesChartData]);
+
+  const hasObjectsData = useMemo(() => {
+    return objectsChartData.some((d) => d.history.length > 0);
+  }, [objectsChartData]);
 
   const chartAgeTimings = useMemo(() => {
-    return chartPlayers
+    return allChartPlayers
       .map((player) => ({
         playerId: player.id,
         timings: statsByPlayerId.get(player.id)?.ageTimings ?? {},
         textColor: getPlayerOutline(player.id),
       }))
       .filter((player) => Object.keys(player.timings).length > 0);
-  }, [chartPlayers, statsByPlayerId, getPlayerOutline]);
+  }, [allChartPlayers, statsByPlayerId, getPlayerOutline]);
   const hasLobbyChat = useMemo(() => (chatEvents ?? []).some((item) => item.time === 0), [chatEvents]);
 
   const hasAiTeamChat = useMemo(() => {
@@ -338,14 +366,54 @@ export function GameTab({
         </div>
 
         <APMChart
-          data={chartData}
-          players={chartPlayers}
+          data={apmChartData}
+          players={apmChartPlayers}
           getPlayerColor={getPlayerColor}
           selectedTime={selectedTime}
           ageTimings={chartAgeTimings}
           isLogScale={showAiApm && hasAi}
         />
       </section>
+
+      {hasResourcesData && (
+        <section className="tab-section flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="headline text-2xl font-semibold">Total resources</h2>
+              <p className="text-xs text-[color:var(--muted)]">Banked resources (wood + food + gold + stone)</p>
+            </div>
+          </div>
+
+          <TimeSeriesChart
+            data={resourcesChartData}
+            players={allChartPlayers}
+            getPlayerColor={getPlayerColor}
+            selectedTime={selectedTime}
+            ageTimings={chartAgeTimings}
+            minYMax={200}
+          />
+        </section>
+      )}
+
+      {hasObjectsData && (
+        <section className="tab-section flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="headline text-2xl font-semibold">Total objects</h2>
+              <p className="text-xs text-[color:var(--muted)]">Units, buildings, and foundations</p>
+            </div>
+          </div>
+
+          <TimeSeriesChart
+            data={objectsChartData}
+            players={allChartPlayers}
+            getPlayerColor={getPlayerColor}
+            selectedTime={selectedTime}
+            ageTimings={chartAgeTimings}
+            minYMax={50}
+          />
+        </section>
+      )}
 
       <section className="tab-section flex flex-col gap-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
