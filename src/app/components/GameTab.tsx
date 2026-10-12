@@ -79,19 +79,44 @@ export function GameTab({
     }));
   }, [apmChartPlayers, statsByPlayerId]);
 
+  const isSharedControl = useMemo(() => {
+    const slots = players.map((p) => p.slotId).filter((s): s is number => s !== undefined);
+    return new Set(slots).size < slots.length;
+  }, [players]);
+
+  const civChartPlayers = useMemo(() => {
+    if (!isSharedControl) return allChartPlayers;
+
+    const slotMap = new Map<number, typeof allChartPlayers>();
+    allChartPlayers.forEach((p) => {
+      const slot = p.slotId ?? p.id;
+      if (!slotMap.has(slot)) slotMap.set(slot, []);
+      slotMap.get(slot)!.push(p);
+    });
+
+    return Array.from(slotMap.values()).map((group) => {
+      const primary = group[0];
+      const combinedName = group.map((p) => p.name).join(" / ");
+      return {
+        ...primary,
+        name: combinedName,
+      };
+    });
+  }, [allChartPlayers, isSharedControl]);
+
   const resourcesChartData = useMemo(() => {
-    return allChartPlayers.map((player) => ({
+    return civChartPlayers.map((player) => ({
       playerId: player.id,
       history: statsByPlayerId.get(player.id)?.resourcesHistory || [],
     }));
-  }, [allChartPlayers, statsByPlayerId]);
+  }, [civChartPlayers, statsByPlayerId]);
 
   const objectsChartData = useMemo(() => {
-    return allChartPlayers.map((player) => ({
+    return civChartPlayers.map((player) => ({
       playerId: player.id,
       history: statsByPlayerId.get(player.id)?.objectsHistory || [],
     }));
-  }, [allChartPlayers, statsByPlayerId]);
+  }, [civChartPlayers, statsByPlayerId]);
 
   const hasResourcesData = useMemo(() => {
     return resourcesChartData.some((d) => d.history.length > 0);
@@ -110,6 +135,16 @@ export function GameTab({
       }))
       .filter((player) => Object.keys(player.timings).length > 0);
   }, [allChartPlayers, statsByPlayerId, getPlayerOutline]);
+
+  const civAgeTimings = useMemo(() => {
+    return civChartPlayers
+      .map((player) => ({
+        playerId: player.id,
+        timings: statsByPlayerId.get(player.id)?.ageTimings ?? {},
+        textColor: getPlayerOutline(player.id),
+      }))
+      .filter((player) => Object.keys(player.timings).length > 0);
+  }, [civChartPlayers, statsByPlayerId, getPlayerOutline]);
   const hasLobbyChat = useMemo(() => (chatEvents ?? []).some((item) => item.time === 0), [chatEvents]);
 
   const hasAiTeamChat = useMemo(() => {
@@ -386,10 +421,10 @@ export function GameTab({
 
           <TimeSeriesChart
             data={resourcesChartData}
-            players={allChartPlayers}
+            players={civChartPlayers}
             getPlayerColor={getPlayerColor}
             selectedTime={selectedTime}
-            ageTimings={chartAgeTimings}
+            ageTimings={civAgeTimings}
             minYMax={200}
           />
         </section>
@@ -406,10 +441,10 @@ export function GameTab({
 
           <TimeSeriesChart
             data={objectsChartData}
-            players={allChartPlayers}
+            players={civChartPlayers}
             getPlayerColor={getPlayerColor}
             selectedTime={selectedTime}
-            ageTimings={chartAgeTimings}
+            ageTimings={civAgeTimings}
             minYMax={50}
           />
         </section>

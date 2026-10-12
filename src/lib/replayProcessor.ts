@@ -1412,7 +1412,16 @@ export const extractPlayerStats = (
         ? rawReplayOrOps.chapters[0].operations
         : [];
 
-  const playerMapping = buildPlayerMapping(ops, players ?? []);
+  const playerById = new Map<number, PlayerSummary>(players?.map((p) => [p.id, p]) ?? []);
+  const playersBySlot = new Map<number, PlayerSummary[]>();
+  players?.forEach((p) => {
+    const slot = p.slotId ?? p.id;
+    if (slot !== undefined) {
+      const list = playersBySlot.get(slot) ?? [];
+      list.push(p);
+      playersBySlot.set(slot, list);
+    }
+  });
 
   // Pre-collect sync checksum player stats across the match
   const rawResourcesByPlayer = new Map<number, TimeSeriesPoint[]>();
@@ -1429,15 +1438,31 @@ export const extractPlayerStats = (
         const minute = Math.round((syncChecksum.current_time_ms / 60000) * 100) / 100;
         for (const stat of syncChecksum.player_stats) {
           if (typeof stat.player_id === "number" && stat.player_id > 0) {
-            const pid = playerMapping.get(stat.player_id) ?? stat.player_id;
-            if (!rawResourcesByPlayer.has(pid)) rawResourcesByPlayer.set(pid, []);
-            if (!rawObjectsByPlayer.has(pid)) rawObjectsByPlayer.set(pid, []);
+            const slot = stat.player_id;
+            const targetPlayers = playersBySlot.get(slot) ?? (playerById.has(slot) ? [playerById.get(slot)!] : []);
 
-            if (typeof stat.total_resources === "number") {
-              rawResourcesByPlayer.get(pid)!.push({ minute, value: stat.total_resources });
-            }
-            if (typeof stat.total_objects === "number") {
-              rawObjectsByPlayer.get(pid)!.push({ minute, value: stat.total_objects });
+            if (targetPlayers.length > 0) {
+              for (const p of targetPlayers) {
+                if (!rawResourcesByPlayer.has(p.id)) rawResourcesByPlayer.set(p.id, []);
+                if (!rawObjectsByPlayer.has(p.id)) rawObjectsByPlayer.set(p.id, []);
+
+                if (typeof stat.total_resources === "number") {
+                  rawResourcesByPlayer.get(p.id)!.push({ minute, value: stat.total_resources });
+                }
+                if (typeof stat.total_objects === "number") {
+                  rawObjectsByPlayer.get(p.id)!.push({ minute, value: stat.total_objects });
+                }
+              }
+            } else {
+              if (!rawResourcesByPlayer.has(slot)) rawResourcesByPlayer.set(slot, []);
+              if (!rawObjectsByPlayer.has(slot)) rawObjectsByPlayer.set(slot, []);
+
+              if (typeof stat.total_resources === "number") {
+                rawResourcesByPlayer.get(slot)!.push({ minute, value: stat.total_resources });
+              }
+              if (typeof stat.total_objects === "number") {
+                rawObjectsByPlayer.get(slot)!.push({ minute, value: stat.total_objects });
+              }
             }
           }
         }
@@ -1447,7 +1472,6 @@ export const extractPlayerStats = (
 
   const maxGameMinute = events.length > 0 ? Math.floor(events[events.length - 1].time / 60) : 0;
   const eventsByPlayer = new Map<number, TimelineEvent[]>();
-  const playerById = new Map<number, PlayerSummary>(players?.map((p) => [p.id, p]) ?? []);
   const playerBySlotId = new Map<number, PlayerSummary>();
   players?.forEach((player) => {
     eventsByPlayer.set(player.id, []);
