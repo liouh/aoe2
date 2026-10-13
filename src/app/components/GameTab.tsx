@@ -367,11 +367,17 @@ export function GameTab({
                                 <span title="Fastest" className="text-[10px] select-none">🥇</span>
                               )}
                             </div>
-                            <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
-                              <span className="text-[color:var(--foreground)]">
-                                {formatClock(time as number)}
-                              </span>
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onSeek?.(time as number);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                              title={`Jump to ${formatClock(time as number)}`}
+                              className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
+                            >
+                              {formatClock(time as number)}
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -540,14 +546,14 @@ export function GameTab({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                       title={`Jump to ${timeLabel}`}
-                      className="w-11 shrink-0 rounded-md px-2 h-6 inline-flex items-center justify-center text-center text-[11px] font-mono tabular-nums transition cursor-pointer select-none bg-[color:var(--btn-subtle-bg)] text-[color:var(--foreground)]/70 hover:bg-[color:var(--btn-subtle-bg-hover)] hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)]"
+                      className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
                     >
                       {timeLabel}
                     </button>
 
                     <div className="flex flex-1 flex-col min-w-0">
                       {!item.isSystem && (
-                        <div className="flex flex-wrap items-center gap-1 min-h-6">
+                        <div className="flex flex-wrap items-center gap-1 min-h-5">
                           {item.playerName && (
                             <span className="flex items-center gap-1.5 text-sm leading-tight text-[color:var(--muted)]">
                               <span
@@ -581,7 +587,7 @@ export function GameTab({
                         </div>
                       )}
 
-                      <p className={`text-sm break-words ${item.isSystem ? "text-[color:var(--muted)] min-h-6 py-0.5 leading-5" : "mt-0.5 text-[color:var(--foreground)]"}`}>
+                      <p className={`text-sm break-words ${item.isSystem ? "text-[color:var(--muted)] min-h-5 leading-5" : "text-[color:var(--foreground)]"}`}>
                         {item.isSystem && (
                           ageRoman ? (
                             <span

@@ -21,7 +21,7 @@ export interface TimeSeriesPointData {
 
 export interface TimeSeriesChartProps {
   data: { playerId: number; history: TimeSeriesPointData[] }[];
-  players: { id: number; name?: string; [key: string]: unknown }[];
+  players: { id: number; name?: string;[key: string]: unknown }[];
   getPlayerColor: (id?: number) => string;
   selectedTime?: number;
   ageTimings?: { playerId: number; timings: Record<string, number>; textColor?: string }[];
@@ -64,7 +64,7 @@ export function TimeSeriesChart({
   const rawMaxVal = Math.max(...allPoints.map((p) => getPointVal(p)), minYMax);
 
   const width = 800;
-  const height = 240;
+  const height = 220;
   const padding = { top: 20, right: 15, bottom: 40, left: 40 };
 
   const { yAxisMax, yTicks } = React.useMemo(() => {
@@ -268,10 +268,10 @@ export function TimeSeriesChart({
 
   const sortedData = isHoveredPlayerPlotted
     ? [...data].sort((a, b) => {
-        if (a.playerId === hoveredPlayerId) return 1;
-        if (b.playerId === hoveredPlayerId) return -1;
-        return 0;
-      })
+      if (a.playerId === hoveredPlayerId) return 1;
+      if (b.playerId === hoveredPlayerId) return -1;
+      return 0;
+    })
     : data;
 
   const defaultFormatTick = (val: number) => {
@@ -287,7 +287,7 @@ export function TimeSeriesChart({
   return (
     <div className="w-full bg-[color:var(--panel)] p-2 pr-4 border border-white/5">
       <div
-        className="flex flex-wrap gap-x-1 gap-y-1 mb-2"
+        className="flex flex-wrap gap-x-1 gap-y-1"
         onMouseLeave={() => setHoveredPlayerId(null)}
       >
         {players.map((p, idx) => {
@@ -311,9 +311,8 @@ export function TimeSeriesChart({
                 style={{ background: getPlayerColor(p.id) }}
               />
               <span
-                className={`text-xs transition-colors duration-150 ${
-                  isHovered ? "text-[color:var(--foreground)]" : "text-[color:var(--muted)]"
-                }`}
+                className={`text-xs transition-colors duration-150 ${isHovered ? "text-[color:var(--foreground)]" : "text-[color:var(--muted)]"
+                  }`}
               >
                 {p.name}
               </span>
