@@ -285,7 +285,7 @@ export function TimeSeriesChart({
   const renderYTick = formatYTick ?? defaultFormatTick;
 
   return (
-    <div className="w-full bg-[color:var(--panel)] p-2 pr-4 border border-white/5">
+    <div className="w-full bg-[color:var(--panel)] p-2 border border-white/5">
       <div
         className="flex flex-wrap gap-x-1 gap-y-1"
         onMouseLeave={() => setHoveredPlayerId(null)}
