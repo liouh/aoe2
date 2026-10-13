@@ -296,9 +296,9 @@ export function GameTab({
                       <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                         <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Player rating</span>
                       </div>
-                      <div className="flex flex-col gap-1.5">
+                      <div className="flex flex-col gap-1">
                         {hasRmRatingInfo && (
-                          <div className="flex items-center justify-between gap-1.5">
+                          <div className="flex items-center justify-between gap-1">
                             <span className="text-xs text-[color:var(--muted)] shrink-0" title="Random Map 1v1">RM 1v1</span>
                             <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                               <span className="text-[color:var(--foreground)]">
@@ -313,7 +313,7 @@ export function GameTab({
                           </div>
                         )}
                         {hasTeamRatingInfo && (
-                          <div className="flex items-center justify-between gap-1.5">
+                          <div className="flex items-center justify-between gap-1">
                             <span className="text-xs text-[color:var(--muted)] shrink-0" title="Team Random Map">Team RM</span>
                             <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                               <span className="text-[color:var(--foreground)]">
@@ -334,8 +334,8 @@ export function GameTab({
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--accent)]">Effective APM</span>
                     </div>
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between gap-1.5">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between gap-1">
                         <span className="text-xs text-[color:var(--muted)] shrink-0" title="Average APM">Average APM</span>
                         <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                           <span className="text-[color:var(--foreground)]">
@@ -343,7 +343,7 @@ export function GameTab({
                           </span>
                         </span>
                       </div>
-                      <div className="flex items-center justify-between gap-1.5">
+                      <div className="flex items-center justify-between gap-1">
                         <span className="text-xs text-[color:var(--muted)] shrink-0" title="Peak APM">Peak APM</span>
                         <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                           <span className="text-[color:var(--foreground)]">
@@ -358,10 +358,10 @@ export function GameTab({
                       <span className="text-xs uppercase tracking-wider text-[color:var(--color-eco)]">Age up time</span>
                     </div>
                     {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
-                      <div className="flex flex-col gap-1.5">
+                      <div className="flex flex-col gap-1">
                         {Object.entries(stats.ageTimings).map(([age, time]) => (
-                          <div key={age} className="flex items-center justify-between gap-1.5 group/age">
-                            <div className="flex items-center gap-1.5">
+                          <div key={age} className="flex items-center justify-between gap-1 group/age">
+                            <div className="flex items-center gap-1">
                               <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
                               {time === (fastestAges as any)[age] && (
                                 <span title="Fastest" className="text-[10px] select-none">🥇</span>

@@ -182,7 +182,7 @@ export function StatsTab({
                       <span className="uppercase tracking-wider text-[color:var(--muted)]">Starting units</span>
                       <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{startingCount}</span>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    <div className="flex flex-col gap-1 min-h-[20px]">
                       {stats.starting.length > 0 ? stats.starting.map((unit) => (
                         <div key={unit.name} className="flex items-center justify-between">
                           <span className="text-[color:var(--muted)] truncate pr-2">{unit.name}</span>
@@ -199,7 +199,7 @@ export function StatsTab({
                       <span className="uppercase tracking-wider text-[color:var(--accent)]">Trained military</span>
                       <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{milCount}</span>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    <div className="flex flex-col gap-1 min-h-[20px]">
                       {stats.military.length > 0 ? (
                         stats.military.map((u, idx) => (
                           <div key={idx} className="flex items-center justify-between">
@@ -219,7 +219,7 @@ export function StatsTab({
                       <span className="uppercase tracking-wider text-[color:var(--color-eco)]">Trained eco units</span>
                       <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{ecoCount}</span>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-h-[20px]">
+                    <div className="flex flex-col gap-1 min-h-[20px]">
                       {stats.economic.length > 0 ? (
                         stats.economic.map((u, idx) => (
                           <div key={idx} className="flex items-center justify-between">
@@ -316,7 +316,7 @@ export function StatsTab({
                     <span className="uppercase tracking-wider text-[color:var(--muted)]">Starting buildings</span>
                     <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(startingBuildingCount)}</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                  <div className="flex flex-col gap-1 min-h-[20px]">
                     {stats.starting.length > 0 ? stats.starting.map((building) => (
                       <div key={building.name} className="flex items-center justify-between">
                         <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
@@ -333,7 +333,7 @@ export function StatsTab({
                     <span className="uppercase tracking-wider text-[color:var(--accent)]">Built in-game</span>
                     <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(buildingCount)}</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                  <div className="flex flex-col gap-1 min-h-[20px]">
                     {stats.built.length > 0 ? stats.built.map((building) => (
                       <div key={building.name} className="flex items-center justify-between">
                         <span className="text-[color:var(--muted)] truncate pr-2">{building.name}</span>
@@ -378,7 +378,7 @@ export function StatsTab({
                     <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{formatNum(totalActions)}</span>
                   </div>
 
-                  <div className="flex flex-col gap-1.5 min-h-[20px]">
+                  <div className="flex flex-col gap-1 min-h-[20px]">
                     {actions.length > 0 ? (
                       actions.map((action, idx) => (
                         <div key={idx} className="flex items-center justify-between">
