@@ -522,7 +522,7 @@ export function GameTab({
             No messages match the selected filters.
           </div>
         ) : (
-          <div className="bg-[color:var(--panel)] px-4 py-3 border border-[color:var(--divider)]">
+          <div className="bg-[color:var(--panel)] px-4 py-2.5 border border-[color:var(--divider)]">
             <div className="space-y-1">
               {filteredChat.map((item) => {
                 const timeLabel = item.time === 0 ? "Lobby" : formatClock(item.time);
