@@ -874,10 +874,15 @@ export const extractChatEvents = (
     const isAgeAdvance = detectedAge !== null;
     const isSystem = hasPlayerIdTag || isAgeAdvance || playerId === 0 || playerId === undefined;
 
+    const isAi = !!resolvedPlayer?.ai;
+
     // Filter out internal AI diagnostic noise / engine triggers:
     // Authentic player messages always have destinationMap defined.
     // System notifications (like age advancement) do not have destinationMap, but have isSystem = true.
-    const isPlayerChat = payload.destinationMap !== undefined;
+    // Authentic AI broadcast messages (like resignation dialogue or chat taunts) have a non-empty messageAGP.
+    const isPlayerChat =
+      payload.destinationMap !== undefined ||
+      (isAi && typeof payload.messageAGP === "string" && payload.messageAGP.length > 0);
     if (!isPlayerChat && !isSystem) {
       return;
     }
@@ -897,8 +902,6 @@ export const extractChatEvents = (
       const targetPlayer = players.find((p) => (p.slotId ?? p.id) === targetPid);
       return targetPlayer?.name || `Player ${targetPid}`;
     });
-
-    const isAi = !!resolvedPlayer?.ai;
 
     if (isAi || /No resources to build:\s*\d+/i.test(formattedMessage)) {
       formattedMessage = formattedMessage.replace(/No resources to build:\s*(\d+)/gi, (match, idStr) => {
