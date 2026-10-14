@@ -1716,7 +1716,7 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
     ? rmsStrings
       .map((entry: unknown) => {
         if (typeof entry !== "string") return undefined;
-        const match = entry.match(/([^:]+)\.rms(?::([^:]*))?/i);
+        const match = entry.match(/([^:]+)\.rms\d*(?::([^:]*))?/i);
         if (!match) return undefined;
         return {
           name: match[1].trim(),
