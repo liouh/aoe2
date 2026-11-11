@@ -259,21 +259,31 @@ export function TimelineTab({
         const presetSpans: { start: number; end: number; label: string }[] = [];
         if (darkAgeEnd !== undefined && darkAgeEnd > 0) {
           let prevEnd = 0;
+          let villCount = 3;
           for (const ev of preset.events) {
             if (ev.time > darkAgeEnd + 1) break;
-            const label = String(ev.raw?.label ?? ev.type ?? "");
-            const isVill = ev.category === "train" && label.toLowerCase().includes("villager");
-            const isLoom = ev.category === "research" && label.toLowerCase() === "loom";
+            const rawLabel = String(ev.raw?.label ?? ev.type ?? "");
+            const isVill = ev.category === "train" && rawLabel.toLowerCase().includes("villager");
+            const isLoom = ev.category === "research" && rawLabel.toLowerCase() === "loom";
             if (!isVill && !isLoom) continue;
             const amount = typeof ev.raw?.amount === "number" && ev.raw.amount > 0 ? ev.raw.amount : 1;
             for (let k = 0; k < amount; k++) {
               const start = Math.max(ev.time, prevEnd);
               const end = Math.min(start + 25, darkAgeEnd);
               if (end > start) {
+                let spanLabel: string;
+                if (isLoom) {
+                  spanLabel = "Loom";
+                } else if (rawLabel.includes("#")) {
+                  spanLabel = rawLabel;
+                } else {
+                  villCount++;
+                  spanLabel = `Villager #${villCount}`;
+                }
                 presetSpans.push({
                   start,
                   end,
-                  label: isLoom ? "Loom" : "Villager",
+                  label: spanLabel,
                 });
                 prevEnd = end;
               }

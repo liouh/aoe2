@@ -1881,13 +1881,27 @@ export const extractPlayerStats = (
           const totalWork = queue.reduce((sum, item) => sum + item.duration, 0);
           darkAgeIdleTc = Math.max(0, Math.round(darkAgeEnd - totalWork));
 
+          const initialVillCount = playerEvents.filter(
+            (e) => e.raw?.isInitial && (e.unitTypeId === 83 || e.unitTypeId === 293)
+          ).length;
+          const defaultInitialVills = civId === 27 ? 6 : civId === 2 ? 4 : 3;
+          let villCount = initialVillCount > 0 ? initialVillCount : defaultInitialVills;
           const spans: { start: number; end: number; label: string }[] = queue
             .filter((item) => item.duration > 0 && item.end > item.start)
-            .map((item) => ({
-              start: item.start,
-              end: Math.min(item.end, darkAgeEnd),
-              label: item.kind === "LOOM" ? "Loom" : "Villager",
-            }));
+            .map((item) => {
+              let label: string;
+              if (item.kind === "LOOM") {
+                label = "Loom";
+              } else {
+                villCount++;
+                label = `Villager #${villCount}`;
+              }
+              return {
+                start: item.start,
+                end: Math.min(item.end, darkAgeEnd),
+                label,
+              };
+            });
 
           if (ageTimings.Feudal !== undefined && ageTimings.Feudal > darkAgeEnd) {
             spans.push({
