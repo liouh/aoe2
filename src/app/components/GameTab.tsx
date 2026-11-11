@@ -196,6 +196,12 @@ export function GameTab({
     return ageMap;
   }, [timelineStats]);
 
+  const hasDarkAge = useMemo(() => {
+    if (matchInfo?.gameTypeId === 13) return false;
+    if (matchInfo?.startingAgeId !== undefined && matchInfo.startingAgeId > 2) return false;
+    return timelineStats.some((s) => s.darkAgeIdleTc !== undefined);
+  }, [matchInfo, timelineStats]);
+
   const matchFormat = useMemo(() => {
     if (!players || players.length === 0) return "";
 
@@ -336,7 +342,7 @@ export function GameTab({
                     </div>
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs text-[color:var(--muted)] shrink-0" title="Average APM">Average APM</span>
+                        <span className="text-xs text-[color:var(--muted)] shrink-0">Average APM</span>
                         <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                           <span className="text-[color:var(--foreground)]">
                             {stats?.apm !== undefined ? formatNum(stats.apm) : "—"}
@@ -344,7 +350,7 @@ export function GameTab({
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs text-[color:var(--muted)] shrink-0" title="Peak APM">Peak APM</span>
+                        <span className="text-xs text-[color:var(--muted)] shrink-0">Peak APM</span>
                         <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
                           <span className="text-[color:var(--foreground)]">
                             {stats?.peakApm !== undefined ? formatNum(stats.peakApm) : "—"}
@@ -353,6 +359,23 @@ export function GameTab({
                       </div>
                     </div>
                   </div>
+                  {hasDarkAge && (
+                    <div>
+                      <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                        <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Town center</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs text-[color:var(--muted)] shrink-0">Dark Age idle time</span>
+                          <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                            <span className="text-[color:var(--foreground)]">
+                              {stats?.darkAgeIdleTc !== undefined ? `${stats.darkAgeIdleTc}s` : "—"}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--color-eco)]">Age up time</span>

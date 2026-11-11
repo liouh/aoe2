@@ -108,6 +108,8 @@ export type PlayerStats = {
   resourcesHistory?: TimeSeriesPoint[];
   objectsHistory?: TimeSeriesPoint[];
   ageTimings?: Record<string, number>;
+  darkAgeIdleTc?: number;
+  tcBusySpans?: { start: number; end: number; label: string }[];
   autoscoutUsage?: number;
   marketUsage?: MarketUsage;
   opening?: string;
@@ -1531,6 +1533,28 @@ export const extractPlayerStats = (
     });
   }
 
+  const settings = !Array.isArray(rawReplayOrOps)
+    ? (rawReplayOrOps?.zheader?.game_settings || rawReplayOrOps?.header?.game_settings || rawReplayOrOps?.game_settings)
+    : undefined;
+  const gameTypeId = pickNumber(settings?.game_type);
+  const startingAgeId = pickNumber(settings?.starting_age_id);
+  const teamBonusDisabled = Boolean(settings?.team_bonus_disabled);
+
+  const anyFeudalAdvance = Array.from(ageTimingsByPlayerId.values()).some((t) => t.Feudal !== undefined)
+    || events.some((e) => e.category === "research" && e.techId === 101);
+  const anyLaterAgeWithoutFeudal = !anyFeudalAdvance && (
+    Array.from(ageTimingsByPlayerId.values()).some((t) => t.Castle !== undefined || t.Imperial !== undefined)
+    || events.some((e) => e.category === "research" && (e.techId === 102 || e.techId === 103))
+  );
+  const anyMultiStartingTc = Array.from(eventsByPlayer.values()).some(
+    (pe) => pe.filter((e) => e.raw?.isInitial && e.category === "build" && e.buildingTypeId === 109).length > 1
+  );
+  const matchHadDarkAge =
+    gameTypeId !== 13 &&
+    (startingAgeId === undefined || startingAgeId <= 2) &&
+    !anyLaterAgeWithoutFeudal &&
+    !anyMultiStartingTc;
+
   const stats: PlayerStats[] = [];
   eventsByPlayer.forEach((playerEvents, playerId) => {
     const resignChat = chatEvents?.find(
@@ -1653,6 +1677,239 @@ export const extractPlayerStats = (
       }
     }
 
+    let darkAgeIdleTc: number | undefined = undefined;
+    let tcBusySpans: { start: number; end: number; label: string }[] | undefined = undefined;
+    if (matchHadDarkAge && activePlayerEvents.length > 0) {
+      const civId = player?.civId;
+      const handicapMult = player?.handicap && player.handicap > 0 ? player.handicap / 100 : 1;
+      // Persians (civId 8) have +5% Town Center work rate in Dark Age
+      const tcWorkRate = (civId === 8 ? 1.05 : 1.0) * handicapMult;
+      // Portuguese (civId 24) team bonus: technologies (excluding Age up) research 25% faster
+      const hasPortugueseTeamBonus = !teamBonusDisabled && (
+        civId === 24 ||
+        Boolean(
+          player?.teamId &&
+          player.teamId > 0 &&
+          players?.some((teammate) => teammate.teamId === player.teamId && teammate.civId === 24)
+        )
+      );
+
+      const villTrainTime = 25 / tcWorkRate;
+      // Goths (civId 3) research Loom instantly (0s)
+      const loomResearchTime = civId === 3
+        ? 0
+        : 25 / (tcWorkRate * (hasPortugueseTeamBonus ? 1.25 : 1.0));
+      // Malay (civId 29) advance to the next age 66% faster
+      const feudalResearchTime = (civId === 29 ? 130 / 1.66 : 130) / tcWorkRate;
+
+      const feudalChatStart = ageTimings.Feudal !== undefined
+        ? Math.max(0, ageTimings.Feudal - feudalResearchTime)
+        : undefined;
+      const feudalClicks = activePlayerEvents.filter(
+        (e) =>
+          e.category === "research" &&
+          e.techId === 101 &&
+          (feudalChatStart === undefined || e.time <= feudalChatStart + 5)
+      );
+      const feudalClickTime = feudalClicks.length > 0
+        ? feudalClicks[feudalClicks.length - 1].time
+        : undefined;
+
+      const actionCutoff = feudalClickTime ?? feudalChatStart ?? (
+        ageTimings.Castle === undefined &&
+        ageTimings.Imperial === undefined &&
+        playerDurationSeconds > 0
+          ? playerDurationSeconds
+          : undefined
+      );
+
+      if (actionCutoff !== undefined && actionCutoff > 0) {
+        type TcAction = { t: number; kind: "VILL" | "LOOM" | "UNQUEUE"; slotIndex?: number };
+        const tcActions: TcAction[] = [];
+        const tcBuildingIds = new Set<number>();
+        const loomResearchedAfterDarkAge = activePlayerEvents.some(
+          (ev) => ev.time > actionCutoff + 0.5 && ev.category === "research" && ev.techId === 22
+        );
+
+        for (const ev of activePlayerEvents) {
+          if (ev.time > actionCutoff + 0.5) break;
+          if (ev.category === "train" && (ev.unitTypeId === 83 || ev.unitTypeId === 293)) {
+            const bIds = (ev.raw as any)?.building_ids;
+            if (Array.isArray(bIds)) bIds.forEach((id: number) => tcBuildingIds.add(id));
+            const rawAmt = pickNumber(ev.raw?.amount);
+            const amount = rawAmt !== undefined && rawAmt > 0 ? rawAmt : 1;
+            for (let k = 0; k < amount; k++) {
+              tcActions.push({ t: ev.time, kind: "VILL" });
+            }
+          } else if (ev.category === "research" && (ev.techId === 22 || ev.techId === 101)) {
+            const bIds = (ev.raw as any)?.building_ids;
+            if (Array.isArray(bIds)) bIds.forEach((id: number) => tcBuildingIds.add(id));
+            if (ev.techId === 22) {
+              tcActions.push({ t: ev.time, kind: "LOOM" });
+            }
+          } else if (ev.type === "Order" && (ev.raw as any)?.order_type === "Unqueue") {
+            const objIds = (ev.raw as any)?.object_ids;
+            const isTcUnqueue =
+              tcBuildingIds.size === 0 ||
+              !Array.isArray(objIds) ||
+              objIds.length === 0 ||
+              objIds.some((id: number) => tcBuildingIds.has(id));
+            if (isTcUnqueue) {
+              tcActions.push({
+                t: ev.time,
+                kind: "UNQUEUE",
+                slotIndex: pickNumber((ev.raw as any)?.unknown5),
+              });
+            }
+          }
+        }
+
+        if (tcBuildingIds.size <= 1) {
+          type QueuedItem = { kind: "VILL" | "LOOM"; t: number; duration: number; start: number; end: number };
+          const rawQueue: QueuedItem[] = [];
+          const recomputeFrom = (startIdx: number) => {
+            for (let q = startIdx; q < rawQueue.length; q++) {
+              const prevEnd = q > 0 ? rawQueue[q - 1].end : 0;
+              rawQueue[q].start = Math.max(rawQueue[q].t, prevEnd);
+              rawQueue[q].end = rawQueue[q].start + rawQueue[q].duration;
+            }
+          };
+
+          for (let i = 0; i < tcActions.length; i++) {
+            const act = tcActions[i];
+            if (act.kind === "UNQUEUE") {
+              const activeIndices: number[] = [];
+              for (let q = 0; q < rawQueue.length; q++) {
+                if (rawQueue[q].end > act.t) activeIndices.push(q);
+              }
+              if (activeIndices.length > 0) {
+                const hasLaterLoom =
+                  loomResearchedAfterDarkAge ||
+                  tcActions.slice(i + 1).some((a) => a.kind === "LOOM" && a.t - act.t > 1.0);
+                const activeLoomIdx = activeIndices.find((idx) => rawQueue[idx].kind === "LOOM");
+                let removeIdx =
+                  act.slotIndex !== undefined &&
+                  act.slotIndex >= 0 &&
+                  act.slotIndex < activeIndices.length
+                    ? activeIndices[act.slotIndex]
+                    : activeIndices[activeIndices.length - 1];
+                if (hasLaterLoom && activeLoomIdx !== undefined) {
+                  removeIdx = activeLoomIdx;
+                } else if (!hasLaterLoom && rawQueue[removeIdx].kind === "LOOM") {
+                  const lastVillIdx = [...activeIndices].reverse().find((idx) => rawQueue[idx].kind === "VILL");
+                  if (lastVillIdx !== undefined) {
+                    removeIdx = lastVillIdx;
+                  }
+                }
+                rawQueue.splice(removeIdx, 1);
+                recomputeFrom(removeIdx);
+              }
+              continue;
+            }
+
+            if (act.kind === "LOOM") {
+              const existingLoomIdx = rawQueue.findIndex((item) => item.kind === "LOOM");
+              if (existingLoomIdx !== -1) {
+                if (act.t - rawQueue[existingLoomIdx].t <= 1.0) continue;
+                rawQueue.splice(existingLoomIdx, 1);
+                recomputeFrom(existingLoomIdx);
+              }
+              const prevEnd = rawQueue.length > 0 ? rawQueue[rawQueue.length - 1].end : 0;
+              const start = Math.max(act.t, prevEnd);
+              const end = start + loomResearchTime;
+              rawQueue.push({ kind: "LOOM", t: act.t, duration: loomResearchTime, start, end });
+            } else {
+              const prevEnd = rawQueue.length > 0 ? rawQueue[rawQueue.length - 1].end : 0;
+              const start = Math.max(act.t, prevEnd);
+              const end = start + villTrainTime;
+              rawQueue.push({ kind: "VILL", t: act.t, duration: villTrainTime, start, end });
+            }
+          }
+
+          if (loomResearchedAfterDarkAge) {
+            const remainingLoomIdx = rawQueue.findIndex((item) => item.kind === "LOOM");
+            if (remainingLoomIdx !== -1) {
+              rawQueue.splice(remainingLoomIdx, 1);
+              recomputeFrom(remainingLoomIdx);
+            }
+          }
+
+          const maxAllowedEnd = (feudalChatStart ?? actionCutoff) + 2.5;
+          while (rawQueue.length > 0 && rawQueue[rawQueue.length - 1].end > maxAllowedEnd) {
+            let runStart = rawQueue.length - 1;
+            while (runStart > 0 && rawQueue[runStart].start <= rawQueue[runStart - 1].end + 1e-6) {
+              runStart--;
+            }
+            let removeIdx = -1;
+            let minDt = Infinity;
+            for (let q = runStart + 1; q < rawQueue.length; q++) {
+              if (rawQueue[q].kind !== "VILL") continue;
+              let preservesContiguity = true;
+              for (let k = q + 1; k < rawQueue.length; k++) {
+                if (rawQueue[k].start - rawQueue[k].t < villTrainTime - 1e-6) {
+                  preservesContiguity = false;
+                  break;
+                }
+              }
+              if (!preservesContiguity) continue;
+              const dt = rawQueue[q].t - rawQueue[q - 1].t;
+              if (dt <= minDt) {
+                minDt = dt;
+                removeIdx = q;
+              }
+            }
+            if (removeIdx === -1) {
+              for (let q = rawQueue.length - 1; q >= 0; q--) {
+                if (rawQueue[q].kind === "VILL") {
+                  removeIdx = q;
+                  break;
+                }
+              }
+            }
+            if (removeIdx === -1) {
+              removeIdx = rawQueue.length - 1;
+            }
+            rawQueue.splice(removeIdx, 1);
+            recomputeFrom(removeIdx);
+          }
+          const queue = rawQueue;
+          const queueEnd = queue.length > 0 ? queue[queue.length - 1].end : 0;
+          const darkAgeEnd = feudalClickTime !== undefined
+            ? Math.max(feudalClickTime, queueEnd)
+            : (feudalChatStart ?? actionCutoff);
+
+          const totalWork = queue.reduce((sum, item) => sum + item.duration, 0);
+          darkAgeIdleTc = Math.max(0, Math.round(darkAgeEnd - totalWork));
+
+          const spans: { start: number; end: number; label: string }[] = queue
+            .filter((item) => item.duration > 0 && item.end > item.start)
+            .map((item) => ({
+              start: item.start,
+              end: Math.min(item.end, darkAgeEnd),
+              label: item.kind === "LOOM" ? "Loom" : "Villager",
+            }));
+
+          if (ageTimings.Feudal !== undefined && ageTimings.Feudal > darkAgeEnd) {
+            spans.push({
+              start: darkAgeEnd,
+              end: ageTimings.Feudal,
+              label: "Feudal Age",
+            });
+          } else if (feudalClickTime !== undefined) {
+            spans.push({
+              start: darkAgeEnd,
+              end: Math.min(darkAgeEnd + feudalResearchTime, playerDurationSeconds),
+              label: "Feudal Age",
+            });
+          }
+
+          if (spans.length > 0) {
+            tcBusySpans = spans;
+          }
+        }
+      }
+    }
+
     stats.push({
       playerId,
       apm,
@@ -1661,6 +1918,8 @@ export const extractPlayerStats = (
       resourcesHistory,
       objectsHistory,
       ageTimings,
+      darkAgeIdleTc,
+      tcBusySpans,
       autoscoutUsage,
       marketUsage,
       opening,
@@ -1695,6 +1954,7 @@ export type MatchInfo = {
   customMapPackName?: string;
   mapSizeId?: number;
   gameTypeId?: number;
+  startingAgeId?: number;
   difficultyId?: number;
   difficultyName?: string;
   populationLimit?: number;
@@ -1762,6 +2022,7 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
     customMapPackName: customMapMetadata?.packName,
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
     gameTypeId,
+    startingAgeId: pickNumber(settings?.starting_age_id),
     difficultyId,
     difficultyName,
     populationLimit: pickNumber(settings?.population_limit),

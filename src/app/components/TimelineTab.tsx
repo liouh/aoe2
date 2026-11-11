@@ -254,11 +254,46 @@ export function TimelineTab({
         const preset = findPresetById(selectionId);
         if (!preset) return null;
 
+        const feudalTime = preset.ageTimings.Feudal;
+        const darkAgeEnd = feudalTime !== undefined ? Math.max(0, feudalTime - 130) : undefined;
+        const presetSpans: { start: number; end: number; label: string }[] = [];
+        if (darkAgeEnd !== undefined && darkAgeEnd > 0) {
+          let prevEnd = 0;
+          for (const ev of preset.events) {
+            if (ev.time > darkAgeEnd + 1) break;
+            const label = String(ev.raw?.label ?? ev.type ?? "");
+            const isVill = ev.category === "train" && label.toLowerCase().includes("villager");
+            const isLoom = ev.category === "research" && label.toLowerCase() === "loom";
+            if (!isVill && !isLoom) continue;
+            const amount = typeof ev.raw?.amount === "number" && ev.raw.amount > 0 ? ev.raw.amount : 1;
+            for (let k = 0; k < amount; k++) {
+              const start = Math.max(ev.time, prevEnd);
+              const end = Math.min(start + 25, darkAgeEnd);
+              if (end > start) {
+                presetSpans.push({
+                  start,
+                  end,
+                  label: isLoom ? "Loom" : "Villager",
+                });
+                prevEnd = end;
+              }
+            }
+          }
+          if (feudalTime !== undefined && feudalTime > darkAgeEnd) {
+            presetSpans.push({
+              start: darkAgeEnd,
+              end: feudalTime,
+              label: "Feudal Age",
+            });
+          }
+        }
+
         return {
           name: preset.name,
           color: undefined,
           civ: preset.description,
           ageTimings: preset.ageTimings,
+          tcBusySpans: presetSpans,
           ...filterAndConsolidate(preset.events),
         };
       }
@@ -276,6 +311,7 @@ export function TimelineTab({
         color: getPlayerColor(player.id),
         civ: getCivName(player.civId),
         ageTimings: stats?.ageTimings ?? {},
+        tcBusySpans: stats?.tcBusySpans ?? [],
         ...filterAndConsolidate(pe),
       };
     };
@@ -298,7 +334,22 @@ export function TimelineTab({
     const col = columnData[index];
     if (!col) return null;
 
-    const { research, builds, trains, name, color, civ, ageTimings } = col;
+    const { research, builds, trains, name, color, civ, ageTimings, tcBusySpans } = col;
+    const displaySpans = (tcBusySpans ?? []).flatMap((span, i, arr) => {
+      const prevEnd = i === 0 ? 0 : arr[i - 1].end;
+      const idleGap = span.start - prevEnd;
+      return idleGap >= 5
+        ? [
+          {
+            start: prevEnd,
+            end: span.start,
+            label: `Idle for ${Math.round(idleGap)}s`,
+            idle: true,
+          },
+          { ...span, idle: false },
+        ]
+        : [{ ...span, idle: false }];
+    });
 
     const renderRow = (
       event: TimelineEvent & { label?: string; hasMilitary?: boolean; hasMarket?: boolean },
@@ -367,6 +418,37 @@ export function TimelineTab({
             className="relative w-full"
             style={{ height: timelineHeight }}
           >
+            {displaySpans.map((span, spanIdx) => (
+              <div
+                key={`tc-busy-${spanIdx}`}
+                className={`absolute inset-x-0 ${span.idle ? "" : "bg-emerald-500/[0.07]"} flex items-start justify-end gap-1.5 pr-1.5 overflow-hidden pointer-events-none`}
+                style={{
+                  top: `${(span.start / Math.max(timelineDuration, 1)) * 100}%`,
+                  height: `${((span.end - span.start) / Math.max(timelineDuration, 1)) * 100}%`,
+                }}
+              >
+                <span className="text-[10px] leading-tight text-[color:var(--muted)] opacity-45 select-none truncate">
+                  {span.label}
+                </span>
+                <div className="h-full flex flex-col items-center text-[color:var(--muted)] opacity-35 shrink-0 py-px">
+                  <div className="w-1.5 h-px bg-current shrink-0" />
+                  <div className="w-px flex-1 bg-current" />
+                  <svg
+                    className="w-2 h-1.5 shrink-0 -mt-px"
+                    viewBox="0 0 8 6"
+                    fill="none"
+                  >
+                    <path
+                      d="M1 1L4 5L7 1"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            ))}
             {timelineMarkers.map((markerTime) => (
               <div
                 key={`marker-${markerTime}`}
