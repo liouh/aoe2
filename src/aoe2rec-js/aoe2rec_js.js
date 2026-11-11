@@ -5,5 +5,5 @@ import { __wbg_set_wasm } from "./aoe2rec_js_bg.js";
 __wbg_set_wasm(wasm);
 wasm.__wbindgen_start();
 export {
-    GameSettings, Player, Replay, SavegameHeader, SavegameSummary, Team, parse_rec, parse_rec_summary
+    GameSettings, Player, Replay, SavegameHeader, SavegameSummary, Team, parse_rec, parse_rec_summary, parse_rec_typed
 } from "./aoe2rec_js_bg.js";

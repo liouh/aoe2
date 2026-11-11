@@ -120,3 +120,5 @@ export class Team {
 export function parse_rec(buffer: ArrayBuffer): any;
 
 export function parse_rec_summary(buffer: ArrayBuffer): SavegameSummary;
+
+export function parse_rec_typed(buffer: ArrayBuffer): any;

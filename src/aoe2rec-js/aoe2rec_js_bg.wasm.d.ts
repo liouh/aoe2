@@ -160,6 +160,7 @@ export const __wbg_set_team_winner: (a: number, b: number) => void;
 export const __wbg_team_free: (a: number, b: number) => void;
 export const parse_rec: (a: any) => any;
 export const parse_rec_summary: (a: any) => number;
+export const parse_rec_typed: (a: any) => any;
 export const __wbg_get_savegameheader_game_string: (a: number) => [number, number];
 export const __wbg_set_player_player_number: (a: number, b: number) => void;
 export const __wbg_set_player_profile_id: (a: number, b: number) => void;

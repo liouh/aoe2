@@ -1249,6 +1249,15 @@ export function parse_rec_summary(buffer) {
     const ret = wasm.parse_rec_summary(buffer);
     return SavegameSummary.__wrap(ret);
 }
+
+/**
+ * @param {ArrayBuffer} buffer
+ * @returns {any}
+ */
+export function parse_rec_typed(buffer) {
+    const ret = wasm.parse_rec_typed(buffer);
+    return ret;
+}
 export function __wbg_Error_408e67f47ca7b58b(arg0, arg1) {
     const ret = Error(getStringFromWasm0(arg0, arg1));
     return ret;
