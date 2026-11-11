@@ -5,6 +5,7 @@ import { TiltCard } from "./TiltCard";
 import { PlayerHeader } from "./PlayerHeader";
 import { getCivName } from "@/lib/civMappings";
 import { getBuildingName, getUnitName, isEconomic } from "@/lib/entityMappings";
+import { getTechName } from "@/lib/techMappings";
 import { type TimelineEvent } from "@/lib/replayProcessor";
 
 interface StatsTabProps {
@@ -13,6 +14,7 @@ interface StatsTabProps {
   events: TimelineEvent[];
   getPlayerColor: (playerId?: number) => string;
   getPlayerOutline?: (playerId?: number) => string;
+  formatClock?: (seconds: number) => string;
 }
 
 export function StatsTab({
@@ -21,6 +23,12 @@ export function StatsTab({
   events,
   getPlayerColor,
   getPlayerOutline,
+  formatClock = (s: number) => {
+    const total = Math.max(s, 0);
+    const mins = Math.floor(total / 60);
+    const secs = Math.floor(total % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  },
 }: StatsTabProps) {
   const formatNum = (n: number) => new Intl.NumberFormat().format(n);
 
@@ -144,6 +152,35 @@ export function StatsTab({
         .map(([name, count]) => ({ name, count }))
         .sort((a, b) => b.count - a.count);
       result.set(playerId, actions);
+    });
+
+    return result;
+  }, [events]);
+
+  const researchStats = useMemo(() => {
+    // Per player, map techId/name to latest research start time
+    const statsMap = new Map<number, Map<string, { id: number; name: string; lastTime: number }>>();
+    events.forEach((event) => {
+      if (event.category !== "research" || event.playerId === undefined || event.playerId === 0) return;
+      if (event.techId === undefined) return;
+
+      const name = getTechName(event.techId);
+      let playerMap = statsMap.get(event.playerId);
+      if (!playerMap) {
+        playerMap = new Map();
+        statsMap.set(event.playerId, playerMap);
+      }
+
+      const existing = playerMap.get(name);
+      if (!existing || event.time >= existing.lastTime) {
+        playerMap.set(name, { id: event.techId, name, lastTime: event.time });
+      }
+    });
+
+    const result = new Map<number, { id: number; name: string; lastTime: number }[]>();
+    statsMap.forEach((playerMap, playerId) => {
+      const researches = Array.from(playerMap.values()).sort((a, b) => a.lastTime - b.lastTime);
+      result.set(playerId, researches);
     });
 
     return result;
@@ -349,6 +386,52 @@ export function StatsTab({
           })}
         </div>
         <p className="text-xs text-[color:var(--muted)]">Counts include cancelled buildings</p>
+      </section>
+
+      <section className="tab-section flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="headline text-2xl font-semibold">Research</h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {players.map((player, index) => {
+            const researches = researchStats.get(player.id) || [];
+
+            return (
+              <TiltCard
+                key={`${player.id}-${index}`}
+                className="panel-strong p-4 flex flex-col gap-5 player-card-3d-base text-xs"
+              >
+                <PlayerHeader
+                  name={player.name}
+                  color={getPlayerColor(player.id)}
+                  outlineColor={getPlayerOutline?.(player.id)}
+                  ai={player.ai}
+                  civ={getCivName(player.civId)}
+                />
+
+                <div>
+                  <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
+                    <span className="uppercase tracking-wider text-[color:var(--muted)]">Researched tech</span>
+                    <span className="tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)]">{researches.length}</span>
+                  </div>
+
+                  <div className="flex flex-col gap-1 min-h-[20px]">
+                    {researches.length > 0 ? (
+                      researches.map((tech) => (
+                        <div key={tech.id} className="flex items-center justify-between">
+                          <span className="text-[color:var(--muted)] truncate pr-2">{tech.name}</span>
+                          <span className="tabular-nums shrink-0 pr-1.5">{formatClock(tech.lastTime)}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[color:var(--muted)]">—</p>
+                    )}
+                  </div>
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
       </section>
 
       <section className="tab-section flex flex-col gap-4">

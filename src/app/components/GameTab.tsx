@@ -28,6 +28,7 @@ interface GameTabProps {
   formatClock: (seconds: number) => string;
   duration?: number;
   onSeek?: (seconds: number) => void;
+  onSwitchTab?: (tab: "game" | "stats" | "timeline") => void;
 }
 
 export function GameTab({
@@ -41,6 +42,7 @@ export function GameTab({
   formatClock,
   duration,
   onSeek,
+  onSwitchTab,
 }: GameTabProps) {
   const allPlayersWon = useMemo(() => players.length > 0 && players.every((p) => p.won), [players]);
   const formatNum = (value: number) => new Intl.NumberFormat().format(value);
@@ -359,75 +361,77 @@ export function GameTab({
                       </div>
                     </div>
                   </div>
-                  {hasDarkAge && (
-                    <div>
-                      <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
-                        <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Town center</span>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs text-[color:var(--muted)] shrink-0">Dark Age idle time</span>
-                          <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
-                            <span className="text-[color:var(--foreground)]">
-                              {stats?.darkAgeIdleTc !== undefined ? `${stats.darkAgeIdleTc}s` : "—"}
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                   <div>
                     <div className="-mx-4 px-4 flex items-center justify-between border-b border-[color:var(--divider)] pb-1 mb-2">
                       <span className="text-xs uppercase tracking-wider text-[color:var(--color-eco)]">Age up time</span>
                     </div>
-                    {stats?.ageTimings && Object.keys(stats.ageTimings).length > 0 ? (
+                    {((stats?.ageTimings && Object.keys(stats.ageTimings).length > 0) || hasDarkAge) ? (
                       <div className="flex flex-col gap-1">
-                        {Object.entries(stats.ageTimings).map(([age, time]) => (
-                          <div key={age} className="flex items-center justify-between gap-1 group/age">
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
-                              {time === (fastestAges as any)[age] && (
-                                <span title="Fastest" className="text-[10px] select-none">🥇</span>
-                              )}
-                            </div>
+                        {hasDarkAge && (
+                          <div className="flex items-center justify-between gap-1 pb-1">
                             <button
                               type="button"
                               onClick={() => {
-                                onSeek?.(time as number);
-                                window.scrollTo({ top: 0, behavior: "smooth" });
+                                onSwitchTab?.("timeline");
                               }}
-                              title={`Jump to ${formatClock(time as number)}`}
-                              className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
+                              className="text-xs text-[color:var(--muted)] hover:text-[color:var(--foreground)] hover:underline shrink-0 text-left cursor-pointer transition-colors"
+                              title="View in Timeline"
                             >
-                              {formatClock(time as number)}
+                              Dark Age TC idle time
                             </button>
+                            <span className="text-xs tabular-nums bg-[color:var(--badge-bg)] px-1.5 py-0.5 rounded text-[color:var(--muted)] inline-flex items-center">
+                              <span className="text-[color:var(--foreground)]">
+                                {stats?.darkAgeIdleTc !== undefined ? `${stats.darkAgeIdleTc}s` : "—"}
+                              </span>
+                            </span>
                           </div>
-                        ))}
+                        )}
+                            {stats?.ageTimings && Object.entries(stats.ageTimings).map(([age, time]) => (
+                              <div key={age} className="flex items-center justify-between gap-1 group/age">
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
+                                  {time === (fastestAges as any)[age] && (
+                                    <span title="Fastest" className="text-[10px] select-none">🥇</span>
+                                  )}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    onSeek?.(time as number);
+                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                  }}
+                                  title={`Jump to ${formatClock(time as number)}`}
+                                  className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
+                                >
+                                  {formatClock(time as number)}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                        <p className="text-sm text-[color:var(--muted)]">—</p>
+                    )}
                       </div>
-                    ) : (
-                      <p className="text-sm text-[color:var(--muted)]">—</p>
+                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
+                      <div className="flex flex-wrap gap-2">
+                        {!!stats?.opening && (
+                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                            {stats.opening} opening
+                          </span>
+                        )}
+                        {player.handicap && player.handicap !== 100 && (
+                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                            {player.handicap}% handicap
+                          </span>
+                        )}
+                        {!!stats?.autoscoutUsage && (
+                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                            Auto scout
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
-                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
-                    <div className="flex flex-wrap gap-2">
-                      {!!stats?.opening && (
-                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                          {stats.opening} opening
-                        </span>
-                      )}
-                      {player.handicap && player.handicap !== 100 && (
-                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                          {player.handicap}% handicap
-                        </span>
-                      )}
-                      {!!stats?.autoscoutUsage && (
-                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                          Auto scout
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
               </TiltCard>
             );
           })}

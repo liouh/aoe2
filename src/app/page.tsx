@@ -520,6 +520,7 @@ export default function Home() {
                     setSelectedTime(clamp(seconds, 0, duration));
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
+                  onSwitchTab={handleTabChange}
                 />
               </div>
 
@@ -531,6 +532,7 @@ export default function Home() {
                     events={events}
                     getPlayerColor={getPlayerColor}
                     getPlayerOutline={getPlayerOutline}
+                    formatClock={formatClock}
                   />
                 </div>
               )}
