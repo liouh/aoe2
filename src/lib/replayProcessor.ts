@@ -115,7 +115,7 @@ export type PlayerStats = {
   opening?: string;
 };
 
-const classifyEvent = (type: string, isAi?: boolean): TimelineEventCategory => {
+const classifyEvent = (type: string): TimelineEventCategory => {
   switch (type) {
     case "Research":
       return "research";
@@ -1170,9 +1170,8 @@ export const buildTimeline = (
       const playerId = playerMapping.get(rawPlayerId) ?? rawPlayerId;
 
       const player = playerById.get(playerId);
-      const isAi = player?.ai;
       const civId = player?.civId;
-      const category = classifyEvent(actionType, isAi);
+      const category = classifyEvent(actionType);
       const data = Array.isArray(payload?.data) ? parseActionData(actionType, payload.data as number[]) : undefined;
 
       let position: { x: number; y: number } | undefined;
