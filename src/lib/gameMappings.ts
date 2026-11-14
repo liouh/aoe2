@@ -30,6 +30,51 @@ export const VICTORY_TYPES: Record<number, string> = {
 
 export const getVictoryTypeName = (id?: number) => (id !== undefined ? VICTORY_TYPES[id] : undefined);
 
+export const STARTING_RESOURCES: Record<number, string> = {
+  0: "Standard",
+  1: "Low",
+  2: "Medium",
+  3: "High",
+  4: "Ultra High",
+  5: "Infinite",
+  6: "Random",
+};
+
+export const getStartingResourcesName = (id?: number) => (id !== undefined ? STARTING_RESOURCES[id] ?? `Resources ${id}` : undefined);
+
+export const AGES: Record<number, string> = {
+  2: "Dark Age",
+  3: "Feudal Age",
+  4: "Castle Age",
+  5: "Imperial Age",
+  6: "Post-Imperial Age",
+};
+
+export const getAgeName = (id?: number, type: "starting" | "ending" = "starting", gameTypeId?: number) => {
+  if (id === undefined) return undefined;
+  if (id === 0) {
+    if (gameTypeId === 2 || gameTypeId === 7 || gameTypeId === 12) return "Post-Imperial Age";
+    if (type === "ending") return "Imperial Age";
+    if (gameTypeId === 10 || gameTypeId === 13) return "Feudal Age";
+    return "Dark Age";
+  }
+  return AGES[id] ?? `Age ${id}`;
+};
+
+// Game modes that support ranked matchmaking in AoE2 DE (Random Map, Death Match, Empire Wars)
+export const RANKABLE_GAME_TYPES = new Set<number>([0, 2, 13]);
+
+export const canBeRanked = (gameTypeId?: number) => gameTypeId !== undefined && RANKABLE_GAME_TYPES.has(gameTypeId);
+
+export const getGameSpeedName = (speed?: number): string | undefined => {
+  if (speed === undefined) return undefined;
+  if (Math.abs(speed - 1.0) < 0.05) return "Slow (1.0x)";
+  if (Math.abs(speed - 1.5) < 0.05) return "Casual (1.5x)";
+  if (Math.abs(speed - 1.7) < 0.05) return "Normal (1.7x)";
+  if (Math.abs(speed - 2.0) < 0.05) return "Fast (2.0x)";
+  return `${speed.toFixed(2)}x`;
+};
+
 export const MAP_SIZES: Record<number, string> = {
   // Map dimensions
   120: "Tiny (2 player)",

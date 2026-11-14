@@ -6,7 +6,16 @@ import { Toggle } from "./Toggle";
 import { PlayerHeader } from "./PlayerHeader";
 import { APMChart, TimeSeriesChart } from "./TimeSeriesChart";
 import { getCivName } from "@/lib/civMappings";
-import { getGameTypeName, getMapName, getMapSizeName, getVictoryTypeName } from "@/lib/gameMappings";
+import {
+  getGameTypeName,
+  getMapName,
+  getMapSizeName,
+  getVictoryTypeName,
+  getStartingResourcesName,
+  getAgeName,
+  getGameSpeedName,
+  canBeRanked,
+} from "@/lib/gameMappings";
 import { type MatchInfo, type ChatEvent, detectAgeAdvance } from "@/lib/replayProcessor";
 import { DEBUG } from "@/lib/debug";
 
@@ -198,11 +207,10 @@ export function GameTab({
     return ageMap;
   }, [timelineStats]);
 
-  const hasDarkAge = useMemo(() => {
-    if (matchInfo?.gameTypeId === 13) return false;
-    if (matchInfo?.startingAgeId !== undefined && matchInfo.startingAgeId > 2) return false;
-    return timelineStats.some((s) => s.darkAgeIdleTc !== undefined);
-  }, [matchInfo, timelineStats]);
+  const hasDarkAge = useMemo(
+    () => timelineStats.some((s) => s.darkAgeIdleTc !== undefined),
+    [timelineStats]
+  );
 
   const matchFormat = useMemo(() => {
     if (!players || players.length === 0) return "";
@@ -386,52 +394,52 @@ export function GameTab({
                             </span>
                           </div>
                         )}
-                            {stats?.ageTimings && Object.entries(stats.ageTimings).map(([age, time]) => (
-                              <div key={age} className="flex items-center justify-between gap-1 group/age">
-                                <div className="flex items-center gap-1">
-                                  <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
-                                  {time === (fastestAges as any)[age] && (
-                                    <span title="Fastest" className="text-[10px] select-none">🥇</span>
-                                  )}
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onSeek?.(time as number);
-                                    window.scrollTo({ top: 0, behavior: "smooth" });
-                                  }}
-                                  title={`Jump to ${formatClock(time as number)}`}
-                                  className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
-                                >
-                                  {formatClock(time as number)}
-                                </button>
-                              </div>
-                            ))}
+                        {stats?.ageTimings && Object.entries(stats.ageTimings).map(([age, time]) => (
+                          <div key={age} className="flex items-center justify-between gap-1 group/age">
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-[color:var(--muted)] shrink-0">{age}</span>
+                              {time === (fastestAges as any)[age] && (
+                                <span title="Fastest" className="text-[10px] select-none">🥇</span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onSeek?.(time as number);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                              title={`Jump to ${formatClock(time as number)}`}
+                              className="w-11 shrink-0 text-xs font-mono tabular-nums bg-[color:var(--btn-subtle-bg)] hover:bg-[color:var(--btn-subtle-bg-hover)] text-[color:var(--foreground)]/70 hover:text-[color:var(--foreground)] border border-[color:var(--border-subtle)] px-1.5 py-0.5 rounded inline-flex items-center justify-center transition cursor-pointer select-none"
+                            >
+                              {formatClock(time as number)}
+                            </button>
                           </div>
-                        ) : (
-                        <p className="text-sm text-[color:var(--muted)]">—</p>
-                    )}
+                        ))}
                       </div>
-                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
-                      <div className="flex flex-wrap gap-2">
-                        {!!stats?.opening && (
-                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                            {stats.opening} opening
-                          </span>
-                        )}
-                        {player.handicap && player.handicap !== 100 && (
-                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                            {player.handicap}% handicap
-                          </span>
-                        )}
-                        {!!stats?.autoscoutUsage && (
-                          <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
-                            Auto scout
-                          </span>
-                        )}
-                      </div>
+                    ) : (
+                      <p className="text-sm text-[color:var(--muted)]">—</p>
                     )}
                   </div>
+                  {((player.handicap && player.handicap !== 100) || !!stats?.autoscoutUsage || !!stats?.opening) && (
+                    <div className="flex flex-wrap gap-2">
+                      {!!stats?.opening && (
+                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                          {stats.opening} opening
+                        </span>
+                      )}
+                      {player.handicap && player.handicap !== 100 && (
+                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                          {player.handicap}% handicap
+                        </span>
+                      )}
+                      {!!stats?.autoscoutUsage && (
+                        <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-[10px] font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30">
+                          Auto scout
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
               </TiltCard>
             );
           })}
@@ -673,6 +681,9 @@ export function GameTab({
                   <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game mode</span>
                   <span className="font-semibold text-[color:var(--foreground)]">
                     {getGameTypeName(matchInfo.gameTypeId) ?? `Type ${matchInfo.gameTypeId}`}
+                    {matchInfo.ranked !== undefined && canBeRanked(matchInfo.gameTypeId) && (
+                      ` (${matchInfo.ranked ? "Ranked" : "Unranked"})`
+                    )}
                   </span>
                 </div>
               )}
@@ -700,6 +711,38 @@ export function GameTab({
                   <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Population limit</span>
                   <span className="font-semibold text-[color:var(--foreground)]">
                     {matchInfo.populationLimit}
+                  </span>
+                </div>
+              )}
+              {matchInfo.speed !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Game speed</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getGameSpeedName(matchInfo.speed) ?? `${matchInfo.speed.toFixed(2)}x`}
+                  </span>
+                </div>
+              )}
+              {matchInfo.startingResourcesId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Resources</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getStartingResourcesName(matchInfo.startingResourcesId) ?? matchInfo.startingResourcesId}
+                  </span>
+                </div>
+              )}
+              {matchInfo.startingAgeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Starting age</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getAgeName(matchInfo.startingAgeId, "starting", matchInfo.gameTypeId) ?? matchInfo.startingAgeId}
+                  </span>
+                </div>
+              )}
+              {matchInfo.endingAgeId !== undefined && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Ending age</span>
+                  <span className="font-semibold text-[color:var(--foreground)]">
+                    {getAgeName(matchInfo.endingAgeId, "ending", matchInfo.gameTypeId) ?? matchInfo.endingAgeId}
                   </span>
                 </div>
               )}

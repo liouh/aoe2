@@ -1550,6 +1550,7 @@ export const extractPlayerStats = (
     (pe) => pe.filter((e) => e.raw?.isInitial && e.category === "build" && e.buildingTypeId === 109).length > 1
   );
   const matchHadDarkAge =
+    gameTypeId !== 10 &&
     gameTypeId !== 13 &&
     (startingAgeId === undefined || startingAgeId <= 2) &&
     !anyLaterAgeWithoutFeudal &&
@@ -1717,8 +1718,8 @@ export const extractPlayerStats = (
 
       const actionCutoff = feudalClickTime ?? feudalChatStart ?? (
         ageTimings.Castle === undefined &&
-        ageTimings.Imperial === undefined &&
-        playerDurationSeconds > 0
+          ageTimings.Imperial === undefined &&
+          playerDurationSeconds > 0
           ? playerDurationSeconds
           : undefined
       );
@@ -1789,8 +1790,8 @@ export const extractPlayerStats = (
                 const activeLoomIdx = activeIndices.find((idx) => rawQueue[idx].kind === "LOOM");
                 let removeIdx =
                   act.slotIndex !== undefined &&
-                  act.slotIndex >= 0 &&
-                  act.slotIndex < activeIndices.length
+                    act.slotIndex >= 0 &&
+                    act.slotIndex < activeIndices.length
                     ? activeIndices[act.slotIndex]
                     : activeIndices[activeIndices.length - 1];
                 if (hasLaterLoom && activeLoomIdx !== undefined) {
@@ -1968,7 +1969,11 @@ export type MatchInfo = {
   customMapPackName?: string;
   mapSizeId?: number;
   gameTypeId?: number;
+  ranked?: boolean;
+  startingResourcesId?: number;
   startingAgeId?: number;
+  endingAgeId?: number;
+  speed?: number;
   difficultyId?: number;
   difficultyName?: string;
   populationLimit?: number;
@@ -1979,27 +1984,12 @@ export type MatchInfo = {
   timestamp?: number;
 };
 
-export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string, summary?: any): MatchInfo => {
+export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: string): MatchInfo => {
   const normSource = normalizeReplay(source);
   const settings = normSource?.zheader?.game_settings || normSource?.header?.game_settings || normSource?.game_settings;
-  const summarySettings = summary?.header?.game_settings;
-  const replayData = normSource?.header?.replay || normSource?.replay;
+  const replayData = normSource?.zheader?.replay || normSource?.header?.replay || normSource?.replay;
   const mapTypeId = pickNumber(settings?.resolved_map_id) ?? pickNumber(settings?.selected_map_id) ?? pickNumber(replayData?.map_id);
-  const rmsStrings = summarySettings?.rms_strings ?? settings?.rms_strings;
-  const customMapMetadata = mapTypeId === 59 && Array.isArray(rmsStrings)
-    ? rmsStrings
-      .map((entry: unknown) => {
-        if (typeof entry !== "string") return undefined;
-        const match = entry.match(/([^:]+)\.rms\d*(?::([^:]*))?/i);
-        if (!match) return undefined;
-        return {
-          name: match[1].trim(),
-          packName: match[2]?.replace(/^\d+_/, "").trim() || undefined,
-        };
-      })
-      .find((metadata: { name: string; packName?: string } | undefined) => Boolean(metadata?.name))
-    : undefined;
-
+  const rmsStrings = settings?.rms_strings;
   const difficultyId = pickNumber(settings?.difficulty);
   const difficultyName = typeof settings?.difficulty === "string" ? settings.difficulty : undefined;
 
@@ -2014,21 +2004,47 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
 
   const isCampaign =
     (replayData?.campaign ?? 0) > 0 ||
-    (replayData?.king_campaign ?? 0) > 0 ||
-    settings?.resolved_map_id === 4294967293 ||
-    settings?.resolved_map_id === -3;
-
-  const isScenario =
-    replayData?.game_mode === 1 ||
-    settings?.resolved_map_id === 4294967294 ||
-    settings?.resolved_map_id === -2 ||
-    settings?.resolved_map_id === 0;
+    (replayData?.king_campaign ?? 0) > 0;
 
   const gameTypeId = isCampaign
     ? 4
-    : isScenario
-      ? 3
-      : pickNumber(settings?.game_type);
+    : pickNumber(settings?.game_type);
+
+  const isCustomMapOrScenario =
+    mapTypeId === 59 ||
+    mapTypeId === -1 ||
+    mapTypeId === -2 ||
+    mapTypeId === -3 ||
+    mapTypeId === 4294967293 ||
+    mapTypeId === 4294967294 ||
+    mapTypeId === 4294967295 ||
+    (!isCampaign && gameTypeId === 3);
+
+  const customMapMetadata = isCustomMapOrScenario && Array.isArray(rmsStrings)
+    ? rmsStrings
+      .map((entry: unknown) => {
+        if (typeof entry !== "string") return undefined;
+        const match = entry.match(/([^:]+)\.(?:rms\d*|aoe2scenario)(?::([^:]*))?/i);
+        if (!match) return undefined;
+        return {
+          name: match[1].trim(),
+          packName: match[2]?.replace(/^\d+_/, "").trim() || undefined,
+        };
+      })
+      .find((metadata: { name: string; packName?: string } | undefined) => Boolean(metadata?.name))
+    : undefined;
+
+  const ranked = typeof settings?.ranked === "boolean"
+    ? settings.ranked
+    : settings?.ranked !== undefined
+      ? (!Array.isArray(settings.ranked) && Boolean(settings.ranked))
+      : undefined;
+
+  const cheats = typeof settings?.cheats === "boolean"
+    ? settings.cheats
+    : settings?.cheats !== undefined
+      ? (!Array.isArray(settings.cheats) && Boolean(settings.cheats))
+      : undefined;
 
   return {
     mapTypeId,
@@ -2036,12 +2052,16 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
     customMapPackName: customMapMetadata?.packName,
     mapSizeId: pickNumber(settings?.map_size) ?? pickNumber(replayData?.map_size),
     gameTypeId,
+    ranked,
+    startingResourcesId: pickNumber(settings?.starting_resources_id),
     startingAgeId: pickNumber(settings?.starting_age_id),
+    endingAgeId: pickNumber(settings?.ending_age_id),
+    speed: pickNumber(settings?.speed) ?? pickNumber(replayData?.game_speed),
     difficultyId,
     difficultyName,
     populationLimit: pickNumber(settings?.population_limit),
     victoryTypeId: pickNumber(settings?.victory_type_id),
-    cheats: settings?.cheats,
+    cheats: cheats ?? false,
     filename,
     sourceUrl,
     timestamp,
