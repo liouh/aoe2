@@ -1978,7 +1978,6 @@ export type MatchInfo = {
   difficultyName?: string;
   populationLimit?: number;
   victoryTypeId?: number;
-  cheats: boolean;
   filename?: string;
   sourceUrl?: string;
   timestamp?: number;
@@ -2040,12 +2039,6 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
       ? (!Array.isArray(settings.ranked) && Boolean(settings.ranked))
       : undefined;
 
-  const cheats = typeof settings?.cheats === "boolean"
-    ? settings.cheats
-    : settings?.cheats !== undefined
-      ? (!Array.isArray(settings.cheats) && Boolean(settings.cheats))
-      : undefined;
-
   return {
     mapTypeId,
     customMapName: customMapMetadata?.name,
@@ -2061,7 +2054,6 @@ export const extractMatchInfo = (source: any, filename?: string, sourceUrl?: str
     difficultyName,
     populationLimit: pickNumber(settings?.population_limit),
     victoryTypeId: pickNumber(settings?.victory_type_id),
-    cheats: cheats ?? false,
     filename,
     sourceUrl,
     timestamp,

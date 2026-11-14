@@ -754,14 +754,6 @@ export function GameTab({
                   </span>
                 </div>
               )}
-              {matchInfo.cheats !== undefined && (
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs uppercase tracking-wider text-[color:var(--muted)]">Cheats enabled</span>
-                  <span className="font-semibold text-[color:var(--foreground)]">
-                    {matchInfo.cheats ? "Yes" : "No"}
-                  </span>
-                </div>
-              )}
               {(matchInfo.filename || matchInfo.sourceUrl) && (
                 <div className="flex flex-col gap-3 md:col-span-full -mx-4 px-4 border-t border-white/5 pt-4">
                   {matchInfo.filename && (
